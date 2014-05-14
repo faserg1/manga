@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MyTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#ff154599</item>
+    </style>
+
+    <style name="card_shadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/card_shadow</item>
+        <item name="android:src">@drawable/card_shadow</item>
+        <item name="android:layout_below">@+id/inner_frame</item>
+    </style>
+
+    <style name="card_inner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/card_inner_padding_left</item>
+        <item name="android:paddingRight">@dimen/card_inner_padding_right</item>
+        <item name="android:paddingTop">@dimen/card_inner_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/card_inner_padding_vertical</item>
+        <item name="android:duplicateParentState">true</item>
+    </style>
+</resources>

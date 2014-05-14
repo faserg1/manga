@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="150dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp">
+    <LinearLayout
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical"
+                  android:background="@drawable/item_background"
+                  android:padding="15dp">
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal">
+
+            <ImageView
+                    android:id="@+id/manga_image"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.3"
+                    android:src="@drawable/test_manga_front"/>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="0.7">
+
+                <TextView
+                        android:id="@+id/manga_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:text="Bakuman"/>
+
+                <TextView
+                        android:id="@+id/manga_quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Episodes: 308"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+                android:src="@drawable/card_shadow"
+                android:layout_height="@dimen/card_shadow"
+                android:layout_width="fill_parent"/>
+
+    </LinearLayout>
+</LinearLayout>
