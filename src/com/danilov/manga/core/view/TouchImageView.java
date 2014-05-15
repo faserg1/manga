@@ -64,11 +64,12 @@ public class TouchImageView extends ImageView {
 
         setOnTouchListener(new OnTouchListener() {
 
+            long lastEventTime = 0;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mScaleDetector.onTouchEvent(event);
                 PointF curr = new PointF(event.getX(), event.getY());
-
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         last.set(curr);
@@ -90,10 +91,14 @@ public class TouchImageView extends ImageView {
 
                     case MotionEvent.ACTION_UP:
                         mode = NONE;
+                        long curEventGetDownTime = event.getDownTime();
+                        //TODO: calculate velocity
+                        //TODO: start moving with minus acceleration
                         int xDiff = (int) Math.abs(curr.x - start.x);
                         int yDiff = (int) Math.abs(curr.y - start.y);
-                        if (xDiff < CLICK && yDiff < CLICK)
-                        performClick();
+                        if (xDiff < CLICK && yDiff < CLICK) {
+                            performClick();
+                        }
                         break;
 
                     case MotionEvent.ACTION_POINTER_UP:
@@ -101,16 +106,13 @@ public class TouchImageView extends ImageView {
                         break;
                 }
 
+                lastEventTime = event.getDownTime();
                 setImageMatrix(matrix);
                 invalidate();
                 return true; // indicate event was handled
             }
 
         });
-    }
-
-    public void setMaxZoom(float x) {
-        maxScale = x;
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -244,6 +246,10 @@ public class TouchImageView extends ImageView {
 
     public void setOnScaleListener(final ImageScaleListener listener) {
         this.scaleListener = listener;
+    }
+
+    public void setMaxZoom(float x) {
+        maxScale = x;
     }
 
     /*interface*/
