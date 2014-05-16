@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
+import com.danilov.manga.core.http.AsyncDrawable;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.util.BitmapUtils;
 
@@ -85,8 +87,11 @@ public class HttpImageManager {
 
     public static class LoadRequest {
 
+        private ImageView imageView = null;
+        private boolean isCancelled = false;
+
         public LoadRequest(Uri uri) {
-            this(uri, null);
+            this(uri, (OnLoadResponseListener) null);
         }
 
         public LoadRequest(Uri uri, OnLoadResponseListener l) {
@@ -99,8 +104,52 @@ public class HttpImageManager {
             this.mListener = l;
         }
 
+        public LoadRequest(final Uri uri, final ImageView imageView) {
+            if (uri == null) {
+                throw new NullPointerException("uri must not be null");
+            }
+
+            this.mUri = uri;
+            this.mHashedUri = this.computeHashedName(uri.toString());
+            this.imageView = imageView;
+            if (imageView.getDrawable() instanceof AsyncDrawable) {
+                AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
+                ad.getRequest().cancel();
+                Log.d(TAG, "!request was cancelled!");
+            }
+            this.mListener = new OnLoadResponseListener() {
+
+                @Override
+                public void beforeLoad(final LoadRequest r) {
+
+                }
+
+                @Override
+                public void onLoadResponse(final LoadRequest r, final Bitmap data) {
+                    if (!LoadRequest.this.isCancelled) {
+                        imageView.setImageBitmap(data);
+                    }
+                }
+
+                @Override
+                public void onLoadError(final LoadRequest r, final Throwable e) {
+
+                }
+
+            };
+            imageView.setImageDrawable(new AsyncDrawable(this));
+        }
+
+        public ImageView getImageView() {
+            return imageView;
+        }
+
         public Uri getUri() {
             return this.mUri;
+        }
+
+        public void cancel() {
+            this.isCancelled = true;
         }
 
         public String getHashedUri() {

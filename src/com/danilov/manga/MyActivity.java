@@ -44,7 +44,15 @@ public class MyActivity extends Activity {
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
 
-        String[] array = {"Episodes: 308", "Episodes: 308", "Episodes: 308", "Episodes: 308"};
+        String[] array = {"Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308",
+                "Episodes: 308", "Episodes: 308"};
         ArrayAdapter<String> adapter = new TestAdapter(this, R.layout.manga_list_item, R.id.manga_quantity,array);
         list.setAdapter(adapter);
     }
@@ -55,6 +63,7 @@ public class MyActivity extends Activity {
     }
 
     private String sample_uri = "http://hc.readmanga.ru/auto/11/29/72/GTO_v01_020.png";
+    private String sample_uri2 = "http://hc.readmanga.ru/auto/11/29/72/GTO_v01_021.png";
 
     File mydir = null; //Creating an internal dir;
 
@@ -91,7 +100,7 @@ public class MyActivity extends Activity {
 
         @Override
         public int getCount() {
-            return 4; //AHHHAHAHAHHAHA HAHAHHAHAHA
+            return 10; //AHHHAHAHAHHAHA HAHAHHAHAHA
         }
 
         @Override
@@ -101,28 +110,9 @@ public class MyActivity extends Activity {
             if (v == null) {
                 v = inflater.inflate(R.layout.manga_list_item, parent, false);
             }
-            final ImageView iv = (ImageView) v.findViewById(R.id.manga_image);
+            ImageView iv = (ImageView) v.findViewById(R.id.manga_image);
             if(!TextUtils.isEmpty(sample_uri)){
-                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(Uri.parse(sample_uri), new HttpImageManager.OnLoadResponseListener() {
-                    @Override
-                    public void beforeLoad(final HttpImageManager.LoadRequest r) {
-
-                    }
-
-                    @Override
-                    public void onLoadResponse(final HttpImageManager.LoadRequest r, final Bitmap data) {
-                        iv.setImageBitmap(data);
-                    }
-
-                    @Override
-                    public void onLoadError(final HttpImageManager.LoadRequest r, final Throwable e) {
-
-                    }
-
-                }));
-                if (bitmap != null) {
-                    iv.setImageBitmap(bitmap);
-                }
+                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(Uri.parse((position > 7) ? sample_uri2 : sample_uri), iv));
             }
             return v;
         }
