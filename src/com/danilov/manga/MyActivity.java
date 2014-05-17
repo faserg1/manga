@@ -21,6 +21,8 @@ import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpStreamReader;
+import com.danilov.manga.core.util.ServiceContainer;
+import com.danilov.manga.test.QueryTestActivity;
 import com.danilov.manga.test.TouchImageViewActivityTest;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -43,7 +45,7 @@ public class MyActivity extends Activity {
         httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
-
+        ServiceContainer.addService(httpBytesReader);
         String[] array = {"Episodes: 308",
                 "Episodes: 308",
                 "Episodes: 308",
@@ -59,6 +61,11 @@ public class MyActivity extends Activity {
 
     public void firstTest(View view) {
         Intent intent = new Intent(this, TouchImageViewActivityTest.class);
+        startActivity(intent);
+    }
+
+    public void secondTest(View view) {
+        Intent intent = new Intent(this, QueryTestActivity.class);
         startActivity(intent);
     }
 

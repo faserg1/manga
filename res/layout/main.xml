@@ -6,8 +6,15 @@
               android:background="#dce1e3">
     <Button
             android:id="@+id/test1"
-            android:text="Test1"
+            android:text="Image View Test"
             android:onClick="firstTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/test2"
+            android:text="Query Test"
+            android:onClick="secondTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     <ListView

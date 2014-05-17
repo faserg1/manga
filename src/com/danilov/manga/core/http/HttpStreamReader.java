@@ -77,9 +77,7 @@ public class HttpStreamReader {
         try {
             HttpEntity entity = response.getEntity();
 
-            InputStream stream = IoUtils.modifyInputStream(entity.getContent(), entity.getContentLength(), listener, task);
-
-            return stream;
+            return IoUtils.modifyInputStream(entity.getContent(), entity.getContentLength(), listener, task);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             ExtendedHttpClient.releaseResponse(response);
