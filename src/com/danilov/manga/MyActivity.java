@@ -46,6 +46,7 @@ public class MyActivity extends Activity {
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
         ServiceContainer.addService(httpBytesReader);
+        ServiceContainer.addService(httpImageManager);
         String[] array = {"Episodes: 308",
                 "Episodes: 308",
                 "Episodes: 308",
@@ -117,9 +118,12 @@ public class MyActivity extends Activity {
             if (v == null) {
                 v = inflater.inflate(R.layout.manga_list_item, parent, false);
             }
-            ImageView iv = (ImageView) v.findViewById(R.id.manga_image);
+            ImageView iv = (ImageView) v.findViewById(R.id.manga_cover);
             if(!TextUtils.isEmpty(sample_uri)){
                 Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(Uri.parse((position > 7) ? sample_uri2 : sample_uri), iv));
+                if (bitmap != null) {
+                    iv.setImageBitmap(bitmap);
+                };
             }
             return v;
         }

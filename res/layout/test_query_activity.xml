@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
+              android:background="#e5e5e5"
               android:layout_height="match_parent">
 
     <EditText
@@ -15,4 +16,9 @@
             android:text="Query readmanga"
             android:id="@+id/start_query"
             android:layout_gravity="center_horizontal"/>
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/manga_list"
+            android:divider="@null"/>
 </LinearLayout>

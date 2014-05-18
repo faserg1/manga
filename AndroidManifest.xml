@@ -20,6 +20,7 @@
         <activity android:name=".test.TouchImageViewActivityTest"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".test.QueryTestActivity"/>
+        <activity android:name=".test.QueryTestActivity"
+                android:label="Query Engine Test"/>
     </application>
 </manifest>

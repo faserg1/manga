@@ -5,6 +5,6 @@
     <dimen name="card_content">15sp</dimen>
     <dimen name="card_shadow">3dp</dimen>
     <dimen name="manga_list_image_height">110dp</dimen>
-    <dimen name="manga_list_item_height">150dp</dimen>
+    <dimen name="manga_list_item_height">140dp</dimen>
 
 </resources>
