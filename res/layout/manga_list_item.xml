@@ -9,18 +9,16 @@
               android:orientation="vertical"
               android:paddingBottom="5dp">
 
+    <!--card-->
     <LinearLayout
                   android:layout_width="fill_parent"
                   android:layout_height="@dimen/manga_list_item_height"
-                  android:orientation="vertical"
+                  android:orientation="horizontal"
+                  android:baselineAligned="false"
                   android:background="@drawable/item_background"
                   android:padding="15dp">
 
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
-
+            <!--cover-->
             <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
@@ -34,7 +32,9 @@
                         android:src="@drawable/test_manga_front"/>
 
             </LinearLayout>
+            <!--cover end-->
 
+            <!--description & info-->
             <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
@@ -49,7 +49,6 @@
                         android:textStyle="bold"
                         android:textSize="15sp"
                         android:text="Bakuman"/>
-
                 <TextView
                         android:id="@+id/manga_quantity"
                         android:layout_width="wrap_content"
@@ -57,11 +56,23 @@
                         android:text="Episodes: 308"/>
 
             </LinearLayout>
+            <!--description & info end-->
 
-        </LinearLayout>
+            <!--<LinearLayout-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="0.2"-->
+                    <!--android:layout_height="fill_parent">-->
+
+                <!--<RatingBar-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:max="2"-->
+                        <!--android:id="@+id/ratingBar" android:layout_gravity="right"/>-->
+
+            <!--</LinearLayout>-->
 
     </LinearLayout>
-
+    <!--card end-->
     <ImageView
             android:src="@drawable/card_shadow"
             android:layout_height="@dimen/card_shadow"

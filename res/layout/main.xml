@@ -8,12 +8,14 @@
             android:id="@+id/test1"
             android:text="Image View Test"
             android:onClick="firstTest"
+            style="@style/Manga.ButtonCommon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
     <Button
             android:id="@+id/test2"
             android:text="Query Test"
+            style="@style/Manga.ButtonCommon"
             android:onClick="secondTest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

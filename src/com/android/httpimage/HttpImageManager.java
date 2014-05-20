@@ -112,16 +112,21 @@ public class HttpImageManager {
             this.mUri = uri;
             this.mHashedUri = this.computeHashedName(uri.toString());
             this.imageView = imageView;
-            if (imageView.getDrawable() instanceof AsyncDrawable) {
-                AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
-                ad.getRequest().cancel();
-                Log.d(TAG, "!request was cancelled!");
-            }
             this.mListener = new OnLoadResponseListener() {
 
                 @Override
                 public void beforeLoad(final LoadRequest r) {
-
+                    if (imageView.getDrawable() instanceof AsyncDrawable) {
+                        AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
+                        if (!LoadRequest.this.equals(ad.getRequest())) {
+                            ad.getRequest().cancel();
+                            Log.d(TAG, "Request with URI " + ad.getRequest().getUri() + " was cancelled");
+                        }
+                    } else {
+                        Log.d(TAG, "Request with URI " + getUri() + " has new imageview");
+                    }
+                    Log.d(TAG, "Starting request for URI " + getUri());
+                    imageView.setImageDrawable(new AsyncDrawable(LoadRequest.this));
                 }
 
                 @Override
@@ -137,7 +142,6 @@ public class HttpImageManager {
                 }
 
             };
-            imageView.setImageDrawable(new AsyncDrawable(this));
         }
 
         public ImageView getImageView() {

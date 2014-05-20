@@ -18,13 +18,13 @@ import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
+import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpStreamReader;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.test.QueryTestActivity;
 import com.danilov.manga.test.TouchImageViewActivityTest;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.File;
 import java.util.List;
@@ -41,7 +41,7 @@ public class MyActivity extends Activity {
         mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
 
         fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, new ApplicationSettings(), "com.danilov.manga"));
-        httpStreamReader = new HttpStreamReader(new DefaultHttpClient(), getResources());
+        httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
         httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
