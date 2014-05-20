@@ -27,12 +27,11 @@
                 <ImageView
                         android:id="@+id/manga_cover"
                         android:layout_height="@dimen/manga_list_image_height"
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:adjustViewBounds="true"
                         android:src="@drawable/test_manga_front"/>
 
-            </LinearLayout>
-            <!--cover end-->
+            </LinearLayout> <!--cover end-->
 
             <!--description & info-->
             <LinearLayout
@@ -55,8 +54,7 @@
                         android:layout_height="wrap_content"
                         android:text="Episodes: 308"/>
 
-            </LinearLayout>
-            <!--description & info end-->
+            </LinearLayout> <!--description & info end-->
 
             <!--<LinearLayout-->
                     <!--android:layout_width="0dp"-->
