@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sv_download">Скачать</string>
+    <string name="sv_add_to_favorites">Добавить в Избранное</string>
+</resources>

@@ -10,6 +10,7 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -48,7 +49,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
-                mangaList = parseResponse(Utils.parseForDocument(responseString));
+                mangaList = parseSearchResponse(Utils.parseForDocument(responseString));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (HttpRequestException e) {
@@ -56,6 +57,28 @@ public class ReadmangaEngine implements RepositoryEngine {
             }
         }
         return mangaList;
+    }
+
+    @Override
+    public boolean queryForMangaInfo(final Manga manga) {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<Manga> mangaList = null;
+        if (httpBytesReader != null) {
+            try {
+                String uri = manga.getUri();
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                Manga.LoadedMangaInfo mangaInfo = parseMangaInfoResponse(Utils.parseForDocument(responseString));
+                if (mangaInfo == null) {
+                    return false;
+                }
+                manga.setInfo(mangaInfo);
+                return true;
+            } catch (HttpRequestException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
     //html values
@@ -66,7 +89,7 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     //!html values
 
-    private List<Manga> parseResponse(final Document document) {
+    private List<Manga> parseSearchResponse(final Document document) {
         List<Manga> mangaList = new LinkedList<Manga>();
         Element searchResults = document.getElementById(searchElementId);
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaLinkClass);
@@ -81,6 +104,25 @@ public class ReadmangaEngine implements RepositoryEngine {
             mangaList.add(manga);
         }
         return mangaList;
+    }
+
+    //html values
+    private String descriptionElementClass = "manga-description";
+
+    private Manga.LoadedMangaInfo parseMangaInfoResponse(final Document document) {
+        Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
+        if (mangaDescriptionElements.isEmpty()) {
+            return null;
+        }
+        Element mangaDescription = mangaDescriptionElements.first();
+        Elements links = mangaDescription.select("a");
+        if (!links.isEmpty()) {
+            links.remove();
+        }
+        String description = mangaDescription.text();
+        Manga.LoadedMangaInfo mangaInfo = new Manga.LoadedMangaInfo();
+        mangaInfo.setDescription(description);
+        return mangaInfo;
     }
 
     @Override

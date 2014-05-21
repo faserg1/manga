@@ -22,5 +22,6 @@
         </activity>
         <activity android:name=".test.QueryTestActivity"
                 android:label="Query Engine Test"/>
+        <activity android:name=".activity.MangaInfoActivity"/>
     </application>
 </manifest>

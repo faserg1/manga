@@ -9,12 +9,11 @@ import com.danilov.manga.R;
  */
 public class BitmapUtils {
 
-    public static Bitmap reduceBitmapSize(final Resources resources, final Bitmap bitmap) {
+    public static Bitmap reduceBitmapSize(final Resources resources, final Bitmap bitmap, final int newSize) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
         int oldSize = Math.max(width, height);
-        int newSize = resources.getDimensionPixelSize(R.dimen.manga_list_image_height);
 
         float scale = newSize / (float) oldSize;
 

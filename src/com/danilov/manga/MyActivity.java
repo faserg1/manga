@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
+import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.manga.core.http.ExtendedHttpClient;
@@ -70,6 +71,11 @@ public class MyActivity extends Activity {
         startActivity(intent);
     }
 
+    public void thirdTest(View view) {
+        Intent intent = new Intent(this, MangaInfoActivity.class);
+        startActivity(intent);
+    }
+
     private String sample_uri = "http://hc.readmanga.ru/auto/11/29/72/GTO_v01_020.png";
     private String sample_uri2 = "http://hc.readmanga.ru/auto/11/29/72/GTO_v01_021.png";
 
@@ -119,8 +125,9 @@ public class MyActivity extends Activity {
                 v = inflater.inflate(R.layout.manga_list_item, parent, false);
             }
             ImageView iv = (ImageView) v.findViewById(R.id.manga_cover);
+            int sizeOfImage = getBaseContext().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
             if(!TextUtils.isEmpty(sample_uri)){
-                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(Uri.parse((position > 7) ? sample_uri2 : sample_uri), iv));
+                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(Uri.parse((position > 7) ? sample_uri2 : sample_uri), iv, sizeOfImage));
                 if (bitmap != null) {
                     iv.setImageBitmap(bitmap);
                 };

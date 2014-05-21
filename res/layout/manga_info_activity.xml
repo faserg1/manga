@@ -3,12 +3,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="#e5e5e5">
 
     <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/scrollView">
+
+            <include layout="@layout/manga_info_item"/>
 
     </ScrollView>
 

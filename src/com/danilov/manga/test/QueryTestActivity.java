@@ -1,12 +1,15 @@
 package com.danilov.manga.test;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.danilov.manga.R;
+import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.adapter.MangaListAdapter;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.ReadmangaEngine;
@@ -17,9 +20,10 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 17.05.2014.
  */
-public class QueryTestActivity extends Activity implements View.OnClickListener {
+public class QueryTestActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private EditText query;
+    private MangaListAdapter adapter = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +48,9 @@ public class QueryTestActivity extends Activity implements View.OnClickListener 
                     @Override
                     public void run() {
                         ListView listView = (ListView) QueryTestActivity.this.findViewById(R.id.manga_list);
-                        MangaListAdapter adapter = new MangaListAdapter(QueryTestActivity.this, R.layout.manga_list_item, mangaList);
+                        adapter = new MangaListAdapter(QueryTestActivity.this, R.layout.manga_list_item, mangaList);
                         listView.setAdapter(adapter);
+                        listView.setOnItemClickListener(QueryTestActivity.this);
                     }
 
                 });
@@ -53,5 +58,14 @@ public class QueryTestActivity extends Activity implements View.OnClickListener 
 
         };
         t.start();
+    }
+
+
+    @Override
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        Manga manga = adapter.getItem(i);
+        Intent intent = new Intent(this, MangaInfoActivity.class);
+        intent.putExtra("manga", manga);
+        startActivity(intent);
     }
 }

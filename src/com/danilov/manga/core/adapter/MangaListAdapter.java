@@ -25,10 +25,12 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
     private final String TAG = "MangaListAdapter";
 
     private final int resourceId;
+    private int sizeOfImage;
 
     public MangaListAdapter(final Context context, final int resource, final List<Manga> objects) {
         super(context, resource, objects);
         resourceId = resource;
+        sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         viewBag.titleView.setText(manga.getTitle());
         HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         Uri coverUri = Uri.parse(manga.getCoverUri());
-        Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, viewBag.coverView));
+        Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, viewBag.coverView, sizeOfImage));
         if (bitmap != null) {
             viewBag.coverView.setImageBitmap(bitmap);
         }

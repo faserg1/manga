@@ -30,6 +30,13 @@ public interface RepositoryEngine {
      */
     List<Manga> queryRepository(final String query);
 
+    /**
+     * Getting info about manga (description and chapters)
+     * @param manga
+     * @return must return true if query was successful
+     */
+    boolean queryForMangaInfo(final Manga manga);
+
     String getBaseSearchUri();
 
 }

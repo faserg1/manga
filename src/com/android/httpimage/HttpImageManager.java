@@ -89,6 +89,7 @@ public class HttpImageManager {
 
         private ImageView imageView = null;
         private boolean isCancelled = false;
+        private int newSize;
 
         public LoadRequest(Uri uri) {
             this(uri, (OnLoadResponseListener) null);
@@ -104,13 +105,14 @@ public class HttpImageManager {
             this.mListener = l;
         }
 
-        public LoadRequest(final Uri uri, final ImageView imageView) {
+        public LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
 
             this.mUri = uri;
-            this.mHashedUri = this.computeHashedName(uri.toString());
+            this.newSize = newSize;
+            this.mHashedUri = this.computeHashedName(uri.toString()) + newSize;
             this.imageView = imageView;
             //отменяем старый реквест здесь, потому что до onBeforeLoad может не дойти, если в кэше есть:)
             if (imageView.getDrawable() instanceof AsyncDrawable) {
@@ -163,6 +165,14 @@ public class HttpImageManager {
 
         public void cancel() {
             this.isCancelled = true;
+        }
+
+        public int getNewSize() {
+            return newSize;
+        }
+
+        public void setNewSize(final int newSize) {
+            this.newSize = newSize;
         }
 
         public String getHashedUri() {
@@ -289,7 +299,7 @@ public class HttpImageManager {
                         data = HttpImageManager.this.mPersistence.loadData(key);
                         if (data != null) {
                             // load it into memory
-                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data);
+                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
                             HttpImageManager.this.mCache.storeData(key, data);
                         } else {
                             // we go to network
@@ -297,7 +307,7 @@ public class HttpImageManager {
                             data = HttpImageManager.this.mNetworkResourceLoader.fromUri(request.getUri().toString());
 
                             // load it into memory
-                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data);
+                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
                             HttpImageManager.this.mCache.storeData(key, data);
 
                             // persist it

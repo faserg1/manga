@@ -15,11 +15,30 @@
             android:padding="15dp"
             android:background="@drawable/item_background">
 
+        <!--title-->
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_marginBottom="10dp">
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Bakuman"
+                      android:id="@+id/manga_title"
+                      android:textSize="25sp"
+                    />
+
+            <View
+                    android:background="#000"
+                    android:layout_height="1dp"
+                    android:layout_width="fill_parent"/>
+
+        </LinearLayout>
+
         <!--cover and buttons-->
         <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.4"
+                android:layout_height="@dimen/manga_info_height"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
 
@@ -38,7 +57,18 @@
 
             <LinearLayout android:layout_width="0dp"
                           android:layout_weight="0.6"
+                          android:orientation="vertical"
                           android:layout_height="fill_parent">
+
+                <Button android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sv_add_to_favorites"
+                        style="@style/Manga.ButtonCommon"/>
+
+                <Button android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Manga.ButtonCommon"
+                        android:text="@string/sv_download"/>
 
             </LinearLayout>
 
@@ -46,8 +76,11 @@
 
         <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.6">
+                android:layout_height="fill_parent">
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="fill_parent"
+                      android:id="@+id/manga_description"
+                      android:text="@string/test_lorem"/>
 
         </LinearLayout>
 
