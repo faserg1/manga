@@ -18,36 +18,31 @@ public class Manga implements Parcelable {
 
     private String coverUri;
 
-    private LoadedMangaInfo info;
-
     public Manga(final String title, final String uri) {
         this.title = title;
-        this.info = null;
         this.uri = uri;
     }
 
-    public static class LoadedMangaInfo {
+    //<!--lazy load -->
+    private String description;
 
-        private String description;
+    private List<MangaChapter> chapters;
+    //<--lazy load --!>
 
-        private List<MangaChapter> chapters;
+    public String getDescription() {
+        return description;
+    }
 
-        public String getDescription() {
-            return description;
-        }
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-        public void setDescription(final String description) {
-            this.description = description;
-        }
+    public List<MangaChapter> getChapters() {
+        return chapters;
+    }
 
-        public List<MangaChapter> getChapters() {
-            return chapters;
-        }
-
-        public void setChapters(final List<MangaChapter> chapters) {
-            this.chapters = chapters;
-        }
-
+    public void setChapters(final List<MangaChapter> chapters) {
+        this.chapters = chapters;
     }
 
     public String getUri() {
@@ -82,19 +77,6 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
-    public void setInfo(final LoadedMangaInfo info) {
-        this.info = info;
-    }
-
-    public String getDescription() {
-        if (info == null) {
-            return null;
-        } else {
-            return info.getDescription();
-        }
-    }
-
-
 //    parcelable implementation
 
     public static final Creator<Manga> CREATOR = new Creator<Manga>() {
@@ -116,6 +98,7 @@ public class Manga implements Parcelable {
         title = parcel.readString();
         author = parcel.readString();
         coverUri = parcel.readString();
+        description = parcel.readString();
     }
 
     @Override
@@ -129,6 +112,7 @@ public class Manga implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(author);
         parcel.writeString(coverUri);
+        parcel.writeString(description);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.danilov.manga.core.repository;
 
+import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import org.json.JSONObject;
 
@@ -35,7 +36,9 @@ public interface RepositoryEngine {
      * @param manga
      * @return must return true if query was successful
      */
-    boolean queryForMangaInfo(final Manga manga);
+    boolean queryForMangaDescription(final Manga manga) throws HttpRequestException;
+
+    boolean queryForChapters(final Manga manga) throws HttpRequestException;
 
     String getBaseSearchUri();
 

@@ -23,10 +23,15 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Bakuman"
+                      android:text="Long Text Test Of Marquee Lol OMGTFY . COM"
                       android:id="@+id/manga_title"
                       android:textSize="25sp"
-                    />
+                      android:singleLine="true"
+                      android:ellipsize="marquee"
+                      android:focusable="true"
+                      android:focusableInTouchMode="true"
+                      android:marqueeRepeatLimit="marquee_forever"
+                      android:scrollHorizontally="true"/>
 
             <View
                     android:background="#000"
@@ -60,12 +65,12 @@
                           android:orientation="vertical"
                           android:layout_height="fill_parent">
 
-                <Button android:layout_width="wrap_content"
+                <Button android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/sv_add_to_favorites"
                         style="@style/Manga.ButtonCommon"/>
 
-                <Button android:layout_width="wrap_content"
+                <Button android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         style="@style/Manga.ButtonCommon"
                         android:text="@string/sv_download"/>

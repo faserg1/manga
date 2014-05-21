@@ -3,6 +3,7 @@ package com.danilov.manga.core.repository;
 import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
@@ -15,6 +16,7 @@ import org.jsoup.select.Elements;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,22 +62,33 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public boolean queryForMangaInfo(final Manga manga) {
+    public boolean queryForMangaDescription(final Manga manga) throws HttpRequestException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
-        List<Manga> mangaList = null;
         if (httpBytesReader != null) {
-            try {
-                String uri = manga.getUri();
-                byte[] response = httpBytesReader.fromUri(uri);
-                String responseString = IoUtils.convertBytesToString(response);
-                Manga.LoadedMangaInfo mangaInfo = parseMangaInfoResponse(Utils.parseForDocument(responseString));
-                if (mangaInfo == null) {
-                    return false;
-                }
-                manga.setInfo(mangaInfo);
+            String uri = baseUri + manga.getUri();
+            byte[] response = httpBytesReader.fromUri(uri);
+            String responseString = IoUtils.convertBytesToString(response);
+            String mangaDescription = parseMangaDescriptionResponse(Utils.parseForDocument(responseString));
+            if (mangaDescription == null) {
+                return false;
+            }
+            manga.setDescription(mangaDescription);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean queryForChapters(final Manga manga) throws HttpRequestException {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        if (httpBytesReader != null) {
+            String uri = baseUri + manga.getUri();
+            byte[] response = httpBytesReader.fromUri(uri);
+            String responseString = IoUtils.convertBytesToString(response);
+            List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.parseForDocument(responseString));
+            if (chapters != null) {
+                manga.setChapters(chapters);
                 return true;
-            } catch (HttpRequestException e) {
-                e.printStackTrace();
             }
         }
         return false;
@@ -95,7 +108,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaLinkClass);
         for (Element mangaLink : mangaLinks) {
             Element parent = mangaLink.parent();
-            String uri = baseUri + mangaLink.attr("href");
+            String uri = mangaLink.attr("href");
             String mangaName = String.valueOf(mangaLink.text());
             Element screenElement = parent.getElementsByClass(mangaCoverClass).get(0);
             String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;
@@ -109,20 +122,42 @@ public class ReadmangaEngine implements RepositoryEngine {
     //html values
     private String descriptionElementClass = "manga-description";
 
-    private Manga.LoadedMangaInfo parseMangaInfoResponse(final Document document) {
+    private String parseMangaDescriptionResponse(final Document document) {
         Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
         if (mangaDescriptionElements.isEmpty()) {
             return null;
         }
         Element mangaDescription = mangaDescriptionElements.first();
-        Elements links = mangaDescription.select("a");
+        Elements links = mangaDescription.getElementsByTag("a");
         if (!links.isEmpty()) {
             links.remove();
         }
         String description = mangaDescription.text();
-        Manga.LoadedMangaInfo mangaInfo = new Manga.LoadedMangaInfo();
-        mangaInfo.setDescription(description);
-        return mangaInfo;
+        return description;
+    }
+
+    //html values
+    private String chaptersElementClass = "chapters-link";
+    private String linkValueAttr = "href";
+
+    private List<MangaChapter> parseMangaChaptersResponse(final Document document) {
+        Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
+        if (chaptersElements.isEmpty()) {
+            return null;
+        }
+        Element chaptersElement = chaptersElements.first();
+        Elements links = chaptersElement.getElementsByTag("a");
+        if (links.isEmpty()) {
+            return null;
+        }
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>();
+        for (Element element : links) {
+            String link = element.attr(linkValueAttr);
+            String title = element.text();
+            MangaChapter chapter = new MangaChapter(title, link);
+            chapters.add(chapter);
+        }
+        return chapters;
     }
 
     @Override
