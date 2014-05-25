@@ -287,7 +287,7 @@ public class HttpImageManager {
                     HttpImageManager.this.mActiveRequests.add(request);
                 }
 
-                Bitmap data = null;
+                Bitmap data;
 
                 try {
                     String key = request.getHashedUri();
