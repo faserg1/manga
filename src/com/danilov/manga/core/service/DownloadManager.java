@@ -17,11 +17,27 @@ public class DownloadManager {
 
     private final String TAG = "DownloadManager";
 
+    private DownloadManagerThread thread = new DownloadManagerThread();
+
     private static final int MAX_BUFFER_SIZE = 1024;
 
     private DownloadPool pool = new DownloadPool();
 
     private DownloadProgressListener listener;
+
+    private Queue<Download> downloads = new ArrayDeque<Download>();
+
+    //executing only one download at a time
+    //on complete start another download
+    //todo: decide if this is good
+    public void startDownload(final String uri, final String filePath) throws DownloadManagerException {
+        if (thread.isBusy()) {
+            throw new DownloadManagerException("Trying to execute another download");
+        }
+        Download download = pool.obtain();
+        download.setUri(uri);
+        download.setFilePath(filePath);
+    }
 
     public class Download implements Runnable {
 
@@ -37,6 +53,22 @@ public class DownloadManager {
         public void recycle() {
             clear();
             DownloadManager.this.recycle(this);
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(final String uri) {
+            this.uri = uri;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
+
+        public void setFilePath(final String filePath) {
+            this.filePath = filePath;
         }
 
         private void clear() {
@@ -115,6 +147,7 @@ public class DownloadManager {
                 reached because downloading has finished. */
                 if (status == DownloadStatus.DOWNLOADING) {
                     status = DownloadStatus.COMPLETE;
+                    downloads.remove(this);
                     stateChanged();
                 }
             } catch (Exception e) {
@@ -221,6 +254,47 @@ public class DownloadManager {
 
         public void onError(final Download download);
 
+    }
+
+    private class DownloadManagerThread extends Thread {
+
+        private Download download;
+
+        public final short IDLE =  0;
+        public final short BUSY =  1;
+
+        private short status = IDLE;
+
+        public DownloadManagerThread(final Download download) {
+            this.download = download;
+        }
+
+        public DownloadManagerThread() {
+
+        }
+
+        @Override
+        public void run() {
+            setStatus(BUSY);
+            download.run();
+            setStatus(IDLE);
+        }
+
+        private synchronized void setStatus(final short status) {
+            this.status = status;
+        }
+
+        public synchronized boolean isBusy() {
+            return status == BUSY;
+        }
+
+        public Download getDownload() {
+            return download;
+        }
+
+        public void setDownload(final Download download) {
+            this.download = download;
+        }
     }
 
     public enum DownloadStatus {
