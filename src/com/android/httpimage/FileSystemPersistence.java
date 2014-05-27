@@ -83,7 +83,7 @@ public class FileSystemPersistence implements BitmapCache {
 
     private Bitmap readBitmapFromFile(File file) throws FileNotFoundException {
         FileInputStream fis = null;
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         try {
             fis = new FileInputStream(file);
             bitmap = BitmapFactory.decodeStream(fis);
