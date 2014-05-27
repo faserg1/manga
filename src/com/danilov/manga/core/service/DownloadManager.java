@@ -27,6 +27,8 @@ public class DownloadManager {
 
     private Queue<Download> downloads = new ArrayDeque<Download>();
 
+    private Download currentDownload = null;
+
     //executing only one download at a time
     //on complete start another download
     //todo: decide if this is good
@@ -35,8 +37,11 @@ public class DownloadManager {
             throw new DownloadManagerException("Trying to execute another download");
         }
         Download download = pool.obtain();
+        currentDownload = download;
         download.setUri(uri);
         download.setFilePath(filePath);
+        thread.setDownload(download);
+        thread.start();
     }
 
     public class Download implements Runnable {
@@ -48,6 +53,10 @@ public class DownloadManager {
         private DownloadStatus status;
 
         public Download() {
+        }
+
+        public synchronized int getProgress() {
+            return (int) ((float) downloaded / size) * 100;
         }
 
         public void recycle() {
@@ -106,7 +115,7 @@ public class DownloadManager {
                 if (contentLength < 1) {
                     error();
                 }
-                status = DownloadStatus.DOWNLOADING;
+                setStatus(DownloadStatus.DOWNLOADING);
                 /* Set the size for this download if it
                 hasn't been already set. */
                 if (size == -1) {
@@ -146,7 +155,7 @@ public class DownloadManager {
                 /* Change status to complete if this point was
                 reached because downloading has finished. */
                 if (status == DownloadStatus.DOWNLOADING) {
-                    status = DownloadStatus.COMPLETE;
+                    setStatus(DownloadStatus.COMPLETE);
                     downloads.remove(this);
                     stateChanged();
                 }
@@ -173,8 +182,12 @@ public class DownloadManager {
             }
         }
 
+        private synchronized void setStatus(final DownloadStatus status) {
+            this.status = status;
+        }
+
         private void error() {
-            status = DownloadStatus.ERROR;
+            setStatus(DownloadStatus.ERROR);
             stateChanged();
         }
 
@@ -238,6 +251,22 @@ public class DownloadManager {
 
     private void recycle(final Download download) {
         pool.retrieve(download);
+    }
+
+    public void setCurrentDownload(final Download currentDownload) {
+        this.currentDownload = currentDownload;
+    }
+
+    public Download getCurrentDownload() {
+        return currentDownload;
+    }
+
+    public DownloadProgressListener getListener() {
+        return listener;
+    }
+
+    public void setListener(final DownloadProgressListener listener) {
+        this.listener = listener;
     }
 
     public interface DownloadProgressListener {
