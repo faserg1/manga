@@ -9,6 +9,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Semyon Danilov on 26.05.2014.
@@ -27,24 +30,38 @@ public class DownloadManager {
 
     private Queue<Download> downloads = new ArrayDeque<Download>();
 
+    //thread
+    final Lock lock = new ReentrantLock();
+
+    final Condition isWake = lock.newCondition();
+    //!thread
+
+    public DownloadManager() {
+        thread.start();
+    }
+
     //executing only one download at a time
     //on complete start another download
     //todo: decide if this is good
-    public void startDownload(final String uri, final String filePath) throws DownloadManagerException {
-        if (thread.isBusy()) {
-            throw new DownloadManagerException("Trying to execute another download");
+    public void startDownload(final String uri, final String filePath) {
+        lock.lock();
+        try {
+            Download download = pool.obtain();
+            download.setUri(uri);
+            download.setFilePath(filePath);
+            downloads.add(download);
+            isWake.signalAll();
+        } finally {
+            lock.unlock();
         }
-        Download download = pool.obtain();
-        download.setUri(uri);
-        download.setFilePath(filePath);
     }
 
     public class Download implements Runnable {
 
         private String uri;
         private String filePath;
-        private int size;
-        private int downloaded;
+        private int size = -1;
+        private int downloaded = 0;
         private DownloadStatus status;
 
         public Download() {
@@ -74,7 +91,7 @@ public class DownloadManager {
         private void clear() {
             this.uri = null;
             this.filePath = null;
-            this.size = 0;
+            this.size = -1;
             this.downloaded = 0;
             this.status = null;
         }
@@ -208,6 +225,9 @@ public class DownloadManager {
             }
         }
 
+        public DownloadStatus getStatus() {
+            return status;
+        }
     }
 
     public class DownloadPool implements Pool<Download> {
@@ -224,6 +244,7 @@ public class DownloadManager {
             } else {
                 download = new Download();
             }
+            download.clear();
             return download;
         }
 
@@ -258,43 +279,43 @@ public class DownloadManager {
 
     private class DownloadManagerThread extends Thread {
 
-        private Download download;
-
-        public final short IDLE =  0;
-        public final short BUSY =  1;
-
-        private short status = IDLE;
-
-        public DownloadManagerThread(final Download download) {
-            this.download = download;
-        }
-
         public DownloadManagerThread() {
 
         }
 
         @Override
         public void run() {
-            setStatus(BUSY);
-            download.run();
-            setStatus(IDLE);
+            while (true) {
+                Download download = null;
+                lock.lock();
+                try {
+                    while (downloads.size() < 1) {
+                        try {
+                            isWake.await();
+                        } catch (InterruptedException e) {
+                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                        }
+                    }
+                    download = downloads.peek();
+                    while (download.getStatus() == DownloadStatus.PAUSED || download.getStatus() == DownloadStatus.ERROR) {
+                        try {
+                            isWake.await();
+                        } catch (InterruptedException e) {
+                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                        }
+                    }
+                    if (download.getStatus() == DownloadStatus.CANCELLED) {
+                        downloads.remove();
+                        continue;
+                    }
+                } finally {
+                    lock.unlock();
+                }
+                download.run();
+            }
         }
 
-        private synchronized void setStatus(final short status) {
-            this.status = status;
-        }
 
-        public synchronized boolean isBusy() {
-            return status == BUSY;
-        }
-
-        public Download getDownload() {
-            return download;
-        }
-
-        public void setDownload(final Download download) {
-            this.download = download;
-        }
     }
 
     public enum DownloadStatus {
