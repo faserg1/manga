@@ -14,13 +14,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by Semyon Danilov on 26.05.2014.
+ * Created by Semyon Danilov on 26.05.2014. Using new mode - 07.06
  */
 public class DownloadManager {
 
     private final String TAG = "DownloadManager";
 
-    private DownloadManagerThread thread = new DownloadManagerThread();
+    protected DownloadManagerThread thread = new DownloadManagerThread();
 
     private static final int MAX_BUFFER_SIZE = 1024;
 
@@ -124,11 +124,11 @@ public class DownloadManager {
                     error();
                 }
                 status = DownloadStatus.DOWNLOADING;
+                stateChanged();
                 /* Set the size for this download if it
                 hasn't been already set. */
                 if (size == -1) {
                     size = contentLength;
-                    stateChanged();
                 }
 
                 // Open file and seek to the end of it.
@@ -210,6 +210,7 @@ public class DownloadManager {
                 case COMPLETE:
                     if (listener != null) {
                         listener.onComplete(this);
+                        recycle();
                     }
                     break;
                 case CANCELLED:
@@ -305,7 +306,8 @@ public class DownloadManager {
                         }
                     }
                     if (download.getStatus() == DownloadStatus.CANCELLED) {
-                        downloads.remove();
+                        download = downloads.remove();
+                        download.recycle();
                         continue;
                     }
                 } finally {
