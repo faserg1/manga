@@ -15,8 +15,8 @@ import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpStreamReader;
-import com.danilov.manga.core.service.DownloadManager;
 import com.danilov.manga.core.util.ServiceContainer;
+import com.danilov.manga.test.DownloadTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 import com.danilov.manga.test.TouchImageViewActivityTest;
 
@@ -39,9 +39,6 @@ public class MyActivity extends Activity {
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpImageManager);
-        DownloadManager downloadManager = new DownloadManager();
-        downloadManager.startDownload("http://he.readmanga.ru/auto/11/52/35/03.png", mydir.getPath() + "/1.png");
-        downloadManager.startDownload("http://hb.readmanga.ru/auto/11/52/35/04.png", mydir.getPath() + "/2.png");
     }
 
     public void firstTest(View view) {
@@ -51,6 +48,11 @@ public class MyActivity extends Activity {
 
     public void secondTest(View view) {
         Intent intent = new Intent(this, QueryTestActivity.class);
+        startActivity(intent);
+    }
+
+    public void fourthTest(View view) {
+        Intent intent = new Intent(this, DownloadTestActivity.class);
         startActivity(intent);
     }
 
@@ -67,6 +69,5 @@ public class MyActivity extends Activity {
     HttpBitmapReader httpBitmapReader = null;
 
     private HttpImageManager httpImageManager = null;
-
 
 }

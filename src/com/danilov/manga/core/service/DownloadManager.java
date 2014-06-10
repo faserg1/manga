@@ -84,6 +84,7 @@ public class DownloadManager {
             return filePath;
         }
 
+        //TODO: block if download is not in pool
         public void setFilePath(final String filePath) {
             this.filePath = filePath;
         }
@@ -123,13 +124,15 @@ public class DownloadManager {
                 if (contentLength < 1) {
                     error();
                 }
-                status = DownloadStatus.DOWNLOADING;
-                stateChanged();
                 /* Set the size for this download if it
                 hasn't been already set. */
                 if (size == -1) {
-                    size = contentLength;
+                    synchronized (this) {
+                        size = contentLength;
+                    }
                 }
+                status = DownloadStatus.DOWNLOADING;
+                stateChanged();
 
                 // Open file and seek to the end of it.
                 file = new RandomAccessFile(filePath, "rw");
@@ -157,7 +160,8 @@ public class DownloadManager {
                     file.write(buffer, 0, read);
                     downloaded += read;
                     if (listener != null) {
-                        listener.onProgress(this);
+                        Log.d(TAG, downloaded + "/" + size);
+                        listener.onProgress(this, downloaded);
                     }
                 }
                 /* Change status to complete if this point was
@@ -226,8 +230,16 @@ public class DownloadManager {
             }
         }
 
+        public float getProgress() {
+            return ((float) downloaded / size) * 100;
+        }
+
         public DownloadStatus getStatus() {
             return status;
+        }
+
+        public synchronized int getSize() {
+            return size;
         }
     }
 
@@ -264,7 +276,7 @@ public class DownloadManager {
 
     public interface DownloadProgressListener {
 
-        public void onProgress(final Download download);
+        public void onProgress(final Download download, final int progress);
 
         public void onPause(final Download download);
 
@@ -276,6 +288,10 @@ public class DownloadManager {
 
         public void onError(final Download download);
 
+    }
+
+    public void setListener(final DownloadProgressListener listener) {
+        this.listener = listener;
     }
 
     private class DownloadManagerThread extends Thread {
