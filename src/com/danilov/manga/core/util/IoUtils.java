@@ -156,13 +156,17 @@ public class IoUtils {
     }
 
     public static void copyArray(final byte[] from, final int offsetFrom, final byte[] to, final int offsetTo) {
+        copyArray(from, offsetFrom, from.length, to, offsetTo);
+    }
+
+    public static void copyArray(final byte[] from, final int offsetFrom, final int lenFrom, final byte[] to, final int offsetTo) {
         int i = offsetFrom;
         int j = offsetTo;
-        if (from.length - i > to.length - j) {
+        if (lenFrom - i > to.length - j) {
             throw new RuntimeException("Can not copy: destination size is too small: from actual length = " + (from.length - i)
                     + ", to actual length = " + (to.length - j));
         }
-        for (; i < from.length; i++) {
+        for (; i < lenFrom; i++) {
             to[j] = from[i];
             j++;
         }

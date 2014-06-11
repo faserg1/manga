@@ -95,7 +95,12 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     public List<String> queryForChapterImages(final MangaChapter mangaChapter) {
-
+//        try {
+//
+//        } catch (IOException e) {
+//
+//        }
+        return null;
     }
 
     //html values
