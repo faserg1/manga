@@ -79,6 +79,36 @@ public class IoUtils {
         return result;
     }
 
+    public static String convertBytesToString(byte[] bytes, int len) {
+        if (bytes == null) {
+            return null;
+        }
+
+        String result;
+        try {
+            result = new String(bytes, 0, len, Charset.forName(HTTP.UTF_8).name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        return result;
+    }
+
+    public static String convertBytesToString(final byte[] bytes, final int offset, final int len) {
+        if (bytes == null) {
+            return null;
+        }
+
+        String result;
+        try {
+            result = new String(bytes, offset, len, Charset.forName(HTTP.UTF_8).name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        return result;
+    }
+
     public static long dirSize(File dir) {
         if (dir == null || !dir.exists()) {
             return 0;
@@ -118,6 +148,23 @@ public class IoUtils {
             }
 
             path.delete();
+        }
+    }
+
+    public static void copyArray(final byte[] from, final byte[] to) {
+        copyArray(from, 0, to, 0);
+    }
+
+    public static void copyArray(final byte[] from, final int offsetFrom, final byte[] to, final int offsetTo) {
+        int i = offsetFrom;
+        int j = offsetTo;
+        if (from.length - i > to.length - j) {
+            throw new RuntimeException("Can not copy: destination size is too small: from actual length = " + (from.length - i)
+                    + ", to actual length = " + (to.length - j));
+        }
+        for (; i < from.length; i++) {
+            to[j] = from[i];
+            j++;
         }
     }
 

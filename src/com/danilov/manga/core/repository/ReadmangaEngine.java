@@ -94,6 +94,10 @@ public class ReadmangaEngine implements RepositoryEngine {
         return false;
     }
 
+    public List<String> queryForChapterImages(final MangaChapter mangaChapter) {
+
+    }
+
     //html values
     private String searchElementId = "mangaResults";
     private String mangaLinkClass = "manga-link";
