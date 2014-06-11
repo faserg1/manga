@@ -44,6 +44,7 @@ public class MyActivity extends Activity {
             @Override
             public void run() {
                 try {
+                    long s = System.currentTimeMillis();
                     String uri = "http://readmanga.me/naruto_dj___animal_panic_paradox/vol1/1";
                     HttpStreamModel model = httpStreamReader.fromUri(uri);
                     LinesSearchInputStream linesSearchInputStream = new LinesSearchInputStream(model.stream, "pictures", "\n");
@@ -54,6 +55,7 @@ public class MyActivity extends Activity {
                     bytes = linesSearchInputStream.getResult();
                     String str = IoUtils.convertBytesToString(bytes);
                     str.isEmpty();
+                    Log.d("MyActivity", "Time: " + (System.currentTimeMillis() - s) + " ms");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
