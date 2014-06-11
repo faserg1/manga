@@ -296,13 +296,15 @@ public class DownloadManager {
 
     private class DownloadManagerThread extends Thread {
 
-        public DownloadManagerThread() {
+        private boolean isWorking;
 
+        public DownloadManagerThread() {
+            isWorking = true;
         }
 
         @Override
         public void run() {
-            while (true) {
+            while (isWorking()) {
                 Download download = null;
                 lock.lock();
                 try {
@@ -333,6 +335,13 @@ public class DownloadManager {
             }
         }
 
+        public synchronized boolean isWorking() {
+            return isWorking;
+        }
+
+        public synchronized void stopWorking() {
+            this.isWorking = false;
+        }
 
     }
 
