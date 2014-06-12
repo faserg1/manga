@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.util.Utils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -44,7 +46,7 @@ public class MangaDownloadService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new MDownloadServiceBinder();
     }
 
     @Override
@@ -120,6 +122,13 @@ public class MangaDownloadService extends Service {
         }
     }
 
+    public void addDownload(final Manga manga, final int from, final int to) {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.ADD_DOWNLOAD;
+        message.obj = new MangaDownloadRequest(manga, from, to);
+        serviceHandler.sendMessage(message);
+    }
+
     public interface ServiceConnectionListener {
 
         void onServiceConnected(final MangaDownloadService service);
@@ -142,7 +151,19 @@ public class MangaDownloadService extends Service {
             final RepositoryEngine engine = manga.getRepository().getEngine();
             List<MangaChapter> chapters = manga.getChapters();
             MangaChapter chapter = chapters.get(request.current);
-
+            List<String> urls = null;
+            try {
+                urls = engine.getChapterImages(chapter);
+            } catch (HttpRequestException e) {
+                e.printStackTrace();
+                return;
+            }
+            String path = Utils.createPathForMangaChapter(manga, request.current, MangaDownloadService.this) + "/";
+            int i = 0;
+            for (String url : urls) {
+                downloadManager.startDownload(url, path + i + ".png", request.current);
+                i++;
+            }
         }
 
     }

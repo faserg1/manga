@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
@@ -12,30 +11,29 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
-import com.danilov.manga.core.http.ExtendedHttpClient;
-import com.danilov.manga.core.http.HttpBitmapReader;
-import com.danilov.manga.core.http.HttpBytesReader;
-import com.danilov.manga.core.http.HttpStreamReader;
-import com.danilov.manga.core.model.MangaChapter;
+import com.danilov.manga.core.http.*;
+import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.test.DownloadTestActivity;
+import com.danilov.manga.test.Mock;
 import com.danilov.manga.test.QueryTestActivity;
 import com.danilov.manga.test.TouchImageViewActivityTest;
 
 import java.io.File;
 
 public class MyActivity extends Activity {
-    /**
-     * Called when the activity is first created.
-     */
+
+    private MangaDownloadService service = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
 
-        fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, new ApplicationSettings(), "com.danilov.manga"));
+        fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), "com.danilov.manga"));
         httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
         httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
@@ -44,17 +42,45 @@ public class MyActivity extends Activity {
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
 
+        final MangaDownloadService.MDownloadServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new MangaDownloadService.ServiceConnectionListener() {
+
+            @Override
+            public void onServiceConnected(final MangaDownloadService service) {
+                MyActivity.this.service = service;
+                synchronized (MyActivity.this) {
+                    MyActivity.this.notifyAll();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(final MangaDownloadService service) {
+
+            }
+
+        });
+
+        Intent intent = new Intent(this, MangaDownloadService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
         Thread thread = new Thread() {
 
             @Override
             public void run() {
+                Manga manga = Mock.getMockManga();
+                RepositoryEngine engine = manga.getRepository().getEngine();
                 try {
-                    long s = System.currentTimeMillis();
-                    String uri = "http://readmanga.me/naruto_dj___kakurega_wa_narusasu_desu/vol1/1";
-                    MangaChapter chapter = new MangaChapter("asd", uri);
-                    RepositoryEngine.Repository.READMANGA.getEngine().getChapterImages(chapter);
-                    Log.d("MyActivity", "Time: " + (System.currentTimeMillis() - s) + " ms");
-                } catch (Exception e) {
+                    engine.queryForChapters(manga);
+                    while (service == null) {
+                        synchronized (MyActivity.this) {
+                            try {
+                                MyActivity.this.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    service.addDownload(manga, 0, 1);
+                } catch (HttpRequestException e) {
                     e.printStackTrace();
                 }
             }

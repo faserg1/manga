@@ -13,7 +13,6 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
 import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
-import com.danilov.manga.core.repository.ReadmangaEngine;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
@@ -70,7 +69,7 @@ public class MangaInfoActivity extends Activity {
 
         @Override
         public void run() {
-            RepositoryEngine repositoryEngine = new ReadmangaEngine();
+            RepositoryEngine repositoryEngine = manga.getRepository().getEngine();
             try {
                 loaded = repositoryEngine.queryForMangaDescription(manga);
             } catch (HttpRequestException e) {
