@@ -24,5 +24,6 @@
                 android:label="Query Engine Test"/>
         <activity android:name=".activity.MangaInfoActivity"/>
         <activity android:name=".test.DownloadTestActivity" android:label="Download Test Activity"/>
+        <service android:name=".core.service.MangaDownloadService"/>
     </application>
 </manifest>

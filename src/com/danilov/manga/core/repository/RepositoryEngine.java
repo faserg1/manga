@@ -42,4 +42,20 @@ public interface RepositoryEngine {
 
     String getBaseSearchUri();
 
+    public enum Repository {
+
+        READMANGA(new ReadmangaEngine());
+
+        private RepositoryEngine engine;
+
+        Repository(final RepositoryEngine engine) {
+            this.engine = engine;
+        }
+
+        public RepositoryEngine getEngine() {
+            return engine;
+        }
+
+    }
+
 }
