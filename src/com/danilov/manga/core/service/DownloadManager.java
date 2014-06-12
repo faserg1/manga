@@ -42,12 +42,16 @@ public class DownloadManager {
 
     //executing only one download at a time
     //on complete start another download
-    //todo: decide if this is good
     public void startDownload(final String uri, final String filePath) {
+        startDownload(uri, filePath, 0);
+    }
+
+    public void startDownload(final String uri, final String filePath, final int tag) {
         lock.lock();
         try {
             Download download = pool.obtain();
             download.setUri(uri);
+            download.setTag(tag);
             download.setFilePath(filePath);
             downloads.add(download);
             isWake.signalAll();
@@ -57,6 +61,8 @@ public class DownloadManager {
     }
 
     public class Download implements Runnable {
+
+        private int tag = 0;
 
         private String uri;
         private String filePath;
@@ -93,6 +99,7 @@ public class DownloadManager {
             this.uri = null;
             this.filePath = null;
             this.size = -1;
+            this.tag = 0;
             this.downloaded = 0;
             this.status = null;
         }
@@ -240,6 +247,14 @@ public class DownloadManager {
 
         public synchronized int getSize() {
             return size;
+        }
+
+        public int getTag() {
+            return tag;
+        }
+
+        public void setTag(final int tag) {
+            this.tag = tag;
         }
     }
 

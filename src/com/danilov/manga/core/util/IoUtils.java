@@ -20,6 +20,10 @@ import org.apache.http.protocol.HTTP;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IoUtils {
     public static final String TAG = "IoUtils";
@@ -357,4 +361,16 @@ public class IoUtils {
     public static long convertMbToBytes(double mb) {
         return (long) (mb * 1024 * 1024);
     }
+
+    private static final Pattern urlPattern = Pattern.compile("(https?:\\/\\/)?([\\w\\.]+)\\.([a-z]{2,6}\\.?)(\\/[\\w\\.]*)*\\/?");
+
+    public static List<String> extractUrls(final String str) {
+        Matcher matcher = urlPattern.matcher(str);
+        List<String> urls = new ArrayList<String>();
+        while (matcher.find()) {
+            urls.add(matcher.group());
+        }
+        return urls;
+    }
+
 }

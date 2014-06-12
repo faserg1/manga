@@ -81,7 +81,11 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
-//    parcelable implementation
+    public RepositoryEngine.Repository getRepository() {
+        return repository;
+    }
+
+    //    parcelable implementation
 
     public static final Creator<Manga> CREATOR = new Creator<Manga>() {
 

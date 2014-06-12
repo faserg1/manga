@@ -1,7 +1,7 @@
 package com.danilov.manga.core.repository;
 
-import com.danilov.manga.core.http.HttpBytesReader;
-import com.danilov.manga.core.http.HttpRequestException;
+import android.util.Log;
+import com.danilov.manga.core.http.*;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.util.IoUtils;
@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -28,6 +29,8 @@ import java.util.List;
  * Engine for russian most popular manga site, geh
  */
 public class ReadmangaEngine implements RepositoryEngine {
+
+    private static final String TAG = "ReadmangaEngine";
 
     private String baseSearchUri = "http://readmanga.me/search?q=";
     public static final String baseUri = "http://readmanga.me";
@@ -94,13 +97,26 @@ public class ReadmangaEngine implements RepositoryEngine {
         return false;
     }
 
-    public List<String> queryForChapterImages(final MangaChapter mangaChapter) {
-//        try {
-//
-//        } catch (IOException e) {
-//
-//        }
-        return null;
+    @Override
+    public List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException {
+        String uri = chapter.getUri();
+        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
+        byte[] bytes = new byte[1024];
+        List<String> imageUrls = null;
+        try {
+            HttpStreamModel model = httpStreamReader.fromUri(uri);
+            LinesSearchInputStream linesSearchInputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
+            while(linesSearchInputStream.read(bytes) == LinesSearchInputStream.SEARCHING) {
+                Log.d("", "searching");
+            }
+            bytes = linesSearchInputStream.getResult();
+            String str = IoUtils.convertBytesToString(bytes);
+            imageUrls = IoUtils.extractUrls(str);
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+            throw new HttpRequestException(e.getMessage());
+        }
+        return imageUrls;
     }
 
     //html values

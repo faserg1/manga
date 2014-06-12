@@ -12,8 +12,12 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
-import com.danilov.manga.core.http.*;
-import com.danilov.manga.core.util.IoUtils;
+import com.danilov.manga.core.http.ExtendedHttpClient;
+import com.danilov.manga.core.http.HttpBitmapReader;
+import com.danilov.manga.core.http.HttpBytesReader;
+import com.danilov.manga.core.http.HttpStreamReader;
+import com.danilov.manga.core.model.MangaChapter;
+import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.test.DownloadTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
@@ -37,6 +41,7 @@ public class MyActivity extends Activity {
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
         httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
         ServiceContainer.addService(httpBytesReader);
+        ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
 
         Thread thread = new Thread() {
@@ -45,16 +50,9 @@ public class MyActivity extends Activity {
             public void run() {
                 try {
                     long s = System.currentTimeMillis();
-                    String uri = "http://readmanga.me/naruto_dj___animal_panic_paradox/vol1/1";
-                    HttpStreamModel model = httpStreamReader.fromUri(uri);
-                    LinesSearchInputStream linesSearchInputStream = new LinesSearchInputStream(model.stream, "pictures", "\n");
-                    byte[] bytes = new byte[1024];
-                    while(linesSearchInputStream.read(bytes) == LinesSearchInputStream.SEARCHING) {
-                        Log.d("", "searching");
-                    }
-                    bytes = linesSearchInputStream.getResult();
-                    String str = IoUtils.convertBytesToString(bytes);
-                    str.isEmpty();
+                    String uri = "http://readmanga.me/naruto_dj___kakurega_wa_narusasu_desu/vol1/1";
+                    MangaChapter chapter = new MangaChapter("asd", uri);
+                    RepositoryEngine.Repository.READMANGA.getEngine().getChapterImages(chapter);
                     Log.d("MyActivity", "Time: " + (System.currentTimeMillis() - s) + " ms");
                 } catch (Exception e) {
                     e.printStackTrace();
