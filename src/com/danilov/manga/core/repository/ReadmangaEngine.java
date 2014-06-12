@@ -121,7 +121,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             String mangaName = String.valueOf(mangaLink.text());
             Element screenElement = parent.getElementsByClass(mangaCoverClass).get(0);
             String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;
-            Manga manga = new Manga(mangaName, uri);
+            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
