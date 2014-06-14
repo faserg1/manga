@@ -209,16 +209,30 @@ public class MangaDownloadService extends Service {
 
     public class MangaDownloadRequest {
 
-        protected int to;
+        public int to;
 
-        protected int currentChapter;
+        public int from;
 
-        protected Manga manga;
+        private int currentChapter;
+
+        public int quantity;
+
+        public Manga manga;
+
+        public synchronized void incCurChapter() {
+            currentChapter++;
+        }
+
+        public synchronized int getCurrentChapter() {
+            return currentChapter;
+        }
 
         public MangaDownloadRequest(final Manga manga, final int from, final int to) {
             this.manga = manga;
+            this.from = from;
             this.currentChapter = from;
             this.to = to;
+            this.quantity = to - from + 1;
         }
 
     }
@@ -226,16 +240,16 @@ public class MangaDownloadService extends Service {
     private int currentImageQuantity;
     private int currentImage;
 
-
-
     private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {
+
+        private int currentSize = -1;
 
         @Override
         public void onProgress(final DownloadManager.Download download, final int progress) {
             Message message = Message.obtain();
             message.what = PROGRESS;
             message.arg1 = progress;
-            message.arg2 = download.getSize();
+            message.arg2 = currentSize;
             notifyObservers(message);
         }
 
@@ -248,7 +262,8 @@ public class MangaDownloadService extends Service {
         public void onResume(final DownloadManager.Download download) {
             Message message = Message.obtain();
             message.what = RESUME;
-            message.arg1 = download.getSize();
+            currentSize = download.getSize();
+            message.arg1 = currentSize;
             Pair pair = Pair.obtain();
             pair.first = currentImage;
             pair.second = currentImageQuantity;
@@ -272,15 +287,16 @@ public class MangaDownloadService extends Service {
                     notifyObservers(message);
                 } else {
                     //go to next chapter
-                    currentRequest.currentChapter++;
+                    currentRequest.incCurChapter();
                     Message message = Message.obtain();
                     message.what = DownloadServiceHandler.START_NEXT_CHAPTER;
                     serviceHandler.sendMessage(message);
 
                     message = Message.obtain(); //that's a new message too
                     message.what = CHAPTER_COMPLETE;
+                    message.obj = currentRequest;
                     message.arg1 = currentRequest.currentChapter;
-                    message.arg2 = currentRequest.to;
+                    message.arg2 = currentRequest.quantity;
                     notifyObservers(message);
                 }
             }
