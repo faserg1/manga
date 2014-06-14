@@ -47,6 +47,9 @@ public class MangaDownloadService extends Service {
 
     private MangaDownloadRequest currentRequest;
 
+    private int currentImageQuantity;
+    private int currentImage;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -57,13 +60,18 @@ public class MangaDownloadService extends Service {
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(final Intent intent) {
         return new MDownloadServiceBinder();
     }
 
     @Override
     public void onStart(final Intent intent, final int startId) {
         super.onStart(intent, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -138,6 +146,7 @@ public class MangaDownloadService extends Service {
                 case START_NEXT_REQUEST:
                     requests.remove();
                     if (requests.isEmpty()) {
+                        currentRequest = null;
                         return;
                     }
                     MangaDownloadRequest nextRequest = requests.poll();
@@ -151,10 +160,14 @@ public class MangaDownloadService extends Service {
     }
 
     private void sendStatus() {
+        if (currentRequest == null) {
+            return;
+        }
         Message message = Message.obtain();
         message.arg1 = currentImage;
         message.arg2 = currentImageQuantity;
         message.obj = currentRequest;
+        message.what = STATUS;
         notifyObservers(message);
     }
 
@@ -237,9 +250,6 @@ public class MangaDownloadService extends Service {
 
     }
 
-    private int currentImageQuantity;
-    private int currentImage;
-
     private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {
 
         private int currentSize = -1;
@@ -318,9 +328,10 @@ public class MangaDownloadService extends Service {
         synchronized (observerHandlers) {
             observerHandlers.add(handler);
         }
+        sendStatus();
     }
 
-    public void notifyObservers(final Message message) {
+    private void notifyObservers(final Message message) {
         synchronized (observerHandlers) {
             for (Handler handler : observerHandlers) {
                 handler.sendMessage(message);

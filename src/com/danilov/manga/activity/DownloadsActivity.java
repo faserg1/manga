@@ -1,16 +1,22 @@
 package com.danilov.manga.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.danilov.manga.R;
+import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.service.MangaDownloadService.MangaDownloadRequest;
 import com.danilov.manga.core.util.Pair;
+import com.danilov.manga.test.Mock;
 
 /**
  * Created by Semyon Danilov on 14.06.2014.
@@ -26,6 +32,10 @@ public class DownloadsActivity extends Activity {
     private TextView chaptersProgress;
     private TextView imagesProgress;
 
+    private ServiceConnection serviceConnection;
+
+    private Intent serviceIntent;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +46,16 @@ public class DownloadsActivity extends Activity {
         chaptersProgress = (TextView) findViewById(R.id.chaptersProgress);
         imagesProgress = (TextView) findViewById(R.id.imageProgress);
 
+        handler = new ServiceMessagesHandler();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new ServiceConnectionListener());
+        serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new ServiceConnectionListener());
+        serviceIntent = new Intent(this, MangaDownloadService.class);
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private class ServiceMessagesHandler extends Handler {
@@ -93,7 +107,8 @@ public class DownloadsActivity extends Activity {
         imageProgressBar.setMax(max);
         imageProgressBar.setProgress(0);
         Pair pair = (Pair) message.obj;
-        String progressText = pair.first + "/" + pair.second;
+        int currentImage = (Integer) pair.first;
+        String progressText = ++currentImage + "/" + pair.second;
         imagesProgress.setText(progressText);
         pair.retrieve();
     }
@@ -107,7 +122,7 @@ public class DownloadsActivity extends Activity {
         int quantity = message.arg2;
         MangaDownloadRequest request = (MangaDownloadRequest) message.obj;
         int passed = currentChapter - request.from;
-        String progressText = passed + "/" + quantity;
+        String progressText = ++passed + "/" + quantity;
         chaptersProgress.setText(progressText);
         chaptersProgressBar.setProgress(passed);
     }
@@ -131,8 +146,20 @@ public class DownloadsActivity extends Activity {
         int passed = currentChapter - request.from;
         chaptersProgressBar.setMax(quantity);
         chaptersProgressBar.setProgress(passed);
-        progressText = passed + "/" + quantity;
+        progressText = ++passed + "/" + quantity;
         chaptersProgress.setText(progressText);
+    }
+
+    @Override
+    protected void onPause() {
+        unbindService(serviceConnection);
+        service.removeObserver(handler);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private class ServiceConnectionListener implements MangaDownloadService.ServiceConnectionListener {
@@ -140,13 +167,41 @@ public class DownloadsActivity extends Activity {
         @Override
         public void onServiceConnected(final MangaDownloadService service) {
             DownloadsActivity.this.service = service;
+            service.addObserver(handler);
+            startService(serviceIntent);
         }
 
         @Override
         public void onServiceDisconnected(final MangaDownloadService service) {
-
+            service.removeObserver(handler);
         }
 
+    }
+
+    public void test(View view) {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                Manga manga = Mock.getMockManga();
+                RepositoryEngine engine = manga.getRepository().getEngine();
+                try {
+                    engine.queryForChapters(manga);
+                    while (service == null) {
+                        synchronized (DownloadsActivity.this) {
+                            try {
+                                DownloadsActivity.this.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    service.addDownload(manga, 2, 4);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        t.start();
     }
 
 }

@@ -9,7 +9,7 @@ import com.danilov.manga.core.repository.RepositoryEngine;
 public class Mock {
 
     public static Manga getMockManga() {
-        return new Manga("Naruto", "/naruto_dj___kakurega_wa_narusasu_desu", RepositoryEngine.Repository.READMANGA);
+        return new Manga("Midori no Hibi", "/midori_s_days", RepositoryEngine.Repository.READMANGA);
     }
 
 }

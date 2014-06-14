@@ -36,6 +36,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:id="@+id/test5"
+            android:text="Downloads Activity"
+            style="@style/Manga.ButtonCommon"
+            android:onClick="fifthTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     <ListView
             android:id="@+id/list"
             android:layout_width="fill_parent"

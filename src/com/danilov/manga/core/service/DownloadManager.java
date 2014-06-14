@@ -167,7 +167,6 @@ public class DownloadManager {
                     file.write(buffer, 0, read);
                     downloaded += read;
                     if (listener != null) {
-                        Log.d(TAG, downloaded + "/" + size);
                         listener.onProgress(this, downloaded);
                     }
                 }

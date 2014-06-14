@@ -99,7 +99,8 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException {
-        String uri = baseUri + chapter.getUri();
+        String uri = baseUri + chapter.getUri() + "?mature=1";
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
         byte[] bytes = new byte[1024];
         List<String> imageUrls = null;

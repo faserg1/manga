@@ -8,16 +8,17 @@ import android.view.View;
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
+import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
-import com.danilov.manga.core.http.*;
-import com.danilov.manga.core.model.Manga;
-import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.http.ExtendedHttpClient;
+import com.danilov.manga.core.http.HttpBitmapReader;
+import com.danilov.manga.core.http.HttpBytesReader;
+import com.danilov.manga.core.http.HttpStreamReader;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.test.DownloadTestActivity;
-import com.danilov.manga.test.Mock;
 import com.danilov.manga.test.QueryTestActivity;
 import com.danilov.manga.test.TouchImageViewActivityTest;
 
@@ -59,33 +60,33 @@ public class MyActivity extends Activity {
 
         });
 
-        Intent intent = new Intent(this, MangaDownloadService.class);
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-        Thread thread = new Thread() {
-
-            @Override
-            public void run() {
-                Manga manga = Mock.getMockManga();
-                RepositoryEngine engine = manga.getRepository().getEngine();
-                try {
-                    engine.queryForChapters(manga);
-                    while (service == null) {
-                        synchronized (MyActivity.this) {
-                            try {
-                                MyActivity.this.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    service.addDownload(manga, 0, 1);
-                } catch (HttpRequestException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
+//        Intent intent = new Intent(this, MangaDownloadService.class);
+//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+//
+//        Thread thread = new Thread() {
+//
+//            @Override
+//            public void run() {
+//                Manga manga = Mock.getMockManga();
+//                RepositoryEngine engine = manga.getRepository().getEngine();
+//                try {
+//                    engine.queryForChapters(manga);
+//                    while (service == null) {
+//                        synchronized (MyActivity.this) {
+//                            try {
+//                                MyActivity.this.wait();
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                    service.addDownload(manga, 0, 1);
+//                } catch (HttpRequestException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//        thread.start();
     }
 
     public void firstTest(View view) {
@@ -103,6 +104,11 @@ public class MyActivity extends Activity {
         startActivity(intent);
     }
 
+    public void fifthTest(View view) {
+        Intent intent = new Intent(this, DownloadsActivity.class);
+        startActivity(intent);
+    }
+
     public void thirdTest(View view) {
         Intent intent = new Intent(this, MangaInfoActivity.class);
         startActivity(intent);
@@ -116,5 +122,4 @@ public class MyActivity extends Activity {
     HttpBitmapReader httpBitmapReader = null;
 
     private HttpImageManager httpImageManager = null;
-
 }

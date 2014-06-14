@@ -131,7 +131,11 @@ public class HttpStreamReader {
                 responseException = null;
                 break;
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                String msg = e.getMessage();
+                if (msg == null) {
+                    msg = e.toString();
+                }
+                Log.e(TAG, msg);
                 responseException = e;
 
                 if ("recvfrom failed: ECONNRESET (Connection reset by peer)".equals(e.getMessage())) {
