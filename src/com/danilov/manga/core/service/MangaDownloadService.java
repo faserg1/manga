@@ -27,20 +27,28 @@ public class MangaDownloadService extends Service {
 
     private static final String TAG = "MangaDownloadService";
 
+    public static final int PROGRESS = 0;
+    public static final int PAUSE = 1;
+    public static final int RESUME = 2;
+    public static final int COMPLETE = 3;
+    public static final int CANCEL = 4;
+    public static final int ERROR = 5;
+
     private Handler serviceHandler = null;
 
     private DownloadManager downloadManager = null;
 
-    private List<Handler> observerHandlers = null;
+    private final List<Handler> observerHandlers = new LinkedList<Handler>();
 
     private Queue<MangaDownloadRequest> requests = new LinkedList<MangaDownloadRequest>();
+
+    private MangaDownloadRequest currentRequest;
 
     @Override
     public void onCreate() {
         super.onCreate();
         downloadManager = new DownloadManager();
         serviceHandler = new DownloadServiceHandler();
-        observerHandlers = new LinkedList<Handler>();
     }
 
     @Nullable
@@ -103,6 +111,7 @@ public class MangaDownloadService extends Service {
 
         public static final int ADD_DOWNLOAD = 0;
         public static final int START_NEXT_CHAPTER = 1;
+        public static final int START_NEXT_REQUEST = 2;
 
         @Override
         public void handleMessage(final Message msg) {
@@ -110,11 +119,26 @@ public class MangaDownloadService extends Service {
             switch (what) {
                 case ADD_DOWNLOAD:
                     MangaDownloadRequest mangaDownloadRequest = (MangaDownloadRequest) msg.obj;
-                    (new MangaDownloadThread(mangaDownloadRequest)).start();
+                    if (requests.isEmpty()) {
+                        currentRequest = mangaDownloadRequest;
+                        requests.add(mangaDownloadRequest);
+                        (new MangaDownloadThread(mangaDownloadRequest)).start();
+                    } else {
+                        requests.add(mangaDownloadRequest);
+                    }
                     break;
                 case START_NEXT_CHAPTER:
                     MangaDownloadRequest request = requests.poll();
                     (new MangaDownloadThread(request)).start();
+                    break;
+                case START_NEXT_REQUEST:
+                    requests.remove();
+                    if (requests.isEmpty()) {
+                        return;
+                    }
+                    MangaDownloadRequest nextRequest = requests.poll();
+                    currentRequest = nextRequest;
+                    (new MangaDownloadThread(nextRequest)).start();
                     break;
                 default:
                     break;
@@ -160,6 +184,7 @@ public class MangaDownloadService extends Service {
             }
             String path = Utils.createPathForMangaChapter(manga, request.current, MangaDownloadService.this) + "/";
             int i = 0;
+            currentQuantity = urls.size();
             for (String url : urls) {
                 downloadManager.startDownload(url, path + i + ".png", request.current);
                 i++;
@@ -183,5 +208,75 @@ public class MangaDownloadService extends Service {
         }
 
     }
+
+    private int currentQuantity;
+
+
+
+    private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {
+
+        @Override
+        public void onProgress(final DownloadManager.Download download, final int progress) {
+
+        }
+
+        @Override
+        public void onPause(final DownloadManager.Download download) {
+
+        }
+
+        @Override
+        public void onResume(final DownloadManager.Download download) {
+
+        }
+
+        @Override
+        public void onComplete(final DownloadManager.Download download) {
+            currentQuantity--;
+            if (currentQuantity == 0) {
+                if (currentRequest.current == currentRequest.to) {
+                    Message message = Message.obtain();
+                    message.what = DownloadServiceHandler.START_NEXT_REQUEST;
+                    serviceHandler.sendMessage(message);
+                } else {
+                    currentRequest.current++;
+                    Message message = Message.obtain();
+                    message.what = DownloadServiceHandler.START_NEXT_CHAPTER;
+                    serviceHandler.sendMessage(message);
+                }
+            }
+        }
+
+        @Override
+        public void onCancel(final DownloadManager.Download download) {
+
+        }
+
+        @Override
+        public void onError(final DownloadManager.Download download) {
+
+        }
+    }
+
+    public void addObserver(final Handler handler) {
+        synchronized (observerHandlers) {
+            observerHandlers.add(handler);
+        }
+    }
+
+    public void notifyObservers(final Message message) {
+        synchronized (observerHandlers) {
+            for (Handler handler : observerHandlers) {
+                handler.sendMessage(message);
+            }
+        }
+    }
+
+    public void removeObserver(final Handler handler) {
+        synchronized (observerHandlers) {
+            observerHandlers.remove(handler);
+        }
+    }
+
 
 }
