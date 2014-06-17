@@ -107,8 +107,8 @@ public class DownloadsActivity extends Activity {
         imageProgressBar.setMax(max);
         imageProgressBar.setProgress(0);
         Pair pair = (Pair) message.obj;
-        int currentImage = (Integer) pair.first;
-        String progressText = ++currentImage + "/" + pair.second;
+        int currentImage = (Integer) pair.first + 1; //what image is processed now starting with 1 not zero
+        String progressText = currentImage + "/" + pair.second;
         imagesProgress.setText(progressText);
         pair.retrieve();
     }
@@ -137,7 +137,7 @@ public class DownloadsActivity extends Activity {
 
     private void onStatus(final Message message) {
         MangaDownloadRequest request = (MangaDownloadRequest) message.obj;
-        int currImage = message.arg1;
+        int currImage = message.arg1 + 1; //what image is processed now starting with 1 not zero
         int currImageQuantity = message.arg2;
         String progressText = currImage + "/" + currImageQuantity;
         imagesProgress.setText(progressText);

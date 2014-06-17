@@ -104,18 +104,27 @@ public class ReadmangaEngine implements RepositoryEngine {
         HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
         byte[] bytes = new byte[1024];
         List<String> imageUrls = null;
+        LinesSearchInputStream inputStream = null;
         try {
             HttpStreamModel model = httpStreamReader.fromUri(uri);
-            LinesSearchInputStream linesSearchInputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
-            while(linesSearchInputStream.read(bytes) == LinesSearchInputStream.SEARCHING) {
+            inputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
+            while(inputStream.read(bytes) == LinesSearchInputStream.SEARCHING) {
                 Log.d("", "searching");
             }
-            bytes = linesSearchInputStream.getResult();
+            bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = IoUtils.extractUrls(str);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
             throw new HttpRequestException(e.getMessage());
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }
         }
         return imageUrls;
     }

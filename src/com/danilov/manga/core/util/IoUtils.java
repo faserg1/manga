@@ -164,16 +164,11 @@ public class IoUtils {
     }
 
     public static void copyArray(final byte[] from, final int offsetFrom, final int lenFrom, final byte[] to, final int offsetTo) {
-        int i = offsetFrom;
-        int j = offsetTo;
-        if (lenFrom - i > to.length - j) {
-            throw new RuntimeException("Can not copy: destination size is too small: from actual length = " + (from.length - i)
-                    + ", to actual length = " + (to.length - j));
+        if (lenFrom - offsetFrom > to.length - offsetTo) {
+            throw new RuntimeException("Can not copy: destination size is too small: from actual length = " + (from.length - offsetFrom)
+                    + ", to actual length = " + (to.length - offsetTo));
         }
-        for (; i < lenFrom; i++) {
-            to[j] = from[i];
-            j++;
-        }
+        System.arraycopy(from, offsetFrom, to, offsetTo, lenFrom - offsetFrom);
     }
 
     public static long freeSpace(File path, long bytesToRelease) {
