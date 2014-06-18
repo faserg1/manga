@@ -180,6 +180,7 @@ public class DownloadsActivity extends Activity {
 
     public void test(View view) {
         Thread t = new Thread() {
+
             @Override
             public void run() {
                 Manga manga = Mock.getMockManga();
@@ -200,6 +201,7 @@ public class DownloadsActivity extends Activity {
                     e.printStackTrace();
                 }
             }
+            
         };
         t.start();
     }

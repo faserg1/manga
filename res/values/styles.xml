@@ -10,6 +10,12 @@
         <item name="android:minHeight">40dp</item>
     </style>
 
+    <style name="Manga.ProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progressbar</item>
+        <item name="android:minHeight">14dip</item>
+        <item name="android:maxHeight">14dip</item>
+    </style>
+
     <style name="card_shadow">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/card_shadow</item>

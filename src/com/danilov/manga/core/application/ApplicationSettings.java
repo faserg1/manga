@@ -58,8 +58,8 @@ public class ApplicationSettings {
             File sdPath = Environment.getExternalStorageDirectory();
             mangaDownloadBasePath = sdPath.getPath() + "/manga/download/";
             sdPath = new File(mangaDownloadBasePath);
-            if (!sdPath.mkdirs()) {
-                Log.d(TAG, "WTF??!");
+            if (!sdPath.mkdirs() && !sdPath.exists()) {
+                Log.d(TAG, "Failure on creation of " + sdPath.toString() + " path");
             }
         }
     }

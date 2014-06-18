@@ -178,6 +178,7 @@ public class DownloadManager {
                     stateChanged();
                 }
             } catch (Exception e) {
+                Log.e(TAG, "Error while downloading: " + e.getMessage());
                 error();
             } finally {
                 // Close file.

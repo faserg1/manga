@@ -357,7 +357,7 @@ public class IoUtils {
         return (long) (mb * 1024 * 1024);
     }
 
-    private static final Pattern urlPattern = Pattern.compile("(https?:\\/\\/)?([\\w\\.]+)\\.([a-z]{2,6}\\.?)(\\/[\\w\\.]*)*\\/?");
+    private static final Pattern urlPattern = Pattern.compile("(https?:\\/\\/)?([\\w\\.]+)\\.([a-z]{2,6}\\.?)(\\/[\\w\\-\\.]*)*\\/?");
 
     public static List<String> extractUrls(final String str) {
         Matcher matcher = urlPattern.matcher(str);

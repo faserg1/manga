@@ -140,7 +140,7 @@ public class MangaDownloadService extends Service {
                     }
                     break;
                 case START_NEXT_CHAPTER:
-                    MangaDownloadRequest request = requests.poll();
+                    MangaDownloadRequest request = requests.peek();
                     (new MangaDownloadThread(request)).start();
                     break;
                 case START_NEXT_REQUEST:
@@ -149,7 +149,7 @@ public class MangaDownloadService extends Service {
                         currentRequest = null;
                         return;
                     }
-                    MangaDownloadRequest nextRequest = requests.poll();
+                    MangaDownloadRequest nextRequest = requests.peek();
                     currentRequest = nextRequest;
                     (new MangaDownloadThread(nextRequest)).start();
                     break;
