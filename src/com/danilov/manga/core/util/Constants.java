@@ -9,4 +9,6 @@ public class Constants {
     public static final long FILE_CACHE_TRIM_AMOUNT = IoUtils.convertMbToBytes(15);
 
     public static final String USER_AGENT_STRING = "";
+
+    public static final String MANGA_PARCEL_KEY = "MPK";
 }

@@ -45,6 +45,8 @@ public interface RepositoryEngine {
 
     String getBaseSearchUri();
 
+    String getBaseUri();
+
     public enum Repository {
 
         READMANGA(new ReadmangaEngine());

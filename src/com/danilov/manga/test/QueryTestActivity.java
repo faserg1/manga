@@ -14,6 +14,7 @@ import com.danilov.manga.core.adapter.MangaListAdapter;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.ReadmangaEngine;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.util.Constants;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class QueryTestActivity extends Activity implements View.OnClickListener,
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Manga manga = adapter.getItem(i);
         Intent intent = new Intent(this, MangaInfoActivity.class);
-        intent.putExtra("manga", manga);
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         startActivity(intent);
     }
 }

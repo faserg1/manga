@@ -13,10 +13,11 @@ import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.Pair;
-import com.danilov.manga.core.util.Utils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -198,8 +199,7 @@ public class MangaDownloadService extends Service {
         public void run() {
             final Manga manga = request.manga;
             final RepositoryEngine engine = manga.getRepository().getEngine();
-            List<MangaChapter> chapters = manga.getChapters();
-            MangaChapter chapter = chapters.get(request.currentChapter);
+            MangaChapter chapter = request.getCurrentChapter();
             List<String> urls = null;
             try {
                 urls = engine.getChapterImages(chapter);
@@ -207,13 +207,21 @@ public class MangaDownloadService extends Service {
                 e.printStackTrace();
                 return;
             }
-            String path = Utils.createPathForMangaChapter(manga, request.currentChapter, MangaDownloadService.this) + "/";
+            for (int i = 0; i < urls.size(); i++) {
+                String url = urls.get(i);
+                if (!url.contains("http")) {
+                    url = manga.getRepository().getEngine().getBaseUri() + "/" + url;
+                }
+                urls.set(i, url);
+            }
+            int curChapterNumber = request.getCurrentChapterNumber();
+            String path = IoUtils.createPathForMangaChapter(manga, curChapterNumber, MangaDownloadService.this) + "/";
             int i = 0;
             currentImage = 0;
             currentImageQuantity = urls.size();
             sendStatus();
             for (String url : urls) {
-                downloadManager.startDownload(url, path + i + ".png", request.currentChapter);
+                downloadManager.startDownload(url, path + i + ".png", curChapterNumber);
                 i++;
             }
         }
@@ -222,9 +230,7 @@ public class MangaDownloadService extends Service {
 
     public class MangaDownloadRequest {
 
-        public int to;
-
-        public int from;
+        private int currentChapterInList;
 
         private int currentChapter;
 
@@ -232,20 +238,45 @@ public class MangaDownloadService extends Service {
 
         public Manga manga;
 
+        public List<Integer> whichChapters;
+
         public synchronized void incCurChapter() {
-            currentChapter++;
+            currentChapterInList++;
         }
 
-        public synchronized int getCurrentChapter() {
-            return currentChapter;
+        public synchronized int getCurrentChapterInList() {
+            return currentChapterInList;
         }
 
         public MangaDownloadRequest(final Manga manga, final int from, final int to) {
+            int size = (from == to) ? (1) : (to - from + 1);
+            List<Integer> which = new ArrayList<Integer>(size);
+            int _from = from;
+            for (int i = 0; i < size; i++) {
+                which.add(_from);
+                _from++;
+            }
             this.manga = manga;
-            this.from = from;
-            this.currentChapter = from;
-            this.to = to;
-            this.quantity = to - from + 1;
+            this.whichChapters = which;
+            this.currentChapterInList = 0;
+            this.quantity = which.size();
+            this.currentChapter = which.get(0);
+        }
+
+        public MangaDownloadRequest(final Manga manga, final List<Integer> whichChapters) {
+            this.manga = manga;
+            this.whichChapters = whichChapters;
+            this.currentChapterInList = 0;
+            this.quantity = whichChapters.size();
+            this.currentChapter = whichChapters.get(0);
+        }
+
+        public MangaChapter getCurrentChapter() {
+            return manga.getChapters().get(whichChapters.get(currentChapterInList));
+        }
+
+        public int getCurrentChapterNumber() {
+            return whichChapters.get(currentChapterInList);
         }
 
     }
@@ -285,7 +316,7 @@ public class MangaDownloadService extends Service {
         public void onComplete(final DownloadManager.Download download) {
             currentImage++;
             if (currentImage == currentImageQuantity) {
-                if (currentRequest.currentChapter == currentRequest.to) {
+                if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {
                     //go to next request
                     Message message = Message.obtain();
                     message.what = DownloadServiceHandler.START_NEXT_REQUEST;
@@ -305,7 +336,7 @@ public class MangaDownloadService extends Service {
                     message = Message.obtain(); //that's a new message too
                     message.what = CHAPTER_COMPLETE;
                     message.obj = currentRequest;
-                    message.arg1 = currentRequest.currentChapter;
+                    message.arg1 = currentRequest.currentChapterInList;
                     message.arg2 = currentRequest.quantity;
                     notifyObservers(message);
                 }

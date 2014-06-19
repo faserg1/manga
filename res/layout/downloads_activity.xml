@@ -62,7 +62,6 @@
             android:layout_height="wrap_content"
             style="@style/Manga.ButtonCommon"
             android:text="Test Download"
-            android:onClick="test"
             android:id="@+id/test_button"/>
 
 </LinearLayout>

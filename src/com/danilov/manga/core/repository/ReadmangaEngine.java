@@ -20,6 +20,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Semyon Danilov on 17.05.2014.
@@ -114,7 +116,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             }
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
-            imageUrls = IoUtils.extractUrls(str);
+            imageUrls = extractUrls(str);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
             throw new HttpRequestException(e.getMessage());
@@ -128,6 +130,18 @@ public class ReadmangaEngine implements RepositoryEngine {
             }
         }
         return imageUrls;
+    }
+
+    private final Pattern urlPattern = Pattern.compile("url:\"(.*?)\"");
+
+    private List<String> extractUrls(final String str) {
+        Log.d(TAG, "a: " + str);
+        Matcher matcher = urlPattern.matcher(str);
+        List<String> urls = new ArrayList<String>();
+        while (matcher.find()) {
+            urls.add(matcher.group(1));
+        }
+        return urls;
     }
 
     //html values
@@ -186,8 +200,10 @@ public class ReadmangaEngine implements RepositoryEngine {
         if (links.isEmpty()) {
             return null;
         }
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>();
-        for (Element element : links) {
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>(links.size());
+
+        for (int i = links.size() - 1; i >= 0; i--) {
+            Element element = links.get(i);
             String link = element.attr(linkValueAttr);
             String title = element.text();
             MangaChapter chapter = new MangaChapter(title, link);
@@ -198,7 +214,12 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     @Override
     public String getBaseSearchUri() {
-        return null;
+        return baseSearchUri;
+    }
+
+    @Override
+    public String getBaseUri() {
+        return baseUri;
     }
 
 }

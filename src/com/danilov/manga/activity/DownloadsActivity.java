@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.danilov.manga.R;
@@ -15,8 +16,8 @@ import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.service.MangaDownloadService.MangaDownloadRequest;
+import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Pair;
-import com.danilov.manga.test.Mock;
 
 /**
  * Created by Semyon Danilov on 14.06.2014.
@@ -47,6 +48,18 @@ public class DownloadsActivity extends Activity {
         imagesProgress = (TextView) findViewById(R.id.imageProgress);
 
         handler = new ServiceMessagesHandler();
+
+        Intent i = getIntent();
+        final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+
+        ((Button) findViewById(R.id.test_button)).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(final View v) {
+                test(manga);
+            }
+
+        });
 
     }
 
@@ -121,10 +134,9 @@ public class DownloadsActivity extends Activity {
         int currentChapter = message.arg1;
         int quantity = message.arg2;
         MangaDownloadRequest request = (MangaDownloadRequest) message.obj;
-        int passed = currentChapter - request.from;
-        String progressText = ++passed + "/" + quantity;
+        chaptersProgressBar.setProgress(currentChapter);
+        String progressText = ++currentChapter + "/" + quantity;
         chaptersProgress.setText(progressText);
-        chaptersProgressBar.setProgress(passed);
     }
 
     private void onCancel(final Message message) {
@@ -141,12 +153,11 @@ public class DownloadsActivity extends Activity {
         int currImageQuantity = message.arg2;
         String progressText = currImage + "/" + currImageQuantity;
         imagesProgress.setText(progressText);
-        int currentChapter = request.getCurrentChapter();
+        int currentChapter = request.getCurrentChapterInList();
         int quantity = request.quantity;
-        int passed = currentChapter - request.from;
         chaptersProgressBar.setMax(quantity);
-        chaptersProgressBar.setProgress(passed);
-        progressText = ++passed + "/" + quantity;
+        chaptersProgressBar.setProgress(currentChapter);
+        progressText = ++currentChapter + "/" + quantity;
         chaptersProgress.setText(progressText);
     }
 
@@ -178,12 +189,11 @@ public class DownloadsActivity extends Activity {
 
     }
 
-    public void test(View view) {
+    public void test(final Manga manga) {
         Thread t = new Thread() {
 
             @Override
             public void run() {
-                Manga manga = Mock.getMockManga();
                 RepositoryEngine engine = manga.getRepository().getEngine();
                 try {
                     engine.queryForChapters(manga);
@@ -196,7 +206,8 @@ public class DownloadsActivity extends Activity {
                             }
                         }
                     }
-                    service.addDownload(manga, 2, 4);
+                    int sz = manga.getChapters().size();
+                    service.addDownload(manga, sz - 10, sz - 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
