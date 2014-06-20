@@ -2,6 +2,7 @@ package com.danilov.manga.core.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.danilov.manga.core.repository.RepositoryEngine;
 
 import java.util.List;
 
@@ -18,9 +19,12 @@ public class Manga implements Parcelable {
 
     private String coverUri;
 
-    public Manga(final String title, final String uri) {
+    private RepositoryEngine.Repository repository;
+
+    public Manga(final String title, final String uri, final RepositoryEngine.Repository repository) {
         this.title = title;
         this.uri = uri;
+        this.repository = repository;
     }
 
     //<!--lazy load -->
@@ -77,7 +81,11 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
-//    parcelable implementation
+    public RepositoryEngine.Repository getRepository() {
+        return repository;
+    }
+
+    //    parcelable implementation
 
     public static final Creator<Manga> CREATOR = new Creator<Manga>() {
 
@@ -99,6 +107,7 @@ public class Manga implements Parcelable {
         author = parcel.readString();
         coverUri = parcel.readString();
         description = parcel.readString();
+        repository = RepositoryEngine.Repository.valueOf(parcel.readString());
     }
 
     @Override
@@ -113,6 +122,7 @@ public class Manga implements Parcelable {
         parcel.writeString(author);
         parcel.writeString(coverUri);
         parcel.writeString(description);
+        parcel.writeString(repository.toString());
     }
 
 }

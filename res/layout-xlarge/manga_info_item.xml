@@ -23,7 +23,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Long Text Test Of Marquee Lol OMGTFY . COM"
+                      android:text="Long Text Test Of Marquee Lol . COM"
                       android:id="@+id/manga_title"
                       android:textSize="25sp"
                       android:singleLine="true"
@@ -67,14 +67,12 @@
 
                 <Button android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/add_to_favorites"
                         android:text="@string/sv_add_to_favorites"
                         style="@style/Manga.ButtonCommon"/>
 
                 <Button android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         style="@style/Manga.ButtonCommon"
-                        android:id="@+id/download"
                         android:text="@string/sv_download"/>
 
             </LinearLayout>

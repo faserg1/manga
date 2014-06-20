@@ -9,15 +9,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by Semyon Danilov on 26.05.2014.
+ * Created by Semyon Danilov on 26.05.2014. Using new mode - 07.06
  */
 public class DownloadManager {
 
     private final String TAG = "DownloadManager";
 
-    private DownloadManagerThread thread = new DownloadManagerThread();
+    protected DownloadManagerThread thread = new DownloadManagerThread();
 
     private static final int MAX_BUFFER_SIZE = 1024;
 
@@ -27,36 +30,47 @@ public class DownloadManager {
 
     private Queue<Download> downloads = new ArrayDeque<Download>();
 
-    private Download currentDownload = null;
+    //thread
+    final Lock lock = new ReentrantLock();
+
+    final Condition isWake = lock.newCondition();
+    //!thread
+
+    public DownloadManager() {
+        thread.start();
+    }
 
     //executing only one download at a time
     //on complete start another download
-    //todo: decide if this is good
-    public void startDownload(final String uri, final String filePath) throws DownloadManagerException {
-        if (thread.isBusy()) {
-            throw new DownloadManagerException("Trying to execute another download");
+    public void startDownload(final String uri, final String filePath) {
+        startDownload(uri, filePath, 0);
+    }
+
+    public void startDownload(final String uri, final String filePath, final int tag) {
+        lock.lock();
+        try {
+            Download download = pool.obtain();
+            download.setUri(uri);
+            download.setTag(tag);
+            download.setFilePath(filePath);
+            downloads.add(download);
+            isWake.signalAll();
+        } finally {
+            lock.unlock();
         }
-        Download download = pool.obtain();
-        currentDownload = download;
-        download.setUri(uri);
-        download.setFilePath(filePath);
-        thread.setDownload(download);
-        thread.start();
     }
 
     public class Download implements Runnable {
 
+        private int tag = 0;
+
         private String uri;
         private String filePath;
-        private int size;
-        private int downloaded;
+        private int size = -1;
+        private int downloaded = 0;
         private DownloadStatus status;
 
         public Download() {
-        }
-
-        public synchronized int getProgress() {
-            return (int) ((float) downloaded / size) * 100;
         }
 
         public void recycle() {
@@ -76,6 +90,7 @@ public class DownloadManager {
             return filePath;
         }
 
+        //TODO: block if download is not in pool
         public void setFilePath(final String filePath) {
             this.filePath = filePath;
         }
@@ -83,7 +98,8 @@ public class DownloadManager {
         private void clear() {
             this.uri = null;
             this.filePath = null;
-            this.size = 0;
+            this.size = -1;
+            this.tag = 0;
             this.downloaded = 0;
             this.status = null;
         }
@@ -115,13 +131,15 @@ public class DownloadManager {
                 if (contentLength < 1) {
                     error();
                 }
-                setStatus(DownloadStatus.DOWNLOADING);
                 /* Set the size for this download if it
                 hasn't been already set. */
                 if (size == -1) {
-                    size = contentLength;
-                    stateChanged();
+                    synchronized (this) {
+                        size = contentLength;
+                    }
                 }
+                status = DownloadStatus.DOWNLOADING;
+                stateChanged();
 
                 // Open file and seek to the end of it.
                 file = new RandomAccessFile(filePath, "rw");
@@ -149,17 +167,18 @@ public class DownloadManager {
                     file.write(buffer, 0, read);
                     downloaded += read;
                     if (listener != null) {
-                        listener.onProgress(this);
+                        listener.onProgress(this, downloaded);
                     }
                 }
                 /* Change status to complete if this point was
                 reached because downloading has finished. */
                 if (status == DownloadStatus.DOWNLOADING) {
-                    setStatus(DownloadStatus.COMPLETE);
+                    status = DownloadStatus.COMPLETE;
                     downloads.remove(this);
                     stateChanged();
                 }
             } catch (Exception e) {
+                Log.e(TAG, "Error while downloading: " + e.getMessage());
                 error();
             } finally {
                 // Close file.
@@ -182,12 +201,8 @@ public class DownloadManager {
             }
         }
 
-        private synchronized void setStatus(final DownloadStatus status) {
-            this.status = status;
-        }
-
         private void error() {
-            setStatus(DownloadStatus.ERROR);
+            status = DownloadStatus.ERROR;
             stateChanged();
         }
 
@@ -206,6 +221,7 @@ public class DownloadManager {
                 case COMPLETE:
                     if (listener != null) {
                         listener.onComplete(this);
+                        recycle();
                     }
                     break;
                 case CANCELLED:
@@ -221,6 +237,25 @@ public class DownloadManager {
             }
         }
 
+        public float getProgress() {
+            return ((float) downloaded / size) * 100;
+        }
+
+        public DownloadStatus getStatus() {
+            return status;
+        }
+
+        public synchronized int getSize() {
+            return size;
+        }
+
+        public int getTag() {
+            return tag;
+        }
+
+        public void setTag(final int tag) {
+            this.tag = tag;
+        }
     }
 
     public class DownloadPool implements Pool<Download> {
@@ -237,6 +272,7 @@ public class DownloadManager {
             } else {
                 download = new Download();
             }
+            download.clear();
             return download;
         }
 
@@ -253,25 +289,9 @@ public class DownloadManager {
         pool.retrieve(download);
     }
 
-    public void setCurrentDownload(final Download currentDownload) {
-        this.currentDownload = currentDownload;
-    }
-
-    public Download getCurrentDownload() {
-        return currentDownload;
-    }
-
-    public DownloadProgressListener getListener() {
-        return listener;
-    }
-
-    public void setListener(final DownloadProgressListener listener) {
-        this.listener = listener;
-    }
-
     public interface DownloadProgressListener {
 
-        public void onProgress(final Download download);
+        public void onProgress(final Download download, final int progress);
 
         public void onPause(final Download download);
 
@@ -285,45 +305,59 @@ public class DownloadManager {
 
     }
 
+    public void setListener(final DownloadProgressListener listener) {
+        this.listener = listener;
+    }
+
     private class DownloadManagerThread extends Thread {
 
-        private Download download;
-
-        public final short IDLE =  0;
-        public final short BUSY =  1;
-
-        private short status = IDLE;
-
-        public DownloadManagerThread(final Download download) {
-            this.download = download;
-        }
+        private boolean isWorking;
 
         public DownloadManagerThread() {
-
+            isWorking = true;
         }
 
         @Override
         public void run() {
-            setStatus(BUSY);
-            download.run();
-            setStatus(IDLE);
+            while (isWorking()) {
+                Download download = null;
+                lock.lock();
+                try {
+                    while (downloads.size() < 1) {
+                        try {
+                            isWake.await();
+                        } catch (InterruptedException e) {
+                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                        }
+                    }
+                    download = downloads.peek();
+                    while (download.getStatus() == DownloadStatus.PAUSED || download.getStatus() == DownloadStatus.ERROR) {
+                        try {
+                            isWake.await();
+                        } catch (InterruptedException e) {
+                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                        }
+                    }
+                    if (download.getStatus() == DownloadStatus.CANCELLED) {
+                        download = downloads.remove();
+                        download.recycle();
+                        continue;
+                    }
+                } finally {
+                    lock.unlock();
+                }
+                download.run();
+            }
         }
 
-        private synchronized void setStatus(final short status) {
-            this.status = status;
+        public synchronized boolean isWorking() {
+            return isWorking;
         }
 
-        public synchronized boolean isBusy() {
-            return status == BUSY;
+        public synchronized void stopWorking() {
+            this.isWorking = false;
         }
 
-        public Download getDownload() {
-            return download;
-        }
-
-        public void setDownload(final Download download) {
-            this.download = download;
-        }
     }
 
     public enum DownloadStatus {

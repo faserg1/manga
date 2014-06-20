@@ -2,6 +2,7 @@ package com.danilov.manga.core.repository;
 
 import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.MangaChapter;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -40,6 +41,26 @@ public interface RepositoryEngine {
 
     boolean queryForChapters(final Manga manga) throws HttpRequestException;
 
+    List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException;
+
     String getBaseSearchUri();
+
+    String getBaseUri();
+
+    public enum Repository {
+
+        READMANGA(new ReadmangaEngine());
+
+        private RepositoryEngine engine;
+
+        Repository(final RepositoryEngine engine) {
+            this.engine = engine;
+        }
+
+        public RepositoryEngine getEngine() {
+            return engine;
+        }
+
+    }
 
 }

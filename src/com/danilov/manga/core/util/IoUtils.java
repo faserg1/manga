@@ -16,10 +16,15 @@ import com.danilov.manga.core.http.CancellableInputStream;
 import com.danilov.manga.core.http.ICancelled;
 import com.danilov.manga.core.http.IProgressChangeListener;
 import com.danilov.manga.core.http.ProgressInputStream;
+import com.danilov.manga.core.model.Manga;
 import org.apache.http.protocol.HTTP;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IoUtils {
     public static final String TAG = "IoUtils";
@@ -79,6 +84,36 @@ public class IoUtils {
         return result;
     }
 
+    public static String convertBytesToString(byte[] bytes, int len) {
+        if (bytes == null) {
+            return null;
+        }
+
+        String result;
+        try {
+            result = new String(bytes, 0, len, Charset.forName(HTTP.UTF_8).name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        return result;
+    }
+
+    public static String convertBytesToString(final byte[] bytes, final int offset, final int len) {
+        if (bytes == null) {
+            return null;
+        }
+
+        String result;
+        try {
+            result = new String(bytes, offset, len, Charset.forName(HTTP.UTF_8).name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        return result;
+    }
+
     public static long dirSize(File dir) {
         if (dir == null || !dir.exists()) {
             return 0;
@@ -119,6 +154,22 @@ public class IoUtils {
 
             path.delete();
         }
+    }
+
+    public static void copyArray(final byte[] from, final byte[] to) {
+        copyArray(from, 0, to, 0);
+    }
+
+    public static void copyArray(final byte[] from, final int offsetFrom, final byte[] to, final int offsetTo) {
+        copyArray(from, offsetFrom, from.length, to, offsetTo);
+    }
+
+    public static void copyArray(final byte[] from, final int offsetFrom, final int lenFrom, final byte[] to, final int offsetTo) {
+        if (lenFrom - offsetFrom > to.length - offsetTo) {
+            throw new RuntimeException("Can not copy: destination size is too small: from actual length = " + (from.length - offsetFrom)
+                    + ", to actual length = " + (to.length - offsetTo));
+        }
+        System.arraycopy(from, offsetFrom, to, offsetTo, lenFrom - offsetFrom);
     }
 
     public static long freeSpace(File path, long bytesToRelease) {
@@ -306,4 +357,34 @@ public class IoUtils {
     public static long convertMbToBytes(double mb) {
         return (long) (mb * 1024 * 1024);
     }
+
+    private static final Pattern urlPattern = Pattern.compile("(https?:\\/\\/)?([\\w\\.]+)\\.([a-z]{2,6}\\.?)(\\/[\\w\\-\\.]*)*\\/?");
+
+    public static List<String> extractUrls(final String str) {
+        Matcher matcher = urlPattern.matcher(str);
+        List<String> urls = new ArrayList<String>();
+        while (matcher.find()) {
+            urls.add(matcher.group());
+        }
+        return urls;
+    }
+
+    private static final Pattern normalNamePattern = Pattern.compile("([ \\w:,.а-яА-Я])*");
+
+    public static String createPathForMangaChapter(final Manga manga, final int chapterNum, final Context context) {
+        ApplicationSettings applicationSettings = ApplicationSettings.get(context);
+        String downloadPath = applicationSettings.getMangaDownloadBasePath();
+        String title = manga.getTitle();
+        Matcher matcher = normalNamePattern.matcher(title);
+        title = "";
+        while (matcher.find()) {
+            title += matcher.group();
+        }
+        File mangaFolder = new File(downloadPath + title + "/" + chapterNum + "/");
+        if (!mangaFolder.mkdirs() && !mangaFolder.exists()) {
+            Log.d(TAG, "Error while creating folder for path: " + mangaFolder.toString());
+        }
+        return mangaFolder.getPath();
+    }
+
 }

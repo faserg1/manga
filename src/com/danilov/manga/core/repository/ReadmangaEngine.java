@@ -1,7 +1,7 @@
 package com.danilov.manga.core.repository;
 
-import com.danilov.manga.core.http.HttpBytesReader;
-import com.danilov.manga.core.http.HttpRequestException;
+import android.util.Log;
+import com.danilov.manga.core.http.*;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.util.IoUtils;
@@ -13,12 +13,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Semyon Danilov on 17.05.2014.
@@ -28,6 +31,8 @@ import java.util.List;
  * Engine for russian most popular manga site, geh
  */
 public class ReadmangaEngine implements RepositoryEngine {
+
+    private static final String TAG = "ReadmangaEngine";
 
     private String baseSearchUri = "http://readmanga.me/search?q=";
     public static final String baseUri = "http://readmanga.me";
@@ -94,6 +99,51 @@ public class ReadmangaEngine implements RepositoryEngine {
         return false;
     }
 
+    @Override
+    public List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException {
+        String uri = baseUri + chapter.getUri() + "?mature=1";
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
+        byte[] bytes = new byte[1024];
+        List<String> imageUrls = null;
+        LinesSearchInputStream inputStream = null;
+        try {
+            HttpStreamModel model = httpStreamReader.fromUri(uri);
+            inputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
+            int status = LinesSearchInputStream.SEARCHING;
+            while (status == LinesSearchInputStream.SEARCHING) {
+                status = inputStream.read(bytes);
+            }
+            bytes = inputStream.getResult();
+            String str = IoUtils.convertBytesToString(bytes);
+            imageUrls = extractUrls(str);
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+            throw new HttpRequestException(e.getMessage());
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+        }
+        return imageUrls;
+    }
+
+    private final Pattern urlPattern = Pattern.compile("url:\"(.*?)\"");
+
+    private List<String> extractUrls(final String str) {
+        Log.d(TAG, "a: " + str);
+        Matcher matcher = urlPattern.matcher(str);
+        List<String> urls = new ArrayList<String>();
+        while (matcher.find()) {
+            urls.add(matcher.group(1));
+        }
+        return urls;
+    }
+
     //html values
     private String searchElementId = "mangaResults";
     private String mangaLinkClass = "manga-link";
@@ -112,7 +162,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             String mangaName = String.valueOf(mangaLink.text());
             Element screenElement = parent.getElementsByClass(mangaCoverClass).get(0);
             String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;
-            Manga manga = new Manga(mangaName, uri);
+            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
@@ -150,8 +200,10 @@ public class ReadmangaEngine implements RepositoryEngine {
         if (links.isEmpty()) {
             return null;
         }
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>();
-        for (Element element : links) {
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>(links.size());
+
+        for (int i = links.size() - 1; i >= 0; i--) {
+            Element element = links.get(i);
             String link = element.attr(linkValueAttr);
             String title = element.text();
             MangaChapter chapter = new MangaChapter(title, link);
@@ -162,7 +214,12 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     @Override
     public String getBaseSearchUri() {
-        return null;
+        return baseSearchUri;
+    }
+
+    @Override
+    public String getBaseUri() {
+        return baseUri;
     }
 
 }

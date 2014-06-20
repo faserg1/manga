@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
  */
 public class Utils {
 
+    private static final String TAG = "Utils";
+
     public static final Document parseForDocument(final String content) {
         Document doc = Jsoup.parse(content);
         return doc;
