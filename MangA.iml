@@ -25,6 +25,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="android-support-v7-appcompat" />
+    <orderEntry type="library" scope="PROVIDED" name="android-support-v7-appcompat" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="android-support-v4" level="project" />
   </component>
 </module>
 

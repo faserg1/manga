@@ -26,6 +26,7 @@
         <activity android:name=".activity.MangaInfoActivity"/>
         <activity android:name=".test.DownloadTestActivity" android:label="Download Test Activity"/>
         <activity android:name=".activity.DownloadsActivity" android:label="DownloadsActivity"/>
+        <activity android:name=".test.MangaViewTestActivity" android:label="MangaViewTestActivity"/>
         <service android:name=".core.service.MangaDownloadService"/>
     </application>
 </manifest>
