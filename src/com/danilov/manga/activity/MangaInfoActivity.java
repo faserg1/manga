@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
-import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
@@ -83,7 +83,7 @@ public class MangaInfoActivity extends Activity {
             RepositoryEngine repositoryEngine = manga.getRepository().getEngine();
             try {
                 loaded = repositoryEngine.queryForMangaDescription(manga);
-            } catch (HttpRequestException e) {
+            } catch (RepositoryException e) {
                 error = e.getMessage();
                 Log.d(TAG, e.getMessage());
             }

@@ -327,7 +327,7 @@ public class DownloadManager {
                         try {
                             isWake.await();
                         } catch (InterruptedException e) {
-                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                            Log.d(TAG, "Thread is awake, checking state now");
                         }
                     }
                     download = downloads.peek();
@@ -335,7 +335,7 @@ public class DownloadManager {
                         try {
                             isWake.await();
                         } catch (InterruptedException e) {
-                            Log.d(TAG, "Thread is awake, but засыпай, баю-бай");
+                            Log.d(TAG, "Thread is awake, checking state now");
                         }
                     }
                     if (download.getStatus() == DownloadStatus.CANCELLED) {

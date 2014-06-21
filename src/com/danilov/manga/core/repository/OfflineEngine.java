@@ -1,6 +1,5 @@
 package com.danilov.manga.core.repository;
 
-import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import org.json.JSONObject;
@@ -28,17 +27,17 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     @Override
-    public boolean queryForMangaDescription(final Manga manga) throws HttpRequestException {
+    public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
         return false;
     }
 
     @Override
-    public boolean queryForChapters(final Manga manga) throws HttpRequestException {
+    public boolean queryForChapters(final Manga manga) throws RepositoryException {
         return false;
     }
 
     @Override
-    public List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException {
+    public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         return null;
     }
 

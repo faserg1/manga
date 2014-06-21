@@ -6,6 +6,7 @@ import android.view.View;
 import com.danilov.manga.R;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 
 /**
@@ -44,9 +45,10 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         private MangaImageSwitcher imageSwitcher;
         private Manga manga;
+        private MangaChapter currentChapter;
 
-        private int currentChapter;
-        private int currentPicture;
+        private int currentChapterNum;
+        private int currentPictureNum;
 
         public MangaShowOfflineTest(final MangaImageSwitcher imageSwitcher, final Manga manga) {
             this.imageSwitcher = imageSwitcher;
@@ -55,24 +57,24 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         @Override
         public void showImage(final int i) {
-            if (i == currentPicture) {
+            if (i == currentPictureNum) {
                 return;
             }
-            if (i < currentPicture) {
+            if (i < currentPictureNum) {
                 imageSwitcher.setNextImageDrawable(null);
-            } else if (i > currentPicture) {
+            } else if (i > currentPictureNum) {
                 imageSwitcher.setPreviousImageDrawable(null);
             }
         }
 
         @Override
         public void next() {
-            showImage(currentPicture + 1);
+            showImage(currentPictureNum + 1);
         }
 
         @Override
         public void previous() {
-            showImage(currentPicture - 1);
+            showImage(currentPictureNum - 1);
         }
 
     }

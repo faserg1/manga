@@ -9,10 +9,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import com.danilov.manga.core.http.HttpRequestException;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -203,7 +203,7 @@ public class MangaDownloadService extends Service {
             List<String> urls = null;
             try {
                 urls = engine.getChapterImages(chapter);
-            } catch (HttpRequestException e) {
+            } catch (RepositoryException e) {
                 e.printStackTrace();
                 return;
             }

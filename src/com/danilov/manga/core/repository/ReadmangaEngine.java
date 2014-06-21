@@ -67,11 +67,17 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public boolean queryForMangaDescription(final Manga manga) throws HttpRequestException {
+    public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
-            byte[] response = httpBytesReader.fromUri(uri);
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                Log.d(TAG, e.getMessage());
+                throw new RepositoryException(e.getMessage());
+            }
             String responseString = IoUtils.convertBytesToString(response);
             String mangaDescription = parseMangaDescriptionResponse(Utils.parseForDocument(responseString));
             if (mangaDescription == null) {
@@ -84,11 +90,17 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public boolean queryForChapters(final Manga manga) throws HttpRequestException {
+    public boolean queryForChapters(final Manga manga) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
-            byte[] response = httpBytesReader.fromUri(uri);
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                Log.d(TAG, e.getMessage());
+                throw new RepositoryException(e.getMessage());
+            }
             String responseString = IoUtils.convertBytesToString(response);
             List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.parseForDocument(responseString));
             if (chapters != null) {
@@ -100,7 +112,7 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<String> getChapterImages(final MangaChapter chapter) throws HttpRequestException {
+    public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String uri = baseUri + chapter.getUri() + "?mature=1";
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
@@ -119,7 +131,10 @@ public class ReadmangaEngine implements RepositoryEngine {
             imageUrls = extractUrls(str);
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
-            throw new HttpRequestException(e.getMessage());
+            throw new RepositoryException(e.getMessage());
+        } catch (HttpRequestException e) {
+            Log.d(TAG, e.getMessage());
+            throw new RepositoryException(e.getMessage());
         } finally {
             if (inputStream != null) {
                 try {
