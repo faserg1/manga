@@ -23,6 +23,9 @@ public class MangaImageSwitcher extends ImageSwitcher {
         TouchImageView prevImage = (TouchImageView)getCurrentView();
         TouchImageView image = (TouchImageView)this.getNextView();
         image.setImageDrawable(drawable);
+        if (prevImage != null) {
+            image.setZoom(prevImage);
+        }
         showNext();
     }
 
@@ -30,6 +33,9 @@ public class MangaImageSwitcher extends ImageSwitcher {
         TouchImageView prevImage = (TouchImageView)getCurrentView();
         TouchImageView image = (TouchImageView) this.getNextView();
         image.setImageDrawable(drawable);
+        if (prevImage != null) {
+            image.setZoom(prevImage);
+        }
         showPrevious();
     }
 
