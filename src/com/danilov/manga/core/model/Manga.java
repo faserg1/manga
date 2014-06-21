@@ -81,6 +81,18 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
+    public MangaChapter getChapterByNumber(final int number) {
+        if (chapters == null) {
+            return null;
+        }
+        for (MangaChapter chapter : chapters) {
+            if (chapter.getNumber() == number) {
+                return chapter;
+            }
+        }
+        return null;
+    }
+
     public RepositoryEngine.Repository getRepository() {
         return repository;
     }

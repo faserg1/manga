@@ -6,7 +6,7 @@
               android:background="#dce1e3">
     <Button
             android:id="@+id/test1"
-            android:text="Image View Test"
+            android:text="Manga Viewer Test"
             android:onClick="firstTest"
             style="@style/Manga.ButtonCommon"
             android:layout_width="wrap_content"

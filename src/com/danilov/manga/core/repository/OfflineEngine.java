@@ -4,6 +4,9 @@ import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,7 +41,19 @@ public class OfflineEngine implements RepositoryEngine {
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
-        return null;
+        String chapterUri = chapter.getUri();
+        File file = new File(chapterUri);
+        String[] uris = file.list(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String filename) {
+                return true;
+            }
+        });
+        for (int i = 0; i < uris.length; i++) {
+            String uri = uris[i];
+            uris[i] = chapterUri + "/" + uri;
+        }
+        return Arrays.asList(uris);
     }
 
     @Override

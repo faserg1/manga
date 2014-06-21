@@ -22,8 +22,8 @@ public class Mock {
         File sdPath = Environment.getExternalStorageDirectory();
         String s = sdPath.getPath() + "/manga/download/fairytail";
         Manga manga = new Manga("Fairy tail", s, RepositoryEngine.Repository.OFFLINE);
-        MangaChapter c1 = new MangaChapter("Uno", s + "/1");
-        MangaChapter c2 = new MangaChapter("Dos", s + "/2");
+        MangaChapter c1 = new MangaChapter("Uno", 0, s + "/1");
+        MangaChapter c2 = new MangaChapter("Dos", 1, s + "/2");
         List<MangaChapter> chapters = new ArrayList<MangaChapter>();
         chapters.add(c1);
         chapters.add(c2);

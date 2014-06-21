@@ -19,8 +19,8 @@ import com.danilov.manga.core.http.HttpStreamReader;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.test.DownloadTestActivity;
+import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
-import com.danilov.manga.test.TouchImageViewActivityTest;
 
 import java.io.File;
 
@@ -90,7 +90,7 @@ public class MyActivity extends Activity {
     }
 
     public void firstTest(View view) {
-        Intent intent = new Intent(this, TouchImageViewActivityTest.class);
+        Intent intent = new Intent(this, MangaViewTestActivity.class);
         startActivity(intent);
     }
 

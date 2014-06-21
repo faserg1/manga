@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 
 /**
  * Created by Semyon Danilov on 21.06.2014.
@@ -21,13 +20,22 @@ public class MangaImageSwitcher extends ImageSwitcher {
     }
 
     public void setNextImageDrawable(final Drawable drawable) {
-        super.setImageDrawable(drawable);
+        TouchImageView prevImage = (TouchImageView)getCurrentView();
+        TouchImageView image = (TouchImageView)this.getNextView();
+        image.setImageDrawable(drawable);
+        showNext();
     }
 
     public void setPreviousImageDrawable(final Drawable drawable) {
-        ImageView image = (ImageView) this.getNextView();
+        TouchImageView prevImage = (TouchImageView)getCurrentView();
+        TouchImageView image = (TouchImageView) this.getNextView();
         image.setImageDrawable(drawable);
         showPrevious();
+    }
+
+    public void setInAndOutAnim(final InAndOutAnim inAndOutAnim) {
+        setInAnimation(inAndOutAnim.getIn());
+        setOutAnimation(inAndOutAnim.getOut());
     }
 
 }

@@ -154,7 +154,11 @@ public class ReadmangaEngine implements RepositoryEngine {
         Matcher matcher = urlPattern.matcher(str);
         List<String> urls = new ArrayList<String>();
         while (matcher.find()) {
-            urls.add(matcher.group(1));
+            String url = matcher.group(1);
+            if (!url.contains("http")) {
+                url = baseUri + url;
+            }
+            urls.add(url);
         }
         return urls;
     }
@@ -216,13 +220,14 @@ public class ReadmangaEngine implements RepositoryEngine {
             return null;
         }
         List<MangaChapter> chapters = new ArrayList<MangaChapter>(links.size());
-
+        int number = 0;
         for (int i = links.size() - 1; i >= 0; i--) {
             Element element = links.get(i);
             String link = element.attr(linkValueAttr);
             String title = element.text();
-            MangaChapter chapter = new MangaChapter(title, link);
+            MangaChapter chapter = new MangaChapter(title, number, link);
             chapters.add(chapter);
+            number++;
         }
         return chapters;
     }

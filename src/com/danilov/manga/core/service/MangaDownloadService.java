@@ -210,6 +210,7 @@ public class MangaDownloadService extends Service {
             for (int i = 0; i < urls.size(); i++) {
                 String url = urls.get(i);
                 if (!url.contains("http")) {
+                    Log.d(TAG, "Added repo uri");
                     url = manga.getRepository().getEngine().getBaseUri() + "/" + url;
                 }
                 urls.set(i, url);

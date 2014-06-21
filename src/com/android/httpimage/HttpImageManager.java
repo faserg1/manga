@@ -134,16 +134,17 @@ public class HttpImageManager {
 
                 @Override
                 public void onLoadResponse(final LoadRequest r, final Bitmap data) {
-                    if (!(imageView.getDrawable() instanceof AsyncDrawable)) {
+                    if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
                         Log.d(TAG, "Request with URI " + getUri() + " has bad imageview" +
-                                " and request cancelled = " + r.isCancelled);
+                                " or request cancelled = " + r.isCancelled);
                         return;
                     }
                     AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
                     if (ad.getRequest().equals(r)) {
                         imageView.setImageBitmap(data);
+                        Log.d(TAG, "Set bitmap, URI = " + getUri());
                     } else {
-                        Log.d(TAG, "Dont set bitmap");
+                        Log.d(TAG, "Dont set bitmap, URI = " + getUri());
                     }
                 }
 

@@ -9,9 +9,12 @@ public class MangaChapter {
 
     private String uri;
 
-    public MangaChapter(final String title, final String uri) {
+    private int number;
+
+    public MangaChapter(final String title, final int number, final String uri) {
         this.title = title;
         this.uri = uri;
+        this.number = number;
     }
 
     public String getTitle() {
@@ -20,6 +23,10 @@ public class MangaChapter {
 
     public String getUri() {
         return uri;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
 }
