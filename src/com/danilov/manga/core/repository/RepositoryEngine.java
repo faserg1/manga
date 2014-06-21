@@ -49,7 +49,8 @@ public interface RepositoryEngine {
 
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine());
+        READMANGA(new ReadmangaEngine()),
+        OFFLINE(new OfflineEngine());
 
         private RepositoryEngine engine;
 
