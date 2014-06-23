@@ -7,8 +7,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.danilov.manga.R;
@@ -33,6 +35,9 @@ public class DownloadsActivity extends Activity {
     private TextView chaptersProgress;
     private TextView imagesProgress;
 
+    private EditText from;
+    private EditText to;
+
     private ServiceConnection serviceConnection;
 
     private Intent serviceIntent;
@@ -46,6 +51,9 @@ public class DownloadsActivity extends Activity {
         imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         chaptersProgress = (TextView) findViewById(R.id.chaptersProgress);
         imagesProgress = (TextView) findViewById(R.id.imageProgress);
+
+        from = (EditText) findViewById(R.id.from);
+        to = (EditText) findViewById(R.id.to);
 
         handler = new ServiceMessagesHandler();
 
@@ -69,6 +77,7 @@ public class DownloadsActivity extends Activity {
         serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new ServiceConnectionListener());
         serviceIntent = new Intent(this, MangaDownloadService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "Connecting to service");
     }
 
     private class ServiceMessagesHandler extends Handler {
@@ -189,6 +198,8 @@ public class DownloadsActivity extends Activity {
 
     }
 
+    private static final String TAG = "DownloadsActivity";
+
     public void test(final Manga manga) {
         Thread t = new Thread() {
 
@@ -198,6 +209,7 @@ public class DownloadsActivity extends Activity {
                 try {
                     engine.queryForChapters(manga);
                     while (service == null) {
+                        Log.d(TAG, "service == null, waiting");
                         synchronized (DownloadsActivity.this) {
                             try {
                                 DownloadsActivity.this.wait();
@@ -206,8 +218,15 @@ public class DownloadsActivity extends Activity {
                             }
                         }
                     }
+                    String fromVal = from.getText().toString();
+                    String toVal = to.getText().toString();
+                    Integer from = Integer.valueOf(fromVal);
+                    Integer to = Integer.valueOf(toVal);
                     int sz = manga.getChapters().size();
-                    service.addDownload(manga, sz - 10, sz - 1);
+                    if (from < 0 || to >= sz) {
+                        return;
+                    }
+                    service.addDownload(manga, from, to);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
