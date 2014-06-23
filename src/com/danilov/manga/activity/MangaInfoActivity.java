@@ -30,6 +30,7 @@ public class MangaInfoActivity extends Activity {
     private HttpImageManager httpImageManager = null;
 
     private TextView mangaDescriptionTextView = null;
+    private TextView chaptersQuantityTextView = null;
     private TextView mangaTitle = null;
     private ImageView mangaCover = null;
 
@@ -41,6 +42,7 @@ public class MangaInfoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_info_activity);
         mangaDescriptionTextView = (TextView) findViewById(R.id.manga_description);
+        chaptersQuantityTextView = (TextView) findViewById(R.id.chapters_quantity);
         mangaTitle = (TextView) findViewById(R.id.manga_title);
         mangaCover = (ImageView) findViewById(R.id.manga_cover);
         downloadButton = (Button) findViewById(R.id.download);
@@ -61,6 +63,7 @@ public class MangaInfoActivity extends Activity {
             String mangaDescription = manga.getDescription();
             if (mangaDescription != null) {
                 mangaDescriptionTextView.setText(mangaDescription);
+                chaptersQuantityTextView.setText(manga.getChaptersQuantity());
             } else {
                 MangaInfoQueryThread thread = new MangaInfoQueryThread(manga);
                 thread.start();
@@ -93,6 +96,7 @@ public class MangaInfoActivity extends Activity {
                     if (loaded) {
                         String mangaDescription = manga.getDescription();
                         mangaDescriptionTextView.setText(mangaDescription);
+                        chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
                     } else {
                         Context context = getApplicationContext();
                         String message = Utils.errorMessage(context, error, R.string.p_internet_error);

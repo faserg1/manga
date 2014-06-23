@@ -15,7 +15,7 @@ public class Manga implements Parcelable {
 
     private String title;
 
-    private String author = ""; //optional desu ka?
+    private String author = ""; //optional
 
     private String coverUri;
 
@@ -30,6 +30,8 @@ public class Manga implements Parcelable {
     //<!--lazy load -->
     private String description;
 
+    private int chaptersQuantity = 0;
+
     private List<MangaChapter> chapters;
     //<--lazy load --!>
 
@@ -39,6 +41,14 @@ public class Manga implements Parcelable {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public int getChaptersQuantity() {
+        return chaptersQuantity;
+    }
+
+    public void setChaptersQuantity(final int chaptersQuantity) {
+        this.chaptersQuantity = chaptersQuantity;
     }
 
     public List<MangaChapter> getChapters() {
@@ -119,6 +129,7 @@ public class Manga implements Parcelable {
         author = parcel.readString();
         coverUri = parcel.readString();
         description = parcel.readString();
+        chaptersQuantity = parcel.readInt();
         repository = RepositoryEngine.Repository.valueOf(parcel.readString());
     }
 
@@ -134,6 +145,7 @@ public class Manga implements Parcelable {
         parcel.writeString(author);
         parcel.writeString(coverUri);
         parcel.writeString(description);
+        parcel.writeInt(chaptersQuantity);
         parcel.writeString(repository.toString());
     }
 

@@ -5,6 +5,7 @@ import com.danilov.manga.core.http.*;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.util.IoUtils;
+import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import org.apache.http.protocol.HTTP;
@@ -56,7 +57,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
-                mangaList = parseSearchResponse(Utils.parseForDocument(responseString));
+                mangaList = parseSearchResponse(Utils.toDocument(responseString));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (HttpRequestException e) {
@@ -79,10 +80,13 @@ public class ReadmangaEngine implements RepositoryEngine {
                 throw new RepositoryException(e.getMessage());
             }
             String responseString = IoUtils.convertBytesToString(response);
-            String mangaDescription = parseMangaDescriptionResponse(Utils.parseForDocument(responseString));
-            if (mangaDescription == null) {
+            Pair pair = parseMangaDescriptionResponse(Utils.toDocument(responseString));
+            String mangaDescription = (String) pair.first;
+            Integer quantity = (Integer) pair.second;
+            if (mangaDescription == null || quantity == null) {
                 return false;
             }
+            manga.setChaptersQuantity(quantity);
             manga.setDescription(mangaDescription);
             return true;
         }
@@ -102,7 +106,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 throw new RepositoryException(e.getMessage());
             }
             String responseString = IoUtils.convertBytesToString(response);
-            List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.parseForDocument(responseString));
+            List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.toDocument(responseString));
             if (chapters != null) {
                 manga.setChapters(chapters);
                 return true;
@@ -190,8 +194,9 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     //html values
     private String descriptionElementClass = "manga-description";
+    private String chaptersElementClass = "chapters-link";
 
-    private String parseMangaDescriptionResponse(final Document document) {
+    private Pair parseMangaDescriptionResponse(final Document document) {
         Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
         if (mangaDescriptionElements.isEmpty()) {
             return null;
@@ -202,11 +207,14 @@ public class ReadmangaEngine implements RepositoryEngine {
             links.remove();
         }
         String description = mangaDescription.text();
-        return description;
+        Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
+        Element chaptersElement = chaptersElements.first();
+        links = chaptersElement.getElementsByTag("a");
+        int quantity = links.size();
+        return Pair.obtain(description, quantity);
     }
 
     //html values
-    private String chaptersElementClass = "chapters-link";
     private String linkValueAttr = "href";
 
     private List<MangaChapter> parseMangaChaptersResponse(final Document document) {
