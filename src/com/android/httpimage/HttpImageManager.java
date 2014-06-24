@@ -14,7 +14,9 @@ import com.danilov.manga.core.util.BitmapUtils;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -91,11 +93,67 @@ public class HttpImageManager {
         private boolean isCancelled = false;
         private int newSize;
 
-        public LoadRequest(Uri uri) {
+        private static Queue<LoadRequest> pool = new ArrayDeque<LoadRequest>();
+
+        public static LoadRequest obtain(final Uri uri) {
+            LoadRequest r = null;
+            if (!pool.isEmpty()) {
+                r = pool.remove();
+                r.mUri = uri;
+                r.mHashedUri = r.computeHashedName(uri.toString());
+                r.mListener = null;
+            } else {
+                r = new LoadRequest(uri);
+            }
+            return r;
+        }
+
+        public static LoadRequest obtain(final Uri uri, final OnLoadResponseListener l) {
+            LoadRequest r = null;
+            if (!pool.isEmpty()) {
+                r = pool.remove();
+                r.mUri = uri;
+                r.mListener = l;
+                r.mHashedUri = r.computeHashedName(uri.toString());
+            } else {
+                r = new LoadRequest(uri, l);
+            }
+            return r;
+        }
+
+        public static LoadRequest obtain(final Uri uri, final ImageView imageView, final int newSize) {
+            LoadRequest r = null;
+            if (!pool.isEmpty()) {
+                r = pool.remove();
+                r.mUri = uri;
+                r.mHashedUri = r.computeHashedName(uri.toString()) + newSize;
+                r.imageView = imageView;
+                r.newSize = newSize;
+            } else {
+                r = new LoadRequest(uri, imageView, newSize);
+                Log.d(TAG, "Creating new loadrequest, pool is empty");
+            }
+            OnLoadResponseListener l = r.new LoadListener();
+            r.mListener = l;
+
+            //отменяем старый реквест здесь, потому что до onBeforeLoad может не дойти, если в кэше есть:)
+            if (imageView.getDrawable() instanceof AsyncDrawable) {
+                AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
+                if (!r.equals(ad.getRequest())) {
+                    ad.getRequest().cancel();
+                    Log.d(TAG, "Request with URI " + ad.getRequest().getUri() + " was cancelled");
+                }
+            } else {
+                Log.d(TAG, "Request with URI " + uri + " has new imageview");
+            }
+            return r;
+        }
+
+        private LoadRequest(final Uri uri) {
             this(uri, (OnLoadResponseListener) null);
         }
 
-        public LoadRequest(Uri uri, OnLoadResponseListener l) {
+        private LoadRequest(final Uri uri, final OnLoadResponseListener l) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -105,7 +163,7 @@ public class HttpImageManager {
             this.mListener = l;
         }
 
-        public LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
+        private LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -114,46 +172,39 @@ public class HttpImageManager {
             this.newSize = newSize;
             this.mHashedUri = this.computeHashedName(uri.toString()) + newSize;
             this.imageView = imageView;
-            //отменяем старый реквест здесь, потому что до onBeforeLoad может не дойти, если в кэше есть:)
-            if (imageView.getDrawable() instanceof AsyncDrawable) {
-                AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
-                if (!LoadRequest.this.equals(ad.getRequest())) {
-                    ad.getRequest().cancel();
-                    Log.d(TAG, "Request with URI " + ad.getRequest().getUri() + " was cancelled");
-                }
-            } else {
-                Log.d(TAG, "Request with URI " + getUri() + " has new imageview");
+        }
+
+
+
+        class LoadListener implements OnLoadResponseListener {
+
+            @Override
+            public void beforeLoad(final LoadRequest r) {
+                Log.d(TAG, "Starting request for URI " + getUri());
+                imageView.setImageDrawable(new AsyncDrawable(LoadRequest.this));
             }
-            this.mListener = new OnLoadResponseListener() {
 
-                @Override
-                public void beforeLoad(final LoadRequest r) {
-                    Log.d(TAG, "Starting request for URI " + getUri());
-                    imageView.setImageDrawable(new AsyncDrawable(LoadRequest.this));
+            @Override
+            public void onLoadResponse(final LoadRequest r, final Bitmap data) {
+                if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
+                    Log.d(TAG, "Request with URI " + getUri() + " has bad imageview" +
+                            " or request cancelled = " + r.isCancelled);
+                    return;
                 }
-
-                @Override
-                public void onLoadResponse(final LoadRequest r, final Bitmap data) {
-                    if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
-                        Log.d(TAG, "Request with URI " + getUri() + " has bad imageview" +
-                                " or request cancelled = " + r.isCancelled);
-                        return;
-                    }
-                    AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
-                    if (ad.getRequest().equals(r)) {
-                        imageView.setImageBitmap(data);
-                        Log.d(TAG, "Set bitmap, URI = " + getUri());
-                    } else {
-                        Log.d(TAG, "Dont set bitmap, URI = " + getUri());
-                    }
+                AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
+                if (ad.getRequest().equals(r)) {
+                    imageView.setImageBitmap(data);
+                    Log.d(TAG, "Set bitmap, URI = " + getUri());
+                } else {
+                    Log.d(TAG, "Don't set bitmap, URI = " + getUri());
                 }
+            }
 
-                @Override
-                public void onLoadError(final LoadRequest r, final Throwable e) {
+            @Override
+            public void onLoadError(final LoadRequest r, final Throwable e) {
 
-                }
+            }
 
-            };
         }
 
         public ImageView getImageView() {
@@ -183,6 +234,16 @@ public class HttpImageManager {
         @Override
         public int hashCode() {
             return this.mUri.hashCode();
+        }
+
+        public void retrieve() {
+            mListener = null;
+            mUri = null;
+            mHashedUri = null;
+            imageView = null;
+            newSize = 0;
+            isCancelled = false;
+            pool.add(this);
         }
 
         @Override
@@ -265,6 +326,7 @@ public class HttpImageManager {
             return null;
         }
 
+        r.retrieve();
         return cachedBitmap;
     }
 
@@ -323,6 +385,7 @@ public class HttpImageManager {
                             @Override
                             public void run() {
                                 request.mListener.onLoadResponse(request, theData);
+                                request.retrieve();
                             }
                         });
                     }
@@ -333,6 +396,7 @@ public class HttpImageManager {
                             @Override
                             public void run() {
                                 request.mListener.onLoadError(request, e);
+                                request.retrieve();
                             }
                         });
                     }

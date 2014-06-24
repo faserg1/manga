@@ -60,7 +60,8 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         viewBag.titleView.setText(manga.getTitle());
         HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         Uri coverUri = Uri.parse(manga.getCoverUri());
-        Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, viewBag.coverView, sizeOfImage));
+        HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
+        Bitmap bitmap = httpImageManager.loadImage(request);
         if (bitmap != null) {
             viewBag.coverView.setImageBitmap(bitmap);
         }

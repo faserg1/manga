@@ -53,7 +53,8 @@ public class MangaInfoActivity extends Activity {
         if (manga != null) {
             Uri coverUri = Uri.parse(manga.getCoverUri());
             final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
-            Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, mangaCover, sizeOfImage));
+            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, sizeOfImage);
+            Bitmap bitmap = httpImageManager.loadImage(request);
             if (bitmap != null) {
                 mangaCover.setImageBitmap(bitmap);
             }
