@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MangA</string>
+    <!--sv means string values-->
     <string name="sv_download">Download</string>
     <string name="sv_add_to_favorites">Add to Favorites</string>
+    <string name="sv_chapters">Chapters:</string>
 
     <string name="p_internet_error">Problems with internet connection</string>
 

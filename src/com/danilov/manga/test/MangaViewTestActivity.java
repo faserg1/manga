@@ -14,6 +14,7 @@ import com.danilov.manga.R;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
+import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
@@ -103,7 +104,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         public void init() {
             try {
-                this.uris = manga.getRepository().getEngine().getChapterImages(currentChapter);
+                this.uris = RepositoryEngine.Repository.OFFLINE.getEngine().getChapterImages(currentChapter);
             } catch (RepositoryException e) {
                 e.printStackTrace();
             }
