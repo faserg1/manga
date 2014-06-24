@@ -51,6 +51,8 @@ public class MangaInfoActivity extends Activity {
         if (savedInstanceState == null) {
             Intent i = getIntent();
             manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        } else {
+            manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
         }
         if (manga != null) {
             Uri coverUri = Uri.parse(manga.getCoverUri());
@@ -64,7 +66,7 @@ public class MangaInfoActivity extends Activity {
             String mangaDescription = manga.getDescription();
             if (mangaDescription != null) {
                 mangaDescriptionTextView.setText(mangaDescription);
-                chaptersQuantityTextView.setText(manga.getChaptersQuantity());
+                chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
             } else {
                 MangaInfoQueryThread thread = new MangaInfoQueryThread(manga);
                 thread.start();
