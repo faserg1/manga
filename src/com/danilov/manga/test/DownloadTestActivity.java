@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.danilov.manga.R;
 import com.danilov.manga.core.service.DownloadManager;
+import com.danilov.manga.core.view.Slider;
 
 import java.io.File;
 
@@ -28,6 +29,7 @@ public class DownloadTestActivity extends Activity {
     private TextView progressText;
     private ProgressBar progressBar;
     private EditText urlEditText;
+    private Slider slider;
 
     private File mydir;
 
@@ -42,9 +44,11 @@ public class DownloadTestActivity extends Activity {
         downloadManager.setListener(new DownloadListener());
         downloadManager.startDownload("http://he.readmanga.ru/auto/11/52/35/03.png", mydir.getPath() + "/1.png");
         downloadManager.startDownload("http://hb.readmanga.ru/auto/11/52/35/04.png", mydir.getPath() + "/2.png");
+        slider = (Slider) findViewById(R.id.slider);
     }
 
     public void load(View view) {
+        slider.smoothScrollTo(0, 0, 0);
         String url = urlEditText.getText().toString();
         String[] splittedUrl = url.split("/");
         String fileName = splittedUrl[splittedUrl.length - 1];
