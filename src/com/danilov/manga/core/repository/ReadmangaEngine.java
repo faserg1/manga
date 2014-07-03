@@ -208,9 +208,14 @@ public class ReadmangaEngine implements RepositoryEngine {
         }
         String description = mangaDescription.text();
         Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
-        Element chaptersElement = chaptersElements.first();
-        links = chaptersElement.getElementsByTag("a");
-        int quantity = links.size();
+        int quantity = 0;
+        if (chaptersElements.isEmpty()) {
+            quantity = 0;
+        } else {
+            Element chaptersElement = chaptersElements.first();
+            links = chaptersElement.getElementsByTag("a");
+            quantity = links.size();
+        }
         return Pair.obtain(description, quantity);
     }
 

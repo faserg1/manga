@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
@@ -18,6 +20,7 @@ import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpStreamReader;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
+import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.DownloadTestActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
@@ -87,6 +90,31 @@ public class MyActivity extends Activity {
 //            }
 //        };
 //        thread.start();
+    }
+
+
+    private AnimatedActionView aav = null;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.myactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        aav = new AnimatedActionView(this, menu, R.id.refresh, R.drawable.ic_action_refresh, R.anim.rotation);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(final int featureId, final MenuItem item) {
+        if (aav.isAnimating()) {
+            aav.stopAnimation();
+        } else {
+            aav.startAnimation();
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
     public void firstTest(View view) {
