@@ -55,5 +55,4 @@ public class AnimatedActionView {
         return isAnimating;
     }
 
-
 }
