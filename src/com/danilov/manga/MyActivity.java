@@ -14,6 +14,7 @@ import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
@@ -45,7 +46,7 @@ public class MyActivity extends Activity {
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
-
+        MangaDAO dao = new MangaDAO();
         final MangaDownloadService.MDownloadServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new MangaDownloadService.ServiceConnectionListener() {
 
             @Override

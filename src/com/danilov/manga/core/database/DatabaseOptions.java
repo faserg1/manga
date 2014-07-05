@@ -45,23 +45,23 @@ public class DatabaseOptions {
 
     public String toSQLStatement() {
         StringBuilder sqlStatement = new StringBuilder();
-        sqlStatement.append("create table ").append(tableName).append(" ( ");
+        sqlStatement.append("create table ").append(tableName).append(" (");
         for (int i = 0; i < columns.size(); i++) {
             Column column = columns.get(i);
             sqlStatement.append(column.name).append(" ");
-            sqlStatement.append(column.type.sql).append(" ");
+            sqlStatement.append(column.type.sql);
             if (column.isPrimaryKey) {
-                sqlStatement.append("primary key ");
+                sqlStatement.append(" primary key");
             }
             if (column.isAutoincrement) {
-                sqlStatement.append("autoincrement ");
+                sqlStatement.append(" autoincrement");
             }
-            if (i == columns.size() - 1) {
-                sqlStatement.append(",");
+            if (i != columns.size() - 1) {
+                sqlStatement.append(", ");
             }
         }
-        if (constraints != null) {
-            sqlStatement.append(",");
+        if (constraints != null && !constraints.isEmpty()) {
+            sqlStatement.append(", ");
             Set<Map.Entry<String, List<Column>>> entries = constraints.entrySet();
             int size = entries.size();
             int i = 0;
@@ -98,7 +98,7 @@ public class DatabaseOptions {
         }
 
         public void setAutoincrement(final boolean isAutoincrement) {
-            if (type != Type.INT && type != Type.LONG) {
+            if (type != Type.INT && type != Type.LONG && isAutoincrement) {
                 throw new IllegalStateException("Autoincrement can be applied only for numeric columns");
             }
             this.isAutoincrement = isAutoincrement;

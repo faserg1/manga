@@ -14,6 +14,8 @@ public class DatabaseHelper {
 
     public DatabaseHelper(final String path, final int version, final DatabaseFirstOpenHandler handler) {
         this.path = path;
+        this.version = version;
+        this.handler = handler;
     }
 
     public synchronized SQLiteDatabase openWritable() throws DatabaseException {
@@ -38,6 +40,7 @@ public class DatabaseHelper {
                     }
                 }
                 database.setVersion(version);
+                database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
             }
@@ -64,6 +67,7 @@ public class DatabaseHelper {
                     }
                 }
                 database.setVersion(version);
+                database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();
             }
