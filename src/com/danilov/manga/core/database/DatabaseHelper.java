@@ -41,4 +41,10 @@ public class DatabaseHelper {
         return database;
     }
 
+    public static interface DatabaseFirstOpenHandler {
+
+        void onFirstOpen(final SQLiteDatabase database);
+
+    }
+
 }
