@@ -9,7 +9,7 @@ public class DatabaseOptions {
 
     private final List<Column> columns;
     private final Map<String, List<Column>> constraints;
-    private final String dbName;
+    private final String tableName;
 
     public enum Type {
 
@@ -29,8 +29,8 @@ public class DatabaseOptions {
 
     }
 
-    private DatabaseOptions(final String dbName, final List<Column> columns, final Map<String, List<Column>> constraints) {
-        this.dbName = dbName;
+    private DatabaseOptions(final String tableName, final List<Column> columns, final Map<String, List<Column>> constraints) {
+        this.tableName = tableName;
         this.columns = columns;
         this.constraints = constraints;
     }
@@ -45,7 +45,7 @@ public class DatabaseOptions {
 
     public String toSQLStatement() {
         StringBuilder sqlStatement = new StringBuilder();
-        sqlStatement.append("create table ").append(dbName).append(" ( ");
+        sqlStatement.append("create table ").append(tableName).append(" ( ");
         for (int i = 0; i < columns.size(); i++) {
             Column column = columns.get(i);
             sqlStatement.append(column.name).append(" ");
@@ -118,7 +118,7 @@ public class DatabaseOptions {
 
         private Map<String, List<Column>> constraints = new HashMap<String, List<Column>>();
 
-        private String dbName;
+        private String tableName;
 
         public void addColumn(final String name, final Type type, final boolean isPrimaryKey, final boolean isAutoIncrement) {
             addColumn(name, type, isPrimaryKey, isAutoIncrement, null);
@@ -145,12 +145,12 @@ public class DatabaseOptions {
             }
         }
 
-        public void setName(final String dbName) {
-            this.dbName = dbName;
+        public void setName(final String tableName) {
+            this.tableName = tableName;
         }
 
         public DatabaseOptions build() {
-            return new DatabaseOptions(dbName, columns, constraints);
+            return new DatabaseOptions(tableName, columns, constraints);
         }
 
     }
