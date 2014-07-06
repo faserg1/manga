@@ -13,12 +13,10 @@ public class DatabaseOptions {
 
     public enum Type {
 
-
-        VARCHAR("varchar"),
         TEXT("text"),
         INT("integer"),
-        LONG("long"),
-        TIMESTAMP("timestamp");
+        REAL("real"),
+        BLOB("blob");
 
         public final String sql;
 
@@ -98,7 +96,7 @@ public class DatabaseOptions {
         }
 
         public void setAutoincrement(final boolean isAutoincrement) {
-            if (type != Type.INT && type != Type.LONG && isAutoincrement) {
+            if (type != Type.INT && isAutoincrement) {
                 throw new IllegalStateException("Autoincrement can be applied only for numeric columns");
             }
             this.isAutoincrement = isAutoincrement;
