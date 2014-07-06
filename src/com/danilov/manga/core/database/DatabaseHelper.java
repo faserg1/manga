@@ -10,9 +10,9 @@ public class DatabaseHelper {
     private String path;
     private SQLiteDatabase database;
     private int version;
-    private DatabaseFirstOpenHandler handler;
+    private DatabaseUpgradeHandler handler;
 
-    public DatabaseHelper(final String path, final int version, final DatabaseFirstOpenHandler handler) {
+    public DatabaseHelper(final String path, final int version, final DatabaseUpgradeHandler handler) {
         this.path = path;
         this.version = version;
         this.handler = handler;
@@ -36,7 +36,7 @@ public class DatabaseHelper {
             try {
                 if (database.getVersion() == 0) {
                     if (handler != null) {
-                        handler.onFirstOpen(database);
+                        handler.onUpgrade(database);
                     }
                 }
                 database.setVersion(version);
@@ -63,7 +63,7 @@ public class DatabaseHelper {
             try {
                 if (database.getVersion() == 0) {
                     if (handler != null) {
-                        handler.onFirstOpen(database);
+                        handler.onUpgrade(database);
                     }
                 }
                 database.setVersion(version);
@@ -75,9 +75,9 @@ public class DatabaseHelper {
         return database;
     }
 
-    public static interface DatabaseFirstOpenHandler {
+    public static interface DatabaseUpgradeHandler {
 
-        void onFirstOpen(final SQLiteDatabase database);
+        void onUpgrade(final SQLiteDatabase database);
 
     }
 
