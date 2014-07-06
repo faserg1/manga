@@ -371,7 +371,7 @@ public class IoUtils {
 
     private static final Pattern normalNamePattern = Pattern.compile("([ \\w:,.а-яА-Я])*");
 
-    public static String createPathForMangaChapter(final Manga manga, final int chapterNum, final Context context) {
+    public static String createPathForManga(final Manga manga, final Context context) {
         ApplicationSettings applicationSettings = ApplicationSettings.get(context);
         String downloadPath = applicationSettings.getMangaDownloadBasePath();
         String title = manga.getTitle();
@@ -380,11 +380,19 @@ public class IoUtils {
         while (matcher.find()) {
             title += matcher.group();
         }
-        File mangaFolder = new File(downloadPath + title + "/" + chapterNum + "/");
+        File mangaFolder = new File(downloadPath + title + "/");
         if (!mangaFolder.mkdirs() && !mangaFolder.exists()) {
             Log.d(TAG, "Error while creating folder for path: " + mangaFolder.toString());
         }
         return mangaFolder.getPath();
+    }
+
+    public static String createPathForMangaChapter(final String mangaPath, final int chapterNum) {
+        File chapterFolder = new File(mangaPath + "/" + chapterNum + "/");
+        if (!chapterFolder.mkdirs() && !chapterFolder.exists()) {
+            Log.d(TAG, "Error while creating folder for path: " + chapterFolder.toString());
+        }
+        return chapterFolder.getPath();
     }
 
 }

@@ -172,6 +172,16 @@ public class MangaDownloadService extends Service {
         notifyObservers(message);
     }
 
+    private void sendError(final MangaDownloadRequest request, final String error) {
+        Message message = Message.obtain();
+        message.what = ERROR;
+        Pair pair = Pair.obtain();
+        pair.first = request;
+        pair.second = error;
+        message.obj = pair;
+        notifyObservers(message);
+    }
+
     public void addDownload(final Manga manga, final int from, final int to) {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.ADD_DOWNLOAD;
@@ -216,13 +226,14 @@ public class MangaDownloadService extends Service {
                 urls.set(i, url);
             }
             int curChapterNumber = request.getCurrentChapterNumber();
-            String path = IoUtils.createPathForMangaChapter(manga, curChapterNumber, MangaDownloadService.this) + "/";
+            String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
+            String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             int i = 0;
             currentImage = 0;
             currentImageQuantity = urls.size();
             sendStatus();
             for (String url : urls) {
-                downloadManager.startDownload(url, path + i + ".png", curChapterNumber);
+                downloadManager.startDownload(url, chapterPath + i + ".png", curChapterNumber);
                 i++;
             }
         }
@@ -350,8 +361,8 @@ public class MangaDownloadService extends Service {
         }
 
         @Override
-        public void onError(final DownloadManager.Download download) {
-
+        public void onError(final DownloadManager.Download download, final String errorMsg) {
+            sendError(currentRequest, errorMsg);
         }
 
     }

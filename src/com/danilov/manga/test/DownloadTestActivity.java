@@ -123,7 +123,7 @@ public class DownloadTestActivity extends Activity {
         }
 
         @Override
-        public void onError(final DownloadManager.Download download) {
+        public void onError(final DownloadManager.Download download, final String errorMsg) {
 
         }
 

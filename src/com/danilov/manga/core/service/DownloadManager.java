@@ -123,13 +123,15 @@ public class DownloadManager {
 
                 // Make sure response code is in the 200 range.
                 if (connection.getResponseCode() / 100 != 2) {
-                    error();
+                    error("Can't download, response code is "
+                            + connection.getResponseCode()
+                            + " message is " + connection.getResponseMessage());
                 }
 
                 // Check for valid content length.
                 int contentLength = connection.getContentLength();
                 if (contentLength < 1) {
-                    error();
+                    error("Not valid content length");
                 }
                 /* Set the size for this download if it
                 hasn't been already set. */
@@ -179,7 +181,7 @@ public class DownloadManager {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error while downloading: " + e.getMessage());
-                error();
+                error(e.getMessage());
             } finally {
                 // Close file.
                 if (file != null) {
@@ -201,8 +203,11 @@ public class DownloadManager {
             }
         }
 
-        private void error() {
+        private String errorMessage = null;
+
+        private void error(final String errorMessage) {
             status = DownloadStatus.ERROR;
+            this.errorMessage = errorMessage;
             stateChanged();
         }
 
@@ -231,7 +236,7 @@ public class DownloadManager {
                     break;
                 case ERROR:
                     if (listener != null) {
-                        listener.onError(this);
+                        listener.onError(this, errorMessage);
                     }
                     break;
             }
@@ -301,7 +306,7 @@ public class DownloadManager {
 
         public void onCancel(final Download download);
 
-        public void onError(final Download download);
+        public void onError(final Download download, final String errorMsg);
 
     }
 

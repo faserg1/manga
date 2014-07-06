@@ -47,14 +47,7 @@ public class MangaDAO {
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
         try {
             SQLiteDatabase db = databaseHelper.openWritable();
-            ContentValues cv = new ContentValues();
-            cv.put(ID, 0);
-            cv.put(CHAPTERS_QUANTITY, 25);
-            cv.put(MANGA_TITLE, "123");
-            cv.put(MANGA_DESCRIPTION, "zxczx");
-            cv.put(MANGA_AUTHOR, "qwe");
-            cv.put(MANGA_URI, "asd");
-            db.insertOrThrow(TABLE_NAME, null, cv);
+            db.execSQL("drop table if exists " + TABLE_NAME + ";");
             db.close();
         } catch (Exception e) {
             e.printStackTrace();

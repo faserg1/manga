@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -60,7 +59,7 @@ public class DownloadsActivity extends Activity {
         Intent i = getIntent();
         final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
 
-        ((Button) findViewById(R.id.test_button)).setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.test_button)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
