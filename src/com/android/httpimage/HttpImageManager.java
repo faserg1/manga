@@ -262,8 +262,7 @@ public class HttpImageManager {
                 digest.update(name.getBytes());
                 byte[] hash = digest.digest();
                 BigInteger bi = new BigInteger(1, hash);
-                String hashtext = bi.toString(16);
-                return hashtext;
+                return bi.toString(16);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }

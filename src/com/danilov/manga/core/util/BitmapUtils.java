@@ -2,7 +2,9 @@ package com.danilov.manga.core.util;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import com.danilov.manga.R;
+import android.graphics.BitmapFactory;
+
+import java.io.File;
 
 /**
  * Created by Semyon Danilov on 16.05.2014.
@@ -25,4 +27,10 @@ public class BitmapUtils {
         bitmap.recycle();
         return resizedBitmap;
     }
+
+    public static Bitmap loadLocal(final String uri) {
+        File imageFile = new File(uri);
+        return BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+    }
+
 }
