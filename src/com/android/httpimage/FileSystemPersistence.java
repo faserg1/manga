@@ -41,6 +41,11 @@ public class FileSystemPersistence implements BitmapCache {
     }
 
     @Override
+    public boolean exists(final Bitmap bitmap) {
+        return false;
+    }
+
+    @Override
     public Bitmap loadData(String key) {
         if (!this.exists(key)) {
             return null;

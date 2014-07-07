@@ -1,31 +1,59 @@
 package com.android.httpimage;
 
 import android.graphics.Bitmap;
-import android.util.Log;
-import com.danilov.manga.core.cache.ILruCacheListener;
 import com.danilov.manga.core.cache.LruCache;
+import com.danilov.manga.core.util.BitmapUtils;
 
 public class BitmapMemoryCache implements BitmapCache {
 
-    private final LruCache<String, Bitmap> mMap;
+    private final LruCache<String, Bitmap> cache;
 
-    public BitmapMemoryCache() {
-        this.mMap = new LruCache<String, Bitmap>(new BitmapLruCacheListener());
+    private final int cacheSize;
+
+    public BitmapMemoryCache(final float maxMemoryPercentage) {
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        if (maxMemoryPercentage >= 1) {
+            throw new IllegalStateException("Can't allocate more than 100% of memory");
+        }
+        // Use 1/8th of the available memory for this memory cache.
+        cacheSize = (int) (maxMemory * maxMemoryPercentage);
+        this.cache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(final String key, final Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return BitmapUtils.getBitmapSize(bitmap) / 1024;
+            }
+
+            @Override
+            protected void entryRemoved(final boolean evicted, final String key, Bitmap oldValue, final Bitmap newValue) {
+                if (oldValue != null) {
+                    oldValue.recycle();
+                    oldValue = null;
+                }
+            }
+        };
     }
 
     @Override
     public synchronized boolean exists(String key) {
-        return this.mMap.containsKey(key);
+        return cache.hasKey(key);
     }
 
     @Override
+    public boolean exists(final Bitmap bitmap) {
+        return cache.hasValue(bitmap);
+    }
+
+
+    @Override
     public synchronized void clear() {
-        this.mMap.clear();
+        this.cache.evictAll();
     }
 
     @Override
     public synchronized Bitmap loadData(String key) {
-        Bitmap res = this.mMap.get(key);
+        Bitmap res = this.cache.get(key);
 
         return res;
     }
@@ -35,15 +63,15 @@ public class BitmapMemoryCache implements BitmapCache {
         if (this.exists(key)) {
             return;
         }
-
-        this.mMap.put(key, data);
+        if (cacheSize <= this.cache.size()  + (BitmapUtils.getBitmapSize(data) / 1024)) {
+            return;
+        }
+        this.cache.put(key, data);
     }
 
-    private class BitmapLruCacheListener implements ILruCacheListener<String, Bitmap> {
-        @Override
-        public void onEntryRemoved(String key, Bitmap value) {
-            Log.d("BitmapMemoryCache", "removed from memory " + key);
-            // check if the bitmap is displayed
-        }
+    @Override
+    public String toString() {
+        int size = cache.size();
+        return "size: " + size + ", free memory: " + (cacheSize - size);
     }
 }

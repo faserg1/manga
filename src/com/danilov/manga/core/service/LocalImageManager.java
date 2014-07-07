@@ -67,13 +67,24 @@ public class LocalImageManager {
                 if (!r.equals(oldRequest)) {
                     oldRequest.cancel();
                 } else {
+                    imageView.setImageDrawable(new RequestDrawable(r));
                     return null; //waiting for bitmap to load in another request
                 }
             }
+            imageView.setImageDrawable(new RequestDrawable(r));
             this.mExecutor.submit(this.newRequestCall(r));
             return null;
         }
         return cachedBitmap;
+    }
+
+    public boolean hasImageInCache(final String uri, final int newSize) {
+        String key = computeHashedName(uri) + newSize;
+        return mCache.exists(key);
+    }
+
+    public boolean hasImageInCache(final Bitmap bitmap) {
+        return mCache.exists(bitmap);
     }
 
     private Callable<Bitmap> newRequestCall(final ImageRequest imageRequest) {
@@ -102,7 +113,11 @@ public class LocalImageManager {
                     data = mCache.loadData(key);
                     if (data == null) {
                         //now lets go persistent (ballin, ballin, yarl ballin)
-                        data = BitmapUtils.loadLocal(imageRequest.getUri());
+                        data = BitmapUtils.loadLocal(imageRequest.getUri(), imageRequest.getNewSize(), 1);
+                        int newSize = imageRequest.getNewSize();
+                        if (newSize >= 0) {
+                            data = BitmapUtils.reduceBitmapSize(resources, data, imageRequest.getNewSize());
+                        }
                         if (data != null) {
                             mCache.storeData(key, data);
                         }

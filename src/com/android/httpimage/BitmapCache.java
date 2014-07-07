@@ -18,6 +18,14 @@ public interface BitmapCache {
     public boolean exists(String key);
 
     /**
+     * Test if a specified bitmap exists
+     *
+     * @param bitmap
+     * @return
+     */
+    public boolean exists(Bitmap bitmap);
+
+    /**
      * Retrieve the bitmap, return null means cache miss
      *
      * @param key

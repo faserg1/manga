@@ -19,10 +19,12 @@ import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
 import com.danilov.manga.core.http.HttpStreamReader;
+import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.DownloadTestActivity;
+import com.danilov.manga.test.LocalImageActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 
@@ -42,10 +44,13 @@ public class MyActivity extends Activity {
         httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
         httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         httpBitmapReader = new HttpBitmapReader(httpBytesReader);
-        httpImageManager = new HttpImageManager(new BitmapMemoryCache(), fsp, getResources(), httpBitmapReader);
+        BitmapMemoryCache bmc = new BitmapMemoryCache(0.4f);
+        httpImageManager = new HttpImageManager(bmc, fsp, getResources(), httpBitmapReader);
+        localImageManager = new LocalImageManager(bmc, getResources());
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
+        ServiceContainer.addService(localImageManager);
         MangaDAO dao = new MangaDAO();
         final MangaDownloadService.MDownloadServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new MangaDownloadService.ServiceConnectionListener() {
 
@@ -138,6 +143,11 @@ public class MyActivity extends Activity {
         startActivity(intent);
     }
 
+    public void sixthTest(View view) {
+        Intent intent = new Intent(this, LocalImageActivity.class);
+        startActivity(intent);
+    }
+
     public void thirdTest(View view) {
         Intent intent = new Intent(this, MangaInfoActivity.class);
         startActivity(intent);
@@ -149,6 +159,7 @@ public class MyActivity extends Activity {
     HttpStreamReader httpStreamReader = null;
     HttpBytesReader httpBytesReader = null;
     HttpBitmapReader httpBitmapReader = null;
+    LocalImageManager localImageManager = null;
 
     private HttpImageManager httpImageManager = null;
 }
