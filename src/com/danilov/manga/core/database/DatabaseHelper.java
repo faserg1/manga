@@ -18,7 +18,7 @@ public class DatabaseHelper {
         this.handler = handler;
     }
 
-    public synchronized SQLiteDatabase openWritable() throws DatabaseException {
+    public synchronized SQLiteDatabase openWritable() throws DatabaseAccessException {
         if (database != null) {
             if (!database.isOpen()) {
                 database = null;
@@ -27,7 +27,7 @@ public class DatabaseHelper {
             }
         }
         if (database != null) {
-            throw new DatabaseException("Can't open writable");
+            throw new DatabaseAccessException("Can't open writable");
         }
         database = SQLiteDatabase.openOrCreateDatabase(path, null);
         int v = database.getVersion();
@@ -48,7 +48,7 @@ public class DatabaseHelper {
         return database;
     }
 
-    public synchronized SQLiteDatabase openReadable() throws DatabaseException {
+    public synchronized SQLiteDatabase openReadable() throws DatabaseAccessException {
         if (database != null) {
             if (!database.isOpen()) {
                 database = null;
