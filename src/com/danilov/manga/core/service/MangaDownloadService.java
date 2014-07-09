@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import com.danilov.manga.core.database.DatabaseAccessException;
+import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
@@ -125,6 +127,7 @@ public class MangaDownloadService extends Service {
         public static final int ADD_DOWNLOAD = 0;
         public static final int START_NEXT_CHAPTER = 1;
         public static final int START_NEXT_REQUEST = 2;
+        public static final int RESTART_ERROR = 3;
 
         @Override
         public void handleMessage(final Message msg) {
@@ -153,6 +156,9 @@ public class MangaDownloadService extends Service {
                     MangaDownloadRequest nextRequest = requests.peek();
                     currentRequest = nextRequest;
                     (new MangaDownloadThread(nextRequest)).start();
+                    break;
+                case RESTART_ERROR:
+                    downloadManager.restartError();
                     break;
                 default:
                     break;
@@ -186,6 +192,12 @@ public class MangaDownloadService extends Service {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.ADD_DOWNLOAD;
         message.obj = new MangaDownloadRequest(manga, from, to);
+        serviceHandler.sendMessage(message);
+    }
+
+    public void restartDownload() {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.RESTART_ERROR;
         serviceHandler.sendMessage(message);
     }
 
@@ -228,6 +240,15 @@ public class MangaDownloadService extends Service {
             int curChapterNumber = request.getCurrentChapterNumber();
             String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
             String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
+            try {
+                DownloadedMangaDAO.updateInfo(manga, 1, mangaPath);
+            } catch (DatabaseAccessException e) {
+                //TODO: decide what do we need to do if can't store manga
+                //I suppose, that we better cancel request, due to the fact
+                // that manga won't be accessible from the app in case of failed ~DAO operation
+                sendError(currentRequest, e.getMessage());
+                Log.d(TAG, e.getMessage());
+            }
             int i = 0;
             currentImage = 0;
             currentImageQuantity = urls.size();
@@ -326,6 +347,10 @@ public class MangaDownloadService extends Service {
 
         @Override
         public void onComplete(final DownloadManager.Download download) {
+            if (download.getTag() == -1) {
+                //TODO: tag = -1 will be applied for manga covers
+                return;
+            }
             currentImage++;
             if (currentImage == currentImageQuantity) {
                 if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {

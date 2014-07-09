@@ -4,5 +4,6 @@
     <item android:drawable="@drawable/btn_common_pressed"  android:state_pressed="true"/>
     <item  android:drawable="@drawable/btn_common_hover" android:state_focused="true" />
     <item  android:drawable="@drawable/btn_common_hover" android:state_active="true" />
+    <item  android:drawable="@drawable/btn_common_disabled" android:state_enabled="false" />
     <item android:drawable="@drawable/btn_common_normal"/>
 </selector>

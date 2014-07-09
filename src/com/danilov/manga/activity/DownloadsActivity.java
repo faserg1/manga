@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.service.MangaDownloadService.MangaDownloadRequest;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Pair;
+import com.danilov.manga.core.util.Utils;
 
 /**
  * Created by Semyon Danilov on 14.06.2014.
@@ -41,6 +43,8 @@ public class DownloadsActivity extends Activity {
 
     private Intent serviceIntent;
 
+    private Button restartButton;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +62,16 @@ public class DownloadsActivity extends Activity {
 
         Intent i = getIntent();
         final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        restartButton = (Button) findViewById(R.id.restart);
+        restartButton.setEnabled(false);
+        restartButton.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(final View v) {
+                service.restartDownload();
+            }
+
+        });
         (findViewById(R.id.test_button)).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -152,7 +165,9 @@ public class DownloadsActivity extends Activity {
     }
 
     private void onError(final Message message) {
-
+        Pair p = (Pair) message.obj;
+        Utils.showToast(this, String.valueOf(p.second));
+        restartButton.setEnabled(true);
     }
 
     private void onStatus(final Message message) {

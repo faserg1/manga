@@ -66,11 +66,29 @@
               android:layout_height="wrap_content"
               android:id="@+id/to"/>
 
-    <Button
-            android:layout_width="wrap_content"
+
+
+    <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            style="@style/Manga.ButtonCommon"
-            android:text="Test Download"
-            android:id="@+id/test_button"/>
+            android:orientation="horizontal">
+
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Manga.ButtonCommon"
+                android:text="Test Download"
+                android:id="@+id/test_button"/>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Manga.ButtonCommon"
+                android:text="Restart if error"
+                android:enabled="false"
+                android:id="@+id/restart"/>
+
+    </LinearLayout>
 
 </LinearLayout>

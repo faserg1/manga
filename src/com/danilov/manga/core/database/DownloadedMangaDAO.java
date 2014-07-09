@@ -47,17 +47,10 @@ public class DownloadedMangaDAO {
         }
         String dbPath = dbFolder + "/" + DB_NAME;
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
-        try {
-            SQLiteDatabase db = databaseHelper.openWritable();
-            db.execSQL("drop table if exists " + TABLE_NAME + ";");
-            db.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
-    public static void addManga(final Manga manga, final String localUri) throws DatabaseAccessException {
+    public static void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(MANGA_TITLE, manga.getTitle());
@@ -66,6 +59,7 @@ public class DownloadedMangaDAO {
         cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
         cv.put(MANGA_URI, localUri);
         cv.put(MANGA_INET_URI, manga.getUri());
+        cv.put(CHAPTERS_QUANTITY, chaptersQuantity);
         try {
             db.insertOrThrow(TABLE_NAME, null, cv);
         } catch (Exception e) {
@@ -150,21 +144,25 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
-    public static void updateInfo(final Manga manga, final int chapters) throws DatabaseAccessException{
+    public static void updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
         LocalManga localManga = getByTitleAndRepository(manga.getTitle(), manga.getRepository());
-        int chaptersQuantity = localManga.getChaptersQuantity();
-        chaptersQuantity += chapters;
-        SQLiteDatabase db = databaseHelper.openWritable();
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(CHAPTERS_QUANTITY, chaptersQuantity);
-            String selection = ID + " = ?";
-            String id = String.valueOf(localManga.getLocalId());
-            db.update(TABLE_NAME, cv, selection, new String[] {id});
-        } catch (Exception e) {
-            throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
+        if (localManga != null) {
+            int chaptersQuantity = localManga.getChaptersQuantity();
+            chaptersQuantity += chapters;
+            SQLiteDatabase db = databaseHelper.openWritable();
+            try {
+                ContentValues cv = new ContentValues();
+                cv.put(CHAPTERS_QUANTITY, chaptersQuantity);
+                String selection = ID + " = ?";
+                String id = String.valueOf(localManga.getLocalId());
+                db.update(TABLE_NAME, cv, selection, new String[] {id});
+            } catch (Exception e) {
+                throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
+            }
+        } else {
+            addManga(manga, chapters, localUri);
         }
     }
 

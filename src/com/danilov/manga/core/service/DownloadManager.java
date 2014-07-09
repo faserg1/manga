@@ -60,6 +60,28 @@ public class DownloadManager {
         }
     }
 
+    public void restartError() {
+        lock.lock();
+        try {
+            Download d = downloads.peek();
+            if (d.getStatus() == DownloadStatus.ERROR) {
+                d.setStatus(DownloadStatus.DOWNLOADING);
+                wakeUp(); //!
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void wakeUp() {
+        lock.lock();
+        try {
+            isWake.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public class Download implements Runnable {
 
         private int tag = 0;
@@ -248,6 +270,10 @@ public class DownloadManager {
 
         public DownloadStatus getStatus() {
             return status;
+        }
+
+        protected void setStatus(final DownloadStatus status) {
+            this.status = status;
         }
 
         public synchronized int getSize() {

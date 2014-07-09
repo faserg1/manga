@@ -369,7 +369,7 @@ public class IoUtils {
         return urls;
     }
 
-    private static final Pattern normalNamePattern = Pattern.compile("([ \\w:,.а-яА-Я])*");
+    private static final Pattern normalNamePattern = Pattern.compile("([ \\w,.а-яА-Я])*");
 
     public static String createPathForManga(final Manga manga, final Context context) {
         ApplicationSettings applicationSettings = ApplicationSettings.get(context);
