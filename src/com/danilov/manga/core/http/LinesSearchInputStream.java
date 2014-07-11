@@ -1,5 +1,6 @@
 package com.danilov.manga.core.http;
 
+import android.util.Log;
 import com.danilov.manga.core.util.IoUtils;
 
 import java.io.FilterInputStream;
@@ -41,6 +42,7 @@ public class LinesSearchInputStream extends FilterInputStream {
             if (!hasFoundDesired) {
                 hasFoundDesired = searchFor(red, b, desire);
                 if (hasFoundDesired) {
+                    Log.d(TAG, "Found desired");
                     prevLoaded = new byte[red - foundOffset];
                     IoUtils.copyArray(b, foundOffset, red, prevLoaded, 0);
                 }
