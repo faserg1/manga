@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,6 +54,8 @@ public class OfflineEngine implements RepositoryEngine {
             String uri = uris[i];
             uris[i] = chapterUri + "/" + uri;
         }
+        List<String> urisList = Arrays.asList(uris);
+        Collections.sort(urisList);
         return Arrays.asList(uris);
     }
 
