@@ -1,9 +1,6 @@
 package com.danilov.manga.test;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,7 +15,7 @@ import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
-import com.danilov.manga.core.view.TouchImageView;
+import com.danilov.manga.core.view.SubsamplingScaleImageView;
 
 import java.io.File;
 import java.util.List;
@@ -41,7 +38,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         right = findViewById(R.id.right);
         left.setOnClickListener(this);
         right.setOnClickListener(this);
-        imageSwitcher.setFactory(new TouchImageViewFactory());
+        imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         strategy.init();
     }
 
@@ -57,11 +54,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
     }
 
-    private class TouchImageViewFactory implements ViewSwitcher.ViewFactory {
+    private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {
 
         @Override
         public View makeView() {
-            TouchImageView touchImageView = new TouchImageView(MangaViewTestActivity.this);
+            SubsamplingScaleImageView touchImageView = new SubsamplingScaleImageView(MangaViewTestActivity.this);
 
             touchImageView.setLayoutParams(new
                     ImageSwitcher.LayoutParams(
@@ -117,14 +114,12 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
                 return;
             }
             File imageFile = new File(uris.get(i));
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
             if (i < currentPictureNum) {
                 imageSwitcher.setInAndOutAnim(prev);
-                imageSwitcher.setPreviousImageDrawable(bitmapDrawable);
+                imageSwitcher.setPreviousImageDrawable(imageFile.getPath());
             } else if (i > currentPictureNum) {
                 imageSwitcher.setInAndOutAnim(next);
-                imageSwitcher.setNextImageDrawable(bitmapDrawable);
+                imageSwitcher.setNextImageDrawable(imageFile.getPath());
             }
             currentPictureNum = i;
         }
