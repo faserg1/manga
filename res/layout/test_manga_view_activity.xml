@@ -49,4 +49,12 @@
 
     </LinearLayout>
 
+    <ListView
+            android:id="@+id/mangaList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffffff">
+
+    </ListView>
+
 </RelativeLayout>

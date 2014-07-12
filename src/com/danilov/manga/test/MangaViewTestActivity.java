@@ -1,21 +1,25 @@
 package com.danilov.manga.test;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageSwitcher;
-import android.widget.ViewSwitcher;
+import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.core.database.DatabaseAccessException;
+import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
-import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 import com.danilov.manga.core.view.SubsamplingScaleImageView;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -23,23 +27,34 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 20.06.2014.
  */
-public class MangaViewTestActivity extends Activity implements View.OnClickListener{
+public class MangaViewTestActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener{
+
+    private ListView mangaList;
 
     private MangaShowOfflineTest strategy;
+    private MangaImageSwitcher imageSwitcher;
     private View left;
     private View right;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_manga_view_activity);
-        MangaImageSwitcher imageSwitcher = (MangaImageSwitcher) findViewById(R.id.imageSwitcher);
-        strategy = new MangaShowOfflineTest(imageSwitcher, Mock.getOfflineMockManga());
+        imageSwitcher = (MangaImageSwitcher) findViewById(R.id.imageSwitcher);
         left = findViewById(R.id.left);
         right = findViewById(R.id.right);
+        mangaList = (ListView) findViewById(R.id.mangaList);
         left.setOnClickListener(this);
         right.setOnClickListener(this);
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
-        strategy.init();
+
+        try {
+            List<LocalManga> localMangas = DownloadedMangaDAO.getAllManga();
+            TestMangaAdapter adapter = new TestMangaAdapter(this, android.R.layout.simple_list_item_1, localMangas);
+            mangaList.setAdapter(adapter);
+            mangaList.setOnItemClickListener(this);
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -52,6 +67,13 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
                 strategy.next();
                 break;
         }
+    }
+
+    @Override
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        mangaList.setVisibility(View.GONE);
+        strategy = new MangaShowOfflineTest(imageSwitcher, (LocalManga) parent.getItemAtPosition(position));
+        strategy.init();
     }
 
     private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {
@@ -72,7 +94,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
     private class MangaShowOfflineTest implements MangaShowStrategy {
 
         private MangaImageSwitcher imageSwitcher;
-        private Manga manga;
+        private LocalManga manga;
         private MangaChapter currentChapter;
         private List<String> uris = null;
 
@@ -82,7 +104,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         private int currentChapterNum;
         private int currentPictureNum = -1;
 
-        public MangaShowOfflineTest(final MangaImageSwitcher imageSwitcher, final Manga manga) {
+        public MangaShowOfflineTest(final MangaImageSwitcher imageSwitcher, final LocalManga manga) {
             this.imageSwitcher = imageSwitcher;
             this.manga = manga;
             this.currentChapterNum = 0;
@@ -101,6 +123,17 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         public void init() {
             try {
+                RepositoryEngine.Repository.OFFLINE.getEngine().queryForChapters(manga);
+            } catch (RepositoryException e) {
+                return;
+            }
+            goToChapter(0);
+        }
+
+        public void goToChapter(final int chapter) {
+            this.currentChapterNum = chapter;
+            this.currentChapter = manga.getChapterByNumber(currentChapterNum);
+            try {
                 this.uris = RepositoryEngine.Repository.OFFLINE.getEngine().getChapterImages(currentChapter);
             } catch (RepositoryException e) {
                 e.printStackTrace();
@@ -110,7 +143,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         @Override
         public void showImage(final int i) {
-            if (i == currentPictureNum) {
+            if (i == currentPictureNum || i >= uris.size() || i < 0) {
                 return;
             }
             File imageFile = new File(uris.get(i));
@@ -126,6 +159,10 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         @Override
         public void next() {
+            if (currentPictureNum + 1 >= uris.size()) {
+                goToChapter(currentChapterNum + 1);
+                return;
+            }
             showImage(currentPictureNum + 1);
         }
 
@@ -134,6 +171,32 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
             showImage(currentPictureNum - 1);
         }
 
+    }
+
+    class TestMangaAdapter extends ArrayAdapter<LocalManga> {
+
+        private List<LocalManga> objects;
+
+        @Override
+        public int getCount() {
+            return objects.size();
+        }
+
+        public TestMangaAdapter(final Context context, final int resource, final List<LocalManga> objects) {
+            super(context, resource, objects);
+            this.objects = objects;
+        }
+
+        @Nullable
+        @Override
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                v = MangaViewTestActivity.this.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
+            }
+            ((TextView) v).setText(objects.get(position).getTitle());
+            return v;
+        }
     }
 
 }

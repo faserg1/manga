@@ -1,11 +1,13 @@
 package com.danilov.manga.core.repository;
 
+import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,14 +39,36 @@ public class OfflineEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        return false;
+        LocalManga localManga = (LocalManga) manga;
+        String mangaUri = localManga.getLocalUri();
+        File folder = new File(mangaUri);
+        String[] dirs = folder.list(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String filename) {
+                File maybeDir = new File(dir.getPath() + "/" + filename);
+                return maybeDir.isDirectory();
+            }
+        });
+        for (int i = 0; i < dirs.length; i++) {
+            String uri = dirs[i];
+            dirs[i] = mangaUri + "/" + uri;
+        }
+        List<String> urisList = Arrays.asList(dirs);
+        Collections.sort(urisList);
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>(urisList.size());
+        for (int i = 0; i < urisList.size(); i++) {
+            MangaChapter chapter = new MangaChapter("", i, urisList.get(i));
+            chapters.add(chapter);
+        }
+        manga.setChapters(chapters);
+        return true;
     }
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String chapterUri = chapter.getUri();
-        File file = new File(chapterUri);
-        String[] uris = file.list(new FilenameFilter() {
+        File folder = new File(chapterUri);
+        String[] uris = folder.list(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String filename) {
                 return true;

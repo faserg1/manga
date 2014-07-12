@@ -70,9 +70,9 @@ public class DownloadedMangaDAO {
         }
     }
 
-    public static List<Manga> getAllManga() throws DatabaseAccessException {
+    public static List<LocalManga> getAllManga() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        List<Manga> mangaList = new ArrayList<Manga>();
+        List<LocalManga> mangaList = new ArrayList<LocalManga>();
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
@@ -84,6 +84,7 @@ public class DownloadedMangaDAO {
             int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
             int uriIndex = cursor.getColumnIndex(MANGA_URI);
             int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+            int idIndex = cursor.getColumnIndex(ID);
             int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
             do {
                 String title = cursor.getString(titleIndex);
@@ -92,12 +93,14 @@ public class DownloadedMangaDAO {
                 Repository repository = Repository.valueOf(cursor.getString(repositoryIndex));
                 String uri = cursor.getString(uriIndex);
                 String inetUri = cursor.getString(inetUriIndex);
+                int id = cursor.getInt(idIndex);
                 int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-                Manga manga = new Manga(title, inetUri, repository);
+                LocalManga manga = new LocalManga(title, inetUri, repository);
                 manga.setDescription(description);
                 manga.setAuthor(author);
                 manga.setLocalUri(uri);
                 manga.setChaptersQuantity(chaptersQuantity);
+                manga.setLocalId(id);
                 mangaList.add(manga);
             } while (cursor.moveToNext());
         } catch (Exception e) {
