@@ -46,7 +46,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         left.setOnClickListener(this);
         right.setOnClickListener(this);
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
-
+        findViewById(R.id.goToChapter).setOnClickListener(this);
         try {
             List<LocalManga> localMangas = DownloadedMangaDAO.getAllManga();
             TestMangaAdapter adapter = new TestMangaAdapter(this, android.R.layout.simple_list_item_1, localMangas);
@@ -65,6 +65,13 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.right:
                 strategy.next();
+                break;
+            case R.id.goToChapter:
+                findViewById(R.id.selectChapter).setVisibility(View.GONE);
+                EditText text = (EditText) findViewById(R.id.chapter);
+                Integer chapter = Integer.valueOf(text.getText().toString());
+                strategy.init();
+                strategy.goToChapter(chapter);
                 break;
         }
     }
@@ -131,6 +138,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         public void goToChapter(final int chapter) {
+            currentPictureNum = -1;
             this.currentChapterNum = chapter;
             this.currentChapter = manga.getChapterByNumber(currentChapterNum);
             try {

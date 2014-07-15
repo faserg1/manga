@@ -19,22 +19,24 @@ public class MangaImageSwitcher extends ImageSwitcher {
     }
 
     public void setNextImageDrawable(final String filePath) {
-        SubsamplingScaleImageView prevImage = (SubsamplingScaleImageView)getCurrentView();
-        SubsamplingScaleImageView image = (SubsamplingScaleImageView)this.getNextView();
-        image.setImageFile(filePath);
-//        if (prevImage != null) {
-//            image.setZoom(prevImage);
-//        }
+        SubsamplingScaleImageView prevImage = (SubsamplingScaleImageView) getCurrentView();
+        SubsamplingScaleImageView image = (SubsamplingScaleImageView) this.getNextView();
+        ImageViewState state = null;
+        if (prevImage != null) {
+            state = prevImage.getState();
+        }
+        image.setImageFile(filePath, state);
         showNext();
     }
 
     public void setPreviousImageDrawable(final String filePath) {
-        SubsamplingScaleImageView prevImage = (SubsamplingScaleImageView)getCurrentView();
+        SubsamplingScaleImageView prevImage = (SubsamplingScaleImageView) getCurrentView();
         SubsamplingScaleImageView image = (SubsamplingScaleImageView) this.getNextView();
-        image.setImageFile(filePath);
-//        if (prevImage != null) {
-//            image.setZoom(prevImage);
-//        }
+        ImageViewState state = null;
+        if (prevImage != null) {
+            state = prevImage.getState();
+        }
+        image.setImageFile(filePath, state);
         showPrevious();
     }
 

@@ -49,6 +49,16 @@
 
     </LinearLayout>
 
+    <LinearLayout
+            android:id="@+id/selectChapter"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:background="#ffffff">
+        <EditText android:id="@+id/chapter" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+        <Button android:id="@+id/goToChapter" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Manga.ButtonCommon"/>
+    </LinearLayout>
+
     <ListView
             android:id="@+id/mangaList"
             android:layout_width="fill_parent"

@@ -2,7 +2,7 @@
 <resources>
 
     <style name="MangaBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#FF8200</item>
+        <item name="android:background">#ffe97823</item>
         <item name="android:titleTextStyle">@style/Manga.MyActionBar.TitleTextStyle</item>
     </style>
 

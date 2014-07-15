@@ -7,10 +7,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Semyon Danilov on 21.06.2014.
@@ -64,6 +61,46 @@ public class OfflineEngine implements RepositoryEngine {
         return true;
     }
 
+    private Comparator<String> numericStringComparator = new Comparator<String>() {
+
+        @Override
+        public int compare(final String lhs, final String rhs) {
+            String _lhs = lhs;
+            String _rhs = rhs;
+            int index = _lhs.indexOf('.');
+            if (index != -1) {
+                _lhs = _lhs.substring(0, index);
+                index = _lhs.lastIndexOf('/');
+                if (index == -1) {
+                    index = _lhs.lastIndexOf('\\');
+                }
+                if (index != -1) {
+                    _lhs = _lhs.substring(index + 1);
+                }
+            }
+            index = _rhs.indexOf('.');
+            if (index != -1) {
+                _rhs = _rhs.substring(0, index);
+                index = _rhs.lastIndexOf('/');
+                if (index == -1) {
+                    index = _rhs.lastIndexOf('\\');
+                }
+                if (index != -1) {
+                    _rhs = _rhs.substring(index + 1);
+                }
+            }
+            try {
+                Integer left = Integer.valueOf(_lhs);
+                Integer right = Integer.valueOf(_rhs);
+                return left.compareTo(right);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
+
+    };
+
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String chapterUri = chapter.getUri();
@@ -79,8 +116,8 @@ public class OfflineEngine implements RepositoryEngine {
             uris[i] = chapterUri + "/" + uri;
         }
         List<String> urisList = Arrays.asList(uris);
-        Collections.sort(urisList);
-        return Arrays.asList(uris);
+        Collections.sort(urisList, numericStringComparator);
+        return urisList;
     }
 
     @Override
