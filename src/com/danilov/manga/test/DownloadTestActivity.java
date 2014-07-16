@@ -42,8 +42,6 @@ public class DownloadTestActivity extends Activity {
         mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
         downloadHandler = new DownloadHandler();
         downloadManager.setListener(new DownloadListener());
-        downloadManager.startDownload("http://he.readmanga.ru/auto/11/52/35/03.png", mydir.getPath() + "/1.png");
-        downloadManager.startDownload("http://hb.readmanga.ru/auto/11/52/35/04.png", mydir.getPath() + "/2.png");
         slider = (Slider) findViewById(R.id.slider);
     }
 
