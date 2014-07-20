@@ -86,7 +86,6 @@
                 android:layout_height="wrap_content"
                 style="@style/Manga.ButtonCommon"
                 android:text="Restart if error"
-                android:enabled="false"
                 android:id="@+id/restart"/>
 
     </LinearLayout>

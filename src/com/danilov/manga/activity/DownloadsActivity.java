@@ -63,7 +63,6 @@ public class DownloadsActivity extends Activity {
         Intent i = getIntent();
         final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         restartButton = (Button) findViewById(R.id.restart);
-        restartButton.setEnabled(false);
         restartButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -167,7 +166,6 @@ public class DownloadsActivity extends Activity {
     private void onError(final Message message) {
         Pair p = (Pair) message.obj;
         Utils.showToast(this, String.valueOf(p.second));
-        restartButton.setEnabled(true);
     }
 
     private void onStatus(final Message message) {
