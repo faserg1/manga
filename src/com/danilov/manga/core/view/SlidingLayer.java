@@ -38,7 +38,7 @@ import android.view.*;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
-import com.danilov.manga.R.styleable;
+import com.danilov.manga.R;
 
 import java.lang.reflect.Method;
 import java.util.Random;
@@ -172,27 +172,27 @@ public class SlidingLayer extends FrameLayout {
         super(context, attrs, defStyle);
 
         // Style
-        final TypedArray ta = context.obtainStyledAttributes(attrs, styleable.SlidingLayer);
+        final TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingLayer);
 
         // Set the side of the screen
-        setStickTo(ta.getInt(styleable.SlidingLayer_stickTo, STICK_TO_AUTO));
+        setStickTo(ta.getInt(R.styleable.SlidingLayer_stickTo, STICK_TO_AUTO));
 
         // Sets the shadow drawable
-        int shadowRes = ta.getResourceId(styleable.SlidingLayer_shadowDrawable, -1);
+        int shadowRes = ta.getResourceId(R.styleable.SlidingLayer_shadowDrawable, -1);
         if (shadowRes != -1) {
             setShadowDrawable(shadowRes);
         }
 
         // Sets the shadow width
-        setShadowWidth((int) ta.getDimension(styleable.SlidingLayer_shadowWidth, 0));
+        setShadowWidth((int) ta.getDimension(R.styleable.SlidingLayer_shadowWidth, 0));
 
         // Sets the ability to close the layer by tapping in any empty space
-        closeOnTapEnabled = ta.getBoolean(styleable.SlidingLayer_closeOnTapEnabled, true);
+        closeOnTapEnabled = ta.getBoolean(R.styleable.SlidingLayer_closeOnTapEnabled, true);
         // Sets the ability to open the layout by tapping on any of the exposed closed layer
-        openOnTapEnabled = ta.getBoolean(styleable.SlidingLayer_openOnTapEnabled, true);
+        openOnTapEnabled = ta.getBoolean(R.styleable.SlidingLayer_openOnTapEnabled, true);
 
         // How much of the view sticks out when closed
-        setOffsetWidth(ta.getDimensionPixelOffset(styleable.SlidingLayer_offsetWidth, 0));
+        setOffsetWidth(ta.getDimensionPixelOffset(R.styleable.SlidingLayer_offsetWidth, 0));
 
         ta.recycle();
 

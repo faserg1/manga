@@ -6,6 +6,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -49,6 +50,24 @@ public class AnimatedActionView {
     public void stopAnimation() {
         isAnimating = false;
         actionView.clearAnimation();
+    }
+
+    public MenuItem getItem() {
+        return item;
+    }
+
+    public ImageView getActionView() {
+        return actionView;
+    }
+
+    public void show() {
+        actionView.setVisibility(View.VISIBLE);
+        item.setVisible(true);
+    }
+
+    public void hide() {
+        actionView.setVisibility(View.GONE);
+        item.setVisible(false);
     }
 
     public boolean isAnimating() {

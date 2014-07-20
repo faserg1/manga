@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
+import com.danilov.manga.core.view.AnimatedActionView;
 
 /**
  * Created by Semyon Danilov on 21.05.2014.
@@ -34,9 +37,13 @@ public class MangaInfoActivity extends Activity {
     private TextView mangaTitle = null;
     private ImageView mangaCover = null;
 
+    private AnimatedActionView refreshSign;
+
     private Button downloadButton;
 
     private Manga manga;
+
+    private boolean isLoading = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +75,7 @@ public class MangaInfoActivity extends Activity {
                 mangaDescriptionTextView.setText(mangaDescription);
                 chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
             } else {
+                isLoading = true;
                 MangaInfoQueryThread thread = new MangaInfoQueryThread(manga);
                 thread.start();
             }
@@ -105,10 +113,18 @@ public class MangaInfoActivity extends Activity {
                         String message = Utils.errorMessage(context, error, R.string.p_internet_error);
                         Utils.showToast(getApplicationContext(), message);
                     }
+                    isLoading = false;
+                    refreshSign.hide();
+                    refreshSign.stopAnimation();
                 }
             });
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -123,6 +139,29 @@ public class MangaInfoActivity extends Activity {
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.myactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        refreshSign = new AnimatedActionView(this, menu, R.id.refresh, R.drawable.ic_action_refresh, R.anim.rotation);
+        if (isLoading) {
+            refreshSign.show();
+            refreshSign.startAnimation();
+        } else {
+            refreshSign.hide();
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(final int featureId, final MenuItem item) {
+        return super.onMenuItemSelected(featureId, item);
     }
 
     private class ButtonClickListener implements View.OnClickListener {

@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import com.danilov.manga.R.styleable;
+import com.danilov.manga.R;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -220,18 +220,18 @@ public class SubsamplingScaleImageView extends View {
 
         // Handle XML attributes
         if (attr != null) {
-            TypedArray typedAttr = getContext().obtainStyledAttributes(attr, styleable.SubsamplingScaleImageView);
-            if (typedAttr.hasValue(styleable.SubsamplingScaleImageView_assetName)) {
-                String assetName = typedAttr.getString(styleable.SubsamplingScaleImageView_assetName);
+            TypedArray typedAttr = getContext().obtainStyledAttributes(attr, R.styleable.SubsamplingScaleImageView);
+            if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_assetName)) {
+                String assetName = typedAttr.getString(R.styleable.SubsamplingScaleImageView_assetName);
                 if (assetName != null && assetName.length() > 0) {
                     setImageAsset(assetName);
                 }
             }
-            if (typedAttr.hasValue(styleable.SubsamplingScaleImageView_panEnabled)) {
-                setPanEnabled(typedAttr.getBoolean(styleable.SubsamplingScaleImageView_panEnabled, true));
+            if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_panEnabled)) {
+                setPanEnabled(typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_panEnabled, true));
             }
-            if (typedAttr.hasValue(styleable.SubsamplingScaleImageView_zoomEnabled)) {
-                setZoomEnabled(typedAttr.getBoolean(styleable.SubsamplingScaleImageView_zoomEnabled, true));
+            if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_zoomEnabled)) {
+                setZoomEnabled(typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_zoomEnabled, true));
             }
         }
     }

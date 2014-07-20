@@ -34,6 +34,9 @@ public class MyActivity extends Activity {
 
     private MangaDownloadService service = null;
 
+
+    private AnimatedActionView aav = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,8 +101,6 @@ public class MyActivity extends Activity {
 //        thread.start();
     }
 
-
-    private AnimatedActionView aav = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

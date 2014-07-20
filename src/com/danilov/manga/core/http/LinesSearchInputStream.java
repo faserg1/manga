@@ -12,7 +12,7 @@ import java.io.InputStream;
  */
 public class LinesSearchInputStream extends FilterInputStream {
 
-    public static final String TAG = "ProgressInputStream";
+    public static final String TAG = "LinesSearchInputStream";
 
     public static final int SEARCHING = 0;
     public static final int FOUND = 1;
@@ -108,10 +108,6 @@ public class LinesSearchInputStream extends FilterInputStream {
             byte cur = bytes[i];
             boolean wrong = false;
             int a = i;
-            if (desire == null) {
-                int b = 0;
-                b++;
-            }
             for (int j = successMatched; j < desire.length; j++) {
                 if (cur != desire[j]) {
                     wrong = true;
@@ -124,7 +120,8 @@ public class LinesSearchInputStream extends FilterInputStream {
                 if (a < red) {
                     cur = bytes[a];
                 } else {
-                    successMatched = j;
+                    Log.e(TAG, "mistake place?");
+                    successMatched = j + 1;
                     break;
                 }
             }
@@ -137,6 +134,7 @@ public class LinesSearchInputStream extends FilterInputStream {
             }
         }
         if (fullFound) {
+            Log.d(TAG, "found");
             return true;
         }
         return false;
