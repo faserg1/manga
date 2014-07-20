@@ -5,10 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.database.DatabaseAccessException;
@@ -20,6 +18,7 @@ import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
+import com.danilov.manga.core.view.SlidingLayer;
 import com.danilov.manga.core.view.SubsamplingScaleImageView;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,38 +37,26 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
     private View left;
     private View right;
     private View selectorStub;
-    private View selector;
 
     private int parentHeight;
     private int height;
+
+    private SlidingLayer slidingLayer;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_manga_view_activity);
         imageSwitcher = (MangaImageSwitcher) findViewById(R.id.imageSwitcher);
+        slidingLayer = (SlidingLayer) findViewById(R.id.selector);
         left = findViewById(R.id.left);
         right = findViewById(R.id.right);
         selectorStub = findViewById(R.id.selectorStub);
-        selector = findViewById(R.id.selector);
         mangaList = (ListView) findViewById(R.id.mangaList);
         left.setOnClickListener(this);
         right.setOnClickListener(this);
         selectorStub.setOnClickListener(this);
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         findViewById(R.id.goToChapter).setOnClickListener(this);
-        ViewTreeObserver viewTreeObserver = selector.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    selector.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    parentHeight = ((View) selector.getParent()).getHeight();
-                    height = selector.getHeight();
-                    closeSelector(false);
-                }
-            });
-        }
-
         try {
             List<LocalManga> localMangas = DownloadedMangaDAO.getAllManga();
             TestMangaAdapter adapter = new TestMangaAdapter(this, android.R.layout.simple_list_item_1, localMangas);
@@ -90,10 +77,10 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
                 strategy.next();
                 break;
             case R.id.selectorStub:
-                if (isOpen) {
-                    closeSelector(true);
+                if (slidingLayer.isOpened()) {
+                    slidingLayer.closeLayer(true);
                 } else {
-                    openSelector();
+                    slidingLayer.openLayer(true);
                 }
                 break;
             case R.id.goToChapter:
@@ -103,52 +90,6 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
                 strategy.init();
                 strategy.goToChapter(chapter);
                 break;
-        }
-    }
-
-    private boolean isOpen = false;
-
-    private void openSelector() {
-        isOpen = true;
-        ViewGroup.LayoutParams layoutParams = selector.getLayoutParams();
-        RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(layoutParams.width, layoutParams.height);
-        newParams.setMargins(0, parentHeight - height, 0, 0);
-        selector.setLayoutParams(newParams);
-        TranslateAnimation ta = new TranslateAnimation(0, 0, height, 0);
-        ta.setDuration(500);
-        selector.startAnimation(ta);
-    }
-
-    private void closeSelector(final boolean anim) {
-        isOpen = false;
-        if (anim) {
-            TranslateAnimation ta = new TranslateAnimation(0, 0, 0, height);
-            ta.setDuration(500);
-            ta.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(final Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(final Animation animation) {
-                    ViewGroup.LayoutParams layoutParams = selector.getLayoutParams();
-                    RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(layoutParams.width, layoutParams.height);
-                    newParams.setMargins(0, parentHeight, 0, 0);
-                    selector.setLayoutParams(newParams);
-                }
-
-                @Override
-                public void onAnimationRepeat(final Animation animation) {
-
-                }
-            });
-            selector.startAnimation(ta);
-        } else {
-            ViewGroup.LayoutParams layoutParams = selector.getLayoutParams();
-            RelativeLayout.LayoutParams newParams = new RelativeLayout.LayoutParams(layoutParams.width, layoutParams.height);
-            newParams.setMargins(0, parentHeight, 0, 0);
-            selector.setLayoutParams(newParams);
         }
     }
 

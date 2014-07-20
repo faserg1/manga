@@ -120,7 +120,6 @@ public class LinesSearchInputStream extends FilterInputStream {
                 if (a < red) {
                     cur = bytes[a];
                 } else {
-                    Log.e(TAG, "mistake place?");
                     successMatched = j + 1;
                     break;
                 }

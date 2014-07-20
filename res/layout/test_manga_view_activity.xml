@@ -68,24 +68,40 @@
 
     </ListView>
 
-    <LinearLayout
+    <com.danilov.manga.core.view.SlidingLayer
+            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
             android:id="@+id/selector"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#ffffc886"
-            android:layout_alignParentBottom="true">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            slidingLayer:stickTo="bottom"
+            slidingLayer:offsetWidth="30dp"
+            slidingLayer:closeOnTapEnabled="true">
 
-        <Button android:text="btn1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Manga.ButtonCommon"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <Button android:text="btn2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Manga.ButtonCommon"/>
+            <View android:layout_width="match_parent"
+                  android:layout_height="30dp"/>
 
-    </LinearLayout>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:background="#14ad8f">
+
+                <Button android:text="btn1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Manga.ButtonCommon"/>
+
+                <Button android:text="btn2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Manga.ButtonCommon"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.danilov.manga.core.view.SlidingLayer>
 
 </RelativeLayout>
