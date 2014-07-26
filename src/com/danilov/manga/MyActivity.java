@@ -12,6 +12,7 @@ import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
+import com.danilov.manga.activity.MangaQueryActivity;
 import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
@@ -24,7 +25,6 @@ import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.DownloadTestActivity;
-import com.danilov.manga.test.LocalImageActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 
@@ -145,7 +145,7 @@ public class MyActivity extends Activity {
     }
 
     public void sixthTest(View view) {
-        Intent intent = new Intent(this, LocalImageActivity.class);
+        Intent intent = new Intent(this, MangaQueryActivity.class);
         startActivity(intent);
     }
 

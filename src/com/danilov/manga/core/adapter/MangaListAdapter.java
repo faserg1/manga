@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.httpimage.HttpImageManager;
@@ -26,11 +27,17 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
 
     private final int resourceId;
     private int sizeOfImage;
+    private PopupButtonClickListener popupButtonClickListener;
 
     public MangaListAdapter(final Context context, final int resource, final List<Manga> objects) {
+        this(context, resource, objects, null);
+    }
+
+    public MangaListAdapter(final Context context, final int resource, final List<Manga> objects, final PopupButtonClickListener popupButtonClickListener) {
         super(context, resource, objects);
         resourceId = resource;
         sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+        this.popupButtonClickListener = popupButtonClickListener;
     }
 
     @Override
@@ -42,7 +49,7 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         }
         Manga manga = getItem(position);
         Object tag = view.getTag();
-        MangaViewBag viewBag;
+        final MangaViewBag viewBag;
 
         Log.d(TAG, "Position = " + position);
         Log.d(TAG, "Has convertView = " + (convertView != null));
@@ -53,11 +60,23 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
             viewBag = new MangaViewBag();
             TextView titleView = (TextView) view.findViewById(R.id.manga_title);
             ImageView coverView = (ImageView) view.findViewById(R.id.manga_cover);
+            ImageButton popupButton = (ImageButton) view.findViewById(R.id.popup_button);
             viewBag.titleView = titleView;
             viewBag.coverView = coverView;
+            viewBag.popupButton = popupButton;
             view.setTag(viewBag);
         }
         viewBag.titleView.setText(manga.getTitle());
+        if (popupButtonClickListener != null) {
+            viewBag.popupButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(final View v) {
+                    popupButtonClickListener.onPopupButtonClick(viewBag.popupButton, position);
+                }
+
+            });
+        }
         HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         Uri coverUri = Uri.parse(manga.getCoverUri());
         HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
@@ -71,7 +90,14 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
     public class MangaViewBag {
         protected TextView titleView;
         protected ImageView coverView;
+        protected ImageButton popupButton;
         //TODO: add everything else
+    }
+
+    public interface PopupButtonClickListener {
+
+        void onPopupButtonClick(final View popupButton, final int listPosition);
+
     }
 
 }

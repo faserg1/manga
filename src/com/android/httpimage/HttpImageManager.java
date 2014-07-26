@@ -133,8 +133,7 @@ public class HttpImageManager {
                 r = new LoadRequest(uri, imageView, newSize);
                 Log.d(TAG, "Creating new loadrequest, pool is empty");
             }
-            OnLoadResponseListener l = r.new LoadListener();
-            r.mListener = l;
+            r.mListener = r.new LoadListener();
 
             //отменяем старый реквест здесь, потому что до onBeforeLoad может не дойти, если в кэше есть:)
             if (imageView.getDrawable() instanceof AsyncDrawable) {

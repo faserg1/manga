@@ -69,4 +69,5 @@ public class QueryTestActivity extends Activity implements View.OnClickListener,
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         startActivity(intent);
     }
+
 }

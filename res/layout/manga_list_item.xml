@@ -64,6 +64,7 @@
                 android:descendantFocusability="blocksDescendants">
 
             <ImageButton
+                    android:id="@+id/popup_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_action_overflow"

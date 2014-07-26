@@ -47,7 +47,7 @@
 
     <Button
             android:id="@+id/test6"
-            android:text="Local Image Activity"
+            android:text="Manga Query Activity"
             style="@style/Manga.ButtonCommon"
             android:onClick="sixthTest"
             android:layout_width="wrap_content"
