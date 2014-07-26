@@ -34,6 +34,35 @@ public class OfflineEngine implements RepositoryEngine {
         return false;
     }
 
+    private Comparator<String> chapterNumericStringComparator = new Comparator<String>() {
+
+        @Override
+        public int compare(final String lhs, final String rhs) {
+            String _lhs = lhs;
+            String _rhs = rhs;
+            int index = _lhs.indexOf('.');
+            if (index != -1) {
+                _lhs = _lhs.substring(0, index);
+                index = _lhs.lastIndexOf('/');
+                if (index == -1) {
+                    index = _lhs.lastIndexOf('\\');
+                }
+                if (index != -1) {
+                    _lhs = _lhs.substring(index + 1);
+                }
+            }
+            try {
+                Integer left = Integer.valueOf(_lhs);
+                Integer right = Integer.valueOf(_rhs);
+                return left.compareTo(right);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
+
+    };
+
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
         LocalManga localManga = (LocalManga) manga;
@@ -51,7 +80,7 @@ public class OfflineEngine implements RepositoryEngine {
             dirs[i] = mangaUri + "/" + uri;
         }
         List<String> urisList = Arrays.asList(dirs);
-        Collections.sort(urisList);
+        Collections.sort(urisList, chapterNumericStringComparator);
         List<MangaChapter> chapters = new ArrayList<MangaChapter>(urisList.size());
         for (int i = 0; i < urisList.size(); i++) {
             MangaChapter chapter = new MangaChapter("", i, urisList.get(i));
@@ -61,7 +90,7 @@ public class OfflineEngine implements RepositoryEngine {
         return true;
     }
 
-    private Comparator<String> numericStringComparator = new Comparator<String>() {
+    private Comparator<String> imageNumericStringComparator = new Comparator<String>() {
 
         @Override
         public int compare(final String lhs, final String rhs) {
@@ -116,7 +145,7 @@ public class OfflineEngine implements RepositoryEngine {
             uris[i] = chapterUri + "/" + uri;
         }
         List<String> urisList = Arrays.asList(uris);
-        Collections.sort(urisList, numericStringComparator);
+        Collections.sort(urisList, imageNumericStringComparator);
         return urisList;
     }
 

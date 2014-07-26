@@ -18,12 +18,16 @@ import com.danilov.manga.core.repository.ReadmangaEngine;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Semyon Danilov on 26.07.2014.
  */
 public class MangaQueryActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+
+    private static final String FOUND_MANGA_KEY = "FOUND_MANGA_KEY";
+    private static final String BRAND_HIDDEN = "BRAND_HIDDEN";
 
     private EditText query;
     private ListView searchResultsView;
@@ -33,6 +37,8 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     private MangaListAdapter adapter = null;
 
     private List<Manga> foundManga = null;
+
+    private boolean brandHidden = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,14 +79,29 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             if (foundManga == null) {
                 return;
             }
-            MangaQueryActivity.this.foundManga = foundManga;
-            adapter = new MangaListAdapter(MangaQueryActivity.this, R.layout.manga_list_item, foundManga);
-            searchResultsView.setAdapter(adapter);
-            searchResultsView.setOnItemClickListener(MangaQueryActivity.this);
+            setFoundMangaList(foundManga);
         }
 
     }
 
+    @Override
+    protected void onResume() {
+        setFoundMangaList(foundManga);
+        if (brandHidden) {
+            brand.setVisibility(View.GONE);
+        }
+        super.onResume();
+    }
+
+    private void setFoundMangaList(final List<Manga> manga) {
+        this.foundManga = manga;
+        if (this.foundManga == null) {
+            return;
+        }
+        adapter = new MangaListAdapter(this, R.layout.manga_list_item, foundManga);
+        searchResultsView.setAdapter(adapter);
+        searchResultsView.setOnItemClickListener(this);
+    }
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
@@ -91,6 +112,10 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     }
 
     private void hideBrand() {
+        if (brandHidden) {
+            return;
+        }
+        brandHidden = true;
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setDuration(1000);
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
@@ -112,6 +137,26 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
 
         });
         brand.startAnimation(fadeOut);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        foundManga = savedInstanceState.getParcelableArrayList(FOUND_MANGA_KEY);
+        brandHidden = savedInstanceState.getBoolean(BRAND_HIDDEN);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        ArrayList<Manga> mangas = null;
+        if (!(foundManga instanceof ArrayList)) {
+            mangas.addAll(foundManga);
+        } else {
+            mangas = (ArrayList<Manga>) foundManga;
+        }
+        outState.putParcelableArrayList(FOUND_MANGA_KEY, mangas);
+        outState.putBoolean(BRAND_HIDDEN, brandHidden);
+        super.onSaveInstanceState(outState);
     }
 
 }

@@ -133,7 +133,7 @@ public class Manga implements Parcelable {
 
     };
 
-    private Manga(final Parcel parcel) {
+    protected Manga(final Parcel parcel) {
         uri = parcel.readString();
         title = parcel.readString();
         author = parcel.readString();

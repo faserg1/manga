@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -176,9 +175,10 @@ public class ReadmangaEngine implements RepositoryEngine {
     //!html values
 
     private List<Manga> parseSearchResponse(final Document document) {
-        List<Manga> mangaList = new LinkedList<Manga>();
+        List<Manga> mangaList = null;
         Element searchResults = document.getElementById(searchElementId);
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaLinkClass);
+        mangaList = new ArrayList<Manga>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
             Element parent = mangaLink.parent();
             String uri = mangaLink.attr("href");
