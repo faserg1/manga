@@ -3,71 +3,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
+              android:orientation="vertical"
               android:paddingLeft="10dp"
               android:paddingRight="10dp"
               android:paddingTop="5dp"
-              android:orientation="vertical"
               android:paddingBottom="5dp">
 
     <!--card-->
     <LinearLayout
-                  android:layout_width="fill_parent"
-                  android:layout_height="@dimen/manga_list_item_height"
-                  android:orientation="horizontal"
-                  android:baselineAligned="false"
-                  android:background="@drawable/item_background"
-                  android:padding="15dp">
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/manga_list_item_height"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:background="@drawable/item_background"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp">
 
-            <!--cover-->
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.3"
-                    android:orientation="vertical">
-                <ImageView
-                        android:id="@+id/manga_cover"
-                        android:layout_height="@dimen/manga_list_image_height"
-                        android:layout_width="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/test_manga_front"/>
+        <!--cover-->
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
+            <ImageView
+                    android:id="@+id/manga_cover"
+                    android:layout_height="@dimen/manga_list_image_height"
+                    android:layout_width="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/test_manga_front"/>
 
-            </LinearLayout> <!--cover end-->
+        </LinearLayout> <!--cover end-->
 
-            <!--description & info-->
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical"
-                    android:paddingLeft="10dp"
-                    android:layout_weight="0.7">
+        <!--description & info-->
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:layout_weight="0.6">
 
-                <TextView
-                        android:id="@+id/manga_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:text="Bakuman"/>
-                <TextView
-                        android:id="@+id/manga_quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Episodes: 308"/>
+            <TextView
+                    android:id="@+id/manga_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:text="Bakuman"/>
+            <TextView
+                    android:id="@+id/manga_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Episodes: 308"/>
 
-            </LinearLayout> <!--description & info end-->
+        </LinearLayout> <!--description & info end-->
 
-            <!--<LinearLayout-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_weight="0.2"-->
-                    <!--android:layout_height="fill_parent">-->
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
 
-                <!--<RatingBar-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:max="2"-->
-                        <!--android:id="@+id/ratingBar" android:layout_gravity="right"/>-->
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_overflow"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:background="?android:attr/selectableItemBackground"/>
 
-            <!--</LinearLayout>-->
+        </LinearLayout>
 
     </LinearLayout>
     <!--card end-->
