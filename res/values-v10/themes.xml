@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="MangaBaseTheme" parent="@android:style/Theme.Light"/>
+    <style name="MangaBaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/MangaBaseTheme.MyActionBar</item>
+
+    </style>
 
 </resources>

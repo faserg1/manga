@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="MangaBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#ffe97823</item>
+        <item name="android:titleTextStyle">@style/Manga.MyActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="Manga.MyActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">#fff</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

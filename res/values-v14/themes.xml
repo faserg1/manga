@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MangaBaseTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+    <style name="MangaBaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MangaBaseTheme.MyActionBar</item>
     </style>
 
