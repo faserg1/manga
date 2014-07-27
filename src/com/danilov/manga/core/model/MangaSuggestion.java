@@ -1,5 +1,7 @@
 package com.danilov.manga.core.model;
 
+import com.danilov.manga.core.repository.RepositoryEngine;
+
 /**
  * Created by Semyon Danilov on 27.07.2014.
  */
@@ -9,9 +11,12 @@ public class MangaSuggestion {
 
     private String title;
 
-    public MangaSuggestion(final String title, final String url) {
+    private RepositoryEngine.Repository repository;
+
+    public MangaSuggestion(final String title, final String url, final RepositoryEngine.Repository repository) {
         this.title = title;
         this.url = url;
+        this.repository = repository;
     }
 
     public String getUrl() {
@@ -28,5 +33,13 @@ public class MangaSuggestion {
 
     public void setTitle(final String title) {
         this.title = title;
+    }
+
+    public RepositoryEngine.Repository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(final RepositoryEngine.Repository repository) {
+        this.repository = repository;
     }
 }

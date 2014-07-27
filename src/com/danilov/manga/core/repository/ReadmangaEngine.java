@@ -6,7 +6,6 @@ import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.model.MangaSuggestion;
 import com.danilov.manga.core.util.IoUtils;
-import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import org.apache.http.protocol.HTTP;
@@ -103,15 +102,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 throw new RepositoryException(e.getMessage());
             }
             String responseString = IoUtils.convertBytesToString(response);
-            Pair pair = parseMangaDescriptionResponse(Utils.toDocument(responseString));
-            String mangaDescription = (String) pair.first;
-            Integer quantity = (Integer) pair.second;
-            if (mangaDescription == null || quantity == null) {
-                return false;
-            }
-            manga.setChaptersQuantity(quantity);
-            manga.setDescription(mangaDescription);
-            return true;
+            return parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
         }
         return false;
     }
@@ -217,7 +208,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                         continue;
                     }
                     String link = data.getString(linkElementName);
-                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.READMANGA);
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
@@ -259,11 +250,14 @@ public class ReadmangaEngine implements RepositoryEngine {
     //html values
     private String descriptionElementClass = "manga-description";
     private String chaptersElementClass = "chapters-link";
+    private String coverClassName = "subject-cower";
+    private String coverClass = "full-list-pic";
+    private String altCoverClass = "nivo-imageLink";
 
-    private Pair parseMangaDescriptionResponse(final Document document) {
+    private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
         Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
         if (mangaDescriptionElements.isEmpty()) {
-            return null;
+            return false;
         }
         Element mangaDescription = mangaDescriptionElements.first();
         Elements links = mangaDescription.getElementsByTag("a");
@@ -280,7 +274,36 @@ public class ReadmangaEngine implements RepositoryEngine {
             links = chaptersElement.getElementsByTag("a");
             quantity = links.size();
         }
-        return Pair.obtain(description, quantity);
+        manga.setChaptersQuantity(quantity);
+        manga.setDescription(description);
+        if (manga.getCoverUri() != null) {
+            return true;
+        }
+        Elements coverContainer = document.getElementsByClass(coverClassName);
+        String coverUri = null;
+        if (coverContainer.size() >= 1) {
+            Element cover = coverContainer.get(0);
+            Elements coverUriElements = cover.getElementsByClass(coverClass);
+            if (coverUriElements.size() >= 1) {
+                //a lot of images
+                Element e = coverUriElements.get(0);
+                coverUri = e.attr("href");
+            } else {
+                coverUriElements = cover.getElementsByClass(altCoverClass);
+                if (coverUriElements.size() >= 1) {
+                    //more than one
+                    coverUri = coverUriElements.get(0).attr("href");
+                } else {
+                    //only one
+                    Elements elements = cover.getElementsByTag("img");
+                    if (elements.size() >= 1) {
+                        coverUri = elements.get(0).attr("src");
+                    }
+                }
+            }
+        }
+        manga.setCoverUri(coverUri);
+        return true;
     }
 
     //html values

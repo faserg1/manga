@@ -175,13 +175,14 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
                 cursor.addRow(row);
                 idx++;
             }
-            CursorAdapter adapter = searchView.getSuggestionsAdapter();
+            MangaSuggestionsAdapter adapter = (MangaSuggestionsAdapter) searchView.getSuggestionsAdapter();
             if (adapter == null) {
                 adapter = new MangaSuggestionsAdapter(MangaQueryActivity.this, cursor);
                 searchView.setSuggestionsAdapter(adapter);
             } else {
                 adapter.changeCursor(cursor);
             }
+            adapter.setSuggestions(mangaSuggestions);
         }
 
     }
@@ -293,13 +294,42 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         searchView.setQueryRefinementEnabled(true);
         MatrixCursor matrixCursor = new MatrixCursor(COLUMNS);
         searchView.setSuggestionsAdapter(new MangaSuggestionsAdapter(this, matrixCursor));
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+
+            @Override
+            public boolean onSuggestionSelect(final int i) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(final int i) {
+                MangaSuggestionsAdapter adapter = (MangaSuggestionsAdapter) searchView.getSuggestionsAdapter();
+                MangaSuggestion suggestion = adapter.getSuggestions().get(i);
+                Manga manga = new Manga(suggestion.getTitle(), suggestion.getUrl(), suggestion.getRepository());
+                Intent intent = new Intent(MangaQueryActivity.this, MangaInfoActivity.class);
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                startActivity(intent);
+                return true;
+            }
+        });
+
         return true;
     }
 
     private class MangaSuggestionsAdapter extends CursorAdapter {
 
+        private List<MangaSuggestion> suggestions = null;
+
         public MangaSuggestionsAdapter(final Context context, final Cursor c) {
             super(context, c, 0);
+        }
+
+        public List<MangaSuggestion> getSuggestions() {
+            return suggestions;
+        }
+
+        public void setSuggestions(final List<MangaSuggestion> suggestions) {
+            this.suggestions = suggestions;
         }
 
         @Override

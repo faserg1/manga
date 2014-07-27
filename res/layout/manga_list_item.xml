@@ -30,8 +30,7 @@
                     android:id="@+id/manga_cover"
                     android:layout_height="@dimen/manga_list_image_height"
                     android:layout_width="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/test_manga_front"/>
+                    android:adjustViewBounds="true"/>
 
         </LinearLayout> <!--cover end-->
 
@@ -48,13 +47,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:text="Bakuman"/>
+                    android:textSize="15sp"/>
             <TextView
                     android:id="@+id/manga_quantity"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Episodes: 308"/>
+                    android:layout_height="wrap_content"/>
 
         </LinearLayout> <!--description & info end-->
 

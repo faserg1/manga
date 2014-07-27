@@ -45,6 +45,8 @@ public class MangaInfoActivity extends Activity {
 
     private boolean isLoading = false;
 
+    private boolean hasCoverLoaded = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_info_activity);
@@ -58,27 +60,33 @@ public class MangaInfoActivity extends Activity {
         if (savedInstanceState == null) {
             Intent i = getIntent();
             manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        } else {
-            manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
         }
         if (manga != null) {
-            Uri coverUri = Uri.parse(manga.getCoverUri());
+            loadMangaInfo(manga);
+        }
+    }
+
+    private void loadMangaInfo(final Manga manga) {
+        String coverUrl = manga.getCoverUri();
+        if (coverUrl != null) {
+            hasCoverLoaded = true;
+            Uri coverUri = Uri.parse(coverUrl);
             final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
             HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, sizeOfImage);
             Bitmap bitmap = httpImageManager.loadImage(request);
             if (bitmap != null) {
                 mangaCover.setImageBitmap(bitmap);
             }
-            mangaTitle.setText(manga.getTitle());
-            String mangaDescription = manga.getDescription();
-            if (mangaDescription != null) {
-                mangaDescriptionTextView.setText(mangaDescription);
-                chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
-            } else {
-                isLoading = true;
-                MangaInfoQueryThread thread = new MangaInfoQueryThread(manga);
-                thread.start();
-            }
+        }
+        mangaTitle.setText(manga.getTitle());
+        String mangaDescription = manga.getDescription();
+        if (mangaDescription != null) {
+            mangaDescriptionTextView.setText(mangaDescription);
+            chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
+        } else {
+            isLoading = true;
+            MangaInfoQueryThread thread = new MangaInfoQueryThread(manga);
+            thread.start();
         }
     }
 
@@ -102,12 +110,26 @@ public class MangaInfoActivity extends Activity {
                 Log.d(TAG, e.getMessage());
             }
             runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
                     if (loaded) {
                         String mangaDescription = manga.getDescription();
                         mangaDescriptionTextView.setText(mangaDescription);
                         chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
+                        if (!hasCoverLoaded) {
+                            String coverUrl = manga.getCoverUri();
+                            if (coverUrl != null) {
+                                hasCoverLoaded = true;
+                                Uri coverUri = Uri.parse(coverUrl);
+                                final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
+                                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, sizeOfImage);
+                                Bitmap bitmap = httpImageManager.loadImage(request);
+                                if (bitmap != null) {
+                                    mangaCover.setImageBitmap(bitmap);
+                                }
+                            }
+                        }
                     } else {
                         Context context = getApplicationContext();
                         String message = Utils.errorMessage(context, error, R.string.p_internet_error);
@@ -117,6 +139,7 @@ public class MangaInfoActivity extends Activity {
                     refreshSign.hide();
                     refreshSign.stopAnimation();
                 }
+
             });
         }
 
