@@ -2,7 +2,7 @@ package com.danilov.manga.core.repository;
 
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
-import org.json.JSONObject;
+import com.danilov.manga.core.model.MangaSuggestion;
 
 import java.util.List;
 
@@ -20,9 +20,9 @@ public interface RepositoryEngine {
     /**
      * Search for suggestions
      * @param query user input
-     * @return json of suggestions
+     * @return suggestions
      */
-    JSONObject getSuggestions(final String query);
+    List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException;
 
     /**
      *

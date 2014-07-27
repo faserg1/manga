@@ -1,26 +1,30 @@
 package com.danilov.manga.activity;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.danilov.manga.R;
 import com.danilov.manga.core.adapter.MangaListAdapter;
 import com.danilov.manga.core.model.Manga;
-import com.danilov.manga.core.repository.ReadmangaEngine;
+import com.danilov.manga.core.model.MangaSuggestion;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Constants;
 
 import java.util.ArrayList;
@@ -36,7 +40,15 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     private static final String FOUND_MANGA_KEY = "FOUND_MANGA_KEY";
     private static final String BRAND_HIDDEN = "BRAND_HIDDEN";
 
+    public static final String CURSOR_ID = BaseColumns._ID;
+    public static final String CURSOR_NAME = SearchManager.SUGGEST_COLUMN_TEXT_1;
+    public static final String CURSOR_LINK = "LINK";
+
+    public static final String[] COLUMNS = {CURSOR_ID, CURSOR_NAME, CURSOR_LINK};
+
     private ListView searchResultsView;
+
+    private SearchView searchView;
 
     private View brand;
 
@@ -45,6 +57,9 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     private List<Manga> foundManga = null;
 
     private boolean brandHidden = false;
+
+    //TODO: change after tests
+    private RepositoryEngine engine = RepositoryEngine.Repository.READMANGA.getEngine();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,9 +130,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             if (params == null || params.length < 1) {
                 return null;
             }
-            RepositoryEngine repositoryEngine = new ReadmangaEngine();
-            final List<Manga> mangaList = repositoryEngine.queryRepository(params[0]);
-            return mangaList;
+            return engine.queryRepository(params[0]);
         }
 
         @Override
@@ -126,6 +139,49 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
                 return;
             }
             showFoundMangaList(foundManga);
+        }
+
+    }
+
+    private class SuggestionsTask extends AsyncTask<String, Void, List<MangaSuggestion>> {
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected List<MangaSuggestion> doInBackground(final String... params) {
+            try {
+                return engine.getSuggestions(params[0]);
+            } catch (RepositoryException e) {
+                //can't load suggestions, nevermind
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final List<MangaSuggestion> mangaSuggestions) {
+            if (mangaSuggestions == null) {
+                return;
+            }
+            MatrixCursor cursor = new MatrixCursor(COLUMNS);
+            int idx = 0;
+            for (MangaSuggestion suggestion : mangaSuggestions) {
+                String[] row = new String[3];
+                row[0] = String.valueOf(idx);
+                row[1] = suggestion.getTitle();
+                row[2] = suggestion.getUrl();
+                cursor.addRow(row);
+                idx++;
+            }
+            CursorAdapter adapter = searchView.getSuggestionsAdapter();
+            if (adapter == null) {
+                adapter = new MangaSuggestionsAdapter(MangaQueryActivity.this, cursor);
+                searchView.setSuggestionsAdapter(adapter);
+            } else {
+                adapter.changeCursor(cursor);
+            }
         }
 
     }
@@ -202,23 +258,63 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.manga_search_menu, menu);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            private long lastSuggestionUpdateTime = 0;
+            private SuggestionsTask suggestionsTask = null;
+
+            private int DELAY = 300;
+
             @Override
-            public boolean onQueryTextSubmit(final String s) {
+            public boolean onQueryTextSubmit(final String query) {
                 QueryTask task = new QueryTask();
-                String textQuery = "" + searchView.getQuery();
-                task.execute(textQuery);
+                task.execute(query);
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(final String s) {
-                return false;
+            public boolean onQueryTextChange(final String query) {
+                long curTime = System.currentTimeMillis();
+                if (curTime - lastSuggestionUpdateTime < DELAY) {
+                    return false;
+                }
+                lastSuggestionUpdateTime = curTime;
+                if (suggestionsTask != null) {
+                    suggestionsTask.cancel(true);
+                }
+                suggestionsTask = new SuggestionsTask();
+                suggestionsTask.execute(query);
+                return true;
             }
+
         });
+        searchView.setQueryRefinementEnabled(true);
+        MatrixCursor matrixCursor = new MatrixCursor(COLUMNS);
+        searchView.setSuggestionsAdapter(new MangaSuggestionsAdapter(this, matrixCursor));
         return true;
+    }
+
+    private class MangaSuggestionsAdapter extends CursorAdapter {
+
+        public MangaSuggestionsAdapter(final Context context, final Cursor c) {
+            super(context, c, 0);
+        }
+
+        @Override
+        public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            return inflater.inflate(R.layout.suggestions_list_item, parent, false);
+        }
+
+        @Override
+        public void bindView(final View view, final Context context, final Cursor cursor) {
+            TextView tv = (TextView) view;
+            int textIndex = cursor.getColumnIndex(CURSOR_NAME);
+            tv.setText(cursor.getString(textIndex));
+        }
+
     }
 
 }

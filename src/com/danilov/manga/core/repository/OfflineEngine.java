@@ -3,7 +3,7 @@ package com.danilov.manga.core.repository;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
-import org.json.JSONObject;
+import com.danilov.manga.core.model.MangaSuggestion;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -20,7 +20,7 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     @Override
-    public JSONObject getSuggestions(final String query) {
+    public List<MangaSuggestion> getSuggestions(final String query) {
         return null;
     }
 

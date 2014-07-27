@@ -2,6 +2,8 @@ package com.danilov.manga.core.util;
 
 import android.content.Context;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -12,8 +14,12 @@ public class Utils {
 
     private static final String TAG = "Utils";
 
-    public static final Document toDocument(final String content) {
+    public static Document toDocument(final String content) {
         return Jsoup.parse(content);
+    }
+
+    public static JSONObject toJSON(final String content) throws JSONException {
+        return new JSONObject(content);
     }
 
     public static void showToast(final Context context, final String message) {

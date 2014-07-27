@@ -4,11 +4,14 @@ import android.util.Log;
 import com.danilov.manga.core.http.*;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
+import com.danilov.manga.core.model.MangaSuggestion;
 import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,6 +38,7 @@ public class ReadmangaEngine implements RepositoryEngine {
     private static final String TAG = "ReadmangaEngine";
 
     private String baseSearchUri = "http://readmanga.me/search?q=";
+    private String baseSuggestionUri = "http://readmanga.me/search/suggestion?query=";
     public static final String baseUri = "http://readmanga.me";
 
     @Override
@@ -43,8 +47,28 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public JSONObject getSuggestions(final String query) {
-        return null;
+    public List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<MangaSuggestion> suggestions = null;
+        if (httpBytesReader != null) {
+            Exception ex = null;
+            try {
+                String uri = baseSuggestionUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                suggestions = parseSuggestionsResponse(Utils.toJSON(responseString));
+            } catch (UnsupportedEncodingException e) {
+                ex = e;
+            } catch (HttpRequestException e) {
+                ex = e;
+            } catch (JSONException e) {
+                ex = e;
+            }
+            if (ex != null) {
+                throw new RepositoryException(ex.getMessage());
+            }
+        }
+        return suggestions;
     }
 
     @Override
@@ -164,6 +188,46 @@ public class ReadmangaEngine implements RepositoryEngine {
             urls.add(url);
         }
         return urls;
+    }
+
+    //json names
+
+    private String suggestionsElementName = "suggestions";
+    private String exclusionValue = "Автор ";
+    private String valueElementName = "value";
+    private String dataElementName = "data";
+    private String linkElementName = "link";
+
+
+    //!json names
+
+    private List<MangaSuggestion> parseSuggestionsResponse(final JSONObject object) {
+        List<MangaSuggestion> mangaSuggestions = new ArrayList<MangaSuggestion>();
+        try {
+            JSONArray suggestions = object.getJSONArray(suggestionsElementName);
+            for (int i = 0; i < suggestions.length(); i++) {
+                JSONObject suggestion = suggestions.getJSONObject(i);
+                String value = suggestion.getString(valueElementName);
+                if (value == null || value.contains(exclusionValue)) {
+                    continue;
+                }
+                try {
+                    JSONObject data = suggestion.getJSONObject(dataElementName);
+                    if (data == null) {
+                        continue;
+                    }
+                    String link = data.getString(linkElementName);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link);
+                    mangaSuggestions.add(mangaSuggestion);
+                } catch (JSONException e ) {
+                    Log.d(TAG, e.getMessage());
+                    continue;
+                }
+            }
+        } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+        return mangaSuggestions;
     }
 
     //html values
