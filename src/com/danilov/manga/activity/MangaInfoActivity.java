@@ -161,6 +161,9 @@ public class MangaInfoActivity extends Activity {
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
+        if (manga != null) {
+            loadMangaInfo(manga);
+        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 

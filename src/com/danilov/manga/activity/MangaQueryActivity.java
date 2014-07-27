@@ -66,7 +66,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.manga_query_activity);
         searchResultsView = (ListView) findViewById(R.id.search_results);
         brand = findViewById(R.id.brand_container);
-        showFoundMangaList(foundManga);
     }
 
     @Override
@@ -237,6 +236,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         foundManga = savedInstanceState.getParcelableArrayList(FOUND_MANGA_KEY);
         brandHidden = savedInstanceState.getBoolean(BRAND_HIDDEN);
+        showFoundMangaList(foundManga);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
