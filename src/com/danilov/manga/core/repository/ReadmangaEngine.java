@@ -185,6 +185,7 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     private String suggestionsElementName = "suggestions";
     private String exclusionValue = "Автор ";
+    private String exclusionValue2 = "Переводчик ";
     private String valueElementName = "value";
     private String dataElementName = "data";
     private String linkElementName = "link";
@@ -199,7 +200,9 @@ public class ReadmangaEngine implements RepositoryEngine {
             for (int i = 0; i < suggestions.length(); i++) {
                 JSONObject suggestion = suggestions.getJSONObject(i);
                 String value = suggestion.getString(valueElementName);
-                if (value == null || value.contains(exclusionValue)) {
+                if (value == null
+                        || value.contains(exclusionValue)
+                        || value.contains(exclusionValue2)) {
                     continue;
                 }
                 try {

@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/text1"
-          android:textColor="#000"
-          android:padding="15sp"
-          android:textSize="17sp"
-          android:layout_width="fill_parent"
-          android:background="#ffe3e3e3"
-          android:singleLine="true"
-          android:gravity="center"
-          android:layout_height="fill_parent"/>
+
+<LinearLayout android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:descendantFocusability="blocksDescendants"
+              android:orientation="horizontal"
+              android:background="#ffe3e3e3">
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/text1"
+              android:textColor="#000"
+              android:padding="15sp"
+              android:textSize="17sp"
+              android:layout_height="fill_parent"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:singleLine="true"
+              android:gravity="center"
+              android:text="asdasd"/>
+
+    <ImageButton android:layout_width="wrap_content"
+                 android:layout_height="fill_parent"
+                 android:id="@+id/suggestion_merge"
+                 android:src="@drawable/ic_action_merge"
+                 android:focusable="false"
+                 android:background="?android:attr/selectableItemBackground"
+                 android:focusableInTouchMode="false"/>
+
+</LinearLayout>

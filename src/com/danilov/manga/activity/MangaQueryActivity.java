@@ -17,6 +17,7 @@ import android.view.*;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.danilov.manga.R;
@@ -182,6 +183,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
                 adapter.changeCursor(cursor);
             }
             adapter.setSuggestions(mangaSuggestions);
+            searchView.setQueryRefinementEnabled(true);
         }
 
     }
@@ -272,6 +274,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             public boolean onQueryTextSubmit(final String query) {
                 QueryTask task = new QueryTask();
                 task.execute(query);
+                searchView.onActionViewCollapsed();
                 return true;
             }
 
@@ -340,9 +343,17 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
 
         @Override
         public void bindView(final View view, final Context context, final Cursor cursor) {
-            TextView tv = (TextView) view;
+            TextView tv = (TextView) view.findViewById(R.id.text1);
             int textIndex = cursor.getColumnIndex(CURSOR_NAME);
-            tv.setText(cursor.getString(textIndex));
+            final String value = cursor.getString(textIndex);
+            ImageButton btn = (ImageButton) view.findViewById(R.id.suggestion_merge);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    searchView.setQuery(value, false);
+                }
+            });
+            tv.setText(value);
         }
 
     }
