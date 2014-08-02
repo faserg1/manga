@@ -16,6 +16,7 @@ import android.support.v7.widget.SearchView;
 import android.view.*;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -274,7 +275,18 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             public boolean onQueryTextSubmit(final String query) {
                 QueryTask task = new QueryTask();
                 task.execute(query);
-                searchView.onActionViewCollapsed();
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+
+                MangaSuggestionsAdapter adapter = (MangaSuggestionsAdapter) searchView.getSuggestionsAdapter();
+                if (adapter == null) {
+                    adapter = new MangaSuggestionsAdapter(MangaQueryActivity.this, new MatrixCursor(COLUMNS));
+                    searchView.setSuggestionsAdapter(adapter);
+                } else {
+                    adapter.changeCursor(new MatrixCursor(COLUMNS));
+                }
+                adapter.setSuggestions(new ArrayList<MangaSuggestion>());
                 return true;
             }
 
@@ -315,7 +327,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
                 return true;
             }
         });
-
+        searchView.clearFocus();
         return true;
     }
 
