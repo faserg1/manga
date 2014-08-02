@@ -147,7 +147,10 @@ public class DownloadsActivity extends Activity {
     }
 
     private void onRequestComplete(final Message message) {
-
+        imageProgressBar.setMax(1);
+        imageProgressBar.setProgress(1);
+        chaptersProgressBar.setMax(1);
+        chaptersProgressBar.setProgress(1);
     }
 
     private void onChapterComplete(final Message message) {

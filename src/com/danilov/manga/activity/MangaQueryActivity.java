@@ -68,6 +68,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.manga_query_activity);
         searchResultsView = (ListView) findViewById(R.id.search_results);
         brand = findViewById(R.id.brand_container);
+        closeKeyboard();
     }
 
     @Override
@@ -275,10 +276,7 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             public boolean onQueryTextSubmit(final String query) {
                 QueryTask task = new QueryTask();
                 task.execute(query);
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-
-
+                closeKeyboard();
                 MangaSuggestionsAdapter adapter = (MangaSuggestionsAdapter) searchView.getSuggestionsAdapter();
                 if (adapter == null) {
                     adapter = new MangaSuggestionsAdapter(MangaQueryActivity.this, new MatrixCursor(COLUMNS));
@@ -368,6 +366,11 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             tv.setText(value);
         }
 
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
     }
 
 }

@@ -251,7 +251,8 @@ public class MangaDownloadService extends Service {
             }
             int i = 0;
             currentImage = 0;
-            currentImageQuantity = urls.size();
+            currentImageQuantity = urls.size() + 1;
+            downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
             sendStatus();
             for (String url : urls) {
                 downloadManager.startDownload(url, chapterPath + i + ".png", curChapterNumber);

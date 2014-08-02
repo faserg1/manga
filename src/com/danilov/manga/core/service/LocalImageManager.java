@@ -54,23 +54,23 @@ public class LocalImageManager {
 
         ImageRequest r = new ImageRequest();
         r.init(imageView, uri, newSize);
-
         String key = r.getHashedUri();
-
         Bitmap cachedBitmap = this.mCache.loadData(key);
-        if (cachedBitmap == null) {
 
-            Drawable oldBitmap = imageView.getDrawable();
-            if (oldBitmap instanceof RequestDrawable) {
-                RequestDrawable requestDrawable = (RequestDrawable) oldBitmap;
-                ImageRequest oldRequest = requestDrawable.getRequest();
-                if (!r.equals(oldRequest)) {
-                    oldRequest.cancel();
-                } else {
-                    imageView.setImageDrawable(new RequestDrawable(r));
-                    return null; //waiting for bitmap to load in another request
+        Drawable oldBitmap = imageView.getDrawable();
+        if (oldBitmap instanceof RequestDrawable) {
+            RequestDrawable requestDrawable = (RequestDrawable) oldBitmap;
+            ImageRequest oldRequest = requestDrawable.getRequest();
+            if (!r.equals(oldRequest)) {
+                oldRequest.cancel();
+            } else {
+                if (cachedBitmap == null) {
+                    return null;
                 }
             }
+        }
+
+        if (cachedBitmap == null) {
             imageView.setImageDrawable(new RequestDrawable(r));
             this.mExecutor.submit(this.newRequestCall(r));
             return null;
@@ -127,7 +127,14 @@ public class LocalImageManager {
                         @Override
                         public void run() {
                             if (!imageRequest.isCancelled()) {
-                                imageRequest.getImageView().setImageBitmap(b);
+                                ImageView imageView = imageRequest.getImageView();
+                                Drawable d = imageView.getDrawable();
+                                if (d != null && d instanceof RequestDrawable) {
+                                    RequestDrawable oldRequest = (RequestDrawable) d;
+                                    if (imageRequest.equals(oldRequest.getRequest())) {
+                                        imageRequest.getImageView().setImageBitmap(b);
+                                    }
+                                }
                             }
                         }
                     });

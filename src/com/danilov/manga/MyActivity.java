@@ -12,7 +12,7 @@ import com.danilov.manga.activity.MangaQueryActivity;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.view.AnimatedActionView;
-import com.danilov.manga.test.DownloadTestActivity;
+import com.danilov.manga.test.LocalMangaActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 
@@ -108,7 +108,7 @@ public class MyActivity extends Activity {
     }
 
     public void fourthTest(View view) {
-        Intent intent = new Intent(this, DownloadTestActivity.class);
+        Intent intent = new Intent(this, LocalMangaActivity.class);
         startActivity(intent);
     }
 
