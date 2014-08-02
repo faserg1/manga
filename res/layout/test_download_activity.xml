@@ -5,47 +5,13 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <EditText
-            android:layout_width="match_parent"
-            android:hint="enter url"
-            android:layout_height="wrap_content"
-            android:id="@+id/url"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Download"
-            android:onClick="load"
-            style="@style/Manga.ButtonCommon"
-            android:id="@+id/button"/>
-    <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBar"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="0%"
-            android:id="@+id/progressAsText" android:layout_gravity="center_horizontal"/>
+     <GridView android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:numColumns="auto_fit"
+              android:columnWidth="120dp"
+              android:id="@+id/grid_view">
 
-    <com.danilov.manga.core.view.Slider
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
-            android:id="@+id/slider"
-            android:orientation="vertical">
+    </GridView>
 
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#550025aa">
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="TEST"/>
-        </LinearLayout>
-
-    </com.danilov.manga.core.view.Slider>
 
 </LinearLayout>

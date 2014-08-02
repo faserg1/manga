@@ -1,34 +1,20 @@
 package com.danilov.manga;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import com.android.httpimage.BitmapMemoryCache;
-import com.android.httpimage.FileSystemPersistence;
-import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.activity.MangaQueryActivity;
-import com.danilov.manga.core.application.ApplicationSettings;
-import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
-import com.danilov.manga.core.http.ExtendedHttpClient;
-import com.danilov.manga.core.http.HttpBitmapReader;
-import com.danilov.manga.core.http.HttpBytesReader;
-import com.danilov.manga.core.http.HttpStreamReader;
-import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.service.MangaDownloadService;
-import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.DownloadTestActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
-
-import java.io.File;
 
 public class MyActivity extends Activity {
 
@@ -41,19 +27,6 @@ public class MyActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
-
-        fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), "com.danilov.manga"));
-        httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
-        httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
-        httpBitmapReader = new HttpBitmapReader(httpBytesReader);
-        BitmapMemoryCache bmc = new BitmapMemoryCache(0.4f);
-        httpImageManager = new HttpImageManager(bmc, fsp, getResources(), httpBitmapReader);
-        localImageManager = new LocalImageManager(bmc, getResources());
-        ServiceContainer.addService(httpBytesReader);
-        ServiceContainer.addService(httpStreamReader);
-        ServiceContainer.addService(httpImageManager);
-        ServiceContainer.addService(localImageManager);
         DownloadedMangaDAO dao = new DownloadedMangaDAO();
         final MangaDownloadService.MDownloadServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new MangaDownloadService.ServiceConnectionListener() {
 
@@ -154,13 +127,4 @@ public class MyActivity extends Activity {
         startActivity(intent);
     }
 
-    File mydir = null; //Creating an internal dir;
-
-    FileSystemPersistence fsp = null;
-    HttpStreamReader httpStreamReader = null;
-    HttpBytesReader httpBytesReader = null;
-    HttpBitmapReader httpBitmapReader = null;
-    LocalImageManager localImageManager = null;
-
-    private HttpImageManager httpImageManager = null;
 }
