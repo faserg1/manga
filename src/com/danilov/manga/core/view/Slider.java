@@ -72,7 +72,6 @@ public class Slider extends FrameLayout {
                 // We invalidate a slightly larger area now, this was only optimised for right menu previously
                 // Keep on drawing until the animation has finished. Just re-draw the necessary part
                 invalidate(getLeft() + oldX, getTop() + oldY, getRight() - oldX, getBottom() - oldY);
-                return;
             }
         }
     }

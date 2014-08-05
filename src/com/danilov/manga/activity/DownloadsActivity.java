@@ -1,12 +1,12 @@
 package com.danilov.manga.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +25,7 @@ import com.danilov.manga.core.util.Utils;
 /**
  * Created by Semyon Danilov on 14.06.2014.
  */
-public class DownloadsActivity extends Activity {
+public class DownloadsActivity extends ActionBarActivity {
 
     private Handler handler;
     private MangaDownloadService service;
@@ -223,16 +223,6 @@ public class DownloadsActivity extends Activity {
                 RepositoryEngine engine = manga.getRepository().getEngine();
                 try {
                     engine.queryForChapters(manga);
-                    while (service == null) {
-                        Log.d(TAG, "service == null, waiting");
-                        synchronized (DownloadsActivity.this) {
-                            try {
-                                DownloadsActivity.this.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
                     String fromVal = from.getText().toString();
                     String toVal = to.getText().toString();
                     Integer from = Integer.valueOf(fromVal);

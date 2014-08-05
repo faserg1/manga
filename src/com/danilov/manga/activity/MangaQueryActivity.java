@@ -1,6 +1,5 @@
 package com.danilov.manga.activity;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +10,10 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.view.*;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -35,12 +33,11 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 26.07.2014.
  */
-public class MangaQueryActivity extends Activity implements View.OnClickListener,
+public class MangaQueryActivity extends ActionBarActivity implements View.OnClickListener,
                                                             AdapterView.OnItemClickListener,
                                                             MangaListAdapter.PopupButtonClickListener {
 
     private static final String FOUND_MANGA_KEY = "FOUND_MANGA_KEY";
-    private static final String BRAND_HIDDEN = "BRAND_HIDDEN";
 
     public static final String CURSOR_ID = BaseColumns._ID;
     public static final String CURSOR_NAME = SearchManager.SUGGEST_COLUMN_TEXT_1;
@@ -52,13 +49,9 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
 
     private SearchView searchView;
 
-    private View brand;
-
     private MangaListAdapter adapter = null;
 
     private List<Manga> foundManga = null;
-
-    private boolean brandHidden = false;
 
     //TODO: change after tests
     private RepositoryEngine engine = RepositoryEngine.Repository.READMANGA.getEngine();
@@ -67,8 +60,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_query_activity);
         searchResultsView = (ListView) findViewById(R.id.search_results);
-        brand = findViewById(R.id.brand_container);
-        closeKeyboard();
     }
 
     @Override
@@ -124,7 +115,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
 
         @Override
         protected void onPreExecute() {
-            hideBrand();
         }
 
         @Override
@@ -192,9 +182,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
 
     @Override
     protected void onResume() {
-        if (brandHidden) {
-            brand.setVisibility(View.GONE);
-        }
         super.onResume();
     }
 
@@ -216,30 +203,9 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         startActivity(intent);
     }
 
-    private void hideBrand() {
-        if (brandHidden) {
-            return;
-        }
-        brandHidden = true;
-        Animation fadeOut = new AlphaAnimation(1, 0);
-        fadeOut.setDuration(1000);
-        fadeOut.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(final Animation animation) { }
-            @Override
-            public void onAnimationEnd(final Animation animation) {
-                brand.setVisibility(View.GONE);
-            }
-            @Override
-            public void onAnimationRepeat(final Animation animation) { }
-        });
-        brand.startAnimation(fadeOut);
-    }
-
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         foundManga = savedInstanceState.getParcelableArrayList(FOUND_MANGA_KEY);
-        brandHidden = savedInstanceState.getBoolean(BRAND_HIDDEN);
         showFoundMangaList(foundManga);
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -256,7 +222,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
             }
             outState.putParcelableArrayList(FOUND_MANGA_KEY, mangas);
         }
-        outState.putBoolean(BRAND_HIDDEN, brandHidden);
         super.onSaveInstanceState(outState);
     }
 
@@ -265,6 +230,9 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
         getMenuInflater().inflate(R.menu.manga_search_menu, menu);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setSubmitButtonEnabled(true);
+        searchView.setIconifiedByDefault(true);
+        searchView.setFocusable(false);
+        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             private long lastSuggestionUpdateTime = 0;
@@ -325,7 +293,6 @@ public class MangaQueryActivity extends Activity implements View.OnClickListener
                 return true;
             }
         });
-        searchView.clearFocus();
         return true;
     }
 

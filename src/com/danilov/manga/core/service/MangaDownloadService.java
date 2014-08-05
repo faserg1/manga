@@ -68,11 +68,6 @@ public class MangaDownloadService extends Service {
     }
 
     @Override
-    public void onStart(final Intent intent, final int startId) {
-        super.onStart(intent, startId);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
     }

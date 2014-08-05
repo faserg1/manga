@@ -1,14 +1,13 @@
 package com.danilov.manga.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,7 +25,7 @@ import com.danilov.manga.core.view.AnimatedActionView;
 /**
  * Created by Semyon Danilov on 21.05.2014.
  */
-public class MangaInfoActivity extends Activity {
+public class MangaInfoActivity extends ActionBarActivity {
 
     private final String TAG = "MangaInfoActivity";
 
@@ -183,11 +182,6 @@ public class MangaInfoActivity extends Activity {
             refreshSign.hide();
         }
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onMenuItemSelected(final int featureId, final MenuItem item) {
-        return super.onMenuItemSelected(featureId, item);
     }
 
     private class ButtonClickListener implements View.OnClickListener {

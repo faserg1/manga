@@ -1,22 +1,21 @@
 package com.danilov.manga;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.activity.MangaQueryActivity;
-import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.LocalMangaActivity;
 import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 
-public class MyActivity extends Activity {
+public class MyActivity extends ActionBarActivity {
 
     private MangaDownloadService service = null;
 
@@ -27,23 +26,6 @@ public class MyActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        DownloadedMangaDAO dao = new DownloadedMangaDAO();
-        final MangaDownloadService.MDownloadServiceConnection serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new MangaDownloadService.ServiceConnectionListener() {
-
-            @Override
-            public void onServiceConnected(final MangaDownloadService service) {
-                MyActivity.this.service = service;
-                synchronized (MyActivity.this) {
-                    MyActivity.this.notifyAll();
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(final MangaDownloadService service) {
-
-            }
-
-        });
 
 //        Intent intent = new Intent(this, MangaDownloadService.class);
 //        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -88,13 +70,13 @@ public class MyActivity extends Activity {
     }
 
     @Override
-    public boolean onMenuItemSelected(final int featureId, final MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (aav.isAnimating()) {
             aav.stopAnimation();
         } else {
             aav.startAnimation();
         }
-        return super.onMenuItemSelected(featureId, item);
+        return super.onOptionsItemSelected(item);
     }
 
     public void firstTest(View view) {
