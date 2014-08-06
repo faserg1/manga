@@ -33,9 +33,9 @@ public class DownloadedMangaDAO {
     private static final String MANGA_URI = "manga_uri";
     private static final String MANGA_INET_URI = "manga_inet_uri";
 
-    public static DatabaseHelper databaseHelper = null;
+    public DatabaseHelper databaseHelper = null;
 
-    static {
+    public DownloadedMangaDAO() {
         String sdPath = Environment.getExternalStorageDirectory().getPath();
         String dbFolder = sdPath + "/manga/db/";
         File file = new File(dbFolder);
@@ -47,10 +47,9 @@ public class DownloadedMangaDAO {
         }
         String dbPath = dbFolder + "/" + DB_NAME;
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
-
     }
 
-    public static void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
+    public void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(MANGA_TITLE, manga.getTitle());
@@ -70,7 +69,7 @@ public class DownloadedMangaDAO {
         }
     }
 
-    public static List<LocalManga> getAllManga() throws DatabaseAccessException {
+    public List<LocalManga> getAllManga() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         List<LocalManga> mangaList = new ArrayList<LocalManga>();
         try {
@@ -111,7 +110,7 @@ public class DownloadedMangaDAO {
         return mangaList;
     }
 
-    public static LocalManga getByTitleAndRepository(final String title, final Repository repository) throws DatabaseAccessException {
+    public LocalManga getByTitleAndRepository(final String title, final Repository repository) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         String selection = MANGA_TITLE + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {title, repository.toString()};
@@ -147,7 +146,7 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
-    public static void updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
+    public void updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
         LocalManga localManga = getByTitleAndRepository(manga.getTitle(), manga.getRepository());
         if (localManga != null) {
             int chaptersQuantity = localManga.getChaptersQuantity();

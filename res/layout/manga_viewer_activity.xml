@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.danilov.manga.core.view.MangaImageSwitcher
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageSwitcher">
+
+
+    </com.danilov.manga.core.view.MangaImageSwitcher>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:layout_height="fill_parent">
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.1">
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/left"/>
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/right"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="0dp"
+                      android:layout_weight="0.9"/>
+
+    </LinearLayout>
+
+    <com.danilov.manga.core.view.SlidingLayer
+            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
+            android:id="@+id/selector"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            slidingLayer:stickTo="bottom"
+            android:layout_alignParentBottom="true"
+            slidingLayer:closeOnTapEnabled="false"
+            slidingLayer:offsetWidth="30dp">
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+
+            <View android:layout_width="match_parent"
+                  android:layout_height="30dp"/>
+
+            <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:background="#a5b5">
+
+                <LinearLayout android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal">
+
+                    <EditText android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#fff"
+                              android:inputType="numberDecimal"
+                              android:id="@+id/imagePicker"/>
+
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#fff"
+                              android:textSize="18sp"
+                              android:id="@+id/imageQuantity"
+                              android:text="/19"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal">
+
+                    <EditText android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#fff"
+                              android:inputType="numberDecimal"
+                              android:id="@+id/chapterPicker"/>
+
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#fff"
+                              android:textSize="18sp"
+                              android:id="@+id/chapterQuantity"
+                              android:text="/19"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.danilov.manga.core.view.SlidingLayer>
+
+</RelativeLayout>

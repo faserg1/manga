@@ -6,6 +6,7 @@ import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
+import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
 import com.danilov.manga.core.http.HttpBytesReader;
@@ -30,10 +31,12 @@ public class MangaApplication extends Application {
         BitmapMemoryCache bmc = new BitmapMemoryCache(0.4f);
         HttpImageManager httpImageManager = new HttpImageManager(bmc, fsp, getResources(), httpBitmapReader);
         LocalImageManager localImageManager = new LocalImageManager(bmc, getResources());
+        DownloadedMangaDAO downloadedMangaDAO = new DownloadedMangaDAO();
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
         ServiceContainer.addService(localImageManager);
+        ServiceContainer.addService(downloadedMangaDAO);
 
     }
 }

@@ -16,6 +16,7 @@ import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
+import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 import com.danilov.manga.core.view.SlidingLayer;
@@ -43,6 +44,8 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
     private SlidingLayer slidingLayer;
 
+    private DownloadedMangaDAO downloadedMangaDAO;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_manga_view_activity);
@@ -56,9 +59,10 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         right.setOnClickListener(this);
         selectorStub.setOnClickListener(this);
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
+        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
         findViewById(R.id.goToChapter).setOnClickListener(this);
         try {
-            List<LocalManga> localMangas = DownloadedMangaDAO.getAllManga();
+            List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
             TestMangaAdapter adapter = new TestMangaAdapter(this, android.R.layout.simple_list_item_1, localMangas);
             mangaList.setAdapter(adapter);
             mangaList.setOnItemClickListener(this);

@@ -17,6 +17,7 @@ import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.Pair;
+import com.danilov.manga.core.util.ServiceContainer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class MangaDownloadService extends Service {
 
     private DownloadManager downloadManager = null;
 
+    private DownloadedMangaDAO downloadedMangaDAO = null;
+
     private final List<Handler> observerHandlers = new LinkedList<Handler>();
 
     private Queue<MangaDownloadRequest> requests = new LinkedList<MangaDownloadRequest>();
@@ -58,6 +61,7 @@ public class MangaDownloadService extends Service {
         super.onCreate();
         downloadManager = new DownloadManager();
         downloadManager.setListener(new MangaDownloadListener());
+        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
         serviceHandler = new DownloadServiceHandler();
     }
 
@@ -236,7 +240,7 @@ public class MangaDownloadService extends Service {
             String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
             String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             try {
-                DownloadedMangaDAO.updateInfo(manga, 1, mangaPath);
+                downloadedMangaDAO.updateInfo(manga, 1, mangaPath);
             } catch (DatabaseAccessException e) {
                 //TODO: decide what do we need to do if can't store manga
                 //I suppose, that we better cancel request, due to the fact

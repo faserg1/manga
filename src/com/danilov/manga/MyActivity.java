@@ -9,10 +9,10 @@ import android.view.View;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.activity.MangaQueryActivity;
+import com.danilov.manga.activity.MangaViewerActivity;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.LocalMangaActivity;
-import com.danilov.manga.test.MangaViewTestActivity;
 import com.danilov.manga.test.QueryTestActivity;
 
 public class MyActivity extends ActionBarActivity {
@@ -80,7 +80,7 @@ public class MyActivity extends ActionBarActivity {
     }
 
     public void firstTest(View view) {
-        Intent intent = new Intent(this, MangaViewTestActivity.class);
+        Intent intent = new Intent(this, MangaViewerActivity.class);
         startActivity(intent);
     }
 

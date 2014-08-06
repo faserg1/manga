@@ -13,6 +13,7 @@ import java.io.File;
 public class ApplicationSettings {
 
     private static final String TAG = "ApplicationSettings";
+    private static final String packageName = "com.danilov.manga";
 
     private static final String DOWNLOAD_PATH_FIELD = "DPF";
     private static final String MANGA_DOWNLOAD_BASE_PATH_FIELD = "MDBPF";
@@ -54,13 +55,24 @@ public class ApplicationSettings {
         SharedPreferences sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
         this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
+
         if ("".equals(mangaDownloadBasePath)) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            mangaDownloadBasePath = sdPath.getPath() + "/manga/download/";
-            sdPath = new File(mangaDownloadBasePath);
-            if (!sdPath.mkdirs() && !sdPath.exists()) {
-                Log.d(TAG, "Failure on creation of " + sdPath.toString() + " path");
-            }
+            loadMangaBasePath();
+        }
+
+    }
+
+    private void loadMangaBasePath() {
+        //TODO: checking state
+        File externalStorageDir = Environment.getExternalStorageDirectory();
+        //{SD_PATH}/Android/data/com.danilov.manga/download
+        File extStorageAppCachePath = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + packageName + File.separator + "download");
+
+        File sdPath = Environment.getExternalStorageDirectory();
+        mangaDownloadBasePath = sdPath.getPath() + "/manga/download/";
+        sdPath = new File(mangaDownloadBasePath);
+        if (!sdPath.mkdirs() && !sdPath.exists()) {
+            Log.d(TAG, "Failure on creation of " + sdPath.toString() + " path");
         }
     }
 

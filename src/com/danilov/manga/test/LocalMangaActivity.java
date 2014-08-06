@@ -32,13 +32,17 @@ public class LocalMangaActivity extends Activity {
     private GridView gridView;
     int sizeOfImage = 0;
 
+    private DownloadedMangaDAO downloadedMangaDAO = null;
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
+        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
         setContentView(R.layout.test_local_manga_activity);
         gridView = (GridView) findViewById(R.id.grid_view);
         try {
-            List<LocalManga> localMangas = DownloadedMangaDAO.getAllManga();
+            List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
             GridViewAdapter adapter = new GridViewAdapter(this, localMangas);
             gridView.setAdapter(adapter);
         } catch (DatabaseAccessException e) {
