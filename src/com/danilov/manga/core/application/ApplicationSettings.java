@@ -67,12 +67,10 @@ public class ApplicationSettings {
         File externalStorageDir = Environment.getExternalStorageDirectory();
         //{SD_PATH}/Android/data/com.danilov.manga/download
         File extStorageAppCachePath = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + packageName + File.separator + "download");
-
-        File sdPath = Environment.getExternalStorageDirectory();
-        mangaDownloadBasePath = sdPath.getPath() + "/manga/download/";
-        sdPath = new File(mangaDownloadBasePath);
-        if (!sdPath.mkdirs() && !sdPath.exists()) {
-            Log.d(TAG, "Failure on creation of " + sdPath.toString() + " path");
+        mangaDownloadBasePath = extStorageAppCachePath.getPath();
+        File path = new File(mangaDownloadBasePath);
+        if (!path.mkdirs() && !path.exists()) {
+            Log.d(TAG, "Failure on creation of " + path.toString() + " path");
         }
     }
 

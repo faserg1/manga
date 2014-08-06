@@ -19,6 +19,7 @@ import java.util.List;
 public class DownloadedMangaDAO {
 
     private final static String TAG = "DownloadedMangaDAO";
+    private static final String packageName = "com.danilov.manga";
 
     private static final int DAOVersion = 1;
     private static final String TABLE_NAME = "downloadedManga";
@@ -36,16 +37,18 @@ public class DownloadedMangaDAO {
     public DatabaseHelper databaseHelper = null;
 
     public DownloadedMangaDAO() {
-        String sdPath = Environment.getExternalStorageDirectory().getPath();
-        String dbFolder = sdPath + "/manga/db/";
-        File file = new File(dbFolder);
-        if (!file.exists()) {
-            boolean created = file.mkdirs();
+
+
+        File externalStorageDir = Environment.getExternalStorageDirectory();
+        //{SD_PATH}/Android/data/com.danilov.manga/download
+        File dbPathFile = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + packageName + File.separator + "db");
+        if (!dbPathFile.exists()) {
+            boolean created = dbPathFile.mkdirs();
             if (!created) {
                 Log.e(TAG, "Can't create file");
             }
         }
-        String dbPath = dbFolder + "/" + DB_NAME;
+        String dbPath = dbPathFile + "/" + DB_NAME;
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
     }
 

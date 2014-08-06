@@ -82,6 +82,10 @@
                               android:id="@+id/imageQuantity"
                               android:text="/19"/>
 
+                    <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@android:string/ok"/>
+
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="fill_parent"
@@ -100,6 +104,10 @@
                               android:textSize="18sp"
                               android:id="@+id/chapterQuantity"
                               android:text="/19"/>
+
+                    <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@android:string/ok"/>
 
                 </LinearLayout>
 
