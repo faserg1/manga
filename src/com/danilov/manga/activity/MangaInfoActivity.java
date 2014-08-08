@@ -135,8 +135,10 @@ public class MangaInfoActivity extends ActionBarActivity {
                         Utils.showToast(getApplicationContext(), message);
                     }
                     isLoading = false;
-                    refreshSign.hide();
-                    refreshSign.stopAnimation();
+                    if (refreshSign != null) {
+                        refreshSign.hide();
+                        refreshSign.stopAnimation();
+                    }
                 }
 
             });
