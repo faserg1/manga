@@ -43,11 +43,13 @@ public class LinesSearchInputStream extends FilterInputStream {
                 hasFoundDesired = searchFor(red, b, desire);
                 if (hasFoundDesired) {
                     Log.d(TAG, "Found desired");
-                    prevLoaded = new byte[red - foundOffset];
-                    IoUtils.copyArray(b, foundOffset, red, prevLoaded, 0);
+                    byte[] tmp = new byte[red - foundOffset];
+                    IoUtils.copyArray(b, foundOffset, red, tmp, 0);
+                    updateFound(red - foundOffset, tmp);
+                    foundOffset = 0;
                 }
             } else {
-                updateFound(red ,b);
+                updateFound(red, b);
             }
         }
         return state;
@@ -83,6 +85,9 @@ public class LinesSearchInputStream extends FilterInputStream {
 
     private void updateFound(final int red, final byte[] bytes) {
         boolean foundDelimiter = searchFor(red, bytes, delimiter);
+        if (prevLoaded == null) {
+            prevLoaded = new byte[0];
+        }
         int prevLen = prevLoaded.length;
         int newLen = prevLen + red;
         byte[] newArray = null;
@@ -107,6 +112,7 @@ public class LinesSearchInputStream extends FilterInputStream {
         for (int i = 0; i < red; i++) {
             byte cur = bytes[i];
             boolean wrong = false;
+            boolean reachedEnd = false;
             int a = i;
             for (int j = successMatched; j < desire.length; j++) {
                 if (cur != desire[j]) {
@@ -121,6 +127,7 @@ public class LinesSearchInputStream extends FilterInputStream {
                     cur = bytes[a];
                 } else {
                     successMatched = j + 1;
+                    reachedEnd = true;
                     break;
                 }
             }
@@ -128,7 +135,11 @@ public class LinesSearchInputStream extends FilterInputStream {
                 successMatched = 0;
             }
             if (fullFound) {
+                successMatched = 0;
                 foundOffset = a;
+                break;
+            }
+            if (reachedEnd) {
                 break;
             }
         }

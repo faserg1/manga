@@ -16,15 +16,14 @@
               android:layout_width="0dp"
               android:layout_weight="1"
               android:singleLine="true"
-              android:gravity="center"
-              android:text="asdasd"/>
+              android:gravity="center"/>
 
     <ImageButton android:layout_width="wrap_content"
                  android:layout_height="fill_parent"
                  android:id="@+id/suggestion_merge"
                  android:src="@drawable/ic_action_merge"
                  android:focusable="false"
-                 android:background="?android:attr/selectableItemBackground"
+                 android:background="?attr/selectableItemBackground"
                  android:focusableInTouchMode="false"/>
 
 </LinearLayout>
