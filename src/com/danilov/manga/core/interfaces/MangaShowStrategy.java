@@ -17,4 +17,8 @@ public interface MangaShowStrategy {
 
     void initStrategy() throws ShowMangaException;
 
+    int getCurrentImageNumber();
+
+    int getCurrentChapterNumber();
+
 }

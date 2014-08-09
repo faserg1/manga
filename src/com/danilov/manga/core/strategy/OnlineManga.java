@@ -31,4 +31,14 @@ public class OnlineManga implements MangaShowStrategy {
 
     }
 
+    @Override
+    public int getCurrentImageNumber() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentChapterNumber() {
+        return 0;
+    }
+
 }

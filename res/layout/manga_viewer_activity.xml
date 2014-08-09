@@ -63,7 +63,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"
-                    android:background="#a5b5">
+                    android:background="#56BB5C">
 
                 <LinearLayout android:layout_width="fill_parent"
                               android:layout_height="wrap_content"

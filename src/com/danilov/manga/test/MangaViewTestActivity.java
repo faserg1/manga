@@ -210,6 +210,16 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         }
 
+        @Override
+        public int getCurrentImageNumber() {
+            return 0;
+        }
+
+        @Override
+        public int getCurrentChapterNumber() {
+            return 0;
+        }
+
     }
 
     class TestMangaAdapter extends ArrayAdapter<LocalManga> {

@@ -27,6 +27,9 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
 
     private static final String TAG = "MangaViewerActivity";
 
+    private static final String CURRENT_CHAPTER_KEY = "CCK";
+    private static final String CURRENT_IMAGE_KEY = "CIK";
+
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
     private View prevBtn;
@@ -47,6 +50,9 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
         Intent intent = getIntent();
         manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (manga == null) {
+            if (savedInstanceState != null) {
+                manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
+            }
             return;
         }
         fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, 0);
@@ -79,7 +85,15 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
      * @param savedState
      */
     private void restoreState(final Bundle savedState) {
-
+        int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
+        int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+        try {
+            currentStrategy.initStrategy();
+            currentStrategy.showChapter(currentChapterNumber);
+            currentStrategy.showImage(currentImageNumber);
+        } catch (ShowMangaException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     private void init() {
@@ -123,6 +137,14 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        outState.putInt(CURRENT_CHAPTER_KEY, currentStrategy.getCurrentChapterNumber());
+        outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
+        outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+        super.onSaveInstanceState(outState);
     }
 
     private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {

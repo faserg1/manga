@@ -89,10 +89,12 @@ public class OfflineManga implements MangaShowStrategy {
         showImage(currentImageNumber - 1);
     }
 
-    public int getCurrentChapter() {
+    @Override
+    public int getCurrentChapterNumber() {
         return currentChapter;
     }
 
+    @Override
     public int getCurrentImageNumber() {
         return currentImageNumber;
     }
