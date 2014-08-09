@@ -30,7 +30,7 @@
 
     <Button
             android:id="@+id/test4"
-            android:text="Download Test Activity"
+            android:text="Local mangas"
             style="@style/Manga.ButtonCommon"
             android:onClick="fourthTest"
             android:layout_width="wrap_content"

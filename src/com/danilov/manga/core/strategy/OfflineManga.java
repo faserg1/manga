@@ -21,6 +21,8 @@ public class OfflineManga implements MangaShowStrategy {
     private InAndOutAnim nextImageAnim;
     private InAndOutAnim prevImageAnim;
 
+    private RepositoryEngine engine = RepositoryEngine.Repository.OFFLINE.getEngine();
+
     private List<String> uris = null;
 
     private int currentImageNumber;
@@ -31,6 +33,15 @@ public class OfflineManga implements MangaShowStrategy {
         this.mangaImageSwitcher = mangaImageSwitcher;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
+    }
+
+    @Override
+    public void initStrategy() throws ShowMangaException {
+        try {
+            engine.queryForChapters(manga);
+        } catch (RepositoryException e) {
+            throw new ShowMangaException(e.getMessage());
+        }
     }
 
     @Override
@@ -54,7 +65,6 @@ public class OfflineManga implements MangaShowStrategy {
         this.currentChapter = i;
         this.currentImageNumber = -1;
         MangaChapter chapter = manga.getChapterByNumber(currentChapter);
-        RepositoryEngine engine = RepositoryEngine.Repository.OFFLINE.getEngine();
         try {
             uris = engine.getChapterImages(chapter);
         } catch (RepositoryException e) {

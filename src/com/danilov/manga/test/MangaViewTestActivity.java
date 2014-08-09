@@ -16,6 +16,7 @@ import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
+import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
@@ -202,6 +203,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         @Override
         public void previous() {
             showImage(currentPictureNum - 1);
+        }
+
+        @Override
+        public void initStrategy() throws ShowMangaException {
+
         }
 
     }

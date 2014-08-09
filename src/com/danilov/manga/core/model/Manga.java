@@ -13,8 +13,6 @@ public class Manga implements Parcelable {
 
     private String uri;
 
-    private String localUri;
-
     private String title;
 
     private String author = ""; //optional
@@ -75,14 +73,6 @@ public class Manga implements Parcelable {
 
     public void setCoverUri(final String coverUri) {
         this.coverUri = coverUri;
-    }
-
-    public String getLocalUri() {
-        return localUri;
-    }
-
-    public void setLocalUri(final String localUri) {
-        this.localUri = localUri;
     }
 
     public String getTitle() {

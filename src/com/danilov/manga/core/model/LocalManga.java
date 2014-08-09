@@ -10,8 +10,18 @@ public class LocalManga extends Manga {
 
     private int localId;
 
+    private String localUri;
+
     public LocalManga(final String title, final String uri, final RepositoryEngine.Repository repository) {
         super(title, uri, repository);
+    }
+
+    public String getLocalUri() {
+        return localUri;
+    }
+
+    public void setLocalUri(final String localUri) {
+        this.localUri = localUri;
     }
 
     public int getLocalId() {
@@ -39,6 +49,7 @@ public class LocalManga extends Manga {
     protected LocalManga(final Parcel parcel) {
         super(parcel);
         this.localId = parcel.readInt();
+        this.localUri = parcel.readString();
     }
 
     @Override
@@ -50,6 +61,7 @@ public class LocalManga extends Manga {
     public void writeToParcel(final Parcel parcel, final int i) {
         super.writeToParcel(parcel, i);
         parcel.writeInt(localId);
+        parcel.writeString(localUri);
     }
 
 }

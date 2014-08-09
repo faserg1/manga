@@ -26,4 +26,9 @@ public class OnlineManga implements MangaShowStrategy {
 
     }
 
+    @Override
+    public void initStrategy() throws ShowMangaException {
+
+    }
+
 }

@@ -15,4 +15,6 @@ public interface MangaShowStrategy {
 
     void previous() throws ShowMangaException;
 
+    void initStrategy() throws ShowMangaException;
+
 }
