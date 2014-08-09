@@ -126,6 +126,7 @@ public class LinesSearchInputStream extends FilterInputStream {
                 if (a < red) {
                     cur = bytes[a];
                 } else {
+                    Log.d(TAG, "Splitted content, beware");
                     successMatched = j + 1;
                     reachedEnd = true;
                     break;

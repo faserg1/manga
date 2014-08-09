@@ -170,6 +170,10 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
             showImage(0);
         }
 
+        public void showChapter(final int i) {
+
+        }
+
         @Override
         public void showImage(final int i) {
             if (i == currentPictureNum || i >= uris.size() || i < 0) {

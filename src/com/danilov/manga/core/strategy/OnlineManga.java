@@ -12,6 +12,11 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
+    public void showChapter(final int i) {
+
+    }
+
+    @Override
     public void next() {
 
     }

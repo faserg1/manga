@@ -26,12 +26,12 @@
             <View   android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:layout_weight="0.5"
-                    android:id="@+id/left"/>
+                    android:id="@+id/prevBtn"/>
 
             <View   android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:layout_weight="0.5"
-                    android:id="@+id/right"/>
+                    android:id="@+id/nextBtn"/>
 
         </LinearLayout>
 
