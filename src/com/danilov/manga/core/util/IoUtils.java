@@ -380,11 +380,7 @@ public class IoUtils {
         while (matcher.find()) {
             title += matcher.group();
         }
-        File mangaFolder = new File(downloadPath + File.separator + title + File.separator);
-        if (!mangaFolder.mkdirs() && !mangaFolder.exists()) {
-            Log.d(TAG, "Error while creating folder for path: " + mangaFolder.toString());
-        }
-        return mangaFolder.getPath();
+        return downloadPath + File.separator + title + File.separator;
     }
 
     public static String createPathForMangaChapter(final String mangaPath, final int chapterNum) {

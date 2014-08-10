@@ -113,10 +113,10 @@ public class DownloadedMangaDAO {
         return mangaList;
     }
 
-    public LocalManga getByTitleAndRepository(final String title, final Repository repository) throws DatabaseAccessException {
+    public LocalManga getByLinkAndRepository(final String _inetUri, final Repository repository) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        String selection = MANGA_TITLE + " = ? AND " + MANGA_REPOSITORY + " = ?";
-        String[] selectionArgs = new String[] {title, repository.toString()};
+        String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
+        String[] selectionArgs = new String[] {_inetUri, repository.toString()};
         LocalManga manga = null;
         try {
             Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
@@ -135,7 +135,7 @@ public class DownloadedMangaDAO {
             String inetUri = cursor.getString(inetUriIndex);
             int id = cursor.getInt(idIndex);
             int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-            manga = new LocalManga(title, inetUri, repository);
+            manga = new LocalManga(inetUri, inetUri, repository);
             manga.setDescription(description);
             manga.setAuthor(author);
             manga.setLocalId(id);
@@ -149,8 +149,8 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
-    public void updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
-        LocalManga localManga = getByTitleAndRepository(manga.getTitle(), manga.getRepository());
+    public LocalManga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
+        LocalManga localManga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (localManga != null) {
             int chaptersQuantity = localManga.getChaptersQuantity();
             chaptersQuantity += chapters;
@@ -166,9 +166,11 @@ public class DownloadedMangaDAO {
             } finally {
                 db.close();
             }
+            return localManga;
         } else {
             addManga(manga, chapters, localUri);
         }
+        return null;
     }
 
 

@@ -11,6 +11,7 @@ import android.os.Message;
 import android.util.Log;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
+import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
@@ -238,9 +239,11 @@ public class MangaDownloadService extends Service {
             }
             int curChapterNumber = request.getCurrentChapterNumber();
             String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
-            String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             try {
-                downloadedMangaDAO.updateInfo(manga, 1, mangaPath);
+                LocalManga localManga = downloadedMangaDAO.updateInfo(manga, 1, mangaPath);
+                if (localManga != null) {
+                    mangaPath = localManga.getLocalUri();
+                }
             } catch (DatabaseAccessException e) {
                 //TODO: decide what do we need to do if can't store manga
                 //I suppose, that we better cancel request, due to the fact
@@ -248,6 +251,7 @@ public class MangaDownloadService extends Service {
                 sendError(currentRequest, e.getMessage());
                 Log.d(TAG, e.getMessage());
             }
+            String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             int i = 0;
             currentImage = 0;
             currentImageQuantity = urls.size() + 1;

@@ -248,7 +248,9 @@ public class HttpImageManager {
         @Override
         public boolean equals(Object b) {
             if (b instanceof LoadRequest) {
-                return this.mUri.equals(((LoadRequest) b).getUri());
+                LoadRequest _b = (LoadRequest) b;
+                boolean a = this.mHashedUri.equals(_b.getHashedUri());
+                return a && this.mUri.equals(((LoadRequest) b).getUri());
             }
 
             return false;
@@ -339,6 +341,7 @@ public class HttpImageManager {
                     // we just wait until it is handled.
                     while (HttpImageManager.this.mActiveRequests.contains(request)) {
                         try {
+                            Log.d(TAG, "waiting");
                             HttpImageManager.this.mActiveRequests.wait();
                         } catch (InterruptedException e) {
                             Log.e(TAG, e.getMessage());
