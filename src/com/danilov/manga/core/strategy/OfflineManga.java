@@ -1,5 +1,6 @@
 package com.danilov.manga.core.strategy;
 
+import android.os.Handler;
 import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
@@ -30,18 +31,28 @@ public class OfflineManga implements MangaShowStrategy {
     private int currentChapter;
 
     private MangaShowObserver observer;
+    private MangaShowListener initListener;
+
+    private Handler handler;
 
     public OfflineManga(final LocalManga manga, final MangaImageSwitcher mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
         this.mangaImageSwitcher = mangaImageSwitcher;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
+        handler = new Handler();
     }
 
     @Override
     public void initStrategy() throws ShowMangaException {
         try {
             engine.queryForChapters(manga);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    initListener.onInit(OfflineManga.this);
+                }
+            });
         } catch (Exception e) {
             throw new ShowMangaException(e.getMessage());
         }
@@ -116,6 +127,11 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public void setObserver(final MangaShowObserver observer) {
         this.observer = observer;
+    }
+
+    @Override
+    public void setOnInitListener(final MangaShowListener mangaShowListener) {
+        this.initListener = mangaShowListener;
     }
 
     @Override

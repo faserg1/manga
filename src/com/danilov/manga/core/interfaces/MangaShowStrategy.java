@@ -27,4 +27,12 @@ public interface MangaShowStrategy {
 
     void setObserver(final MangaShowObserver observer);
 
+    void setOnInitListener(MangaShowListener mangaShowListener);
+
+    public interface MangaShowListener {
+
+        public void onInit(final MangaShowStrategy strategy);
+
+    }
+
 }

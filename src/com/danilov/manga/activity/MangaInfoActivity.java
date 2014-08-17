@@ -39,6 +39,7 @@ public class MangaInfoActivity extends ActionBarActivity {
     private AnimatedActionView refreshSign;
 
     private Button downloadButton;
+    private Button readOnlineButton;
 
     private Manga manga;
 
@@ -54,7 +55,10 @@ public class MangaInfoActivity extends ActionBarActivity {
         mangaTitle = (TextView) findViewById(R.id.manga_title);
         mangaCover = (ImageView) findViewById(R.id.manga_cover);
         downloadButton = (Button) findViewById(R.id.download);
-        downloadButton.setOnClickListener(new ButtonClickListener());
+        readOnlineButton = (Button) findViewById(R.id.read_online);
+        ButtonClickListener buttonClickListener = new ButtonClickListener();
+        downloadButton.setOnClickListener(buttonClickListener);
+        readOnlineButton.setOnClickListener(buttonClickListener);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         if (savedInstanceState == null) {
             Intent i = getIntent();
@@ -190,13 +194,19 @@ public class MangaInfoActivity extends ActionBarActivity {
 
         @Override
         public void onClick(final View v) {
+            Intent intent = null;
             switch (v.getId()) {
                 case R.id.download:
-                    Intent intent = new Intent(MangaInfoActivity.this, DownloadsActivity.class);
+                    intent = new Intent(MangaInfoActivity.this, DownloadsActivity.class);
                     intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
                     startActivity(intent);
                     break;
                 case R.id.add_to_favorites:
+                    break;
+                case R.id.read_online:
+                    intent = new Intent(MangaInfoActivity.this, MangaViewerActivity.class);
+                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                    startActivity(intent);
                     break;
             }
         }

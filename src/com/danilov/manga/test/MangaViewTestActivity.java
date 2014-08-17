@@ -236,6 +236,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         }
 
+        @Override
+        public void setOnInitListener(final MangaShowListener mangaShowListener) {
+
+        }
+
     }
 
     class TestMangaAdapter extends ArrayAdapter<LocalManga> {

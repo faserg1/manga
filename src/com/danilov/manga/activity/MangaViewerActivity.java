@@ -17,6 +17,7 @@ import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.strategy.OfflineManga;
+import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.view.InAndOutAnim;
@@ -26,7 +27,7 @@ import com.danilov.manga.core.view.SubsamplingScaleImageView;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends Activity implements MangaShowObserver, View.OnClickListener {
+public class MangaViewerActivity extends Activity implements MangaShowObserver, MangaShowStrategy.MangaShowListener, View.OnClickListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -82,8 +83,10 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
 
         if (manga instanceof LocalManga) {
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
-            currentStrategy.setObserver(this);
         }
+        currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
+        currentStrategy.setOnInitListener(this);
+        currentStrategy.setObserver(this);
         if (savedInstanceState != null) {
             restoreState(savedInstanceState);
         } else {
@@ -113,13 +116,6 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
             currentStrategy.initStrategy();
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage());
-        }
-        if (manga.getChaptersQuantity() > 0) {
-            try {
-                currentStrategy.showChapter(fromChapter);
-            } catch (ShowMangaException e) {
-                Log.e(TAG, e.getMessage());
-            }
         }
     }
 
@@ -169,6 +165,17 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
         outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onInit(final MangaShowStrategy strategy) {
+        if (manga.getChaptersQuantity() > 0) {
+            try {
+                currentStrategy.showChapter(fromChapter);
+            } catch (ShowMangaException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
     }
 
     private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {

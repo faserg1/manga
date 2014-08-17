@@ -5,6 +5,7 @@
     <string name="sv_add_to_favorites">Добавить в Избранное</string>
     <string name="sv_chapters">Кол-во глав:</string>
     <string name="sv_search">Поиск</string>
+    <string name="sv_read_online">Читать онлайн</string>
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
 
