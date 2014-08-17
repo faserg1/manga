@@ -1,5 +1,6 @@
 package com.danilov.manga.core.strategy;
 
+import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.MangaChapter;
@@ -28,6 +29,8 @@ public class OfflineManga implements MangaShowStrategy {
     private int currentImageNumber;
     private int currentChapter;
 
+    private MangaShowObserver observer;
+
     public OfflineManga(final LocalManga manga, final MangaImageSwitcher mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
         this.mangaImageSwitcher = mangaImageSwitcher;
@@ -39,7 +42,7 @@ public class OfflineManga implements MangaShowStrategy {
     public void initStrategy() throws ShowMangaException {
         try {
             engine.queryForChapters(manga);
-        } catch (RepositoryException e) {
+        } catch (Exception e) {
             throw new ShowMangaException(e.getMessage());
         }
     }
@@ -58,6 +61,7 @@ public class OfflineManga implements MangaShowStrategy {
             mangaImageSwitcher.setNextImageDrawable(imageFile.getPath());
         }
         currentImageNumber = i;
+        updateObserver();
     }
 
     @Override
@@ -72,6 +76,13 @@ public class OfflineManga implements MangaShowStrategy {
         }
         if (uris != null && uris.size() > 0) {
             showImage(0);
+        }
+        updateObserver();
+    }
+
+    private void updateObserver() {
+        if (observer != null) {
+            observer.onUpdate(this);
         }
     }
 
@@ -95,8 +106,29 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
+    public int getTotalChaptersNumber() {
+        if (manga == null) {
+            return 0;
+        }
+        return manga.getChaptersQuantity();
+    }
+
+    @Override
+    public void setObserver(final MangaShowObserver observer) {
+        this.observer = observer;
+    }
+
+    @Override
     public int getCurrentImageNumber() {
         return currentImageNumber;
+    }
+
+    @Override
+    public int getTotalImageNumber() {
+        if (uris == null) {
+            return 0;
+        }
+        return uris.size();
     }
 
 }

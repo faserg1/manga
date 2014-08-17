@@ -11,6 +11,7 @@ import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
+import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.MangaChapter;
@@ -216,8 +217,23 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
+        public int getTotalImageNumber() {
+            return 0;
+        }
+
+        @Override
         public int getCurrentChapterNumber() {
             return 0;
+        }
+
+        @Override
+        public int getTotalChaptersNumber() {
+            return 0;
+        }
+
+        @Override
+        public void setObserver(final MangaShowObserver observer) {
+
         }
 
     }

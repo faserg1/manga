@@ -7,9 +7,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageSwitcher;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 import com.danilov.manga.R;
+import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
@@ -23,7 +26,7 @@ import com.danilov.manga.core.view.SubsamplingScaleImageView;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends Activity implements View.OnClickListener {
+public class MangaViewerActivity extends Activity implements MangaShowObserver, View.OnClickListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -33,6 +36,10 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
     private View prevBtn;
+    private EditText currentImageTextView;
+    private TextView totalImagesTextView;
+    private EditText currentChapterTextView;
+    private TextView totalChaptersTextView;
 
     private MangaShowStrategy currentStrategy;
     private Manga manga;
@@ -45,6 +52,10 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewById(R.id.nextBtn);
         this.prevBtn = findViewById(R.id.prevBtn);
+        this.currentImageTextView = (EditText) findViewById(R.id.imagePicker);
+        this.totalImagesTextView = (TextView)findViewById(R.id.imageQuantity);
+        this.currentChapterTextView = (EditText) findViewById(R.id.chapterPicker);
+        this.totalChaptersTextView = (TextView) findViewById(R.id.chapterQuantity);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
         Intent intent = getIntent();
@@ -71,6 +82,7 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
 
         if (manga instanceof LocalManga) {
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
+            currentStrategy.setObserver(this);
         }
         if (savedInstanceState != null) {
             restoreState(savedInstanceState);
@@ -123,6 +135,18 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
         }
     }
 
+    @Override
+    public void onUpdate(final MangaShowStrategy strategy) {
+        int currentChapter = strategy.getCurrentChapterNumber();
+        int totalChapters = strategy.getTotalChaptersNumber();
+        int currentImage = strategy.getCurrentImageNumber();
+        int totalImages = strategy.getTotalImageNumber();
+        currentChapterTextView.setText("" + (currentChapter + 1));
+        currentImageTextView.setText("" + (currentImage + 1));
+        totalImagesTextView.setText("" + totalImages);
+        totalChaptersTextView.setText("" + totalChapters);
+    }
+
     private void onPrevious() {
         try {
             currentStrategy.previous();
@@ -157,6 +181,8 @@ public class MangaViewerActivity extends Activity implements View.OnClickListene
                     ImageSwitcher.LayoutParams(
                     ImageSwitcher.LayoutParams.MATCH_PARENT, ImageSwitcher.LayoutParams.MATCH_PARENT));
             touchImageView.setVisibility(View.INVISIBLE);
+            touchImageView.setMaxScale(4);
+            touchImageView.setDebug(true);
             return touchImageView;
         }
 

@@ -63,28 +63,36 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"
-                    android:background="#56BB5C">
+                    android:background="#ffcdd1ce"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp">
 
                 <LinearLayout android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
                               android:orientation="horizontal">
 
+                    <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@android:string/ok"
+                            style="@style/Manga.ButtonCommon"/>
+
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#fff"
+                              android:textColor="#000000"
                               android:inputType="numberDecimal"
                               android:id="@+id/imagePicker"/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#fff"
+                              android:textColor="#000000"
                               android:textSize="18sp"
-                              android:id="@+id/imageQuantity"
-                              android:text="/19"/>
+                              android:text=" / "/>
 
-                    <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@android:string/ok"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#000000"
+                              android:textSize="18sp"
+                              android:id="@+id/imageQuantity"/>
 
                 </LinearLayout>
 
@@ -92,22 +100,28 @@
                               android:layout_height="wrap_content"
                               android:orientation="horizontal">
 
+                    <Button android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@android:string/ok"
+                            style="@style/Manga.ButtonCommon"/>
+
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#fff"
+                              android:textColor="#000000"
                               android:inputType="numberDecimal"
                               android:id="@+id/chapterPicker"/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#fff"
+                              android:textColor="#000000"
                               android:textSize="18sp"
-                              android:id="@+id/chapterQuantity"
-                              android:text="/19"/>
+                              android:text=" / "/>
 
-                    <Button android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@android:string/ok"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textColor="#000000"
+                              android:textSize="18sp"
+                              android:id="@+id/chapterQuantity"/>
 
                 </LinearLayout>
 

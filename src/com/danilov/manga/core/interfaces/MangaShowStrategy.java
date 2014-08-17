@@ -19,6 +19,12 @@ public interface MangaShowStrategy {
 
     int getCurrentImageNumber();
 
+    int getTotalImageNumber();
+
     int getCurrentChapterNumber();
+
+    int getTotalChaptersNumber();
+
+    void setObserver(final MangaShowObserver observer);
 
 }
