@@ -226,23 +226,41 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     //html values
     private String searchElementId = "mangaResults";
-    private String mangaLinkClass = "manga-link";
-    private String mangaCoverClass = "screenshot";
-    private String mangaCoverLinkAttrName = "rel";
+    private String mangaTileClass = "tile";
+    private String mangaCoverClass = "img";
+    private String mangaDescClass = "desc";
 
     //!html values
 
     private List<Manga> parseSearchResponse(final Document document) {
         List<Manga> mangaList = null;
         Element searchResults = document.getElementById(searchElementId);
-        List<Element> mangaLinks = searchResults.getElementsByClass(mangaLinkClass);
+        List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
         mangaList = new ArrayList<Manga>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
-            Element parent = mangaLink.parent();
-            String uri = mangaLink.attr("href");
-            String mangaName = String.valueOf(mangaLink.text());
-            Element screenElement = parent.getElementsByClass(mangaCoverClass).get(0);
-            String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;
+            String uri = null;
+            String mangaName = null;
+            Elements tmp = mangaLink.getElementsByClass(mangaDescClass);
+            if (!tmp.isEmpty()) {
+                tmp = tmp.get(0).getElementsByTag("h3");
+                if (!tmp.isEmpty()) {
+                    tmp = tmp.get(0).getElementsByTag("a");
+                    if (!tmp.isEmpty()) {
+                        Element realLink = tmp.get(0);
+                        uri = realLink.attr("href");
+                        mangaName = realLink.attr("title");
+                    }
+                }
+            }
+
+            Element screenElement = mangaLink.getElementsByClass(mangaCoverClass).get(0);
+
+            tmp = screenElement.getElementsByTag("img");
+            String coverUri = null;
+            if (!tmp.isEmpty()) {
+                Element img = tmp.get(0);
+                coverUri = img != null ? img.attr("src") : "";
+            }
             Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
