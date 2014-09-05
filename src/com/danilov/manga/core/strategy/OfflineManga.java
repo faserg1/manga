@@ -31,7 +31,7 @@ public class OfflineManga implements MangaShowStrategy {
     private int currentChapter;
 
     private MangaShowObserver observer;
-    private MangaShowListener initListener;
+    private MangaStrategyListener initListener;
 
     private Handler handler;
 
@@ -88,6 +88,7 @@ public class OfflineManga implements MangaShowStrategy {
         if (uris != null && uris.size() > 0) {
             showImage(0);
         }
+
         updateObserver();
     }
 
@@ -117,11 +118,11 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public int getTotalChaptersNumber() {
+    public String getTotalChaptersNumber() {
         if (manga == null) {
-            return 0;
+            return "0";
         }
-        return manga.getChaptersQuantity();
+        return "? (" + manga.getChaptersQuantity() + ")";
     }
 
     @Override
@@ -130,8 +131,8 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void setOnInitListener(final MangaShowListener mangaShowListener) {
-        this.initListener = mangaShowListener;
+    public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
+        this.initListener = mangaStrategyListener;
     }
 
     @Override

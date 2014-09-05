@@ -23,15 +23,19 @@ public interface MangaShowStrategy {
 
     int getCurrentChapterNumber();
 
-    int getTotalChaptersNumber();
+    String getTotalChaptersNumber();
 
     void setObserver(final MangaShowObserver observer);
 
-    void setOnInitListener(MangaShowListener mangaShowListener);
+    void setOnStrategyListener(MangaStrategyListener mangaStrategyListener);
 
-    public interface MangaShowListener {
+    public interface MangaStrategyListener {
 
         public void onInit(final MangaShowStrategy strategy);
+
+        public void onImageLoadStart(final MangaShowStrategy strategy);
+
+        public void onChapterInfoLoadStart(final MangaShowStrategy strategy);
 
     }
 

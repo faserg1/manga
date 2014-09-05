@@ -60,6 +60,20 @@ public class DownloadManager {
         }
     }
 
+    public void cancelAllDownloads() {
+        lock.lock();
+        try {
+            for (Download download : downloads) {
+                download.setStatus(DownloadStatus.CANCELLED);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Exception occured in cancelAllDownloads(), error: " + e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+
+    }
+
     public void restartError() {
         lock.lock();
         try {
@@ -162,7 +176,7 @@ public class DownloadManager {
                         size = contentLength;
                     }
                 }
-                status = DownloadStatus.DOWNLOADING;
+                setStatus(DownloadStatus.DOWNLOADING);
                 stateChanged();
 
                 // Open file and seek to the end of it.
@@ -176,7 +190,7 @@ public class DownloadManager {
                 } else {
                     buffer = new byte[size - downloaded];
                 }
-                while (status == DownloadStatus.DOWNLOADING) {
+                while (getStatus() == DownloadStatus.DOWNLOADING) {
                     /* Size buffer according to how much of the
                     file is left to download. */
                     if (size - downloaded < MAX_BUFFER_SIZE) {
@@ -196,7 +210,7 @@ public class DownloadManager {
                 }
                 /* Change status to complete if this point was
                 reached because downloading has finished. */
-                if (status == DownloadStatus.DOWNLOADING) {
+                if (getStatus() == DownloadStatus.DOWNLOADING) {
                     status = DownloadStatus.COMPLETE;
                     downloads.remove(this);
                     stateChanged();
@@ -228,7 +242,7 @@ public class DownloadManager {
         private String errorMessage = null;
 
         private void error(final String errorMessage) {
-            status = DownloadStatus.ERROR;
+            setStatus(DownloadStatus.ERROR);
             this.errorMessage = errorMessage;
             stateChanged();
         }
@@ -268,11 +282,11 @@ public class DownloadManager {
             return ((float) downloaded / size) * 100;
         }
 
-        public DownloadStatus getStatus() {
+        public synchronized DownloadStatus getStatus() {
             return status;
         }
 
-        protected void setStatus(final DownloadStatus status) {
+        protected synchronized void setStatus(final DownloadStatus status) {
             this.status = status;
         }
 
@@ -363,6 +377,7 @@ public class DownloadManager {
                     }
                     download = downloads.peek();
                     while (download.getStatus() == DownloadStatus.PAUSED || download.getStatus() == DownloadStatus.ERROR) {
+                        //doing nothing while download is paused or has error
                         try {
                             isWake.await();
                         } catch (InterruptedException e) {
@@ -378,6 +393,9 @@ public class DownloadManager {
                     lock.unlock();
                 }
                 download.run();
+                if (download.getStatus() == DownloadStatus.CANCELLED) {
+
+                }
             }
         }
 

@@ -37,7 +37,7 @@ public class OnlineManga implements MangaShowStrategy {
     private List<String> uris = null;
 
     private MangaShowObserver observer;
-    private MangaShowListener initListener;
+    private MangaStrategyListener listener;
 
     public OnlineManga(final Manga manga, final MangaImageSwitcher mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
@@ -59,8 +59,9 @@ public class OnlineManga implements MangaShowStrategy {
         File f = new File(path);
         f.mkdirs();
         path += "1.png";
-        downloadManager.startDownload(uri, path);
+        downloadManager.cancelAllDownloads();
         downloadManager.setListener(new DownloadListener(path, i));
+        downloadManager.startDownload(uri, path);
     }
 
     private class DownloadListener implements DownloadManager.DownloadProgressListener {
@@ -136,6 +137,7 @@ public class OnlineManga implements MangaShowStrategy {
         if (chapter == null) {
             throw new ShowMangaException("No chapter ");
         }
+        listener.onChapterInfoLoadStart(this);
         Thread thread = new Thread() {
 
             @Override
@@ -186,7 +188,7 @@ public class OnlineManga implements MangaShowStrategy {
 
                             @Override
                             public void run() {
-                                initListener.onInit(OnlineManga.this);
+                                listener.onInit(OnlineManga.this);
                             }
 
                         });
@@ -218,11 +220,11 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public int getTotalChaptersNumber() {
+    public String getTotalChaptersNumber() {
         if (manga == null) {
-            return 0;
+            return "0";
         }
-        return manga.getChaptersQuantity();
+        return String.valueOf(manga.getChaptersQuantity());
     }
 
     @Override
@@ -231,8 +233,8 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void setOnInitListener(final MangaShowListener mangaShowListener) {
-        this.initListener = mangaShowListener;
+    public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
+        this.listener = mangaStrategyListener;
     }
 
 }

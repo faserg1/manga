@@ -227,8 +227,8 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
-        public int getTotalChaptersNumber() {
-            return 0;
+        public String getTotalChaptersNumber() {
+            return "0";
         }
 
         @Override
@@ -237,7 +237,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
-        public void setOnInitListener(final MangaShowListener mangaShowListener) {
+        public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
 
         }
 

@@ -27,7 +27,7 @@ import com.danilov.manga.core.view.SubsamplingScaleImageView;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends Activity implements MangaShowObserver, MangaShowStrategy.MangaShowListener, View.OnClickListener {
+public class MangaViewerActivity extends Activity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -85,7 +85,7 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
         }
         currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
-        currentStrategy.setOnInitListener(this);
+        currentStrategy.setOnStrategyListener(this);
         currentStrategy.setObserver(this);
         if (savedInstanceState != null) {
             restoreState(savedInstanceState);
@@ -134,13 +134,13 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
     @Override
     public void onUpdate(final MangaShowStrategy strategy) {
         int currentChapter = strategy.getCurrentChapterNumber();
-        int totalChapters = strategy.getTotalChaptersNumber();
+        String totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
-        currentChapterTextView.setText("" + (currentChapter + 1));
-        currentImageTextView.setText("" + (currentImage + 1));
-        totalImagesTextView.setText("" + totalImages);
-        totalChaptersTextView.setText("" + totalChapters);
+        currentChapterTextView.setText(String.valueOf(currentChapter + 1));
+        currentImageTextView.setText(String.valueOf(currentImage + 1));
+        totalImagesTextView.setText(String.valueOf(totalImages));
+        totalChaptersTextView.setText(totalChapters);
     }
 
     private void onPrevious() {
@@ -167,6 +167,8 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
         super.onSaveInstanceState(outState);
     }
 
+    // the part with MangaStrategyListener
+
     @Override
     public void onInit(final MangaShowStrategy strategy) {
         if (manga.getChaptersQuantity() > 0) {
@@ -177,6 +179,18 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
             }
         }
     }
+
+    @Override
+    public void onImageLoadStart(final MangaShowStrategy strategy) {
+
+    }
+
+    @Override
+    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
+
+    }
+
+    // MangaStrategyListener realization end
 
     private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {
 
