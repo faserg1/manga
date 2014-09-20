@@ -36,11 +36,14 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
     private View prevBtn;
-    private EditText currentImageTextView;
+    private EditText currentImageEditText;
     private TextView totalImagesTextView;
-    private EditText currentChapterTextView;
+    private EditText currentChapterEditText;
     private TextView totalChaptersTextView;
     private ProgressBar imageProgressBar;
+
+    private Button imageOk;
+    private Button chapterOk;
 
     private MangaShowStrategy currentStrategy;
     private Manga manga;
@@ -53,13 +56,17 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewById(R.id.nextBtn);
         this.prevBtn = findViewById(R.id.prevBtn);
-        this.currentImageTextView = (EditText) findViewById(R.id.imagePicker);
+        this.currentImageEditText = (EditText) findViewById(R.id.imagePicker);
         this.totalImagesTextView = (TextView)findViewById(R.id.imageQuantity);
-        this.currentChapterTextView = (EditText) findViewById(R.id.chapterPicker);
+        this.currentChapterEditText = (EditText) findViewById(R.id.chapterPicker);
         this.totalChaptersTextView = (TextView) findViewById(R.id.chapterQuantity);
         this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
+        this.imageOk = (Button) findViewById(R.id.imageOk);
+        this.chapterOk = (Button) findViewById(R.id.chapterOk);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
+        imageOk.setOnClickListener(this);
+        chapterOk.setOnClickListener(this);
         Intent intent = getIntent();
         manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (manga == null) {
@@ -68,7 +75,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             }
             return;
         }
-        fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, 0);
+        fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, -1);
 
 
         //loading anims
@@ -84,8 +91,9 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
         if (manga instanceof LocalManga) {
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
+        } else {
+            currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
         }
-        currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
         currentStrategy.setOnStrategyListener(this);
         currentStrategy.setObserver(this);
         if (savedInstanceState != null) {
@@ -129,6 +137,32 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             case R.id.nextBtn:
                 onNext();
                 break;
+            case R.id.imageOk:
+                goToImageFromImagePicker();
+                break;
+            case R.id.chapterOk:
+                goToChapterFromChapterPicker();
+                break;
+        }
+    }
+
+    private void goToChapterFromChapterPicker() {
+        String chapterString = currentChapterEditText.getText().toString();
+        Integer chapterNum = Integer.valueOf(chapterString) - 1;
+        try {
+            currentStrategy.showChapter(chapterNum);
+        } catch (ShowMangaException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+    }
+
+    private void goToImageFromImagePicker() {
+        String imageString = currentImageEditText.getText().toString();
+        Integer imageNum = Integer.valueOf(imageString) - 1;
+        try {
+            currentStrategy.showImage(imageNum);
+        } catch (ShowMangaException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
@@ -138,8 +172,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         String totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
-        currentChapterTextView.setText(String.valueOf(currentChapter + 1));
-        currentImageTextView.setText(String.valueOf(currentImage + 1));
+        currentChapterEditText.setText(String.valueOf(currentChapter + 1));
+        currentImageEditText.setText(String.valueOf(currentImage + 1));
         totalImagesTextView.setText(String.valueOf(totalImages));
         totalChaptersTextView.setText(totalChapters);
     }
@@ -173,6 +207,9 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     @Override
     public void onInit(final MangaShowStrategy strategy) {
         if (manga.getChaptersQuantity() > 0) {
+            if (fromChapter == -1) {
+                fromChapter = manga.getChapters().get(0).getNumber();
+            }
             try {
                 currentStrategy.showChapter(fromChapter);
             } catch (ShowMangaException e) {
@@ -183,6 +220,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     @Override
     public void onImageLoadStart(final MangaShowStrategy strategy) {
+        imageProgressBar.setProgress(0);
+        imageProgressBar.setMax(100);
         imageProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -228,7 +267,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                     ImageSwitcher.LayoutParams.MATCH_PARENT, ImageSwitcher.LayoutParams.MATCH_PARENT));
             touchImageView.setVisibility(View.INVISIBLE);
             touchImageView.setMaxScale(4);
-            touchImageView.setDebug(true);
+//            touchImageView.setDebug(true);
             return touchImageView;
         }
 

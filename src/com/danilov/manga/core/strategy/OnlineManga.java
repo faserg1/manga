@@ -34,6 +34,7 @@ public class OnlineManga implements MangaShowStrategy {
     private RepositoryEngine engine;
     private int currentImageNumber;
     private int currentChapter;
+    private int totalImages = 0;
     private List<String> uris = null;
 
     private MangaShowObserver observer;
@@ -141,7 +142,7 @@ public class OnlineManga implements MangaShowStrategy {
         if (manga.getChaptersQuantity() <= 0) {
             throw new ShowMangaException("No chapters to show");
         }
-        final MangaChapter chapter = manga.getChapterByListPos(i);
+        final MangaChapter chapter = manga.getChapterByNumber(i);
         if (chapter == null) {
             throw new ShowMangaException("No chapter ");
         }
@@ -152,6 +153,7 @@ public class OnlineManga implements MangaShowStrategy {
             public void run() {
                 try {
                     uris = engine.getChapterImages(chapter);
+                    totalImages = uris.size();
                 } catch (Exception e) {
                     listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
                 }
@@ -220,7 +222,7 @@ public class OnlineManga implements MangaShowStrategy {
 
     @Override
     public int getTotalImageNumber() {
-        return 0;
+        return totalImages;
     }
 
     @Override

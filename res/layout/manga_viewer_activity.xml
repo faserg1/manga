@@ -74,7 +74,8 @@
                     <Button android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@android:string/ok"
-                            style="@style/Manga.ButtonCommon"/>
+                            style="@style/Manga.ButtonCommon"
+                            android:id="@+id/imageOk"/>
 
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
@@ -103,7 +104,8 @@
                     <Button android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@android:string/ok"
-                            style="@style/Manga.ButtonCommon"/>
+                            style="@style/Manga.ButtonCommon"
+                            android:id="@+id/chapterOk"/>
 
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
@@ -136,6 +138,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/imageProgressBar"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:visibility="gone"/>
 
 </RelativeLayout>

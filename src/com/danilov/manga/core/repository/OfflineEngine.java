@@ -40,16 +40,20 @@ public class OfflineEngine implements RepositoryEngine {
         public int compare(final String lhs, final String rhs) {
             String _lhs = lhs;
             String _rhs = rhs;
-            int index = _lhs.indexOf('.');
+            int index = _lhs.lastIndexOf('/');
+            if (index == -1) {
+                index = _lhs.lastIndexOf('\\');
+            }
             if (index != -1) {
-                _lhs = _lhs.substring(0, index);
-                index = _lhs.lastIndexOf('/');
-                if (index == -1) {
-                    index = _lhs.lastIndexOf('\\');
-                }
-                if (index != -1) {
-                    _lhs = _lhs.substring(index + 1);
-                }
+                _lhs = _lhs.substring(index + 1);
+            }
+
+            index = _rhs.lastIndexOf('/');
+            if (index == -1) {
+                index = _rhs.lastIndexOf('\\');
+            }
+            if (index != -1) {
+                _rhs = _rhs.substring(index + 1);
             }
             try {
                 Integer left = Integer.valueOf(_lhs);
@@ -83,7 +87,21 @@ public class OfflineEngine implements RepositoryEngine {
         Collections.sort(urisList, chapterNumericStringComparator);
         List<MangaChapter> chapters = new ArrayList<MangaChapter>(urisList.size());
         for (int i = 0; i < urisList.size(); i++) {
-            MangaChapter chapter = new MangaChapter("", i, urisList.get(i));
+            String uri = urisList.get(i);
+            int index = uri.lastIndexOf('/');
+            if (index == -1) {
+                index = uri.lastIndexOf('\\');
+            }
+            if (index != -1) {
+                uri = uri.substring(index + 1);
+            }
+            Integer number = 0;
+            try {
+                number = Integer.valueOf(uri);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            MangaChapter chapter = new MangaChapter("", number, urisList.get(i));
             chapters.add(chapter);
         }
         manga.setChapters(chapters);
