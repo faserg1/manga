@@ -98,7 +98,11 @@ public class ReadmangaEngine implements RepositoryEngine {
             try {
                 response = httpBytesReader.fromUri(uri);
             } catch (HttpRequestException e) {
-                Log.d(TAG, e.getMessage());
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
                 throw new RepositoryException(e.getMessage());
             }
             String responseString = IoUtils.convertBytesToString(response);

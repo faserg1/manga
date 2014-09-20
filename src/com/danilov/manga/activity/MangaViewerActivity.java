@@ -8,10 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
-import android.widget.ImageSwitcher;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
+import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
@@ -43,6 +40,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private TextView totalImagesTextView;
     private EditText currentChapterTextView;
     private TextView totalChaptersTextView;
+    private ProgressBar imageProgressBar;
 
     private MangaShowStrategy currentStrategy;
     private Manga manga;
@@ -59,6 +57,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         this.totalImagesTextView = (TextView)findViewById(R.id.imageQuantity);
         this.currentChapterTextView = (EditText) findViewById(R.id.chapterPicker);
         this.totalChaptersTextView = (TextView) findViewById(R.id.chapterQuantity);
+        this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
         Intent intent = getIntent();
@@ -184,12 +183,18 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     @Override
     public void onImageLoadStart(final MangaShowStrategy strategy) {
+        imageProgressBar.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total) {
+        imageProgressBar.setMax(total);
+        imageProgressBar.setProgress(current);
     }
 
     @Override
     public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
-
+        imageProgressBar.setVisibility(View.GONE);
     }
 
     private DialogFragment progressDialog = null;

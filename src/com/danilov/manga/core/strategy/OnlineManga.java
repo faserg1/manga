@@ -77,7 +77,8 @@ public class OnlineManga implements MangaShowStrategy {
 
         @Override
         public void onProgress(final DownloadManager.Download download, final int progress) {
-
+            int total = download.getSize();
+            listener.onImageLoadProgress(OnlineManga.this, progress, total);
         }
 
         @Override
@@ -95,6 +96,7 @@ public class OnlineManga implements MangaShowStrategy {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    listener.onImageLoadEnd(OnlineManga.this, true, "");
                     File imageFile = new File(path);
                     if (imgNum < currentImageNumber) {
                         mangaImageSwitcher.setInAndOutAnim(prevImageAnim);
@@ -116,7 +118,12 @@ public class OnlineManga implements MangaShowStrategy {
 
         @Override
         public void onError(final DownloadManager.Download download, final String errorMsg) {
-
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onImageLoadEnd(OnlineManga.this, false, errorMsg);
+                }
+            });
         }
 
     }

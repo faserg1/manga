@@ -131,4 +131,11 @@
 
     </com.danilov.manga.core.view.SlidingLayer>
 
+    <ProgressBar
+            style="@style/Manga.ProgressBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageProgressBar"
+            android:layout_alignParentTop="true"/>
+
 </RelativeLayout>
