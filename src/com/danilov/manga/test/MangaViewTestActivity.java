@@ -18,6 +18,7 @@ import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.strategy.ShowMangaException;
+import com.danilov.manga.core.util.Promise;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
@@ -172,8 +173,8 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
             showImage(0);
         }
 
-        public void showChapter(final int i) {
-
+        public Promise<MangaShowStrategy> showChapter(final int i) {
+            return null;
         }
 
         @Override
@@ -207,8 +208,8 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
-        public void initStrategy() throws ShowMangaException {
-
+        public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
+            return null;
         }
 
         @Override

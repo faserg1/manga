@@ -9,6 +9,7 @@ import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.service.DownloadManager;
+import com.danilov.manga.core.util.Promise;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 
@@ -136,7 +137,8 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void showChapter(final int i) throws ShowMangaException {
+    public Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
+        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
         this.currentChapter = i;
         this.currentImageNumber = -1;
         if (manga.getChaptersQuantity() <= 0) {
@@ -165,11 +167,13 @@ public class OnlineManga implements MangaShowStrategy {
                             showImage(0);
                         }
                         updateObserver();
+                        promise.finish();
                     }
                 });
             }
         };
         thread.start();
+        return promise;
     }
 
     @Override
@@ -187,7 +191,8 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void initStrategy() throws ShowMangaException {
+    public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
+        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
         try {
             Thread t = new Thread() {
 
@@ -200,6 +205,7 @@ public class OnlineManga implements MangaShowStrategy {
                             @Override
                             public void run() {
                                 listener.onInit(OnlineManga.this);
+                                promise.finish();
                             }
 
                         });
@@ -213,6 +219,7 @@ public class OnlineManga implements MangaShowStrategy {
         } catch (Exception e) {
             throw new ShowMangaException(e.getMessage());
         }
+        return promise;
     }
 
     @Override

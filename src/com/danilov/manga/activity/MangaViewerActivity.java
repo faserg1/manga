@@ -18,6 +18,7 @@ import com.danilov.manga.core.strategy.OfflineManga;
 import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Constants;
+import com.danilov.manga.core.util.Promise;
 import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
@@ -109,12 +110,33 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
      * @param savedState
      */
     private void restoreState(final Bundle savedState) {
-        int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
-        int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+        final int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
+        final int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
         try {
-            currentStrategy.initStrategy();
-            currentStrategy.showChapter(currentChapterNumber);
-            currentStrategy.showImage(currentImageNumber);
+            currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
+
+                @Override
+                public void action(final MangaShowStrategy strategy) {
+                    try {
+                        Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
+                        promise.after(new Promise.Action<MangaShowStrategy>() {
+
+                            @Override
+                            public void action(final MangaShowStrategy strategy) {
+                                try {
+                                    currentStrategy.showImage(currentImageNumber);
+                                } catch (ShowMangaException e) {
+                                    Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                                }
+                            }
+
+                        });
+                    } catch (ShowMangaException e) {
+                        Log.e(TAG, "Failed to show chapter: " + e.getMessage(), e);
+                    }
+                }
+
+            });
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -122,7 +144,23 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private void init() {
         try {
-            currentStrategy.initStrategy();
+            currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
+                @Override
+                public void action(final MangaShowStrategy strategy) {
+
+                    if (manga.getChaptersQuantity() > 0) {
+                        if (fromChapter == -1) {
+                            fromChapter = manga.getChapters().get(0).getNumber();
+                        }
+                        try {
+                            currentStrategy.showChapter(fromChapter);
+                        } catch (ShowMangaException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+
+                }
+            });
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -206,16 +244,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     @Override
     public void onInit(final MangaShowStrategy strategy) {
-        if (manga.getChaptersQuantity() > 0) {
-            if (fromChapter == -1) {
-                fromChapter = manga.getChapters().get(0).getNumber();
-            }
-            try {
-                currentStrategy.showChapter(fromChapter);
-            } catch (ShowMangaException e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }
     }
 
     @Override
