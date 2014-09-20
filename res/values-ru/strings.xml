@@ -8,5 +8,6 @@
     <string name="sv_read_online">Читать онлайн</string>
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
+    <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
 
 </resources>

@@ -1,7 +1,10 @@
 package com.danilov.manga.core.util;
 
 import android.content.Context;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
+import com.danilov.manga.core.dialog.EasyDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -32,6 +35,20 @@ public class Utils {
 
     public static String errorMessage(final Context context, final String error, final int errorMessageId) {
         return stringResource(context, errorMessageId) + ": " + error;
+    }
+
+    public static DialogFragment easyDialogMessage(final FragmentManager fm, final boolean userClosable, final boolean hasProgress) {
+        return null;
+    }
+
+    public static DialogFragment easyDialogProgress(final FragmentManager fm, final String title, final String message) {
+        EasyDialog easyDialog = new EasyDialog();
+        easyDialog.setHasProgress(true);
+        easyDialog.setUserClosable(false);
+        easyDialog.setTextData(message);
+        easyDialog.setTitle(title);
+        easyDialog.show(fm, "progress-dialog");
+        return easyDialog;
     }
 
 }

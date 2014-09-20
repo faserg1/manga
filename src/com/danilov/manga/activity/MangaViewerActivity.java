@@ -1,8 +1,9 @@
 package com.danilov.manga.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,6 +21,7 @@ import com.danilov.manga.core.strategy.OfflineManga;
 import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Constants;
+import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 import com.danilov.manga.core.view.SubsamplingScaleImageView;
@@ -27,7 +29,7 @@ import com.danilov.manga.core.view.SubsamplingScaleImageView;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends Activity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
+public class MangaViewerActivity extends ActionBarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -186,8 +188,26 @@ public class MangaViewerActivity extends Activity implements MangaShowObserver, 
     }
 
     @Override
-    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
+    public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
 
+    }
+
+    private DialogFragment progressDialog = null;
+
+    @Override
+    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
+        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Loading chapter");
+    }
+
+    @Override
+    public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
+        if (!success) {
+            String errorMsg = Utils.errorMessage(this, message, R.string.p_failed_to_load_chapter_info);
+            Utils.showToast(this, errorMsg);
+        }
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     // MangaStrategyListener realization end

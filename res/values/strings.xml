@@ -7,6 +7,7 @@
     <string name="sv_chapters">Chapters:</string>
 
     <string name="p_internet_error">Problems with internet connection</string>
+    <string name="p_failed_to_load_chapter_info">Failed to load chapter info: </string>
 
     <!--test values-->
     <string name="test_lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra tortor libero, vel lacinia nulla rutrum sed. Cras id urna rhoncus, posuere turpis sit amet, venenatis felis. Maecenas pulvinar fermentum pretium. Pellentesque eu est lectus. Nulla facilisi. Sed iaculis dui eget sapien bibendum, sit amet molestie dolor posuere. Suspendisse auctor magna id elit interdum tincidunt. Nam et consectetur lacus. Integer non nibh sodales augue ornare tristique vitae mollis massa. Pellentesque ultrices ipsum quis risus semper consequat. Maecenas id sem eu ipsum dapibus pretium. Aliquam et dui in metus mattis pellentesque vel ut felis. Ut fermentum, lacus a condimentum volutpat, neque erat tincidunt mi, non eleifend leo velit et risus. Ut nec nisi sodales, tristique lacus et, dignissim nunc. Vivamus vel urna lorem.

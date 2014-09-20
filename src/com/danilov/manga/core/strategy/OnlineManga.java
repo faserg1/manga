@@ -54,6 +54,7 @@ public class OnlineManga implements MangaShowStrategy {
         if (i == currentImageNumber || i >= uris.size() || i < 0) {
             return;
         }
+        listener.onImageLoadStart(this);
         String uri = uris.get(i);
         String path = Environment.getExternalStorageDirectory() + "/cache/";
         File f = new File(path);
@@ -145,11 +146,12 @@ public class OnlineManga implements MangaShowStrategy {
                 try {
                     uris = engine.getChapterImages(chapter);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
                 }
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
                         if (uris != null && uris.size() > 0) {
                             showImage(0);
                         }

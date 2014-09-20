@@ -35,7 +35,11 @@ public interface MangaShowStrategy {
 
         public void onImageLoadStart(final MangaShowStrategy strategy);
 
+        public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
+
         public void onChapterInfoLoadStart(final MangaShowStrategy strategy);
+
+        public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
 
     }
 
