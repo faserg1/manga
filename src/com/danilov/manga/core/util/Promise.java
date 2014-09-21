@@ -11,21 +11,24 @@ public class Promise<ARG> {
 
     private Action<ARG> action;
 
+    private boolean success = false;
+
     public Promise(final ARG arg) {
         this.arg = arg;
     }
 
-    public synchronized void finish() {
+    public synchronized void finish(final boolean success) {
         isOver = true;
+        this.success = success;
         if (action != null) {
-            action.action(arg);
+            action.action(arg, success);
         }
     }
 
     public void after(final Action<ARG> action) {
         synchronized (this) {
             if (isOver) {
-                action.action(arg);
+                action.action(arg, success);
             }
         }
         this.action = action;
@@ -33,7 +36,7 @@ public class Promise<ARG> {
 
     public interface Action<ARG> {
 
-        public void action(final ARG arg);
+        public void action(final ARG arg, final boolean success);
 
     }
 

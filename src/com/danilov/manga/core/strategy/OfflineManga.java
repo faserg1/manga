@@ -53,7 +53,7 @@ public class OfflineManga implements MangaShowStrategy {
                 @Override
                 public void run() {
                     initListener.onInit(OfflineManga.this);
-                    promise.finish();
+                    promise.finish(true);
                 }
             });
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class OfflineManga implements MangaShowStrategy {
             showImage(0);
         }
         updateObserver();
-        promise.finish();
+        promise.finish(true);
         return promise;
     }
 
@@ -105,12 +105,12 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void next() throws ShowMangaException {
+    public Promise<MangaShowStrategy> next() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
-            showChapter(currentChapter + 1);
-            return;
+            return showChapter(currentChapter + 1);
         }
         showImage(currentImageNumber + 1);
+        return null;
     }
 
     @Override

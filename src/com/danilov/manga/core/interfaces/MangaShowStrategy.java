@@ -12,7 +12,7 @@ public interface MangaShowStrategy {
 
     Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException;
 
-    void next() throws ShowMangaException;
+    Promise<MangaShowStrategy> next() throws ShowMangaException;
 
     void previous() throws ShowMangaException;
 

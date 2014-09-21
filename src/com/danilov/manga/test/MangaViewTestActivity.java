@@ -194,12 +194,13 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
-        public void next() {
+        public Promise<MangaShowStrategy> next() {
             if (currentPictureNum + 1 >= uris.size()) {
                 goToChapter(currentChapterNum + 1);
-                return;
+                return null;
             }
             showImage(currentPictureNum + 1);
+            return null;
         }
 
         @Override

@@ -116,17 +116,19 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
 
                 @Override
-                public void action(final MangaShowStrategy strategy) {
+                public void action(final MangaShowStrategy strategy, final boolean success) {
                     try {
                         Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
                         promise.after(new Promise.Action<MangaShowStrategy>() {
 
                             @Override
-                            public void action(final MangaShowStrategy strategy) {
-                                try {
-                                    currentStrategy.showImage(currentImageNumber);
-                                } catch (ShowMangaException e) {
-                                    Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                            public void action(final MangaShowStrategy strategy, final boolean success) {
+                                if (success) {
+                                    try {
+                                        currentStrategy.showImage(currentImageNumber);
+                                    } catch (ShowMangaException e) {
+                                        Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                                    }
                                 }
                             }
 
@@ -146,14 +148,23 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         try {
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
                 @Override
-                public void action(final MangaShowStrategy strategy) {
+                public void action(final MangaShowStrategy strategy, final boolean success) {
 
                     if (manga.getChaptersQuantity() > 0) {
                         if (fromChapter == -1) {
                             fromChapter = manga.getChapters().get(0).getNumber();
                         }
                         try {
-                            currentStrategy.showChapter(fromChapter);
+                            currentStrategy.showChapter(fromChapter).after(new Promise.Action<MangaShowStrategy>() {
+                                @Override
+                                public void action(final MangaShowStrategy strategy, final boolean success) {
+                                    try {
+                                        strategy.showImage(0);
+                                    } catch (ShowMangaException e) {
+                                        Log.e(TAG, e.getMessage(), e);
+                                    }
+                                }
+                            });
                         } catch (ShowMangaException e) {
                             Log.e(TAG, e.getMessage());
                         }
@@ -188,7 +199,16 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         String chapterString = currentChapterEditText.getText().toString();
         Integer chapterNum = Integer.valueOf(chapterString) - 1;
         try {
-            currentStrategy.showChapter(chapterNum);
+            currentStrategy.showChapter(chapterNum).after(new Promise.Action<MangaShowStrategy>() {
+                @Override
+                public void action(final MangaShowStrategy strategy, final boolean success) {
+                    try {
+                        strategy.showImage(0);
+                    } catch (ShowMangaException e) {
+                        Log.e(TAG, e.getMessage(), e);
+                    }
+                }
+            });
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage(), e);
         }
@@ -226,9 +246,21 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private void onNext() {
         try {
-            currentStrategy.next();
+            Promise<MangaShowStrategy> promise = currentStrategy.next();
+            if (promise != null) {
+                promise.after(new Promise.Action<MangaShowStrategy>() {
+                    @Override
+                    public void action(final MangaShowStrategy strategy, final boolean success) {
+                        try {
+                            strategy.showImage(0);
+                        } catch (ShowMangaException e) {
+                            Log.e(TAG, e.getMessage(), e);
+                        }
+                    }
+                });
+            }
         } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
