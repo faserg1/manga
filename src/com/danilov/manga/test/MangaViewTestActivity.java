@@ -178,6 +178,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
+        public void restoreState(final int chapter, final int image) {
+
+        }
+
+        @Override
         public void showImage(final int i) {
             if (i == currentPictureNum || i >= uris.size() || i < 0) {
                 return;
@@ -240,6 +245,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
 
         @Override
         public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
+
+        }
+
+        @Override
+        public void destroy() {
 
         }
 

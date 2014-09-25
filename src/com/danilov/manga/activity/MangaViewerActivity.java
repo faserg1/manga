@@ -112,6 +112,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private void restoreState(final Bundle savedState) {
         final int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
         final int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+        Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
+        currentStrategy.restoreState(currentChapterNumber, currentImageNumber);
         try {
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
 
@@ -266,6 +268,10 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
+        currentStrategy.destroy();
+        int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
+        int currentImageNumber = currentStrategy.getCurrentImageNumber();
+        Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
         outState.putInt(CURRENT_CHAPTER_KEY, currentStrategy.getCurrentChapterNumber());
         outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);

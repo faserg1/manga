@@ -8,6 +8,8 @@ import com.danilov.manga.core.util.Promise;
  */
 public interface MangaShowStrategy {
 
+    void restoreState(final int chapter, final int image);
+
     void showImage(final int i) throws ShowMangaException;
 
     Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException;
@@ -29,6 +31,8 @@ public interface MangaShowStrategy {
     void setObserver(final MangaShowObserver observer);
 
     void setOnStrategyListener(MangaStrategyListener mangaStrategyListener);
+
+    void destroy();
 
     public interface MangaStrategyListener {
 

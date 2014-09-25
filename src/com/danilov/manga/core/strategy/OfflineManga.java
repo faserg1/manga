@@ -28,6 +28,8 @@ public class OfflineManga implements MangaShowStrategy {
 
     private List<String> uris = null;
 
+    private boolean destroyed = false;
+
     private int currentImageNumber;
     private int currentChapter;
 
@@ -46,20 +48,26 @@ public class OfflineManga implements MangaShowStrategy {
 
     @Override
     public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
-        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
+        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
         try {
             engine.queryForChapters(manga);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     initListener.onInit(OfflineManga.this);
-                    promise.finish(true);
+                    promise.finish(OfflineManga.this, true);
                 }
             });
         } catch (Exception e) {
             throw new ShowMangaException(e.getMessage());
         }
         return promise;
+    }
+
+    @Override
+    public void restoreState(final int chapter, final int image) {
+        this.currentChapter = chapter;
+        this.currentImageNumber = image;
     }
 
     @Override
@@ -81,7 +89,7 @@ public class OfflineManga implements MangaShowStrategy {
 
     @Override
     public Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
-        Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
+        Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
         this.currentChapter = i;
         this.currentImageNumber = -1;
         MangaChapter chapter = manga.getChapterByNumber(currentChapter);
@@ -94,7 +102,7 @@ public class OfflineManga implements MangaShowStrategy {
             showImage(0);
         }
         updateObserver();
-        promise.finish(true);
+        promise.finish(this, true);
         return promise;
     }
 
@@ -139,6 +147,11 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
         this.initListener = mangaStrategyListener;
+    }
+
+    @Override
+    public void destroy() {
+        this.destroyed = true;
     }
 
     @Override

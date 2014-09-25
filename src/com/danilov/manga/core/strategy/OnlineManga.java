@@ -41,6 +41,8 @@ public class OnlineManga implements MangaShowStrategy {
     private MangaShowObserver observer;
     private MangaStrategyListener listener;
 
+    private boolean destroyed = false;
+
     public OnlineManga(final Manga manga, final MangaImageSwitcher mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
         this.engine = manga.getRepository().getEngine();
@@ -49,6 +51,12 @@ public class OnlineManga implements MangaShowStrategy {
         this.prevImageAnim = prevImageAnim;
         this.handler = new Handler();
         this.downloadManager = new DownloadManager();
+    }
+
+    @Override
+    public void restoreState(final int chapter, final int image) {
+        this.currentChapter = chapter;
+        this.currentImageNumber = image;
     }
 
     @Override
@@ -98,6 +106,9 @@ public class OnlineManga implements MangaShowStrategy {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (destroyed) {
+                        return;
+                    }
                     listener.onImageLoadEnd(OnlineManga.this, true, "");
                     File imageFile = new File(path);
                     if (imgNum < currentImageNumber) {
@@ -123,6 +134,9 @@ public class OnlineManga implements MangaShowStrategy {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (destroyed) {
+                        return;
+                    }
                     listener.onImageLoadEnd(OnlineManga.this, false, errorMsg);
                 }
             });
@@ -136,10 +150,13 @@ public class OnlineManga implements MangaShowStrategy {
         }
     }
 
+    private int savedCurrentImageNumber = 0;
+
     @Override
     public Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
-        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
+        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
         this.currentChapter = i;
+        this.savedCurrentImageNumber = this.currentImageNumber;
         this.currentImageNumber = -1;
         if (manga.getChaptersQuantity() <= 0) {
             throw new ShowMangaException("No chapters to show");
@@ -162,12 +179,15 @@ public class OnlineManga implements MangaShowStrategy {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        if (destroyed) {
+                            return;
+                        }
                         listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
                         if (uris != null && uris.size() > 0) {
                             //showImage(0);
                         }
                         updateObserver();
-                        promise.finish(true);
+                        promise.finish(OnlineManga.this, true);
                     }
                 });
             }
@@ -192,7 +212,7 @@ public class OnlineManga implements MangaShowStrategy {
 
     @Override
     public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
-        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>(this);
+        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
         try {
             Thread t = new Thread() {
 
@@ -204,8 +224,11 @@ public class OnlineManga implements MangaShowStrategy {
 
                             @Override
                             public void run() {
+                                if (destroyed) {
+                                    return;
+                                }
                                 listener.onInit(OnlineManga.this);
-                                promise.finish(true);
+                                promise.finish(OnlineManga.this, true);
                             }
 
                         });
@@ -224,6 +247,9 @@ public class OnlineManga implements MangaShowStrategy {
 
     @Override
     public int getCurrentImageNumber() {
+        if (currentImageNumber == -1) {
+            return savedCurrentImageNumber;
+        }
         return currentImageNumber;
     }
 
@@ -253,6 +279,11 @@ public class OnlineManga implements MangaShowStrategy {
     @Override
     public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
         this.listener = mangaStrategyListener;
+    }
+
+    @Override
+    public void destroy() {
+        this.destroyed = true;
     }
 
 }
