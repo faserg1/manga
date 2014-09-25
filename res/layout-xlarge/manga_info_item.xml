@@ -77,6 +77,12 @@
                         android:id="@+id/download"
                         android:text="@string/sv_download"/>
 
+                <Button android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Manga.ButtonCommon"
+                        android:id="@+id/read_online"
+                        android:text="@string/sv_read_online"/>
+
                 <LinearLayout android:layout_width="fill_parent"
                               android:layout_height="match_parent"
                               android:paddingLeft="5dp"

@@ -114,7 +114,7 @@ public class OfflineEngine implements RepositoryEngine {
         public int compare(final String lhs, final String rhs) {
             String _lhs = lhs;
             String _rhs = rhs;
-            int index = _lhs.indexOf('.');
+            int index = _lhs.lastIndexOf('.');
             if (index != -1) {
                 _lhs = _lhs.substring(0, index);
                 index = _lhs.lastIndexOf('/');
@@ -125,7 +125,7 @@ public class OfflineEngine implements RepositoryEngine {
                     _lhs = _lhs.substring(index + 1);
                 }
             }
-            index = _rhs.indexOf('.');
+            index = _rhs.lastIndexOf('.');
             if (index != -1) {
                 _rhs = _rhs.substring(0, index);
                 index = _rhs.lastIndexOf('/');

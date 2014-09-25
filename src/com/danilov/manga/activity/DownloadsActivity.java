@@ -79,7 +79,6 @@ public class DownloadsActivity extends ActionBarActivity {
             }
 
         });
-
     }
 
     @Override
