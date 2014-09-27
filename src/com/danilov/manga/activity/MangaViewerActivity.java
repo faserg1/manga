@@ -314,10 +314,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     // the part with MangaStrategyListener
 
     @Override
-    public void onInit(final MangaShowStrategy strategy) {
-    }
-
-    @Override
     public void onImageLoadStart(final MangaShowStrategy strategy) {
         imageProgressBar.setProgress(0);
         imageProgressBar.setMax(100);

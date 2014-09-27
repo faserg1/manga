@@ -40,8 +40,6 @@ public interface MangaShowStrategy {
 
     public interface MangaStrategyListener {
 
-        public void onInit(final MangaShowStrategy strategy);
-
         public void onImageLoadStart(final MangaShowStrategy strategy);
 
         public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total);

@@ -230,7 +230,6 @@ public class OnlineManga implements MangaShowStrategy {
                                 if (destroyed) {
                                     return;
                                 }
-                                listener.onInit(OnlineManga.this);
                                 promise.finish(OnlineManga.this, true);
                             }
 
