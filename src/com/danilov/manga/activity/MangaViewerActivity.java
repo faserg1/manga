@@ -14,6 +14,7 @@ import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.strategy.OfflineManga;
 import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
@@ -24,6 +25,8 @@ import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 import com.danilov.manga.core.view.SubsamplingScaleImageView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
@@ -33,6 +36,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private static final String CURRENT_CHAPTER_KEY = "CCK";
     private static final String CURRENT_IMAGE_KEY = "CIK";
+    private static final String CHAPTERS_KEY = "CK";
 
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
@@ -49,6 +53,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private MangaShowStrategy currentStrategy;
     private Manga manga;
     private int fromChapter;
+
+    private DialogFragment progressDialog = null;
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,14 +118,21 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private void restoreState(final Bundle savedState) {
         final int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
         final int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+        ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
+        if (chapters != null) {
+            manga.setChapters(chapters);
+            manga.setChaptersQuantity(chapters.size());
+        }
         Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
         currentStrategy.restoreState(currentChapterNumber, currentImageNumber);
         try {
+            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
 
                 @Override
                 public void action(final MangaShowStrategy strategy, final boolean success) {
                     try {
+                        progressDialog.dismiss();
                         Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
                         promise.after(new Promise.Action<MangaShowStrategy>() {
 
@@ -148,10 +161,11 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private void init() {
         try {
+            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
                 @Override
                 public void action(final MangaShowStrategy strategy, final boolean success) {
-
+                    progressDialog.dismiss();
                     if (manga.getChaptersQuantity() > 0) {
                         if (fromChapter == -1) {
                             fromChapter = manga.getChapters().get(0).getNumber();
@@ -275,6 +289,11 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         outState.putInt(CURRENT_CHAPTER_KEY, currentStrategy.getCurrentChapterNumber());
         outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+
+        ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
+        if (chapterList != null) {
+            outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -302,7 +321,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         imageProgressBar.setVisibility(View.GONE);
     }
 
-    private DialogFragment progressDialog = null;
 
     @Override
     public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {

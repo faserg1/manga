@@ -10,6 +10,9 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Semyon Danilov on 18.05.2014.
  */
@@ -49,6 +52,14 @@ public class Utils {
         easyDialog.setTitle(title);
         easyDialog.show(fm, "progress-dialog");
         return easyDialog;
+    }
+
+    public static <T> ArrayList<T> listToArrayList(final List<? extends T> oldList) {
+        if (oldList instanceof ArrayList) {
+            return (ArrayList) oldList;
+        } else {
+            return new ArrayList<T>(oldList);
+        }
     }
 
 }

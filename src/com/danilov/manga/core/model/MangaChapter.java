@@ -1,9 +1,13 @@
 package com.danilov.manga.core.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Created by Semyon Danilov on 21.05.2014.
  */
-public class MangaChapter {
+public class MangaChapter implements Parcelable {
 
     private String title;
 
@@ -27,6 +31,39 @@ public class MangaChapter {
 
     public int getNumber() {
         return number;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<MangaChapter> CREATOR = new Creator<MangaChapter>() {
+
+        @Nullable
+        @Override
+        public MangaChapter createFromParcel(final Parcel source) {
+            return new MangaChapter(source);
+        }
+
+        @Override
+        public MangaChapter[] newArray(final int size) {
+            return new MangaChapter[size];
+        }
+
+    };
+
+    private MangaChapter(final Parcel parcel) {
+        title = parcel.readString();
+        uri = parcel.readString();
+        number = parcel.readInt();
+    }
+
+    @Override
+    public void writeToParcel(final Parcel parcel, final int flags) {
+        parcel.writeString(title);
+        parcel.writeString(uri);
+        parcel.writeInt(number);
     }
 
 }

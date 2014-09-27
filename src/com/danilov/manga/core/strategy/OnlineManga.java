@@ -213,7 +213,9 @@ public class OnlineManga implements MangaShowStrategy {
     @Override
     public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
         final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
-        try {
+        if (manga.getChapters() != null) {
+            promise.finish(this, true);
+        } else {
             Thread t = new Thread() {
 
                 @Override
@@ -233,14 +235,12 @@ public class OnlineManga implements MangaShowStrategy {
 
                         });
                     } catch (RepositoryException e) {
-                        e.printStackTrace();
+                        promise.finish(OnlineManga.this, false);
                     }
                 }
 
             };
             t.start();
-        } catch (Exception e) {
-            throw new ShowMangaException(e.getMessage());
         }
         return promise;
     }
