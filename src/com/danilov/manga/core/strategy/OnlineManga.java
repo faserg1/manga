@@ -33,7 +33,7 @@ public class OnlineManga implements MangaShowStrategy {
 
     private Manga manga;
     private RepositoryEngine engine;
-    private int currentImageNumber;
+    private int currentImageNumber = -1;
     private int currentChapter;
     private int totalImages = 0;
     private List<String> uris = null;
@@ -54,9 +54,10 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void restoreState(final int chapter, final int image) {
+    public void restoreState(final List<String> uris, final int chapter, final int image) {
         this.currentChapter = chapter;
-        this.currentImageNumber = image;
+        this.savedCurrentImageNumber = image;
+        this.uris = uris;
     }
 
     @Override
@@ -269,6 +270,11 @@ public class OnlineManga implements MangaShowStrategy {
             return "0";
         }
         return String.valueOf(manga.getChaptersQuantity());
+    }
+
+    @Override
+    public List<String> getChapterUris() {
+        return uris;
     }
 
     @Override

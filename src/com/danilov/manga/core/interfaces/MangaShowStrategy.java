@@ -3,12 +3,14 @@ package com.danilov.manga.core.interfaces;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Promise;
 
+import java.util.List;
+
 /**
  * Created by Semyon Danilov on 21.06.2014.
  */
 public interface MangaShowStrategy {
 
-    void restoreState(final int chapter, final int image);
+    void restoreState(final List<String> uris, final int chapter, final int image);
 
     void showImage(final int i) throws ShowMangaException;
 
@@ -27,6 +29,8 @@ public interface MangaShowStrategy {
     int getCurrentChapterNumber();
 
     String getTotalChaptersNumber();
+
+    List<String> getChapterUris();
 
     void setObserver(final MangaShowObserver observer);
 

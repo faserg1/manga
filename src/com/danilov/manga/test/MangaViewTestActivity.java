@@ -178,7 +178,7 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         }
 
         @Override
-        public void restoreState(final int chapter, final int image) {
+        public void restoreState(final List<String> uris, final int chapter, final int image) {
 
         }
 
@@ -236,6 +236,11 @@ public class MangaViewTestActivity extends Activity implements View.OnClickListe
         @Override
         public String getTotalChaptersNumber() {
             return "0";
+        }
+
+        @Override
+        public List<String> getChapterUris() {
+            return null;
         }
 
         @Override

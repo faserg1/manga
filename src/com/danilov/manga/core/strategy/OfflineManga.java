@@ -65,7 +65,7 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void restoreState(final int chapter, final int image) {
+    public void restoreState(final List<String> uris, final int chapter, final int image) {
         this.currentChapter = chapter;
         this.currentImageNumber = image;
     }
@@ -137,6 +137,11 @@ public class OfflineManga implements MangaShowStrategy {
             return "0";
         }
         return "? (" + manga.getChaptersQuantity() + ")";
+    }
+
+    @Override
+    public List<String> getChapterUris() {
+        return uris;
     }
 
     @Override

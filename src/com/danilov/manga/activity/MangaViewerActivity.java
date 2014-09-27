@@ -37,6 +37,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private static final String CURRENT_CHAPTER_KEY = "CCK";
     private static final String CURRENT_IMAGE_KEY = "CIK";
     private static final String CHAPTERS_KEY = "CK";
+    private static final String URIS_KEY = "UK";
 
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
@@ -123,8 +124,9 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             manga.setChapters(chapters);
             manga.setChaptersQuantity(chapters.size());
         }
+        final ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
         Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-        currentStrategy.restoreState(currentChapterNumber, currentImageNumber);
+        currentStrategy.restoreState(uris, currentChapterNumber, currentImageNumber);
         try {
             progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
             currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
@@ -133,21 +135,29 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                 public void action(final MangaShowStrategy strategy, final boolean success) {
                     try {
                         progressDialog.dismiss();
-                        Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
-                        promise.after(new Promise.Action<MangaShowStrategy>() {
+                        if (uris != null) {
+                            try {
+                                currentStrategy.showImage(currentImageNumber);
+                            } catch (ShowMangaException e) {
+                                Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                            }
+                        } else {
+                            Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
+                            promise.after(new Promise.Action<MangaShowStrategy>() {
 
-                            @Override
-                            public void action(final MangaShowStrategy strategy, final boolean success) {
-                                if (success) {
-                                    try {
-                                        currentStrategy.showImage(currentImageNumber);
-                                    } catch (ShowMangaException e) {
-                                        Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                                @Override
+                                public void action(final MangaShowStrategy strategy, final boolean success) {
+                                    if (success) {
+                                        try {
+                                            currentStrategy.showImage(currentImageNumber);
+                                        } catch (ShowMangaException e) {
+                                            Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                                        }
                                     }
                                 }
-                            }
 
-                        });
+                            });
+                        }
                     } catch (ShowMangaException e) {
                         Log.e(TAG, "Failed to show chapter: " + e.getMessage(), e);
                     }
@@ -293,6 +303,10 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
         if (chapterList != null) {
             outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
+        }
+        ArrayList<String> uris = Utils.listToArrayList(currentStrategy.getChapterUris());
+        if (uris != null) {
+            outState.putStringArrayList(URIS_KEY, uris);
         }
         super.onSaveInstanceState(outState);
     }
