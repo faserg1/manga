@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#ff373737">
 
     <com.danilov.manga.core.view.MangaImageSwitcher
             android:layout_width="match_parent"
@@ -63,7 +64,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"
-                    android:background="#ffcdd1ce"
+                    android:background="#99000000"
                     android:paddingLeft="15dp"
                     android:paddingTop="5dp">
 
@@ -79,19 +80,19 @@
 
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:inputType="numberDecimal"
                               android:id="@+id/imagePicker"/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:textSize="18sp"
                               android:text=" / "/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:textSize="18sp"
                               android:id="@+id/imageQuantity"/>
 
@@ -109,19 +110,19 @@
 
                     <EditText android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:inputType="numberDecimal"
                               android:id="@+id/chapterPicker"/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:textSize="18sp"
                               android:text=" / "/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:textColor="#000000"
+                              android:textColor="#ffffffff"
                               android:textSize="18sp"
                               android:id="@+id/chapterQuantity"/>
 
