@@ -30,8 +30,8 @@ public class OfflineManga implements MangaShowStrategy {
 
     private boolean destroyed = false;
 
-    private int currentImageNumber;
-    private int currentChapter;
+    private int currentImageNumber = -1;
+    private int currentChapter = -1;
 
     private MangaShowObserver observer;
     private MangaStrategyListener initListener;

@@ -58,6 +58,9 @@ public class OnlineManga implements MangaShowStrategy {
         this.currentChapter = chapter;
         this.savedCurrentImageNumber = image;
         this.uris = uris;
+        if (uris != null) {
+            this.totalImages = uris.size();
+        }
     }
 
     @Override
