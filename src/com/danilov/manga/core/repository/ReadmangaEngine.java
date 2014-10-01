@@ -40,6 +40,11 @@ public class ReadmangaEngine implements RepositoryEngine {
     private String baseSuggestionUri = "http://readmanga.me/search/suggestion?query=";
     public static final String baseUri = "http://readmanga.me";
 
+//  ADULT
+//    private String baseSearchUri = "http://adultmanga.ru/search?q=";
+//    private String baseSuggestionUri = "http://adultmanga.ru/search/suggestion?query=";
+//    public static final String baseUri = "http://adultmanga.ru";
+
     @Override
     public String getLanguage() {
         return "Русский";
