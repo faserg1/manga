@@ -42,6 +42,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private MangaImageSwitcher imageSwitcher;
     private View nextBtn;
     private View prevBtn;
+    private View nextBtnBottom;
+    private View prevBtnBottom;
     private EditText currentImageEditText;
     private TextView totalImagesTextView;
     private EditText currentChapterEditText;
@@ -64,6 +66,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewById(R.id.nextBtn);
         this.prevBtn = findViewById(R.id.prevBtn);
+        this.nextBtnBottom = findViewById(R.id.nextBtnBottom);
+        this.prevBtnBottom = findViewById(R.id.prevBtnBottom);
         this.currentImageEditText = (EditText) findViewById(R.id.imagePicker);
         this.totalImagesTextView = (TextView)findViewById(R.id.imageQuantity);
         this.currentChapterEditText = (EditText) findViewById(R.id.chapterPicker);
@@ -73,6 +77,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         this.chapterOk = (Button) findViewById(R.id.chapterOk);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
+        nextBtnBottom.setOnClickListener(this);
+        prevBtnBottom.setOnClickListener(this);
         imageOk.setOnClickListener(this);
         chapterOk.setOnClickListener(this);
         Intent intent = getIntent();
@@ -210,6 +216,12 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                 onPrevious();
                 break;
             case R.id.nextBtn:
+                onNext();
+                break;
+            case R.id.prevBtnBottom:
+                onPrevious();
+                break;
+            case R.id.nextBtnBottom:
                 onNext();
                 break;
             case R.id.imageOk:
