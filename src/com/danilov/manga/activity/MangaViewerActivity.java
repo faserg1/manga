@@ -335,15 +335,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
 
-        if (manga instanceof LocalManga) {
-            HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
-            try {
-                historyDAO.updateLocalInfo((LocalManga) manga, currentChapterNumber, currentImageNumber);
-            } catch (DatabaseAccessException e) {
-                Log.e(TAG, "Failed to update history: " + e.getMessage());
-            }
-        }
-
         ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
         if (chapterList != null) {
             outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
@@ -353,6 +344,21 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             outState.putStringArrayList(URIS_KEY, uris);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
+        int currentImageNumber = currentStrategy.getCurrentImageNumber();
+        if (manga instanceof LocalManga) {
+            HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+            try {
+                historyDAO.updateLocalInfo((LocalManga) manga, currentChapterNumber, currentImageNumber);
+            } catch (DatabaseAccessException e) {
+                Log.e(TAG, "Failed to update history: " + e.getMessage());
+            }
+        }
+        super.onDestroy();
     }
 
     // the part with MangaStrategyListener

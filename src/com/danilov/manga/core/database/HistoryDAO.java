@@ -157,6 +157,8 @@ public class HistoryDAO {
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
             builder.addColumn(LOCAL_MANGA_ID, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(PAGE, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(CHAPTER, DatabaseOptions.Type.INT, false, false);
             DatabaseOptions options = builder.build();
             String sqlStatement = options.toSQLStatement();
             try {

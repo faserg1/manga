@@ -121,19 +121,21 @@ public class DownloadedMangaDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
+            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
             int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
             int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
             int uriIndex = cursor.getColumnIndex(MANGA_URI);
             int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
             int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
             int idIndex = cursor.getColumnIndex(ID);
+            String title = cursor.getString(titleIndex);
             String description = cursor.getString(descriptionIndex);
             String author = cursor.getString(authorIndex);
             String uri = cursor.getString(uriIndex);
             String inetUri = cursor.getString(inetUriIndex);
             int id = cursor.getInt(idIndex);
             int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-            manga = new LocalManga(inetUri, inetUri, repository);
+            manga = new LocalManga(title, inetUri, repository);
             manga.setDescription(description);
             manga.setAuthor(author);
             manga.setLocalId(id);
@@ -157,12 +159,14 @@ public class DownloadedMangaDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
+            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
             int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
             int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
             int uriIndex = cursor.getColumnIndex(MANGA_URI);
             int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
             int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
             int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
+            String title = cursor.getString(titleIndex);
             String description = cursor.getString(descriptionIndex);
             String author = cursor.getString(authorIndex);
             String uri = cursor.getString(uriIndex);
@@ -170,7 +174,7 @@ public class DownloadedMangaDAO {
             String repositoryString = cursor.getString(repositoryIndex);
             Repository repository = Repository.valueOf(repositoryString);
             int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-            manga = new LocalManga(inetUri, inetUri, repository);
+            manga = new LocalManga(title, inetUri, repository);
             manga.setDescription(description);
             manga.setAuthor(author);
             manga.setLocalId(id);
