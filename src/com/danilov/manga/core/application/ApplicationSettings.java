@@ -17,12 +17,15 @@ public class ApplicationSettings {
 
     private static final String DOWNLOAD_PATH_FIELD = "DPF";
     private static final String MANGA_DOWNLOAD_BASE_PATH_FIELD = "MDBPF";
+    private static final String TUTORIAL_VIEWER_PASSED_FIELD = "TVPF";
 
     private static ApplicationSettings instance;
 
     private String downloadPath;
 
     private String mangaDownloadBasePath;
+
+    private boolean tutorialViewerPassed;
 
     public String getDownloadPath() {
         return downloadPath;
@@ -40,6 +43,14 @@ public class ApplicationSettings {
         this.mangaDownloadBasePath = mangaDownloadBasePath;
     }
 
+    public boolean isTutorialViewerPassed() {
+        return tutorialViewerPassed;
+    }
+
+    public void setTutorialViewerPassed(final boolean tutorialViewerPassed) {
+        this.tutorialViewerPassed = tutorialViewerPassed;
+    }
+
     public static ApplicationSettings get(final Context context) {
         if (instance == null) {
             instance = new ApplicationSettings(context);
@@ -55,7 +66,7 @@ public class ApplicationSettings {
         SharedPreferences sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
         this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
-
+        this.tutorialViewerPassed = sharedPreferences.getBoolean(TUTORIAL_VIEWER_PASSED_FIELD, false);
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
         }
@@ -72,6 +83,15 @@ public class ApplicationSettings {
         if (!path.mkdirs() && !path.exists()) {
             Log.d(TAG, "Failure on creation of " + path.toString() + " path");
         }
+    }
+
+    public void update(final Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(DOWNLOAD_PATH_FIELD, downloadPath);
+        editor.putString(MANGA_DOWNLOAD_BASE_PATH_FIELD, mangaDownloadBasePath);
+        editor.putBoolean(TUTORIAL_VIEWER_PASSED_FIELD, tutorialViewerPassed);
+        editor.commit();
     }
 
 }

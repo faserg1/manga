@@ -10,6 +10,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.core.application.ApplicationSettings;
 import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
@@ -57,6 +58,10 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private Manga manga;
     private int fromChapter;
 
+    private ApplicationSettings settings;
+
+    private View tutorialView;
+
     private DialogFragment progressDialog = null;
 
     public void onCreate(final Bundle savedInstanceState) {
@@ -75,12 +80,21 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         this.imageOk = (Button) findViewById(R.id.imageOk);
         this.chapterOk = (Button) findViewById(R.id.chapterOk);
+        this.tutorialView = findViewById(R.id.tutorialView);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
         nextBtnBottom.setOnClickListener(this);
         prevBtnBottom.setOnClickListener(this);
         imageOk.setOnClickListener(this);
         chapterOk.setOnClickListener(this);
+        Button closeTutorial = (Button) findViewById(R.id.closeTutorial);
+        closeTutorial.setOnClickListener(this);
+        settings = ApplicationSettings.get(this);
+        boolean isTutorialPassed = settings.isTutorialViewerPassed();
+        if (isTutorialPassed) {
+            this.tutorialView.setVisibility(View.GONE);
+        }
+
         Intent intent = getIntent();
         manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (manga == null) {
@@ -90,7 +104,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             return;
         }
         fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, -1);
-
 
         //loading anims
         Animation nextInAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
@@ -229,6 +242,11 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                 break;
             case R.id.chapterOk:
                 goToChapterFromChapterPicker();
+                break;
+            case R.id.closeTutorial:
+                this.tutorialView.setVisibility(View.GONE);
+                settings.setTutorialViewerPassed(true);
+                settings.update(this);
                 break;
         }
     }
