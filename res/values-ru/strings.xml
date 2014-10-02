@@ -9,5 +9,7 @@
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
+    <string name="cap_page">Страница</string>
+    <string name="cap_chapter">Глава</string>
 
 </resources>
