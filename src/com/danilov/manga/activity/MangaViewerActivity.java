@@ -60,6 +60,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private MangaShowStrategy currentStrategy;
     private Manga manga;
     private int fromChapter;
+    private int fromPage;
 
     private ApplicationSettings settings;
 
@@ -109,6 +110,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         TextView mangaTitleTextView = (TextView) findViewById(R.id.manga_title);
         mangaTitleTextView.setText(manga.getTitle());
         fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, -1);
+        fromPage = intent.getIntExtra(Constants.FROM_PAGE_KEY, -1);
 
         //loading anims
         Animation nextInAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
@@ -209,7 +211,11 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                                 @Override
                                 public void action(final MangaShowStrategy strategy, final boolean success) {
                                     try {
-                                        strategy.showImage(0);
+                                        if (fromPage != -1) {
+                                            strategy.showImage(fromPage);
+                                        } else {
+                                            strategy.showImage(0);
+                                        }
                                     } catch (ShowMangaException e) {
                                         Log.e(TAG, e.getMessage(), e);
                                     }

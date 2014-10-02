@@ -57,6 +57,8 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
         HistoryElement historyElement = adapter.getHistoryElements().get(position);
         Intent intent = new Intent(this, MangaViewerActivity.class);
         intent.putExtra(Constants.MANGA_PARCEL_KEY, historyElement.getManga());
+        intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
+        intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
         startActivity(intent);
     }
 

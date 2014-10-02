@@ -12,5 +12,6 @@ public class Constants {
 
     public static final String MANGA_PARCEL_KEY = "MPK";
     public static final String FROM_CHAPTER_KEY = "FCK";
+    public static final String FROM_PAGE_KEY = "FPK";
 
 }
