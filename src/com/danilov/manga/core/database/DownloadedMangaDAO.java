@@ -147,6 +147,43 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
+    public LocalManga getById(final int id) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openReadable();
+        String selection = ID + " = ?";
+        String[] selectionArgs = new String[] {"" + id};
+        LocalManga manga = null;
+        try {
+            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            if (!cursor.moveToFirst()) {
+                return null;
+            }
+            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
+            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
+            int uriIndex = cursor.getColumnIndex(MANGA_URI);
+            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
+            int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
+            String description = cursor.getString(descriptionIndex);
+            String author = cursor.getString(authorIndex);
+            String uri = cursor.getString(uriIndex);
+            String inetUri = cursor.getString(inetUriIndex);
+            String repositoryString = cursor.getString(repositoryIndex);
+            Repository repository = Repository.valueOf(repositoryString);
+            int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
+            manga = new LocalManga(inetUri, inetUri, repository);
+            manga.setDescription(description);
+            manga.setAuthor(author);
+            manga.setLocalId(id);
+            manga.setLocalUri(uri);
+            manga.setChaptersQuantity(chaptersQuantity);
+        } catch (Exception e) {
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+        return manga;
+    }
+
     public LocalManga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
         LocalManga localManga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (localManga != null) {
