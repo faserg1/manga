@@ -101,7 +101,7 @@ public class DownloadedMangaDAO {
                 manga.setDescription(description);
                 manga.setAuthor(author);
                 manga.setLocalUri(uri);
-                manga.setChaptersQuantity(chaptersQuantity);
+                manga.setChaptersQuantity(0);
                 manga.setLocalId(id);
                 mangaList.add(manga);
             } while (cursor.moveToNext());
