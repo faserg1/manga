@@ -33,6 +33,7 @@
         <activity android:name=".activity.MangaQueryActivity"
                   android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".activity.MangaViewerActivity"/>
+        <activity android:name=".activity.HistoryActivity" android:label="History"/>
 
         <service android:name=".core.service.MangaDownloadService"/>
     </application>

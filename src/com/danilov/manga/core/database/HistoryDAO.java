@@ -1,5 +1,6 @@
 package com.danilov.manga.core.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -107,6 +108,45 @@ public class HistoryDAO {
             db.close();
         }
         return mangaList;
+    }
+
+    public void addLocalHistory(final LocalManga manga, final int chapter, final int page) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openWritable();
+        ContentValues cv = new ContentValues();
+        cv.put(CHAPTER, chapter);
+        cv.put(LOCAL_MANGA_ID, manga.getLocalId());
+        cv.put(PAGE, page);
+        try {
+            db.insertOrThrow(TABLE_NAME, null, cv);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
+    public HistoryElement updateLocalInfo(final LocalManga manga, final int chapter, final int page) throws DatabaseAccessException{
+        HistoryElement historyElement = getLocalHistoryByManga(manga);
+        if (historyElement != null) {
+            SQLiteDatabase db = databaseHelper.openWritable();
+            try {
+                ContentValues cv = new ContentValues();
+                cv.put(PAGE, page);
+                cv.put(CHAPTER, chapter);
+                String selection = ID + " = ?";
+                String id = String.valueOf(historyElement.getId());
+                db.update(TABLE_NAME, cv, selection, new String[] {id});
+            } catch (Exception e) {
+                throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
+            }
+            return historyElement;
+        } else {
+            addLocalHistory(manga, chapter, page);
+        }
+        return null;
     }
 
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
