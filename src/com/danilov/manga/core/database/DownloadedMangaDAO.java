@@ -37,8 +37,6 @@ public class DownloadedMangaDAO {
     public DatabaseHelper databaseHelper = null;
 
     public DownloadedMangaDAO() {
-
-
         File externalStorageDir = Environment.getExternalStorageDirectory();
         //{SD_PATH}/Android/data/com.danilov.manga/download
         File dbPathFile = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + packageName + File.separator + "db");
@@ -194,7 +192,7 @@ public class DownloadedMangaDAO {
                 database.execSQL("drop table if exists " + TABLE_NAME + ";");
                 database.execSQL(sqlStatement);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "UpgradeHandler onUpgrade failed: " + e.getMessage());
             }
         }
 
