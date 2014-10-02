@@ -11,5 +11,6 @@
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
     <string name="cap_page">Страница</string>
     <string name="cap_chapter">Глава</string>
+    <string name="tutorial_viewer">Нажимайте на выделенные синим области для перехода назад и вперёд по главе</string>
 
 </resources>
