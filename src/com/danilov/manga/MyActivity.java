@@ -7,9 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.danilov.manga.activity.DownloadsActivity;
+import com.danilov.manga.activity.HistoryActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.activity.MangaQueryActivity;
-import com.danilov.manga.activity.MangaViewerActivity;
 import com.danilov.manga.core.service.MangaDownloadService;
 import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.test.LocalMangaActivity;
@@ -80,7 +80,7 @@ public class MyActivity extends ActionBarActivity {
     }
 
     public void firstTest(View view) {
-        Intent intent = new Intent(this, MangaViewerActivity.class);
+        Intent intent = new Intent(this, HistoryActivity.class);
         startActivity(intent);
     }
 

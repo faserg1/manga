@@ -38,7 +38,7 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
         super.onCreate(savedInstanceState);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.history_activity);
         gridView = (GridView) findViewById(R.id.grid_view);
         try {
             List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();

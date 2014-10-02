@@ -11,6 +11,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.application.ApplicationSettings;
+import com.danilov.manga.core.database.DatabaseAccessException;
+import com.danilov.manga.core.database.HistoryDAO;
 import com.danilov.manga.core.interfaces.MangaShowObserver;
 import com.danilov.manga.core.interfaces.MangaShowStrategy;
 import com.danilov.manga.core.model.LocalManga;
@@ -21,6 +23,7 @@ import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
@@ -331,6 +334,15 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         outState.putInt(CURRENT_CHAPTER_KEY, currentStrategy.getCurrentChapterNumber());
         outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+
+        if (manga instanceof LocalManga) {
+            HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+            try {
+                historyDAO.updateLocalInfo((LocalManga) manga, currentChapterNumber, currentImageNumber);
+            } catch (DatabaseAccessException e) {
+                Log.e(TAG, "Failed to update history: " + e.getMessage());
+            }
+        }
 
         ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
         if (chapterList != null) {
