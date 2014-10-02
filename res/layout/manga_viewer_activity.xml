@@ -43,25 +43,20 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="5dp">
 
-                <LinearLayout android:layout_width="fill_parent"
-                      android:layout_height="0dp"
-                      android:layout_weight="0.1">
+                <TextView android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="20dp"
+                          android:id="@+id/manga_title"
+                          android:textColor="#ffffffff"
+                          android:textSize="35sp"
+                          android:singleLine="true"
+                          android:ellipsize="marquee"
+                          android:focusable="true"
+                          android:focusableInTouchMode="true"
+                          android:marqueeRepeatLimit="marquee_forever"
+                          android:scrollHorizontally="true"/>
 
-                    <TextView android:layout_width="fill_parent"
-                              android:layout_height="wrap_content"
-                              android:layout_marginTop="20dp"
-                              android:id="@+id/manga_title"
-                              android:textColor="#ffffffff"
-                              android:textSize="35sp"
-                              android:singleLine="true"
-                              android:ellipsize="marquee"
-                              android:focusable="true"
-                              android:focusableInTouchMode="true"
-                              android:marqueeRepeatLimit="marquee_forever"
-                              android:scrollHorizontally="true"
-                              android:text="Melancholy Of Suzumiya Haruhi"/>
-
-                </LinearLayout>
+                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
 
                 <LinearLayout
                         android:layout_width="fill_parent"
@@ -244,7 +239,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
                             android:id="@+id/tutorialText"
-                            android:layout_above="@+id/closeTutorial">
+                            android:layout_above="@+id/close_tutorial">
 
                     <TextView android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
@@ -261,7 +256,7 @@
                         android:layout_height="wrap_content"
                         android:text="@android:string/ok"
                         style="@style/Manga.ButtonBlue"
-                        android:id="@+id/closeTutorial"
+                        android:id="@+id/close_tutorial"
                         android:layout_centerHorizontal="true"
                         android:layout_alignParentBottom="true"/>
 

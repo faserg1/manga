@@ -87,7 +87,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         prevBtnBottom.setOnClickListener(this);
         imageOk.setOnClickListener(this);
         chapterOk.setOnClickListener(this);
-        Button closeTutorial = (Button) findViewById(R.id.closeTutorial);
+        Button closeTutorial = (Button) findViewById(R.id.close_tutorial);
         closeTutorial.setOnClickListener(this);
         settings = ApplicationSettings.get(this);
         boolean isTutorialPassed = settings.isTutorialViewerPassed();
@@ -103,6 +103,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             }
             return;
         }
+        TextView mangaTitleTextView = (TextView) findViewById(R.id.manga_title);
+        mangaTitleTextView.setText(manga.getTitle());
         fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, -1);
 
         //loading anims
@@ -243,7 +245,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
             case R.id.chapterOk:
                 goToChapterFromChapterPicker();
                 break;
-            case R.id.closeTutorial:
+            case R.id.close_tutorial:
                 this.tutorialView.setVisibility(View.GONE);
                 settings.setTutorialViewerPassed(true);
                 settings.update(this);
