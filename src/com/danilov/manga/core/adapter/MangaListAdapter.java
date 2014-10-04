@@ -3,7 +3,6 @@ package com.danilov.manga.core.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,9 +49,6 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         Manga manga = getItem(position);
         Object tag = view.getTag();
         final MangaViewBag viewBag;
-
-        Log.d(TAG, "Position = " + position);
-        Log.d(TAG, "Has convertView = " + (convertView != null));
 
         if (tag != null && tag instanceof MangaViewBag) {
             viewBag = (MangaViewBag) tag;

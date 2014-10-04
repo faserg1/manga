@@ -142,8 +142,6 @@ public class HttpImageManager {
                     ad.getRequest().cancel();
                     Log.d(TAG, "Request with URI " + ad.getRequest().getUri() + " was cancelled");
                 }
-            } else {
-                Log.d(TAG, "Request with URI " + uri + " has new imageview");
             }
             return r;
         }
@@ -186,16 +184,11 @@ public class HttpImageManager {
             @Override
             public void onLoadResponse(final LoadRequest r, final Bitmap data) {
                 if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
-                    Log.d(TAG, "Request with URI " + getUri() + " has bad imageview" +
-                            " or request cancelled = " + r.isCancelled);
                     return;
                 }
                 AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
                 if (ad.getRequest().equals(r)) {
                     imageView.setImageBitmap(data);
-                    Log.d(TAG, "Set bitmap, URI = " + getUri());
-                } else {
-                    Log.d(TAG, "Don't set bitmap, URI = " + getUri());
                 }
             }
 
@@ -335,13 +328,14 @@ public class HttpImageManager {
         return new Callable<LoadRequest>() {
             @Override
             public LoadRequest call() {
-
+                StringBuilder log = new StringBuilder();
+                log.append("Starting request: " + request.getUri());
                 synchronized (HttpImageManager.this.mActiveRequests) {
                     // If there's been already request pending for the same URL,
                     // we just wait until it is handled.
                     while (HttpImageManager.this.mActiveRequests.contains(request)) {
                         try {
-                            Log.d(TAG, "waiting");
+                            log.append("; waiting; ");
                             HttpImageManager.this.mActiveRequests.wait();
                         } catch (InterruptedException e) {
                             Log.e(TAG, e.getMessage());
@@ -362,10 +356,12 @@ public class HttpImageManager {
                         // then check the persistent storage
                         data = HttpImageManager.this.mPersistence.loadData(key);
                         if (data != null) {
+                            log.append("; Loaded from persistent cache");
                             // load it into memory
                             data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
                             HttpImageManager.this.mCache.storeData(key, data);
                         } else {
+                            log.append("; going to network");
                             // we go to network
                             HttpImageManager.this.mNetworkResourceLoader.removeIfModifiedForUri(request.getUri().toString());
                             data = HttpImageManager.this.mNetworkResourceLoader.fromUri(request.getUri().toString());
@@ -377,10 +373,13 @@ public class HttpImageManager {
                             // persist it
                             HttpImageManager.this.mPersistence.storeData(key, data);
                         }
+                    } else {
+                        log.append("; Loaded from RAM cache");
                     }
 
                     if (data != null && request.mListener != null) {
                         final Bitmap theData = data;
+                        log.append("; posting to handler");
 
                         HttpImageManager.this.mHandler.post(new Runnable() {
                             @Override
@@ -392,6 +391,7 @@ public class HttpImageManager {
                     }
 
                 } catch (final Throwable e) {
+                    log.append("; got error: " + e.getMessage());
                     if (request.mListener != null) {
                         HttpImageManager.this.mHandler.post(new Runnable() {
                             @Override
@@ -403,6 +403,7 @@ public class HttpImageManager {
                     }
                     Log.e(TAG, e.getMessage());
                 } finally {
+                    Log.d(TAG, log.toString());
                     synchronized (HttpImageManager.this.mActiveRequests) {
                         HttpImageManager.this.mActiveRequests.remove(request);
                         HttpImageManager.this.mActiveRequests.notifyAll(); // wake up pending requests
