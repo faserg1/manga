@@ -16,6 +16,7 @@
                   android:layout_height="fill_parent"
                   android:id="@+id/search_results"
                   android:numColumns="1"
+                  android:listSelector="#00000000"
                   android:cacheColorHint="@android:color/transparent">
 
         </GridView>
