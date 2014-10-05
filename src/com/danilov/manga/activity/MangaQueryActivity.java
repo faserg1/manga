@@ -16,8 +16,8 @@ import android.support.v7.widget.SearchView;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.danilov.manga.R;
 import com.danilov.manga.core.adapter.MangaListAdapter;
@@ -45,7 +45,7 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
 
     public static final String[] COLUMNS = {CURSOR_ID, CURSOR_NAME, CURSOR_LINK};
 
-    private ListView searchResultsView;
+    private GridView searchResultsView;
 
     private SearchView searchView;
 
@@ -59,7 +59,7 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_query_activity);
-        searchResultsView = (ListView) findViewById(R.id.search_results);
+        searchResultsView = (GridView) findViewById(R.id.search_results);
     }
 
     @Override
