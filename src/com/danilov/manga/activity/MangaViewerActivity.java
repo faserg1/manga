@@ -417,7 +417,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                     ImageSwitcher.LayoutParams.MATCH_PARENT, ImageSwitcher.LayoutParams.MATCH_PARENT));
             touchImageView.setVisibility(View.INVISIBLE);
             touchImageView.setMaxScale(4);
-            touchImageView.setDebug(true);
+            //touchImageView.setDebug(true);
             return touchImageView;
         }
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.test.LocalMangaActivity;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -76,6 +77,13 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        drawerToggle.syncState();
+    }
+
     private enum DrawerMenuItem {
 
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
@@ -110,9 +118,10 @@ public class MainActivity extends ActionBarActivity {
         public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
             DrawerMenuItem item = DrawerMenuItem.values()[position];
             view.setSelected(true);
+            Intent intent = null;
             switch (item) {
                 case SEARCH:
-                    Intent intent = new Intent(MainActivity.this, MangaQueryActivity.class);
+                    intent = new Intent(MainActivity.this, MangaQueryActivity.class);
                     startActivity(intent);
                     break;
                 case HISTORY:
@@ -120,6 +129,8 @@ public class MainActivity extends ActionBarActivity {
                 case FAVORITE:
                     break;
                 case LOCAL:
+                    intent = new Intent(MainActivity.this, LocalMangaActivity.class);
+                    startActivity(intent);
                     break;
                 case DOWNLOAD_MANAGER:
                     break;
