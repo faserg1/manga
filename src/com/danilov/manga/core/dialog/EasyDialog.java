@@ -52,7 +52,7 @@ public class EasyDialog extends DialogFragment {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if (userClosable) {
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener(){
+            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
@@ -73,7 +73,16 @@ public class EasyDialog extends DialogFragment {
         builder.setView(contentView);
         builder.setTitle(title);
         fillView(contentView);
-        return builder.create();
+        Dialog dialog = builder.create();
+        return dialog;
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!userClosable) {
+            setCancelable(false);
+        }
     }
 
     private void fillView(final View contentView) {
