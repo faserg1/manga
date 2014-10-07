@@ -14,7 +14,7 @@
               android:divider="#ff454546"
               android:listSelector="#CC181E"
               android:dividerHeight="1dp"
-              android:background="#99000000"/>
+              android:background="#CC000000"/>
 
     <!-- The main content view -->
     <FrameLayout
