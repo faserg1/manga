@@ -76,7 +76,7 @@ public class DownloadedMangaDAO {
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return null;
+                return new ArrayList<LocalManga>(0);
             }
             int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
             int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);

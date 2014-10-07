@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,8 +16,8 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.util.DrawerStub;
+import com.danilov.manga.fragment.DownloadedMangaFragment;
 import com.danilov.manga.fragment.RepositoryPickerFragment;
-import com.danilov.manga.test.LocalMangaActivity;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -146,8 +147,7 @@ public class MainActivity extends ActionBarActivity {
                 case FAVORITE:
                     break;
                 case LOCAL:
-                    intent = new Intent(MainActivity.this, LocalMangaActivity.class);
-                    startActivity(intent);
+                    showDownloadedMangaFragment();
                     break;
                 case DOWNLOAD_MANAGER:
                     break;
@@ -176,6 +176,18 @@ public class MainActivity extends ActionBarActivity {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = true;
+    }
+
+    private void showDownloadedMangaFragment() {
+        Fragment fragment = DownloadedMangaFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
     }
 
     private class DrawerListAdapter extends ArrayAdapter<DrawerMenuItem> {

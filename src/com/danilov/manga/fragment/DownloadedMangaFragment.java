@@ -1,10 +1,11 @@
-package com.danilov.manga.test;
+package com.danilov.manga.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,46 +23,58 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Created by Semyon Danilov on 11.06.2014.
+ * Created by Semyon Danilov on 07.10.2014.
  */
-public class LocalMangaActivity extends Activity implements AdapterView.OnItemClickListener {
+public class DownloadedMangaFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String TAG = "DownloadTestActivity";
+    private static final String TAG = "DownloadedMangaFragment";
 
-    private GridView gridView;
-    int sizeOfImage = 0;
+    private View view;
 
     private LocalImageManager localImageManager = null;
     private DownloadedMangaDAO downloadedMangaDAO = null;
 
+    private int sizeOfImage;
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        localImageManager = ServiceContainer.getService(LocalImageManager.class);
-        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
-        setContentView(R.layout.test_local_manga_activity);
-        gridView = (GridView) findViewById(R.id.grid_view);
-        try {
-            List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
-            GridViewAdapter adapter = new GridViewAdapter(this, localMangas);
-            gridView.setAdapter(adapter);
-        } catch (DatabaseAccessException e) {
-            e.printStackTrace();
-        }
-        gridView.setOnItemClickListener(this);
-        sizeOfImage = getApplicationContext().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+    public static DownloadedMangaFragment newInstance() {
+        return new DownloadedMangaFragment();
     }
 
     @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.manga_downloaded_fragment, container, false);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        localImageManager = ServiceContainer.getService(LocalImageManager.class);
+        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
+        try {
+            List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
+            DownloadedMangaAdapter adapter = new DownloadedMangaAdapter(getActivity(), localMangas);
+            gridView.setAdapter(adapter);
+        } catch (DatabaseAccessException e) {
+            Log.e(TAG, "Failed to get downloaded manga: " + e.getMessage());
+        }
+        gridView.setOnItemClickListener(this);
+        sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+
+
+    @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        GridViewAdapter adapter = (GridViewAdapter) parent.getAdapter();
+        DownloadedMangaAdapter adapter = (DownloadedMangaAdapter) parent.getAdapter();
         LocalManga manga = adapter.getMangas().get(position);
-        Intent intent = new Intent(this, MangaViewerActivity.class);
+        Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         startActivity(intent);
     }
 
-    private class GridViewAdapter extends ArrayAdapter<LocalManga> {
+    private class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
         private List<LocalManga> mangas = null;
 
@@ -70,7 +83,7 @@ public class LocalMangaActivity extends Activity implements AdapterView.OnItemCl
             return mangas.size();
         }
 
-        public GridViewAdapter(final Context context, final List<LocalManga> mangas) {
+        public DownloadedMangaAdapter(final Context context, final List<LocalManga> mangas) {
             super(context, 0, mangas);
             this.mangas = mangas;
         }
