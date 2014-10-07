@@ -126,8 +126,6 @@ public class MainActivity extends ActionBarActivity {
             switch (item) {
                 case SEARCH:
                     showRepositoryPickerFragment();
-//                    intent = new Intent(MainActivity.this, MangaQueryActivity.class);
-//                    startActivity(intent);
                     break;
                 case HISTORY:
                     break;
@@ -142,8 +140,14 @@ public class MainActivity extends ActionBarActivity {
                 case SETTINGS:
                     break;
             }
+            closeDrawer();
         }
 
+    }
+
+    private void closeDrawer() {
+        drawerLayout.closeDrawer(drawerList);
+        drawerToggle.syncState();
     }
 
     private void showRepositoryPickerFragment() {

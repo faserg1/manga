@@ -53,11 +53,24 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
 
     private List<Manga> foundManga = null;
 
-    //TODO: change after tests
-    private RepositoryEngine engine = RepositoryEngine.Repository.READMANGA.getEngine();
+    private RepositoryEngine.Repository repository;
+
+    private RepositoryEngine engine = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            String repositoryString = getIntent().getStringExtra(Constants.REPOSITORY_KEY);
+            repository = RepositoryEngine.Repository.valueOf(repositoryString);
+            engine = repository.getEngine();
+        } else {
+            String repositoryString = savedInstanceState.getString(Constants.REPOSITORY_KEY);
+            if (repositoryString == null) {
+                repositoryString = "READMANGA";
+            }
+            repository = RepositoryEngine.Repository.valueOf(repositoryString);
+            engine = repository.getEngine();
+        }
         setContentView(R.layout.manga_query_activity);
         searchResultsView = (GridView) findViewById(R.id.search_results);
     }
@@ -222,6 +235,8 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
             }
             outState.putParcelableArrayList(FOUND_MANGA_KEY, mangas);
         }
+        String repositoryString = repository.toString();
+        outState.putString(Constants.REPOSITORY_KEY, repositoryString);
         super.onSaveInstanceState(outState);
     }
 

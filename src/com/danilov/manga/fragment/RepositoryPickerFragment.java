@@ -1,6 +1,7 @@
 package com.danilov.manga.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.activity.MangaQueryActivity;
 import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.util.Constants;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -38,7 +41,9 @@ public class RepositoryPickerFragment extends Fragment {
             public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
                 RepositoryEngine.Repository repository = repositories[position];
                 String repoString = repository.toString();
-
+                Intent intent = new Intent(getActivity(), MangaQueryActivity.class);
+                intent.putExtra(Constants.REPOSITORY_KEY, repoString);
+                startActivity(intent);
             }
 
         });
