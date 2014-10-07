@@ -73,8 +73,7 @@ public class EasyDialog extends DialogFragment {
         builder.setView(contentView);
         builder.setTitle(title);
         fillView(contentView);
-        Dialog dialog = builder.create();
-        return dialog;
+        return builder.create();
     }
 
     @Override

@@ -17,6 +17,7 @@ import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.util.DrawerStub;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
+import com.danilov.manga.fragment.MainFragment;
 import com.danilov.manga.fragment.RepositoryPickerFragment;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,8 +73,10 @@ public class MainActivity extends ActionBarActivity {
             castedDrawerLayout = new DrawerStub(this);
         }
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setHomeButtonEnabled(true);
+        showMainFragment();
+        syncToggle();
     }
 
 
@@ -154,9 +157,27 @@ public class MainActivity extends ActionBarActivity {
                 case SETTINGS:
                     break;
             }
+            syncToggle();
             closeDrawer();
         }
 
+    }
+
+    private void syncToggle() {
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
+        ActionBar actionBar = getSupportActionBar();
+        if (!isOnMainFragment) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } else {
+            if (drawerToggle != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                drawerToggle.setDrawerIndicatorEnabled(true);
+            } else {
+                actionBar.setDisplayHomeAsUpEnabled(false);
+            }
+        }
     }
 
     private void closeDrawer() {
@@ -175,7 +196,7 @@ public class MainActivity extends ActionBarActivity {
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
-        isOnMainFragment = true;
+        isOnMainFragment = false;
     }
 
     private void showDownloadedMangaFragment() {
@@ -188,6 +209,18 @@ public class MainActivity extends ActionBarActivity {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = false;
+    }
+
+    private void showMainFragment() {
+        Fragment fragment = MainFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(true);
+        }
+        isOnMainFragment = true;
     }
 
     private class DrawerListAdapter extends ArrayAdapter<DrawerMenuItem> {
