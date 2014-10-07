@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.core.util.DrawerStub;
 import com.danilov.manga.fragment.RepositoryPickerFragment;
 import com.danilov.manga.test.LocalMangaActivity;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class MainActivity extends ActionBarActivity {
 
-    private DrawerLayout drawerLayout;
+    private View drawerLayout;
+
+    private DrawerLayout castedDrawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
 
@@ -31,34 +34,42 @@ public class MainActivity extends ActionBarActivity {
 
     private boolean isOnMainFragment = false;
 
+    private boolean isLarge = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        isLarge = findViewById(R.id.is_large) != null; //dealing with pads
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
         drawerList.setAdapter(new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values()));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
-        // Set the list's click listener
-        //drawerList.setOnItemClickListener(new DrawerListItemClickListener());
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                R.drawable.ic_navigation_drawer, R.string.sv_drawer_open, R.string.sv_drawer_close) {
 
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-            }
+        if (!isLarge) {
+            castedDrawerLayout = (DrawerLayout) drawerLayout;
+            drawerToggle = new ActionBarDrawerToggle(this, castedDrawerLayout,
+                    R.drawable.ic_navigation_drawer, R.string.sv_drawer_open, R.string.sv_drawer_close) {
 
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
+                /** Called when a drawer has settled in a completely closed state. */
+                public void onDrawerClosed(View view) {
+                    super.onDrawerClosed(view);
+                }
 
-        };
-        // Set the drawer toggle as the DrawerListener
-        drawerLayout.setDrawerListener(drawerToggle);
+                /** Called when a drawer has settled in a completely open state. */
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                }
+
+            };
+            // Set the drawer toggle as the DrawerListener
+            castedDrawerLayout.setDrawerListener(drawerToggle);
+
+        } else {
+            castedDrawerLayout = new DrawerStub(this);
+        }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -70,12 +81,14 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                if (drawerLayout.isDrawerOpen(drawerList)) {
-                    drawerLayout.closeDrawer(drawerList);
+                if (castedDrawerLayout.isDrawerOpen(drawerList)) {
+                    castedDrawerLayout.closeDrawer(drawerList);
                 } else {
-                    drawerLayout.openDrawer(drawerList);
+                    castedDrawerLayout.openDrawer(drawerList);
                 }
-                drawerToggle.syncState();
+                if (drawerToggle != null) {
+                    drawerToggle.syncState();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -84,8 +97,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     private enum DrawerMenuItem {
@@ -146,8 +160,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void closeDrawer() {
-        drawerLayout.closeDrawer(drawerList);
-        drawerToggle.syncState();
+        castedDrawerLayout.closeDrawer(drawerList);
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     private void showRepositoryPickerFragment() {
@@ -156,7 +172,9 @@ public class MainActivity extends ActionBarActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
-        drawerToggle.setDrawerIndicatorEnabled(false);
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
         isOnMainFragment = true;
     }
 
