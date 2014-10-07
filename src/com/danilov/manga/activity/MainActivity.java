@@ -79,6 +79,7 @@ public class MainActivity extends ActionBarActivity {
     private enum DrawerMenuItem {
 
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
+        HISTORY(R.drawable.ic_action_time, R.string.menu_history),
         FAVORITE(R.drawable.ic_action_important, R.string.menu_favorite),
         LOCAL(R.drawable.ic_action_download, R.string.menu_local),
         DOWNLOAD_MANAGER(R.drawable.ic_action_settings, R.string.menu_download),
@@ -108,10 +109,13 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
             DrawerMenuItem item = DrawerMenuItem.values()[position];
+            view.setSelected(true);
             switch (item) {
                 case SEARCH:
                     Intent intent = new Intent(MainActivity.this, MangaQueryActivity.class);
                     startActivity(intent);
+                    break;
+                case HISTORY:
                     break;
                 case FAVORITE:
                     break;

@@ -26,6 +26,7 @@
     <string name="sv_drawer_close">Close menu</string>
 
     <string name="menu_search">Search</string>
+    <string name="menu_history">History</string>
     <string name="menu_favorite">Favorite</string>
     <string name="menu_local">Downloads</string>
     <string name="menu_download">Download Manager</string>

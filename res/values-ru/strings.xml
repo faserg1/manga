@@ -13,6 +13,7 @@
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
 
     <string name="menu_search">Поиск</string>
+    <string name="menu_history">История</string>
     <string name="menu_favorite">Избранное</string>
     <string name="menu_local">Загрузки</string>
     <string name="menu_download">Управление загрузками</string>
