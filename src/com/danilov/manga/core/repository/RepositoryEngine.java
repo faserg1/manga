@@ -1,5 +1,6 @@
 package com.danilov.manga.core.repository;
 
+import com.danilov.manga.R;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.model.MangaSuggestion;
@@ -49,9 +50,11 @@ public interface RepositoryEngine {
     //enum of names containing matched engines
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine(), "ReadManga", 0, 0),
-        ADULTMANGA(new AdultmangaEngine(), "AdultManga", 0, 0),
+        READMANGA(new ReadmangaEngine(), "ReadManga", R.drawable.ic_readmanga, R.drawable.ic_russia),
+        ADULTMANGA(new AdultmangaEngine(), "AdultManga", R.drawable.ic_adultmanga, R.drawable.ic_russia),
         OFFLINE(new OfflineEngine(), "", 0, -1);
+
+        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA};
 
         private RepositoryEngine engine;
         private String name;
@@ -75,6 +78,10 @@ public interface RepositoryEngine {
 
         public int getIconId() {
             return iconId;
+        }
+
+        public static Repository[] getWithoutOffline() {
+            return withoutOffline;
         }
 
         public RepositoryEngine getEngine() {

@@ -19,6 +19,7 @@
             android:background="@drawable/list_item_background"
             android:paddingLeft="15dp"
             android:paddingTop="15dp"
+            android:paddingRight="15dp"
             android:paddingBottom="15dp">
 
         <!--cover-->
@@ -59,8 +60,9 @@
 
             <ImageView
                     android:id="@+id/country_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_width="35dp"
+                    android:scaleType="centerCrop"
+                    android:layout_height="35dp"/>
 
         </LinearLayout>
 

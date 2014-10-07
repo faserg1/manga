@@ -6,10 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +31,17 @@ public class RepositoryPickerFragment extends Fragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         GridView repositoriesView = (GridView) view.findViewById(R.id.repositories);
-        RepositoryEngine.Repository[] repositories = RepositoryEngine.Repository.values();
+        final RepositoryEngine.Repository[] repositories = RepositoryEngine.Repository.getWithoutOffline();
+        repositoriesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+                RepositoryEngine.Repository repository = repositories[position];
+                String repoString = repository.toString();
+
+            }
+
+        });
         repositoriesView.setAdapter(new RepoAdapter(this.getActivity(), R.layout.repository_item, repositories));
         super.onActivityCreated(savedInstanceState);
     }
