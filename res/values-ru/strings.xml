@@ -6,9 +6,18 @@
     <string name="sv_chapters">Кол-во глав:</string>
     <string name="sv_search">Поиск</string>
     <string name="sv_read_online">Читать онлайн</string>
+    <string name="sv_drawer_open">Открыть меню</string>
+    <string name="sv_drawer_close">Закрыть меню</string>
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
+
+    <string name="menu_search">Поиск</string>
+    <string name="menu_favorite">Избранное</string>
+    <string name="menu_local">Загрузки</string>
+    <string name="menu_download">Управление загрузками</string>
+    <string name="menu_settings">Настройки</string>
+
     <string name="cap_page">Страница</string>
     <string name="cap_chapter">Глава</string>
     <string name="tutorial_viewer">Нажимайте на выделенные синим области для перехода назад и вперёд по главе</string>

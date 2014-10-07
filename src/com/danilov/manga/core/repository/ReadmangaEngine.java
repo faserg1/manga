@@ -36,14 +36,14 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     private static final String TAG = "ReadmangaEngine";
 
-    private String baseSearchUri = "http://readmanga.me/search?q=";
-    private String baseSuggestionUri = "http://readmanga.me/search/suggestion?query=";
-    public static final String baseUri = "http://readmanga.me";
+//    private String baseSearchUri = "http://readmanga.me/search?q=";
+//    private String baseSuggestionUri = "http://readmanga.me/search/suggestion?query=";
+//    public static final String baseUri = "http://readmanga.me";
 
 //  ADULT
-//    private String baseSearchUri = "http://adultmanga.ru/search?q=";
-//    private String baseSuggestionUri = "http://adultmanga.ru/search/suggestion?query=";
-//    public static final String baseUri = "http://adultmanga.ru";
+    private String baseSearchUri = "http://adultmanga.ru/search?q=";
+    private String baseSuggestionUri = "http://adultmanga.ru/search/suggestion?query=";
+    public static final String baseUri = "http://adultmanga.ru";
 
     @Override
     public String getLanguage() {
