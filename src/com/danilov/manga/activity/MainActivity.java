@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.fragment.RepositoryPickerFragment;
 import com.danilov.manga.test.LocalMangaActivity;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +28,8 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     private ListView drawerList;
+
+    private boolean isOnMainFragment = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -121,8 +125,9 @@ public class MainActivity extends ActionBarActivity {
             Intent intent = null;
             switch (item) {
                 case SEARCH:
-                    intent = new Intent(MainActivity.this, MangaQueryActivity.class);
-                    startActivity(intent);
+                    showRepositoryPickerFragment();
+//                    intent = new Intent(MainActivity.this, MangaQueryActivity.class);
+//                    startActivity(intent);
                     break;
                 case HISTORY:
                     break;
@@ -139,6 +144,16 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
+    }
+
+    private void showRepositoryPickerFragment() {
+        RepositoryPickerFragment fragment = RepositoryPickerFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        drawerToggle.setDrawerIndicatorEnabled(false);
+        isOnMainFragment = true;
     }
 
     private class DrawerListAdapter extends ArrayAdapter<DrawerMenuItem> {

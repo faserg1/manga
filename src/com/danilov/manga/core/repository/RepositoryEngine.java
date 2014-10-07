@@ -49,13 +49,31 @@ public interface RepositoryEngine {
     //enum of names containing matched engines
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine()),
-        OFFLINE(new OfflineEngine());
+        READMANGA(new ReadmangaEngine(), "ReadManga", 0, 0),
+        OFFLINE(new OfflineEngine(), "", 0, -1);
 
         private RepositoryEngine engine;
+        private String name;
+        private int iconId;
+        private int countryIconId;
 
-        Repository(final RepositoryEngine engine) {
+        Repository(final RepositoryEngine engine, final String name, final int iconId, final int countryIconId) {
             this.engine = engine;
+            this.name = name;
+            this.iconId = iconId;
+            this.countryIconId = countryIconId;
+        }
+
+        public int getCountryIconId() {
+            return countryIconId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getIconId() {
+            return iconId;
         }
 
         public RepositoryEngine getEngine() {
