@@ -50,6 +50,7 @@ public interface RepositoryEngine {
     public enum Repository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga", 0, 0),
+        ADULTMANGA(new AdultmangaEngine(), "AdultManga", 0, 0),
         OFFLINE(new OfflineEngine(), "", 0, -1);
 
         private RepositoryEngine engine;

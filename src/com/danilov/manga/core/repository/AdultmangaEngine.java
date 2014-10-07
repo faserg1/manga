@@ -32,13 +32,14 @@ import java.util.regex.Pattern;
 /**
  * Engine for russian most popular manga site, geh
  */
-public class ReadmangaEngine implements RepositoryEngine {
+public class AdultmangaEngine implements RepositoryEngine {
 
-    private static final String TAG = "ReadmangaEngine";
+    private static final String TAG = "AdultmangaEngine";
 
-    private String baseSearchUri = "http://readmanga.me/search?q=";
-    private String baseSuggestionUri = "http://readmanga.me/search/suggestion?query=";
-    public static final String baseUri = "http://readmanga.me";
+//  ADULT
+    private String baseSearchUri = "http://adultmanga.ru/search?q=";
+    private String baseSuggestionUri = "http://adultmanga.ru/search/suggestion?query=";
+    public static final String baseUri = "http://adultmanga.ru";
 
     @Override
     public String getLanguage() {
@@ -215,7 +216,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                         continue;
                     }
                     String link = data.getString(linkElementName);
-                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.READMANGA);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.ADULTMANGA);
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
@@ -265,7 +266,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 Element img = tmp.get(0);
                 coverUri = img != null ? img.attr("src") : "";
             }
-            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            Manga manga = new Manga(mangaName, uri, Repository.ADULTMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
