@@ -36,21 +36,21 @@ public class MainActivity extends ActionBarActivity {
 
     private boolean isOnMainFragment = false;
 
-    private boolean isLarge = false;
+    private boolean isLargeLandscape = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
         drawerLayout = findViewById(R.id.drawer_layout);
-        isLarge = findViewById(R.id.is_large) != null; //dealing with pads
+        isLargeLandscape = findViewById(R.id.is_large) != null; //dealing with landscape pads
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
         drawerList.setAdapter(new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values()));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        if (!isLarge) {
+        if (!isLargeLandscape) {
             castedDrawerLayout = (DrawerLayout) drawerLayout;
             drawerToggle = new ActionBarDrawerToggle(this, castedDrawerLayout,
                     R.drawable.ic_navigation_drawer, R.string.sv_drawer_open, R.string.sv_drawer_close) {
