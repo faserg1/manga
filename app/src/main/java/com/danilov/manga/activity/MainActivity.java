@@ -17,6 +17,7 @@ import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.util.DrawerStub;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
+import com.danilov.manga.fragment.HistoryMangaFragment;
 import com.danilov.manga.fragment.MainFragment;
 import com.danilov.manga.fragment.RepositoryPickerFragment;
 
@@ -145,6 +146,7 @@ public class MainActivity extends ActionBarActivity {
                     showRepositoryPickerFragment();
                     break;
                 case HISTORY:
+                    showHistoryFragment();
                     break;
                 case FAVORITE:
                     break;
@@ -200,6 +202,18 @@ public class MainActivity extends ActionBarActivity {
 
     private void showDownloadedMangaFragment() {
         Fragment fragment = DownloadedMangaFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+    }
+
+    private void showHistoryFragment() {
+        Fragment fragment = HistoryMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)

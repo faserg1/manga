@@ -1,5 +1,6 @@
 package com.danilov.manga.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.application.ApplicationSettings;
@@ -135,6 +137,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         } else {
             init();
         }
+        closeKeyboard();
     }
 
     /**
@@ -279,6 +282,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        closeKeyboard();
     }
 
     private void goToImageFromImagePicker() {
@@ -289,6 +293,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        closeKeyboard();
     }
 
     @Override
@@ -422,4 +427,10 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         }
 
     }
+
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
+    }
+
 }

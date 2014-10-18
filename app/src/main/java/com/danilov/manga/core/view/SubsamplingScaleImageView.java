@@ -942,6 +942,8 @@ public class SubsamplingScaleImageView extends View {
         invalidate();
     }
 
+    private String _source = null;
+
     /**
      * Async task used to get image details without blocking the UI thread.
      */
@@ -956,6 +958,7 @@ public class SubsamplingScaleImageView extends View {
             this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
             this.contextRef = new WeakReference<Context>(context);
             this.source = source;
+            view._source = source;
             this.sourceIsAsset = sourceIsAsset;
         }
 
@@ -1040,7 +1043,9 @@ public class SubsamplingScaleImageView extends View {
                             options.inSampleSize = tile.sampleSize;
                             options.inPreferredConfig = Config.RGB_565;
                             options.inDither = true;
-                            Bitmap bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
+                            Rect rect = view.fileSRect(tile.sRect);
+                            //Bitmap bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
+                            Bitmap bitmap = BitmapDecoder.from(view._source).region(rect).decode();
                             int rotation = view.getRequiredRotation();
                             if (rotation != 0) {
                                 Matrix matrix = new Matrix();
