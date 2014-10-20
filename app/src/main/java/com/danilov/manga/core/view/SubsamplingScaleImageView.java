@@ -24,6 +24,8 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 import rapid.decoder.BitmapDecoder;
+import rapid.decoder.MyBitmapDecoder;
+import rapid.decoder.MyBitmapLoader;
 
 /**
  * Displays an image subsampled as necessary to avoid loading too much image data into memory. After a pinch to zoom in,
@@ -133,8 +135,6 @@ public class SubsamplingScaleImageView extends View {
     // Fling detector
     private GestureDetector detector;
 
-    // Tile decoder
-    private BitmapRegionDecoder decoder;
     private final Object decoderLock = new Object();
 
     // Sample size used to display the whole image when fully zoomed out
@@ -324,12 +324,6 @@ public class SubsamplingScaleImageView extends View {
         vDistStart = 0;
         anim = null;
         if (newImage) {
-            if (decoder != null) {
-                synchronized (decoderLock) {
-                    decoder.recycle();
-                    decoder = null;
-                }
-            }
             sWidth = 0;
             sHeight = 0;
             sOrientation = 0;
@@ -577,7 +571,7 @@ public class SubsamplingScaleImageView extends View {
         createPaints();
 
         // If image or view dimensions are not known yet, abort.
-        if (sWidth == 0 || sHeight == 0 || decoder == null || getWidth() == 0 || getHeight() == 0) {
+        if (sWidth == 0 || sHeight == 0 || getWidth() == 0 || getHeight() == 0) {
             return;
         }
 
@@ -725,7 +719,7 @@ public class SubsamplingScaleImageView extends View {
 
         List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
         for (Tile baseTile : baseGrid) {
-            BitmapTileTask task = new BitmapTileTask(this, decoder, decoderLock, baseTile);
+            BitmapTileTask task = new BitmapTileTask(this, decoderLock, baseTile);
             task.execute();
         }
 
@@ -756,7 +750,7 @@ public class SubsamplingScaleImageView extends View {
                     if (RectF.intersects(sVisRect, convertRect(tile.sRect))) {
                         tile.visible = true;
                         if (!tile.loading && tile.bitmap == null && load) {
-                            BitmapTileTask task = new BitmapTileTask(this, decoder, decoderLock, tile);
+                            BitmapTileTask task = new BitmapTileTask(this, decoderLock, tile);
                             task.execute();
                         }
                     } else if (tile.sampleSize != fullImageSampleSize) {
@@ -926,8 +920,7 @@ public class SubsamplingScaleImageView extends View {
     /**
      * Called by worker task when decoder is ready and image size and EXIF orientation is known.
      */
-    private void onImageInited(BitmapRegionDecoder decoder, int sWidth, int sHeight, int sOrientation) {
-        this.decoder = decoder;
+    private void onImageInited(int sWidth, int sHeight, int sOrientation) {
         this.sWidth = sWidth;
         this.sHeight = sHeight;
         this.sOrientation = sOrientation;
@@ -952,7 +945,6 @@ public class SubsamplingScaleImageView extends View {
         private final WeakReference<Context> contextRef;
         private final String source;
         private final boolean sourceIsAsset;
-        private BitmapRegionDecoder decoder;
 
         public BitmapInitTask(SubsamplingScaleImageView view, Context context, String source, boolean sourceIsAsset) {
             this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
@@ -967,12 +959,21 @@ public class SubsamplingScaleImageView extends View {
             try {
                 if (viewRef != null && contextRef != null) {
                     Context context = contextRef.get();
+                    int width = 0;
+                    int height = 0;
                     if (context != null) {
                         int exifOrientation = ORIENTATION_0;
                         if (sourceIsAsset) {
-                            decoder = BitmapRegionDecoder.newInstance(context.getAssets().open(source, AssetManager.ACCESS_RANDOM), true);
+//                            decoder = BitmapRegionDecoder.newInstance(context.getAssets().open(source, AssetManager.ACCESS_RANDOM), true);
+//                            width = decoder.getWidth();
+//                            height = decoder.getHeight();
                         } else {
-                            decoder = BitmapRegionDecoder.newInstance(source, true);
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+
+                            BitmapFactory.decodeFile(source, options);
+                            width = options.outWidth;
+                            height = options.outHeight;
                             try {
                                 ExifInterface exifInterface = new ExifInterface(source);
                                 int orientationAttr = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -992,7 +993,7 @@ public class SubsamplingScaleImageView extends View {
                             }
 
                         }
-                        return new int[] { decoder.getWidth(), decoder.getHeight(), exifOrientation };
+                        return new int[] { width,height, exifOrientation };
                     }
                 }
             } catch (Exception e) {
@@ -1003,10 +1004,10 @@ public class SubsamplingScaleImageView extends View {
 
         @Override
         protected void onPostExecute(int[] xyo) {
-            if (viewRef != null && decoder != null) {
+            if (viewRef != null) {
                 final SubsamplingScaleImageView subsamplingScaleImageView = viewRef.get();
-                if (subsamplingScaleImageView != null && decoder != null && xyo != null && xyo.length == 3) {
-                    subsamplingScaleImageView.onImageInited(decoder, xyo[0], xyo[1], xyo[2]);
+                if (subsamplingScaleImageView != null && xyo != null && xyo.length == 3) {
+                    subsamplingScaleImageView.onImageInited(xyo[0], xyo[1], xyo[2]);
                 }
             }
         }
@@ -1017,13 +1018,11 @@ public class SubsamplingScaleImageView extends View {
      */
     private static class BitmapTileTask extends AsyncTask<Void, Void, Bitmap> {
         private final WeakReference<SubsamplingScaleImageView> viewRef;
-        private final WeakReference<BitmapRegionDecoder> decoderRef;
         private final WeakReference<Object> decoderLockRef;
         private final WeakReference<Tile> tileRef;
 
-        public BitmapTileTask(SubsamplingScaleImageView view, BitmapRegionDecoder decoder, Object decoderLock, Tile tile) {
+        public BitmapTileTask(SubsamplingScaleImageView view, Object decoderLock, Tile tile) {
             this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
-            this.decoderRef = new WeakReference<BitmapRegionDecoder>(decoder);
             this.decoderLockRef = new WeakReference<Object>(decoderLock);
             this.tileRef = new WeakReference<Tile>(tile);
             tile.loading = true;
@@ -1032,20 +1031,28 @@ public class SubsamplingScaleImageView extends View {
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {
-                if (decoderRef != null && tileRef != null && viewRef != null) {
-                    final BitmapRegionDecoder decoder = decoderRef.get();
+                if (tileRef != null && viewRef != null) {
                     final Object decoderLock = decoderLockRef.get();
                     final Tile tile = tileRef.get();
                     final SubsamplingScaleImageView view = viewRef.get();
-                    if (decoder != null && decoderLock != null && tile != null && view != null && !decoder.isRecycled()) {
+                    if (decoderLock != null && tile != null && view != null) {
                         synchronized (decoderLock) {
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inSampleSize = tile.sampleSize;
                             options.inPreferredConfig = Config.RGB_565;
                             options.inDither = true;
                             Rect rect = view.fileSRect(tile.sRect);
+                            boolean shouldRegion = view.sWidth != rect.right || view.sHeight != rect.bottom || rect.top != 0 || rect.left != 0;
                             //Bitmap bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
-                            Bitmap bitmap = BitmapDecoder.from(view._source).region(rect).decode();
+                            float scaleBy = (float) (1.0f / tile.sampleSize);
+                            Bitmap bitmap = null;
+                            if (shouldRegion) {
+                                MyBitmapLoader myBitmapLoader = MyBitmapDecoder.myFrom(view._source, false).useBuiltInDecoder(true).config(Config.RGB_565);
+                                myBitmapLoader.region(rect);
+                                bitmap = myBitmapLoader.scaleBy(scaleBy).decode();
+                            } else {
+                                bitmap = BitmapFactory.decodeFile(view._source, options);
+                            }
                             int rotation = view.getRequiredRotation();
                             if (rotation != 0) {
                                 Matrix matrix = new Matrix();
