@@ -68,9 +68,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
         historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
-
         loadHistory();
-
         gridView.setOnItemClickListener(this);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
         super.onActivityCreated(savedInstanceState);
@@ -87,7 +85,6 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                     List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
                     if (history != null && !history.isEmpty()) {
                         adapter = new HistoryMangaAdapter(getActivity(), history);
-                        gridView.setAdapter(adapter);
                     }
                 } catch (DatabaseAccessException e) {
                     _success = false;

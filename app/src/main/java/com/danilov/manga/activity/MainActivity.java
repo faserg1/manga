@@ -155,7 +155,6 @@ public class MainActivity extends ActionBarActivity {
             }
             DrawerMenuItem item = DrawerMenuItem.values()[position];
             view.setSelected(true);
-            parent.setSelection(position);
             item.setSelected(true);
             prevSelected = item;
             Intent intent = null;
@@ -296,7 +295,6 @@ public class MainActivity extends ActionBarActivity {
             }
             DrawerMenuItem item = objects[position];
             if (item.isSelected()) {
-                ((AdapterView) parent).setSelection(position);
                 view.setSelected(true);
             } else {
                 view.setSelected(false);
