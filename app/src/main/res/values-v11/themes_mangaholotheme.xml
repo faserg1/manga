@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="MangaHoloTheme" parent="@style/_MangaHoloTheme"/>
+
+  <style name="_MangaHoloTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    <item name="android:editTextBackground">@drawable/mangaholotheme_edit_text_holo_light</item>
+
+    <item name="android:textColorHighlight">#9933b5e5</item>
+    <item name="android:textSelectHandleLeft">@drawable/mangaholotheme_text_select_handle_left</item>
+    <item name="android:textSelectHandleRight">@drawable/mangaholotheme_text_select_handle_right</item>
+    <item name="android:textSelectHandle">@drawable/mangaholotheme_text_select_handle_middle</item>
+
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMangaHoloTheme</item>
+
+    <item name="android:listChoiceIndicatorMultiple">@drawable/mangaholotheme_btn_check_holo_light</item>
+
+    <item name="android:listChoiceIndicatorSingle">@drawable/mangaholotheme_btn_radio_holo_light</item>
+
+    <item name="android:buttonStyle">@style/ButtonMangaHoloTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonMangaHoloTheme</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerMangaHoloTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarMangaHoloTheme</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarMangaHoloTheme</item>
+
+    <item name="android:ratingBarStyle">@style/RatingBarMangaHoloTheme</item>
+
+    <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMangaHoloTheme</item>
+
+    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMangaHoloTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleMangaHoloTheme</item>
+
+    <item name="android:listChoiceBackgroundIndicator">@drawable/mangaholotheme_list_selector_holo_light</item>
+
+    <item name="android:activatedBackgroundIndicator">@drawable/mangaholotheme_activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/mangaholotheme_fastscroll_thumb_holo</item>
+
+  </style>
+
+</resources>

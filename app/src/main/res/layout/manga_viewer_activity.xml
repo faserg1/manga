@@ -17,7 +17,7 @@
     <com.danilov.manga.core.view.SlidingLayer
             xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
             android:id="@+id/selector"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="fill_parent"
             slidingLayer:stickTo="left"
             android:layout_alignParentLeft="true"
@@ -35,7 +35,7 @@
             </LinearLayout>
 
             <LinearLayout
-                    android:layout_width="300dp"
+                    android:layout_width="250dp"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"
                     android:background="#99000000"

@@ -119,9 +119,19 @@ public class MainActivity extends ActionBarActivity {
 
         private int stringId;
 
+        private boolean isSelected = false;
+
         private DrawerMenuItem(final int iconId, final int stringId) {
             this.iconId = iconId;
             this.stringId = stringId;
+        }
+
+        public void setSelected(final boolean isSelected) {
+            this.isSelected = isSelected;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
         }
 
         public int getIconId() {
@@ -136,10 +146,18 @@ public class MainActivity extends ActionBarActivity {
 
     private class DrawerItemClickListener implements AdapterView.OnItemClickListener {
 
+        private DrawerMenuItem prevSelected = null;
+
         @Override
         public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+            if (prevSelected != null) {
+                prevSelected.setSelected(false);
+            }
             DrawerMenuItem item = DrawerMenuItem.values()[position];
             view.setSelected(true);
+            parent.setSelection(position);
+            item.setSelected(true);
+            prevSelected = item;
             Intent intent = null;
             switch (item) {
                 case SEARCH:
@@ -277,6 +295,12 @@ public class MainActivity extends ActionBarActivity {
                 holder.icon = icon;
             }
             DrawerMenuItem item = objects[position];
+            if (item.isSelected()) {
+                ((AdapterView) parent).setSelection(position);
+                view.setSelected(true);
+            } else {
+                view.setSelected(false);
+            }
             text.setText(context.getString(item.getStringId()));
             icon.setImageResource(item.getIconId());
             return view;
