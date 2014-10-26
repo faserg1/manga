@@ -23,7 +23,6 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Long Text Test Of Marquee Lol . COM"
                       android:id="@+id/manga_title"
                       android:textSize="25sp"
                       android:singleLine="true"
@@ -55,8 +54,7 @@
                         android:id="@+id/manga_cover"
                         android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/test_manga_front"/>
+                        android:adjustViewBounds="true"/>
 
             </LinearLayout>
 
@@ -108,8 +106,7 @@
                 android:layout_height="fill_parent">
             <TextView android:layout_width="fill_parent"
                       android:layout_height="fill_parent"
-                      android:id="@+id/manga_description"
-                      android:text="@string/test_lorem"/>
+                      android:id="@+id/manga_description"/>
 
         </LinearLayout>
 

@@ -24,6 +24,8 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
 
     private final String TAG = "MangaListAdapter";
 
+    private HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
+
     private final int resourceId;
     private int sizeOfImage;
     private PopupButtonClickListener popupButtonClickListener;
@@ -73,7 +75,6 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
 
             });
         }
-        HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         Uri coverUri = Uri.parse(manga.getCoverUri());
         HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
         Bitmap bitmap = httpImageManager.loadImage(request);
@@ -88,12 +89,6 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         protected ImageView coverView;
         protected ImageButton popupButton;
         //TODO: add everything else
-    }
-
-    public interface PopupButtonClickListener {
-
-        void onPopupButtonClick(final View popupButton, final int listPosition);
-
     }
 
 }

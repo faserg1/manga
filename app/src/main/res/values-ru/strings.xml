@@ -2,6 +2,7 @@
 <resources>
 
     <string name="sv_download">Скачать</string>
+    <string name="sv_delete">Удалить</string>
     <string name="sv_add_to_favorites">Добавить в Избранное</string>
     <string name="sv_chapters">Кол-во глав:</string>
     <string name="sv_search">Поиск</string>
@@ -11,6 +12,7 @@
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
+    <string name="p_failed_to_show_loaded">Не удалось показать загруженную мангу: </string>
 
     <string name="menu_search">Поиск</string>
     <string name="menu_history">История</string>

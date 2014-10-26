@@ -24,8 +24,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 import rapid.decoder.BitmapDecoder;
-import rapid.decoder.MyBitmapDecoder;
-import rapid.decoder.MyBitmapLoader;
+import rapid.decoder.BitmapLoader;
 
 /**
  * Displays an image subsampled as necessary to avoid loading too much image data into memory. After a pinch to zoom in,
@@ -1043,11 +1042,10 @@ public class SubsamplingScaleImageView extends View {
                             options.inDither = true;
                             Rect rect = view.fileSRect(tile.sRect);
                             boolean shouldRegion = view.sWidth != rect.right || view.sHeight != rect.bottom || rect.top != 0 || rect.left != 0;
-                            //Bitmap bitmap = decoder.decodeRegion(view.fileSRect(tile.sRect), options);
                             float scaleBy = (float) (1.0f / tile.sampleSize);
                             Bitmap bitmap = null;
                             if (shouldRegion) {
-                                MyBitmapLoader myBitmapLoader = MyBitmapDecoder.myFrom(view._source, false).useBuiltInDecoder(true).config(Config.RGB_565);
+                                BitmapLoader myBitmapLoader = BitmapDecoder.from(view._source, false).useBuiltInDecoder(true).config(Config.RGB_565);
                                 myBitmapLoader.region(rect);
                                 bitmap = myBitmapLoader.scaleBy(scaleBy).decode();
                             } else {

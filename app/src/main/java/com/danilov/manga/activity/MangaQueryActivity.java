@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.danilov.manga.R;
 import com.danilov.manga.core.adapter.MangaListAdapter;
+import com.danilov.manga.core.adapter.PopupButtonClickListener;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaSuggestion;
 import com.danilov.manga.core.repository.RepositoryEngine;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public class MangaQueryActivity extends ActionBarActivity implements View.OnClickListener,
                                                             AdapterView.OnItemClickListener,
-                                                            MangaListAdapter.PopupButtonClickListener {
+        PopupButtonClickListener {
 
     private static final String FOUND_MANGA_KEY = "FOUND_MANGA_KEY";
 
