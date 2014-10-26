@@ -110,6 +110,19 @@ public class HistoryDAO {
         return mangaList;
     }
 
+    public void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openWritable();
+        String selection = LOCAL_MANGA_ID + " = ?";
+        String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
+        try {
+            db.delete(TABLE_NAME, selection, selectionArgs);
+        } catch (Exception e){
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
     public void addLocalHistory(final LocalManga manga, final int chapter, final int page) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();

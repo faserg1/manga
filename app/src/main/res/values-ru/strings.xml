@@ -13,6 +13,7 @@
     <string name="p_internet_error">Проблемы с интернет соединением</string>
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>
     <string name="p_failed_to_show_loaded">Не удалось показать загруженную мангу: </string>
+    <string name="p_failed_to_delete">Не удалось удалить мангу: </string>
 
     <string name="menu_search">Поиск</string>
     <string name="menu_history">История</string>

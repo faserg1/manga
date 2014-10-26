@@ -149,6 +149,19 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
+    public void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openWritable();
+        String selection = ID + " = ?";
+        String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
+        try {
+            db.delete(TABLE_NAME, selection, selectionArgs);
+        } catch (Exception e){
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
     public LocalManga getById(final int id) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         String selection = ID + " = ?";
@@ -211,7 +224,6 @@ public class DownloadedMangaDAO {
         }
         return null;
     }
-
 
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 

@@ -3,6 +3,7 @@ package com.danilov.manga.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,12 +20,15 @@ import com.danilov.manga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.manga.core.adapter.PopupButtonClickListener;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
+import com.danilov.manga.core.database.HistoryDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.util.Constants;
+import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -39,6 +43,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     private LocalImageManager localImageManager = null;
     private DownloadedMangaDAO downloadedMangaDAO = null;
+    private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
 
@@ -62,6 +67,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
         downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
@@ -118,18 +124,14 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         final PopupMenu popup = new PopupMenu(getActivity(), popupButton);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.downloaded_manga_item_menu, popup.getMenu());
-        LocalManga manga = adapter.getMangas().get(listPosition);
+        final LocalManga manga = adapter.getMangas().get(listPosition);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.download:
-//                        Intent intent = new Intent(MangaQueryActivity.this, DownloadsActivity.class);
-//                        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-//                        startActivity(intent);
-                        return true;
-                    case R.id.add_to_favorites:
+                    case R.id.delete:
+                        deleteManga(manga);
                         return true;
                 }
                 return false;
@@ -137,6 +139,45 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
         });
         popup.show();
+    }
+
+    private DialogFragment progressDialog = null;
+
+    private void deleteManga(final LocalManga localManga) {
+        progressDialog = Utils.easyDialogProgress(getFragmentManager(), "Deleting", "Deleting manga");
+        Thread thread = new Thread() {
+
+            @Override
+            public void run() {
+                boolean _success = true;
+                String _error = null;
+                IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
+                try {
+                    historyDAO.deleteManga(localManga);
+                    downloadedMangaDAO.deleteManga(localManga);
+                } catch (DatabaseAccessException e) {
+                    _success = false;
+                    _error = e.getMessage();
+                    Log.e(TAG, "Failed to delete downloaded manga: " + _error);
+                }
+                final boolean success = _success;
+                final String error = _error;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        if (success) {
+                            loadDownloadedManga();
+//                            gridView.setAdapter(adapter);
+                        } else {
+                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
+                            Utils.showToast(getActivity(), formedError + error);
+                        }
+                    }
+                });
+            }
+        };
+        thread.start();
     }
 
 }

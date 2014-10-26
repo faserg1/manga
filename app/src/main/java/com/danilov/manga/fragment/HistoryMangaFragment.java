@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,10 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.danilov.manga.R;
 import com.danilov.manga.activity.MangaViewerActivity;
+import com.danilov.manga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.HistoryDAO;
@@ -25,6 +28,7 @@ import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
+import com.danilov.manga.core.util.Utils;
 
 import java.util.List;
 
@@ -36,6 +40,12 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
     private static final String TAG = "DownloadedMangaFragment";
 
     private View view;
+    private GridView gridView;
+    private ProgressBar historyProgressBar;
+
+    private Handler handler = new Handler();
+
+    private HistoryMangaAdapter adapter = null;
 
     private LocalImageManager localImageManager = null;
     private HistoryDAO historyDAO = null;
@@ -48,27 +58,61 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.manga_downloaded_fragment, container, false);
+        view = inflater.inflate(R.layout.manga_history_fragment, container, false);
         return view;
     }
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
+        historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        try {
-            List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
-            HistoryMangaAdapter adapter = new HistoryMangaAdapter(this.getActivity(), history);
-            gridView.setAdapter(adapter);
-        } catch (DatabaseAccessException e) {
-            Log.e(TAG, "Failed to get downloaded manga: " + e.getMessage());
-        }
+        gridView = (GridView) view.findViewById(R.id.grid_view);
+
+        loadHistory();
+
         gridView.setOnItemClickListener(this);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
         super.onActivityCreated(savedInstanceState);
     }
 
+    private void loadHistory() {
+        historyProgressBar.setVisibility(View.VISIBLE);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                boolean _success = true;
+                String _error = null;
+                try {
+                    List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
+                    if (history != null && !history.isEmpty()) {
+                        adapter = new HistoryMangaAdapter(getActivity(), history);
+                        gridView.setAdapter(adapter);
+                    }
+                } catch (DatabaseAccessException e) {
+                    _success = false;
+                    _error = e.getMessage();
+                    Log.e(TAG, "Failed to get history: " + _error);
+                }
+                final boolean success = _success;
+                final String error = _error;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        historyProgressBar.setVisibility(View.INVISIBLE);
+                        if (success) {
+                            gridView.setAdapter(adapter);
+                        } else {
+                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
+                            Utils.showToast(getActivity(), formedError + error);
+                        }
+                    }
+                });
+            }
+
+        };
+        thread.start();
+    }
 
 
     @Override
