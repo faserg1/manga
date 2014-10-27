@@ -75,7 +75,10 @@ public class MainActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setHomeButtonEnabled(true);
-        showMainFragment();
+        //TODO: check if we need to display main fragment or we need to show restored
+        if (savedInstanceState == null) {
+            showMainFragment();
+        }
         syncToggle();
     }
 

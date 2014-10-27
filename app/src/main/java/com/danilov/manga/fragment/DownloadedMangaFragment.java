@@ -1,5 +1,6 @@
 package com.danilov.manga.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -77,6 +78,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     private void loadDownloadedManga() {
         downloadedProgressBar.setVisibility(View.VISIBLE);
+        final Context context = getActivity();
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -84,7 +86,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
                 String _error = null;
                 try {
                     List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
-                    adapter = new DownloadedMangaAdapter(getActivity(), localMangas, DownloadedMangaFragment.this);
+                    adapter = new DownloadedMangaAdapter(context, localMangas, DownloadedMangaFragment.this);
                 } catch (DatabaseAccessException e) {
                     _success = false;
                     _error = e.getMessage();

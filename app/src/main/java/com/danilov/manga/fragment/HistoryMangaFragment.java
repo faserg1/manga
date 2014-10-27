@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class HistoryMangaFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String TAG = "DownloadedMangaFragment";
+    private static final String TAG = "HistoryMangaFragment";
 
     private View view;
     private GridView gridView;
@@ -64,6 +64,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
         historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
@@ -71,11 +72,11 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
         loadHistory();
         gridView.setOnItemClickListener(this);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
-        super.onActivityCreated(savedInstanceState);
     }
 
     private void loadHistory() {
         historyProgressBar.setVisibility(View.VISIBLE);
+        final Context context = getActivity();
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -84,7 +85,9 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                 try {
                     List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
                     if (history != null && !history.isEmpty()) {
-                        adapter = new HistoryMangaAdapter(getActivity(), history);
+                        Log.d(TAG, "Context is " + context);
+                        Log.d(TAG, "HistoryDAO is " + history);
+                        adapter = new HistoryMangaAdapter(context, history);
                     }
                 } catch (DatabaseAccessException e) {
                     _success = false;
