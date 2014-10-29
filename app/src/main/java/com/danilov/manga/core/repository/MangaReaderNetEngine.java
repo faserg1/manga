@@ -108,12 +108,31 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
 
     @Override
-    public boolean queryForChapters(Manga manga) throws RepositoryException {
+    public boolean queryForChapters(final Manga manga) throws RepositoryException {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        if (httpBytesReader != null) {
+            String uri = baseUri + manga.getUri();
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+                throw new RepositoryException(e.getMessage());
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            List<MangaChapter> chapters = parseMangaChaptersResponse(manga, Utils.toDocument(responseString));
+            manga.setChapters(chapters);
+            return true;
+        }
         return false;
     }
 
     @Override
-    public List<String> getChapterImages(MangaChapter chapter) throws RepositoryException {
+    public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         return null;
     }
 
@@ -124,7 +143,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public String getBaseUri() {
-        return null;
+        return baseUri;
     }
 
     private String imgContainerId = "mangaimg";
@@ -164,6 +183,30 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             manga.setChaptersQuantity(chapters.size());
         }
         return true;
+    }
+
+
+    //html values
+    private String linkValueAttr = "href";
+
+    private List<MangaChapter> parseMangaChaptersResponse(final Manga manga, final Document document) {
+        Element chaptersContainer = document.getElementById(chaptersContainerId);
+        if (chaptersContainer == null) {
+            manga.setChaptersQuantity(0);
+            return null;
+        }
+        Elements chapterLinks = chaptersContainer.getElementsByTag("a");
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>(chapterLinks.size());
+        int number = 0;
+        for (Element element : chapterLinks) {
+            String link = element.attr(linkValueAttr);
+            String title = element.parent().text();
+            MangaChapter chapter = new MangaChapter(title, number, link);
+            chapters.add(chapter);
+            number++;
+        }
+        manga.setChaptersQuantity(chapters.size());
+        return chapters;
     }
 
 }
