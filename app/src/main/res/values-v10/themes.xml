@@ -4,6 +4,8 @@
     <style name="MangaBaseTheme" parent="@style/MangaHoloTheme">
 
         <item name="actionBarStyle">@style/MangaBaseTheme.AppCompatActionBar</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_manga</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_manga</item>
 
     </style>
 

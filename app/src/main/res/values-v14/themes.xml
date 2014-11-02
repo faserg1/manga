@@ -3,6 +3,8 @@
 
     <style name="MangaBaseTheme" parent="@style/MangaHoloTheme">
         <item name="android:actionBarStyle">@style/MangaBaseTheme.MyActionBar</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_manga</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_manga</item>
     </style>
 
 </resources>

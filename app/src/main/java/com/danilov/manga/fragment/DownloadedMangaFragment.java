@@ -33,6 +33,7 @@ import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +42,8 @@ import java.util.List;
 public class DownloadedMangaFragment extends Fragment implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
 
     private static final String TAG = "DownloadedMangaFragment";
+
+    private boolean isInMultiChoice = false;
 
     private View view;
     private ProgressBar downloadedProgressBar;
@@ -118,7 +121,10 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        DownloadedMangaAdapter adapter = (DownloadedMangaAdapter) parent.getAdapter();
+        if (isInMultiChoice) {
+            adapter.onMultiSelectClick(view, position);
+            return;
+        }
         LocalManga manga = adapter.getMangas().get(position);
         Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
@@ -130,6 +136,8 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
         actionBarActivity.startSupportActionMode(this);
         adapter.setPositionSelected(view, position, true);
+        adapter.setIsInMultiSelect(true);
+        isInMultiChoice = true;
         return true;
     }
 
@@ -142,18 +150,27 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     @Override
     public boolean onPrepareActionMode(final ActionMode actionMode, final Menu menu) {
-        actionMode.setTitle("Uuuuh");
+        actionMode.setTitle("working");
         return false;
     }
 
     @Override
     public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem menuItem) {
+        List<LocalManga> selected = adapter.getSelectedManga();
+        switch (menuItem.getItemId()) {
+            case R.id.delete:
+                deleteManga(selected);
+                actionMode.finish();
+                return true;
+        }
         return false;
     }
 
     @Override
     public void onDestroyActionMode(final ActionMode actionMode) {
-
+        isInMultiChoice = false;
+        adapter.setIsInMultiSelect(false);
+        adapter.deselectAll();
     }
 
     @Override
@@ -168,7 +185,9 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
             public boolean onMenuItemClick(final MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.delete:
-                        deleteManga(manga);
+                        List<LocalManga> mangas = new ArrayList<LocalManga>(1);
+                        mangas.add(manga);
+                        deleteManga(mangas);
                         return true;
                 }
                 return false;
@@ -180,7 +199,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     private DialogFragment progressDialog = null;
 
-    private void deleteManga(final LocalManga localManga) {
+    private void deleteManga(final List<LocalManga> mangas) {
         progressDialog = Utils.easyDialogProgress(getFragmentManager(), "Deleting", "Deleting manga");
         Thread thread = new Thread() {
 
@@ -188,28 +207,37 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
             public void run() {
                 boolean _success = true;
                 String _error = null;
-                IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
-                try {
-                    historyDAO.deleteManga(localManga);
-                    downloadedMangaDAO.deleteManga(localManga);
-                } catch (DatabaseAccessException e) {
-                    _success = false;
-                    _error = e.getMessage();
-                    Log.e(TAG, "Failed to delete downloaded manga: " + _error);
+                for (LocalManga localManga : mangas) {
+                    IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
+                    try {
+                        historyDAO.deleteManga(localManga);
+                        downloadedMangaDAO.deleteManga(localManga);
+                    } catch (DatabaseAccessException e) {
+                        _success = false;
+                        _error = e.getMessage();
+                        Log.e(TAG, "Failed to delete downloaded manga: " + _error);
+                    }
+                    final boolean success = _success;
+                    final String error = _error;
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (success) {
+                                loadDownloadedManga();
+                            } else {
+                                String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
+                                Utils.showToast(getActivity(), formedError + error);
+                            }
+                        }
+                    });
+                    if (!success) {
+                        break;
+                    }
                 }
-                final boolean success = _success;
-                final String error = _error;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
-                        if (success) {
-                            loadDownloadedManga();
-//                            gridView.setAdapter(adapter);
-                        } else {
-                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
-                            Utils.showToast(getActivity(), formedError + error);
-                        }
                     }
                 });
             }

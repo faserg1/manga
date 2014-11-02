@@ -19,8 +19,7 @@
 
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="170dp"
-                   android:id="@+id/manga_cover"
-                   android:src="@drawable/test_manga_front"/>
+                   android:id="@+id/manga_cover"/>
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -30,7 +29,6 @@
             <TextView android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/manga_title"
-                android:text="Bakuman"
                 android:singleLine="true"
                 android:layout_toLeftOf="@+id/popup_button"
                 android:layout_toStartOf="@+id/popup_button"
@@ -70,6 +68,7 @@
 
     <View android:layout_width="fill_parent"
         android:layout_height="210dp"
+        android:id="@+id/background"
         android:background="?attr/selectableItemBackground">
     </View>
 

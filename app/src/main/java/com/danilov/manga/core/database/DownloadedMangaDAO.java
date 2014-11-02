@@ -50,7 +50,7 @@ public class DownloadedMangaDAO {
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
     }
 
-    public void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
+    public synchronized void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(MANGA_TITLE, manga.getTitle());
@@ -70,7 +70,7 @@ public class DownloadedMangaDAO {
         }
     }
 
-    public List<LocalManga> getAllManga() throws DatabaseAccessException {
+    public synchronized List<LocalManga> getAllManga() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         List<LocalManga> mangaList = new ArrayList<LocalManga>();
         try {
@@ -111,7 +111,7 @@ public class DownloadedMangaDAO {
         return mangaList;
     }
 
-    public LocalManga getByLinkAndRepository(final String _inetUri, final Repository repository) throws DatabaseAccessException {
+    public synchronized LocalManga getByLinkAndRepository(final String _inetUri, final Repository repository) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {_inetUri, repository.toString()};
@@ -149,7 +149,7 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
-    public void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
+    public synchronized void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
@@ -162,7 +162,7 @@ public class DownloadedMangaDAO {
         }
     }
 
-    public LocalManga getById(final int id) throws DatabaseAccessException {
+    public synchronized LocalManga getById(final int id) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + id};
@@ -201,7 +201,7 @@ public class DownloadedMangaDAO {
         return manga;
     }
 
-    public LocalManga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
+    public synchronized LocalManga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
         LocalManga localManga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (localManga != null) {
             int chaptersQuantity = localManga.getChaptersQuantity();
