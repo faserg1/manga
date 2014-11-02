@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +38,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class DownloadedMangaFragment extends Fragment implements AdapterView.OnItemClickListener, PopupButtonClickListener {
+public class DownloadedMangaFragment extends Fragment implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
 
     private static final String TAG = "DownloadedMangaFragment";
 
@@ -72,6 +75,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         gridView = (GridView) view.findViewById(R.id.grid_view);
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
+        gridView.setOnItemLongClickListener(this);
         loadDownloadedManga();
         super.onActivityCreated(savedInstanceState);
     }
@@ -119,6 +123,37 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
+        actionBarActivity.startSupportActionMode(this);
+        adapter.setPositionSelected(view, position, true);
+        return true;
+    }
+
+    //action mode callback
+    @Override
+    public boolean onCreateActionMode(final ActionMode actionMode, final Menu menu) {
+        actionMode.getMenuInflater().inflate(R.menu.downloaded_manga_action_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(final ActionMode actionMode, final Menu menu) {
+        actionMode.setTitle("Uuuuh");
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(final ActionMode actionMode, final MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(final ActionMode actionMode) {
+
     }
 
     @Override
@@ -181,5 +216,4 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         };
         thread.start();
     }
-
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
@@ -13,7 +13,8 @@
                   android:layout_height="210dp"
                   android:background="@drawable/grid_item_background"
                   android:orientation="vertical"
-                  android:padding="10dp">
+                  android:padding="10dp"
+                  android:id="@+id/card_wrapper">
 
 
         <ImageView android:layout_width="fill_parent"
@@ -58,6 +59,18 @@
     <ImageView
             android:src="@drawable/card_shadow"
             android:layout_height="@dimen/card_shadow"
-            android:layout_width="fill_parent"/>
+            android:layout_width="fill_parent"
+            android:layout_below="@id/card_wrapper"/>
 
-</LinearLayout>
+    <View android:layout_width="fill_parent"
+        android:layout_height="210dp"
+        android:id="@+id/selectorBackground"
+        android:background="@drawable/abc_list_selector_background_transition_holo_light">
+    </View>
+
+    <View android:layout_width="fill_parent"
+        android:layout_height="210dp"
+        android:background="?attr/selectableItemBackground">
+    </View>
+
+</RelativeLayout>

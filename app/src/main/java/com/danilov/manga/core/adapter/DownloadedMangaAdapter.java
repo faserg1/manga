@@ -29,6 +29,8 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
     private int sizeOfImage;
 
+    private boolean[] isPosSelected;
+
     private PopupButtonClickListener popupButtonClickListener;
 
     @Override
@@ -39,6 +41,10 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
     public DownloadedMangaAdapter(final Context context, final List<LocalManga> mangas, final PopupButtonClickListener listener) {
         super(context, 0, mangas);
         this.mangas = mangas;
+        isPosSelected = new boolean[mangas.size()];
+        for (int i = 0; i < mangas.size(); i++) {
+            isPosSelected[i] = false;
+        }
         this.popupButtonClickListener = listener;
         sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
     }
@@ -61,9 +67,11 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
         }
         if (holder == null) {
             holder = new GridItemHolder();
+            view.setTag(holder);
             holder.mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
             holder.mangaTitle = (TextView) view.findViewById(R.id.manga_title);
             holder.popupButton = (ImageButton) view.findViewById(R.id.popup_button);
+            holder.selector = view.findViewById(R.id.selectorBackground);
         }
         final ImageButton popupButton = holder.popupButton;
         if (popupButtonClickListener != null) {
@@ -81,14 +89,30 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
         if (bitmap != null) {
             holder.mangaCover.setImageBitmap(bitmap);
         }
+        if (isPosSelected[position]) {
+            holder.selector.setVisibility(View.VISIBLE);
+        } else {
+            holder.selector.setVisibility(View.INVISIBLE);
+        }
         return view;
+    }
+
+    public void setPositionSelected(final View view, final int position, final boolean isSelected) {
+        GridItemHolder holder = null;
+        Object tag = view.getTag();
+        if (tag instanceof GridItemHolder) {
+            holder = (GridItemHolder) tag;
+            holder.selector.setVisibility(isSelected ? View.VISIBLE : View.INVISIBLE);
+        }
+        isPosSelected[position] = isSelected;
     }
 
     private class GridItemHolder {
 
         public ImageView mangaCover;
         public TextView mangaTitle;
-        protected ImageButton popupButton;
+        public ImageButton popupButton;
+        public View selector;
 
     }
 

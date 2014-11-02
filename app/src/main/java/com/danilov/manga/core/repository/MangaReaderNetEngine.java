@@ -21,6 +21,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -133,7 +136,78 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
-        return null;
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        String[] imageUrisArray = null;
+        if (httpBytesReader != null) {
+            String uri = baseUri + chapter.getUri();
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+                throw new RepositoryException(e.getMessage());
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            List<String> pageUris = getImagePagesUris(Utils.toDocument(responseString));
+            imageUrisArray = new String[pageUris.size()];
+            List<Thread> threads = new LinkedList<Thread>();
+            int i = 0;
+            for (String pageUri : pageUris) {
+                PageImageThread pageImageThread = new PageImageThread(httpBytesReader, pageUri, i, imageUrisArray);
+                threads.add(pageImageThread);
+                pageImageThread.start();
+                i++;
+            }
+            for (Thread t : threads) {
+                while (t.isAlive()) {
+                    try {
+                        t.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return Arrays.asList(imageUrisArray);
+    }
+
+    private class PageImageThread extends Thread {
+
+        private HttpBytesReader httpBytesReader;
+        private String pageUri;
+        private int pos;
+
+        private String[] arrayRef;
+
+        public PageImageThread(final HttpBytesReader reader, final String pageUri, final int pos, final String[] arrayRef) {
+            this.httpBytesReader = reader;
+            this.pageUri = pageUri;
+            this.arrayRef = arrayRef;
+            this.pos = pos;
+        }
+
+        @Override
+        public void run() {
+            String uri = baseUri + pageUri;
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            String imageUri = parsePageForImageUrl(Utils.toDocument(responseString));
+            arrayRef[pos] = imageUri;
+        }
+
     }
 
     @Override
@@ -207,6 +281,35 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         }
         manga.setChaptersQuantity(chapters.size());
         return chapters;
+    }
+
+    private String selectorId = "pageMenu";
+
+    private List<String> getImagePagesUris(final Document document) {
+        Element element = document.getElementById(selectorId);
+        List<String> uris = new LinkedList<String>();
+        if (element == null) {
+            return uris;
+        }
+        for (Element option : element.children()) {
+            uris.add(option.attr("value"));
+        }
+        return uris;
+    }
+
+    private String imgHolderId = "imgholder";
+    private String imgElement = "img";
+
+    private String parsePageForImageUrl(final Document document) {
+        Element element = document.getElementById(imgHolderId);
+        if (element == null) {
+            return null;
+        }
+        Elements imgs = element.getElementsByTag(imgElement);
+        if (imgs.isEmpty()) {
+            return null;
+        }
+        return imgs.get(0).attr("src");
     }
 
 }
