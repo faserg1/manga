@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="viewer_slider_inner_width">250dp</dimen>
+    <dimen name="viewer_slider_outer_width">300dp</dimen>
+</resources>

@@ -2,9 +2,12 @@ package com.danilov.manga.core.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -50,7 +53,7 @@ public class EasyDialog extends DialogFragment {
         if(savedInstanceState != null){
             restoreSavedInstanceState(savedInstanceState);
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        EasyDialogBuilder builder = new EasyDialogBuilder(getActivity(), R.style.Manga_Dialog);
         if (userClosable) {
             builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 
@@ -128,4 +131,73 @@ public class EasyDialog extends DialogFragment {
     public void setTitle(final String title) {
         this.title = title;
     }
+
+
+    public class EasyAlertDialog extends AlertDialog {
+
+        protected EasyAlertDialog(final Context context) {
+            super(context);
+        }
+
+        protected EasyAlertDialog(final Context context, final int theme) {
+            super(context, theme);
+        }
+
+        protected EasyAlertDialog(final Context context, final boolean cancelable, final OnCancelListener cancelListener) {
+            super(context, cancelable, cancelListener);
+        }
+
+    }
+
+    public class EasyDialogBuilder extends AlertDialog.Builder {
+
+        private int theme = 0;
+        private Context context;
+
+        private CharSequence mNeutralButtonText;
+        private String title;
+        private DialogInterface.OnClickListener mNeutralButtonListener;
+        private View view;
+
+        public EasyDialogBuilder(final Context context) {
+            this(context, 0);
+        }
+
+        public EasyDialogBuilder(final Context context, final int theme) {
+            super(context);
+            this.theme = theme;
+            this.context = context;
+        }
+
+        public EasyDialogBuilder setNeutralButton(final CharSequence text, final DialogInterface.OnClickListener listener) {
+            this.mNeutralButtonText = text;
+            this.mNeutralButtonListener = listener;
+            return this;
+        }
+
+        @NonNull
+        @Override
+        public EasyDialogBuilder setView(final View view) {
+            this.view = view;
+            return this;
+        }
+
+        public void setTitle(final String title) {
+            this.title = title;
+        }
+
+        @NonNull
+        @Override
+        public AlertDialog create() {
+            EasyAlertDialog alertDialog = new EasyAlertDialog(context, theme);
+            if (mNeutralButtonText != null) {
+                alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, mNeutralButtonText,
+                        mNeutralButtonListener);
+            }
+            alertDialog.setView(view);
+            alertDialog.setTitle(title);
+            return alertDialog;
+        }
+    }
+
 }
