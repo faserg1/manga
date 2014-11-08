@@ -141,6 +141,16 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
         return selected;
     }
 
+    public int getSelectedQuantity() {
+        int selected = 0;
+        for (int i = 0; i < mangas.size(); i++) {
+            if (isPosSelected[i]) {
+                selected++;
+            }
+        }
+        return selected;
+    }
+
     private class GridItemHolder {
 
         public ImageView mangaCover;

@@ -81,8 +81,6 @@ public class MainActivity extends ActionBarActivity {
             showMainFragment();
         }
         syncToggle();
-        Utils.easyDialogMessage(getSupportFragmentManager(), true, false, "ASD", "QWE");
-//        Utils.easyDialogProgress(getSupportFragmentManager(), "ASD", "QWE");
     }
 
 

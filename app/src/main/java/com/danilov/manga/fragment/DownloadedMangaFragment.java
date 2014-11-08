@@ -56,6 +56,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     private DownloadedMangaAdapter adapter = null;
     private GridView gridView = null;
+    private ActionMode actionMode;
 
     private Handler handler = new Handler();
 
@@ -123,6 +124,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         if (isInMultiChoice) {
             adapter.onMultiSelectClick(view, position);
+            updateActionMode(actionMode);
             return;
         }
         LocalManga manga = adapter.getMangas().get(position);
@@ -134,10 +136,16 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     @Override
     public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
-        actionBarActivity.startSupportActionMode(this);
-        adapter.setPositionSelected(view, position, true);
+        if (isInMultiChoice) {
+            adapter.onMultiSelectClick(view, position);
+            updateActionMode(actionMode);
+            return true;
+        }
+        actionMode = actionBarActivity.startSupportActionMode(this);
+        adapter.onMultiSelectClick(view, position);
         adapter.setIsInMultiSelect(true);
         isInMultiChoice = true;
+        updateActionMode(actionMode);
         return true;
     }
 
@@ -150,8 +158,8 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
 
     @Override
     public boolean onPrepareActionMode(final ActionMode actionMode, final Menu menu) {
-        actionMode.setTitle("working");
-        return false;
+        updateActionMode(actionMode);
+        return true;
     }
 
     @Override
@@ -171,6 +179,12 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         isInMultiChoice = false;
         adapter.setIsInMultiSelect(false);
         adapter.deselectAll();
+    }
+
+    private void updateActionMode(final ActionMode actionMode) {
+        String selectedString = Utils.stringResource(getActivity(), R.string.sv_selected);
+        int selected = adapter.getSelectedQuantity();
+        actionMode.setTitle(selectedString + selected + "/" + adapter.getCount());
     }
 
     @Override
@@ -244,4 +258,13 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
         };
         thread.start();
     }
+
+    @Override
+    public void onDestroy() {
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+        super.onDestroy();
+    }
+
 }

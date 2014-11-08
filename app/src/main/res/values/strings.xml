@@ -6,6 +6,7 @@
     <string name="sv_delete">Delete</string>
     <string name="sv_add_to_favorites">Add to Favorites</string>
     <string name="sv_chapters">Chapters:</string>
+    <string name="sv_selected">Selected: </string>
 
     <string name="p_internet_error">Problems with internet connection</string>
     <string name="p_failed_to_load_chapter_info">Failed to load chapter info: </string>
