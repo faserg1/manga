@@ -53,7 +53,7 @@ public class EasyDialog extends DialogFragment {
         if(savedInstanceState != null){
             restoreSavedInstanceState(savedInstanceState);
         }
-        EasyDialogBuilder builder = new EasyDialogBuilder(getActivity(), R.style.Manga_Dialog);
+        CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
         if (userClosable) {
             builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 
@@ -76,7 +76,7 @@ public class EasyDialog extends DialogFragment {
         builder.setView(contentView);
         builder.setTitle(title);
         fillView(contentView);
-        return builder.create();
+        return builder.build();
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.util.DrawerStub;
+import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
 import com.danilov.manga.fragment.HistoryMangaFragment;
 import com.danilov.manga.fragment.MainFragment;
@@ -80,6 +81,8 @@ public class MainActivity extends ActionBarActivity {
             showMainFragment();
         }
         syncToggle();
+//        Utils.easyDialogMessage(getSupportFragmentManager(), true, false, "ASD", "QWE");
+        Utils.easyDialogProgress(getSupportFragmentManager(), "ASD", "QWE");
     }
 
 

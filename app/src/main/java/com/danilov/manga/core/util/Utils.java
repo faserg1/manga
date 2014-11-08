@@ -40,8 +40,14 @@ public class Utils {
         return stringResource(context, errorMessageId) + ": " + error;
     }
 
-    public static DialogFragment easyDialogMessage(final FragmentManager fm, final boolean userClosable, final boolean hasProgress) {
-        return null;
+    public static DialogFragment easyDialogMessage(final FragmentManager fm, final boolean userClosable, final boolean hasProgress, final String title, final String message) {
+        EasyDialog easyDialog = new EasyDialog();
+        easyDialog.setHasProgress(hasProgress);
+        easyDialog.setUserClosable(userClosable);
+        easyDialog.setTextData(message);
+        easyDialog.setTitle(title);
+        easyDialog.show(fm, "message-dialog");
+        return easyDialog;
     }
 
     public static DialogFragment easyDialogProgress(final FragmentManager fm, final String title, final String message) {

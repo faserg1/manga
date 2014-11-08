@@ -10,4 +10,6 @@
     <dimen name="viewer_slider_inner_width">300dp</dimen>
     <dimen name="viewer_slider_outer_width">350dp</dimen>
 
+    <dimen name="alert_dialog_button_bar_height">48dip</dimen>
+
 </resources>
