@@ -91,9 +91,6 @@
                   android:dividerPadding="0dip">
         <LinearLayout
             android:paddingTop="5dip"
-            android:paddingBottom="1dip"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -104,7 +101,7 @@
                     android:layout_gravity="left"
                     android:layout_weight="1"
                     android:maxLines="2"
-                    style="@style/Manga.ButtonCommon"
+                    style="@style/Manga.BorderlessButton"
                     android:textSize="14sp"
                     android:minHeight="@dimen/alert_dialog_button_bar_height"
                     android:layout_height="wrap_content" />
@@ -113,7 +110,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:maxLines="2"
-                    style="@style/Manga.ButtonCommon"
+                    style="@style/Manga.BorderlessButton"
                     android:textSize="14sp"
                     android:minHeight="@dimen/alert_dialog_button_bar_height"
                     android:layout_height="wrap_content" />
@@ -123,7 +120,7 @@
                     android:layout_weight="1"
                     android:maxLines="2"
                     android:minHeight="@dimen/alert_dialog_button_bar_height"
-                    style="@style/Manga.ButtonCommon"
+                    style="@style/Manga.BorderlessButton"
                     android:textSize="14sp"
                     android:layout_height="wrap_content" />
         </LinearLayout>
