@@ -10,6 +10,8 @@
         android:id="@+id/chaptersListView"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:fastScrollEnabled="true"
+        android:fastScrollAlwaysVisible="true"
         android:layout_above="@+id/linearLayout"/>
 
     <LinearLayout

@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
+import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.interfaces.RefreshableActivity;
 import com.danilov.manga.core.model.Manga;
@@ -42,6 +43,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
     private final String TAG = "ChaptersFragment";
     private static final String CHAPTERS_KEY = "CK";
+    private static final String SELECTED_CHAPTERS = "SC";
 
     private MangaInfoActivity activity;
     private RefreshableActivity refreshable;
@@ -51,12 +53,15 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
     private ListView chaptersListView;
 
     private Button backButton;
+    private Button download;
 
     private Manga manga;
 
     private ChaptersAdapter adapter = null;
 
     private boolean isLoading = false;
+
+    private boolean[] selection = null;
 
     public static ChaptersFragment newInstance(final Manga manga) {
         ChaptersFragment chaptersFragment = new ChaptersFragment();
@@ -77,10 +82,21 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         refreshable = (RefreshableActivity) getActivity();
         chaptersListView = (ListView) view.findViewById(R.id.chaptersListView);
         backButton = (Button) view.findViewById(R.id.back);
+        download = (Button) view.findViewById(R.id.download);
         chaptersListView.setOnItemClickListener(this);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                activity.showInfoFragment();
+            }
+        });
+        download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Intent intent = new Intent(activity, DownloadsActivity.class);
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
+                startActivity(intent);
                 activity.showInfoFragment();
             }
         });
@@ -110,6 +126,9 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
     private void showChapters() {
         List<MangaChapter> chapters = manga.getChapters();
         adapter = new ChaptersAdapter(getActivity(), chapters);
+        if (selection != null) {
+            adapter.setSelectedChapters(selection);
+        }
         chaptersListView.setAdapter(adapter);
     }
 
@@ -121,6 +140,9 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
             if (chapterList != null) {
                 outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
             }
+            if (adapter != null) {
+                outState.putBooleanArray(SELECTED_CHAPTERS, adapter.getSelectedChapters());
+            }
         }
         super.onSaveInstanceState(outState);
     }
@@ -131,8 +153,9 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         if (chapters != null) {
             manga.setChapters(chapters);
             manga.setChaptersQuantity(chapters.size());
+            selection = savedInstanceState.getBooleanArray(SELECTED_CHAPTERS);
         }
-        if (manga != null && chapters == null) {
+        if (manga != null) {
             loadChaptersInfo(manga);
         }
         if (isLoading) {
@@ -239,6 +262,24 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
             h.checkBox.setChecked(selectedChapters[position]);
 
             return view;
+        }
+
+        public boolean[] getSelectedChapters() {
+            return selectedChapters;
+        }
+
+        public void setSelectedChapters(final boolean[] selectedChapters) {
+            this.selectedChapters = selectedChapters;
+        }
+
+        public ArrayList<Integer> getSelectedChaptersList() {
+            ArrayList<Integer> selection = new ArrayList<Integer>();
+            for (int i = 0; i < selectedChapters.length; i++) {
+                if (selectedChapters[i]) {
+                    selection.add(i);
+                }
+            }
+            return selection;
         }
 
         public void select(final int position) {

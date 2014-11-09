@@ -115,7 +115,19 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public Promise<MangaShowStrategy> next() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
-            return showChapter(currentChapter + 1);
+            List<MangaChapter> chapters = manga.getChapters();
+            boolean nextIsNeeded = false;
+            int chapterToShow = currentChapter + 1;
+            for (MangaChapter chapter : chapters) {
+                if (nextIsNeeded) {
+                    chapterToShow = chapter.getNumber();
+                    break;
+                }
+                if (chapter.getNumber() == currentChapter) {
+                    nextIsNeeded = true;
+                }
+            }
+            return showChapter(chapterToShow);
         }
         showImage(currentImageNumber + 1);
         return null;

@@ -209,6 +209,13 @@ public class MangaDownloadService extends Service {
         serviceHandler.sendMessage(message);
     }
 
+    public void addDownload(final Manga manga, final List<Integer> chapters) {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.ADD_DOWNLOAD;
+        message.obj = new MangaDownloadRequest(manga, chapters);
+        serviceHandler.sendMessage(message);
+    }
+
     public void restartDownload() {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.RESTART_ERROR;

@@ -25,6 +25,7 @@ import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
@@ -72,6 +73,13 @@ public class DownloadsActivity extends ActionBarActivity {
 
         Intent i = getIntent();
         final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        final ArrayList<Integer> selectedChapters = i.getIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY);
+        if (selectedChapters != null) {
+            startDownload(manga, selectedChapters);
+            i.removeExtra(Constants.SELECTED_CHAPTERS_KEY);
+        }
+
+
         restartButton = (Button) findViewById(R.id.restart);
         skipButton = (Button) findViewById(R.id.skip);
         restartButton.setOnClickListener(new View.OnClickListener() {
@@ -261,6 +269,24 @@ public class DownloadsActivity extends ActionBarActivity {
                 }
             }
             
+        };
+        t.start();
+    }
+
+    private void startDownload(final Manga manga, final ArrayList<Integer> selectedChapters) {
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                RepositoryEngine engine = manga.getRepository().getEngine();
+                try {
+                    engine.queryForChapters(manga);
+                    service.addDownload(manga, selectedChapters);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
         };
         t.start();
     }
