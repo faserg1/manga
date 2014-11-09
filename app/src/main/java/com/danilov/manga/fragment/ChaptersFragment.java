@@ -250,7 +250,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
                 h = (Holder) view.getTag();
             }
             MangaChapter chapter = chapters.get(position);
-            h.title.setText(chapter.getNumber() + ". " + chapter.getTitle());
+            h.title.setText((chapter.getNumber() + 1) + ". " + chapter.getTitle());
 
             h.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

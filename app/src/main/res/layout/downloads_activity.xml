@@ -73,14 +73,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Manga.ButtonCommon"
-                android:text="Test Download"
-                android:id="@+id/test_button"/>
-
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,14 +80,15 @@
                 android:text="Restart if error"
                 android:id="@+id/restart"/>
 
-    </LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Manga.ButtonCommon"
+            android:text="Skip"
+            android:id="@+id/skip"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Manga.ButtonCommon"
-        android:text="Skip"
-        android:id="@+id/skip"/>
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/download_queue"

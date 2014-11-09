@@ -34,6 +34,8 @@ import java.util.Queue;
  */
 public class DownloadsActivity extends ActionBarActivity {
 
+    private static final String TAG = "DownloadsActivity";
+
     private Handler handler;
     private MangaDownloadService service;
 
@@ -42,9 +44,6 @@ public class DownloadsActivity extends ActionBarActivity {
 
     private TextView chaptersProgress;
     private TextView imagesProgress;
-
-    private EditText from;
-    private EditText to;
 
     private ServiceConnection serviceConnection;
 
@@ -65,9 +64,6 @@ public class DownloadsActivity extends ActionBarActivity {
         chaptersProgress = (TextView) findViewById(R.id.chaptersProgress);
         imagesProgress = (TextView) findViewById(R.id.imageProgress);
         listView = (ListView) findViewById(R.id.download_queue);
-
-        from = (EditText) findViewById(R.id.from);
-        to = (EditText) findViewById(R.id.to);
 
         handler = new ServiceMessagesHandler();
 
@@ -95,14 +91,6 @@ public class DownloadsActivity extends ActionBarActivity {
             @Override
             public void onClick(final View v) {
                 service.skipImage();
-            }
-
-        });
-        (findViewById(R.id.test_button)).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                test(manga);
             }
 
         });
@@ -243,34 +231,6 @@ public class DownloadsActivity extends ActionBarActivity {
             service.removeObserver(handler);
         }
 
-    }
-
-    private static final String TAG = "DownloadsActivity";
-
-    public void test(final Manga manga) {
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                RepositoryEngine engine = manga.getRepository().getEngine();
-                try {
-                    engine.queryForChapters(manga);
-                    String fromVal = from.getText().toString();
-                    String toVal = to.getText().toString();
-                    Integer from = Integer.valueOf(fromVal);
-                    Integer to = Integer.valueOf(toVal);
-                    int sz = manga.getChapters().size();
-                    if (from < 0 || to >= sz) {
-                        return;
-                    }
-                    service.addDownload(manga, from, to);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            
-        };
-        t.start();
     }
 
     private void startDownload(final Manga manga, final ArrayList<Integer> selectedChapters) {
