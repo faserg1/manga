@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
 import com.danilov.manga.activity.DownloadsActivity;
+import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.activity.MangaViewerActivity;
 import com.danilov.manga.core.interfaces.RefreshableActivity;
 import com.danilov.manga.core.model.Manga;
@@ -35,7 +36,7 @@ public class InfoFragment extends Fragment {
 
     private final String TAG = "InfoFragment";
 
-    private ActionBarActivity activity;
+    private MangaInfoActivity activity;
     private RefreshableActivity refreshable;
 
     private HttpImageManager httpImageManager = null;
@@ -70,7 +71,7 @@ public class InfoFragment extends Fragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = (ActionBarActivity) getActivity();
+        activity = (MangaInfoActivity) getActivity();
         refreshable = (RefreshableActivity) getActivity();
         mangaDescriptionTextView = (TextView) view.findViewById(R.id.manga_description);
         chaptersQuantityTextView = (TextView) view.findViewById(R.id.chapters_quantity);
@@ -199,9 +200,10 @@ public class InfoFragment extends Fragment {
             Intent intent = null;
             switch (v.getId()) {
                 case R.id.download:
-                    intent = new Intent(activity, DownloadsActivity.class);
-                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-                    startActivity(intent);
+//                    intent = new Intent(activity, DownloadsActivity.class);
+//                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+//                    startActivity(intent);
+                    activity.showChaptersFragment();
                     break;
                 case R.id.add_to_favorites:
                     break;

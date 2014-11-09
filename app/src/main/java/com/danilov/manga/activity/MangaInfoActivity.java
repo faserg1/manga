@@ -27,6 +27,7 @@ import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.core.view.AnimatedActionView;
+import com.danilov.manga.fragment.ChaptersFragment;
 import com.danilov.manga.fragment.InfoFragment;
 
 /**
@@ -40,6 +41,7 @@ public class MangaInfoActivity extends ActionBarActivity implements RefreshableA
     private RelativeLayout frame;
 
     private InfoFragment infoFragment;
+    private ChaptersFragment chaptersFragment;
 
     private boolean isRefreshing = false;
 
@@ -52,13 +54,22 @@ public class MangaInfoActivity extends ActionBarActivity implements RefreshableA
         }
     }
 
-    private void showInfoFragment() {
+    public void showInfoFragment() {
         Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         infoFragment = InfoFragment.newInstance(manga);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
         fragmentTransaction.replace(R.id.frame, infoFragment).commit();
+    }
+
+    public void showChaptersFragment() {
+        Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        chaptersFragment = ChaptersFragment.newInstance(manga);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        fragmentTransaction.replace(R.id.frame, chaptersFragment).commit();
     }
 
     @Override
