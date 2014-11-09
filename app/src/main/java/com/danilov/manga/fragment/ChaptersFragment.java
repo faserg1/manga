@@ -159,6 +159,14 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onPause() {
+        if (dialogFragment != null) {
+            dialogFragment.dismiss();
+        }
+        super.onPause();
+    }
+
     public void restoreInstanceState(final Bundle savedInstanceState) {
         manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
         ArrayList<MangaChapter> chapters = savedInstanceState.getParcelableArrayList(CHAPTERS_KEY);
@@ -184,8 +192,10 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         }
     }
 
+    private CustomDialogFragment dialogFragment = null;
+
     private void showNumberPickerFragment() {
-        final CustomDialogFragment dialogFragment = new CustomDialogFragment();
+        dialogFragment = new CustomDialogFragment();
         CustomDialog dialog = null;
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.dialog_select_range, null);
@@ -194,7 +204,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         TextView max = (TextView) contentView.findViewById(R.id.max);
 
         if (manga.getChapters() != null) {
-            String all = "всего(" + manga.getChapters().size() + ")";
+            String all = manga.getChapters().size() + " " + Utils.stringResource(activity, R.string.sv_all);
             max.setText(all);
         }
 

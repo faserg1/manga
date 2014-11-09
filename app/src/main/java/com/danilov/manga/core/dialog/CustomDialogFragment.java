@@ -11,6 +11,8 @@ public class CustomDialogFragment extends DialogFragment {
 
     private Dialog dialog;
 
+    private boolean dismissOnDestroy;
+
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return dialog;
@@ -22,6 +24,22 @@ public class CustomDialogFragment extends DialogFragment {
 
     public void setDialog(final Dialog dialog) {
         this.dialog = dialog;
+    }
+
+    public boolean isDismissOnDestroy() {
+        return dismissOnDestroy;
+    }
+
+    public void setDismissOnDestroy(final boolean dismissOnDestroy) {
+        this.dismissOnDestroy = dismissOnDestroy;
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        if (dismissOnDestroy) {
+            dismiss();
+        }
+        super.onSaveInstanceState(outState);
     }
 
 }
