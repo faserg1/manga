@@ -141,6 +141,7 @@ public class MangaDownloadService extends Service {
                         (new MangaDownloadThread(mangaDownloadRequest)).start();
                     } else {
                         requests.add(mangaDownloadRequest);
+                        sendStatus();
                     }
                     break;
                 case START_NEXT_CHAPTER:
