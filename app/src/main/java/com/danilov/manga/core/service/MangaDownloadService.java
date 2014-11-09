@@ -21,6 +21,7 @@ import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.ServiceContainer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -172,10 +173,21 @@ public class MangaDownloadService extends Service {
         if (currentRequest == null) {
             return;
         }
+
+        List<MangaDownloadRequest> rqs = new ArrayList<MangaDownloadRequest>(requests.size());
+        for (MangaDownloadRequest request : requests) {
+            if (currentRequest == request) {
+                continue;
+            }
+            rqs.add(request);
+        }
+
+        Pair pair = Pair.obtain(currentRequest, rqs);
+
         Message message = Message.obtain();
         message.arg1 = currentImage;
         message.arg2 = currentImageQuantity;
-        message.obj = currentRequest;
+        message.obj = pair;
         message.what = STATUS;
         notifyObservers(message);
     }
@@ -322,6 +334,10 @@ public class MangaDownloadService extends Service {
 
         public int getCurrentChapterNumber() {
             return whichChapters.get(currentChapterInList);
+        }
+
+        public Manga getManga() {
+            return manga;
         }
 
     }

@@ -9,8 +9,11 @@ import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.danilov.manga.R;
@@ -21,6 +24,9 @@ import com.danilov.manga.core.service.MangaDownloadService.MangaDownloadRequest;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.Utils;
+
+import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by Semyon Danilov on 14.06.2014.
@@ -46,6 +52,8 @@ public class DownloadsActivity extends ActionBarActivity {
     private Button restartButton;
     private Button skipButton;
 
+    private ListView listView;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +63,7 @@ public class DownloadsActivity extends ActionBarActivity {
         imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         chaptersProgress = (TextView) findViewById(R.id.chaptersProgress);
         imagesProgress = (TextView) findViewById(R.id.imageProgress);
+        listView = (ListView) findViewById(R.id.download_queue);
 
         from = (EditText) findViewById(R.id.from);
         to = (EditText) findViewById(R.id.to);
@@ -181,7 +190,13 @@ public class DownloadsActivity extends ActionBarActivity {
     }
 
     private void onStatus(final Message message) {
-        MangaDownloadRequest request = (MangaDownloadRequest) message.obj;
+        Pair p = (Pair) message.obj;
+        MangaDownloadRequest request = (MangaDownloadRequest) p.first;
+        List<MangaDownloadRequest> requests = (List<MangaDownloadRequest>) p.second;
+
+        RequestsAdapter adapter = new RequestsAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, requests);
+        listView.setAdapter(adapter);
+
         int currImage = message.arg1 + 1; //what image is processed now starting with 1 not zero
         int currImageQuantity = message.arg2;
         String progressText = currImage + "/" + currImageQuantity;
@@ -248,6 +263,25 @@ public class DownloadsActivity extends ActionBarActivity {
             
         };
         t.start();
+    }
+
+    private class RequestsAdapter extends ArrayAdapter<MangaDownloadRequest> {
+
+        private List<MangaDownloadRequest> requests = null;
+
+        public RequestsAdapter(final Context context, final int resource, final List<MangaDownloadRequest> objects) {
+            super(context, resource, objects);
+            requests = objects;
+        }
+
+        @Override
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
+            TextView view = (TextView) getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
+            MangaDownloadRequest request = requests.get(position);
+            view.setText(request.getManga().getTitle());
+            return view;
+        }
+
     }
 
 }

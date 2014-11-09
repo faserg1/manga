@@ -6,14 +6,9 @@
               android:layout_height="match_parent"
               android:background="#e5e5e5">
 
-    <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:fillViewport="true"
-            android:id="@+id/scrollView">
-
-            <include layout="@layout/manga_info_item"/>
-
-    </ScrollView>
+    <RelativeLayout
+        android:id="@+id/frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

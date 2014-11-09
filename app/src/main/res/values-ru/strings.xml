@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">MangA</string>
+
     <string name="sv_download">Скачать</string>
     <string name="sv_delete">Удалить</string>
     <string name="sv_add_to_favorites">Добавить в Избранное</string>

@@ -13,17 +13,6 @@
     <string name="p_failed_to_show_loaded">Failed to show downloaded manga: </string>
     <string name="p_failed_to_delete">Failed delete manga: </string>
 
-    <!--test values-->
-    <string name="test_lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra tortor libero, vel lacinia nulla rutrum sed. Cras id urna rhoncus, posuere turpis sit amet, venenatis felis. Maecenas pulvinar fermentum pretium. Pellentesque eu est lectus. Nulla facilisi. Sed iaculis dui eget sapien bibendum, sit amet molestie dolor posuere. Suspendisse auctor magna id elit interdum tincidunt. Nam et consectetur lacus. Integer non nibh sodales augue ornare tristique vitae mollis massa. Pellentesque ultrices ipsum quis risus semper consequat. Maecenas id sem eu ipsum dapibus pretium. Aliquam et dui in metus mattis pellentesque vel ut felis. Ut fermentum, lacus a condimentum volutpat, neque erat tincidunt mi, non eleifend leo velit et risus. Ut nec nisi sodales, tristique lacus et, dignissim nunc. Vivamus vel urna lorem.
-
-        Nullam id feugiat tellus, et laoreet diam. Donec aliquet orci in tincidunt ornare. Nunc placerat pulvinar felis, sit amet iaculis ligula elementum vitae. Aliquam vel orci eget nisl dapibus accumsan eu sed arcu. Suspendisse quis magna id lectus luctus aliquet et ut tellus. Vestibulum arcu lectus, imperdiet quis ullamcorper semper, condimentum non eros. Nunc id nisi cursus, blandit arcu a, vestibulum odio. Nullam leo justo, sollicitudin eu velit ac, sollicitudin tempus nibh. Aliquam malesuada vel augue sed pulvinar. Sed ornare nisi eu interdum hendrerit.
-
-        Duis scelerisque est at lacus faucibus, nec viverra orci ultricies. Quisque et felis vulputate, vestibulum urna sed, convallis ligula. Nam mattis ante vel mattis rutrum. Curabitur enim massa, dignissim tincidunt consequat vitae, interdum luctus est. Curabitur ac lacus in nisl fermentum consectetur. Donec augue justo, viverra ac vulputate eget, venenatis non nulla. Duis eget sem laoreet, porta ante nec, interdum nisi.
-
-        Ut nec tellus a arcu facilisis accumsan. Nunc sagittis porta ornare. Curabitur tempor justo eget erat consectetur, ut porttitor erat consequat. Donec libero velit, vestibulum sed molestie sed, lobortis in mi. Sed scelerisque nunc vitae ante vehicula pretium. Vivamus dignissim urna placerat nisl dapibus malesuada ut ac velit. Integer interdum nisi augue, ac viverra diam varius ac. Sed viverra libero sit amet ligula pulvinar elementum. Vivamus id commodo nulla, a tincidunt dui.
-
-        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus auctor lectus quis ligula malesuada ultricies. Pellentesque eget arcu est. Aenean tempus lectus vitae tellus molestie semper. In feugiat, ligula viverra aliquam bibendum, velit nunc viverra ante, eu lobortis dui enim sodales sapien. Maecenas vulputate vehicula elit, et euismod eros elementum vitae. Fusce bibendum iaculis lectus. Vivamus et purus sit amet metus adipiscing feugiat.
-    </string>
     <string name="sv_search">Search</string>
     <string name="sv_read_online">Read online</string>
     <string name="sv_drawer_open">Open menu</string>
