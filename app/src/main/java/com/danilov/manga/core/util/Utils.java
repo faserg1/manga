@@ -60,6 +60,15 @@ public class Utils {
         return easyDialog;
     }
 
+    public static Integer stringToInt(final String s) {
+        Integer integer = null;
+        try {
+            integer = Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+        }
+        return integer;
+    }
+
     public static <T> ArrayList<T> listToArrayList(final List<? extends T> oldList) {
         if (oldList instanceof ArrayList) {
             return (ArrayList) oldList;

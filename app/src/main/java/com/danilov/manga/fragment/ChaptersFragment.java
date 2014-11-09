@@ -1,6 +1,7 @@
 package com.danilov.manga.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +26,8 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
+import com.danilov.manga.core.dialog.CustomDialog;
+import com.danilov.manga.core.dialog.CustomDialogFragment;
 import com.danilov.manga.core.interfaces.RefreshableActivity;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
@@ -54,6 +58,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
     private Button backButton;
     private Button download;
+    private Button selectRange;
 
     private Manga manga;
 
@@ -83,6 +88,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         chaptersListView = (ListView) view.findViewById(R.id.chaptersListView);
         backButton = (Button) view.findViewById(R.id.back);
         download = (Button) view.findViewById(R.id.download);
+        selectRange = (Button) view.findViewById(R.id.number_select);
         chaptersListView.setOnItemClickListener(this);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +104,12 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
                 intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
                 startActivity(intent);
                 activity.showInfoFragment();
+            }
+        });
+        selectRange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                showNumberPickerFragment();
             }
         });
         if (savedInstanceState == null) {
@@ -170,6 +182,51 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         if (adapter != null) {
             adapter.select(position);
         }
+    }
+
+    private void showNumberPickerFragment() {
+        final CustomDialogFragment dialogFragment = new CustomDialogFragment();
+        CustomDialog dialog = null;
+
+        View contentView = getActivity().getLayoutInflater().inflate(R.layout.dialog_select_range, null);
+        final EditText from = (EditText) contentView.findViewById(R.id.from);
+        final EditText to = (EditText) contentView.findViewById(R.id.to);
+        TextView max = (TextView) contentView.findViewById(R.id.max);
+
+        if (manga.getChapters() != null) {
+            String all = "всего(" + manga.getChapters().size() + ")";
+            max.setText(all);
+        }
+
+
+        CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
+        builder.setPositiveButton(R.string.sv_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                if (adapter != null) {
+                    Integer _from = Utils.stringToInt(from.getText().toString());
+                    Integer _to = Utils.stringToInt(to.getText().toString());
+                    if (_from == null || _to == null) {
+                        return;
+                    }
+                    _from--;
+                    _to--;
+                    adapter.selectFromAndTo(_from, _to);
+                }
+                dialogFragment.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.sv_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                dialogFragment.dismiss();
+            }
+        });
+        builder.setView(contentView);
+        builder.setTitle(R.string.sv_select_range_dialog);
+        dialog = builder.build();
+        dialogFragment.setDialog(dialog);
+        dialogFragment.show(activity.getSupportFragmentManager(), "selec-range");
     }
 
     private class MangaChaptersQueryThread extends Thread {
@@ -270,6 +327,16 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
         public void setSelectedChapters(final boolean[] selectedChapters) {
             this.selectedChapters = selectedChapters;
+        }
+
+        public void selectFromAndTo(final int from, final int to) {
+            for (int i = from; i <= to; i++) {
+                if (i < 0 || i > selectedChapters.length - 1) {
+                    continue;
+                }
+                selectedChapters[i] = true;
+            }
+            notifyDataSetChanged();
         }
 
         public ArrayList<Integer> getSelectedChaptersList() {

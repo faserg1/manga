@@ -12,6 +12,14 @@
         android:layout_height="match_parent"
         android:fastScrollEnabled="true"
         android:fastScrollAlwaysVisible="true"
+        android:layout_above="@+id/number_select"/>
+
+
+    <Button
+        android:id="@+id/number_select"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sv_select_range"
         android:layout_above="@+id/linearLayout"/>
 
     <LinearLayout
