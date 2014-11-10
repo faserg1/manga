@@ -167,6 +167,14 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         super.onPause();
     }
 
+    private boolean isDetached = false;
+
+    @Override
+    public void onDetach() {
+        isDetached = true;
+        super.onDetach();
+    }
+
     public void restoreInstanceState(final Bundle savedInstanceState) {
         manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
         ArrayList<MangaChapter> chapters = savedInstanceState.getParcelableArrayList(CHAPTERS_KEY);
@@ -262,6 +270,9 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
                 @Override
                 public void run() {
+                    if (isDetached) {
+                        return;
+                    }
                     if (loaded) {
                         showChapters();
                     } else {
