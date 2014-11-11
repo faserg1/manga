@@ -6,7 +6,14 @@
               android:layout_height="match_parent"
               android:padding="5dip">
 
+    <CheckBox
+        android:id="@+id/select_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sv_select_all"/>
+
     <ListView
+        android:layout_below="@+id/select_all"
         android:id="@+id/chaptersListView"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"

@@ -10,6 +10,7 @@
     <string name="sv_selected">Selected: </string>
     <string name="sv_queued">Queued: </string>
     <string name="sv_select_range">Select range</string>
+    <string name="sv_select_all">Select all</string>
     <string name="sv_select_range_dialog">Select range</string>
     <string name="sv_all">all</string>
     <string name="sv_ok">OK</string>

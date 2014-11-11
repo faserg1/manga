@@ -59,6 +59,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
     private Button backButton;
     private Button download;
     private Button selectRange;
+    private CheckBox checkBox;
 
     private Manga manga;
 
@@ -89,6 +90,15 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         backButton = (Button) view.findViewById(R.id.back);
         download = (Button) view.findViewById(R.id.download);
         selectRange = (Button) view.findViewById(R.id.number_select);
+        checkBox = (CheckBox) view.findViewById(R.id.select_all);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                if (adapter != null) {
+                    adapter.all(isChecked);
+                }
+            }
+        });
         chaptersListView.setOnItemClickListener(this);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -377,6 +387,13 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
         public void select(final int position, final boolean isChecked) {
             selectedChapters[position] = isChecked;
+        }
+
+        public void all(final boolean select) {
+            for (int i = 0; i < selectedChapters.length; i++) {
+                selectedChapters[i] = select;
+            }
+            notifyDataSetChanged();
         }
 
         private class Holder {
