@@ -119,6 +119,14 @@ public class InfoFragment extends Fragment {
         }
     }
 
+    private boolean isDetached = false;
+
+    @Override
+    public void onDetach() {
+        isDetached = true;
+        super.onDetach();
+    }
+
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         if (manga != null) {
@@ -162,6 +170,9 @@ public class InfoFragment extends Fragment {
 
                 @Override
                 public void run() {
+                    if (isDetached) {
+                        return;
+                    }
                     if (loaded) {
                         String mangaDescription = manga.getDescription();
                         mangaDescriptionTextView.setText(mangaDescription);
@@ -200,9 +211,6 @@ public class InfoFragment extends Fragment {
             Intent intent = null;
             switch (v.getId()) {
                 case R.id.download:
-//                    intent = new Intent(activity, DownloadsActivity.class);
-//                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-//                    startActivity(intent);
                     activity.showChaptersFragment();
                     break;
                 case R.id.add_to_favorites:
