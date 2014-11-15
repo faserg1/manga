@@ -254,7 +254,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         builder.setTitle(R.string.sv_select_range_dialog);
         dialog = builder.build();
         dialogFragment.setDialog(dialog);
-        dialogFragment.show(activity.getSupportFragmentManager(), "selec-range");
+        dialogFragment.show(activity.getSupportFragmentManager(), "select-range");
     }
 
     private class MangaChaptersQueryThread extends Thread {

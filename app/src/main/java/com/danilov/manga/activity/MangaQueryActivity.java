@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
@@ -65,15 +66,19 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
             repository = RepositoryEngine.Repository.valueOf(repositoryString);
             engine = repository.getEngine();
         } else {
+            //why I do not use getString with default value? Because it's API 12 :(
             String repositoryString = savedInstanceState.getString(Constants.REPOSITORY_KEY);
             if (repositoryString == null) {
-                repositoryString = "READMANGA";
+                repository = RepositoryEngine.Repository.READMANGA;
+            } else {
+                repository = RepositoryEngine.Repository.valueOf(repositoryString);
             }
-            repository = RepositoryEngine.Repository.valueOf(repositoryString);
             engine = repository.getEngine();
         }
         setContentView(R.layout.manga_query_activity);
         searchResultsView = (GridView) findViewById(R.id.search_results);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(repository.getName());
     }
 
     @Override
