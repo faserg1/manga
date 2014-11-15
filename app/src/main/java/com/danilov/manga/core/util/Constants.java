@@ -15,5 +15,6 @@ public class Constants {
     public static final String REPOSITORY_KEY = "RK";
     public static final String FROM_CHAPTER_KEY = "FCK";
     public static final String FROM_PAGE_KEY = "FPK";
+    public static final String FRAGMENTS_KEY = "FK";
 
 }

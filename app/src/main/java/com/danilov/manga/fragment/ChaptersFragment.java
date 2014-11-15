@@ -26,6 +26,7 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
 import com.danilov.manga.activity.DownloadsActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
+import com.danilov.manga.activity.SingleFragmentActivity;
 import com.danilov.manga.core.dialog.CustomDialog;
 import com.danilov.manga.core.dialog.CustomDialogFragment;
 import com.danilov.manga.core.interfaces.RefreshableActivity;
@@ -109,7 +110,8 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Intent intent = new Intent(activity, DownloadsActivity.class);
+                Intent intent = new Intent(activity, SingleFragmentActivity.class);
+                intent.putExtra(Constants.FRAGMENTS_KEY, SingleFragmentActivity.DOWNLOAD_MANAGER_FRAGMENT);
                 intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
                 intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
                 startActivity(intent);

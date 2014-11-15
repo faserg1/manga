@@ -35,6 +35,7 @@
         <activity android:name=".test.QueryTestActivity"
                 android:label="Query Engine Test"/>
         <activity android:name=".activity.MangaInfoActivity"/>
+        <activity android:name=".activity.SingleFragmentActivity"/>
         <activity android:name=".test.LocalMangaActivity" android:label="Local Manga Activity"/>
         <activity android:name=".activity.DownloadsActivity" android:label="DownloadsActivity"/>
         <activity android:name=".test.MangaViewTestActivity" android:label="MangaViewTestActivity"/>
