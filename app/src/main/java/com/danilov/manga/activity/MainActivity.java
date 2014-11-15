@@ -17,6 +17,7 @@ import android.widget.*;
 import com.danilov.manga.R;
 import com.danilov.manga.core.util.DrawerStub;
 import com.danilov.manga.core.util.Utils;
+import com.danilov.manga.fragment.DownloadManagerFragment;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
 import com.danilov.manga.fragment.HistoryMangaFragment;
 import com.danilov.manga.fragment.MainFragment;
@@ -175,6 +176,7 @@ public class MainActivity extends ActionBarActivity {
                     showDownloadedMangaFragment();
                     break;
                 case DOWNLOAD_MANAGER:
+                    showDownloadManagerFragment();
                     break;
                 case SETTINGS:
                     break;
@@ -223,6 +225,18 @@ public class MainActivity extends ActionBarActivity {
 
     private void showDownloadedMangaFragment() {
         Fragment fragment = DownloadedMangaFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+    }
+
+    private void showDownloadManagerFragment() {
+        Fragment fragment = DownloadManagerFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
