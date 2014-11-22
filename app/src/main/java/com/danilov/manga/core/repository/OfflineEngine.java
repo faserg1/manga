@@ -105,7 +105,6 @@ public class OfflineEngine implements RepositoryEngine {
             chapters.add(chapter);
         }
         manga.setChapters(chapters);
-        manga.setChaptersQuantity(chapters.size());
         return true;
     }
 

@@ -20,6 +20,7 @@
     <string name="sv_all">всего</string>
     <string name="sv_ok">OK</string>
     <string name="sv_cancel">Отмена</string>
+    <string name="sv_toggle_full_screen">На весь экран</string>
 
     <string name="p_internet_error">Проблемы с интернет соединением</string>
     <string name="p_failed_to_load_chapter_info">Не удалось загрузить информацию о главе: </string>

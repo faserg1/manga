@@ -268,7 +268,7 @@ public class MangaDownloadService extends Service {
             int curChapterNumber = request.getCurrentChapterNumber();
             String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
             try {
-                LocalManga localManga = downloadedMangaDAO.updateInfo(manga, 1, mangaPath);
+                LocalManga localManga = downloadedMangaDAO.updateInfo(manga, manga.getChaptersQuantity(), mangaPath);
                 if (localManga != null) {
                     mangaPath = localManga.getLocalUri();
                 }
