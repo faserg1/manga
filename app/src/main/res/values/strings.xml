@@ -16,6 +16,7 @@
     <string name="sv_ok">OK</string>
     <string name="sv_cancel">Cancel</string>
     <string name="sv_toggle_full_screen">Toggle full screen</string>
+    <string name="sv_disable_full_screen">Disable full screen</string>
 
     <string name="p_internet_error">Problems with internet connection</string>
     <string name="p_failed_to_load_chapter_info">Failed to load chapter info: </string>

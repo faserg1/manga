@@ -18,6 +18,7 @@ public class ApplicationSettings {
     private static final String DOWNLOAD_PATH_FIELD = "DPF";
     private static final String MANGA_DOWNLOAD_BASE_PATH_FIELD = "MDBPF";
     private static final String TUTORIAL_VIEWER_PASSED_FIELD = "TVPF";
+    private static final String VIEWER_FULLSCREEN_FIELD = "VFF";
 
     private static ApplicationSettings instance;
 
@@ -26,6 +27,8 @@ public class ApplicationSettings {
     private String mangaDownloadBasePath;
 
     private boolean tutorialViewerPassed;
+
+    private boolean viewerFullscreen;
 
     public String getDownloadPath() {
         return downloadPath;
@@ -51,6 +54,14 @@ public class ApplicationSettings {
         this.tutorialViewerPassed = tutorialViewerPassed;
     }
 
+    public boolean isViewerFullscreen() {
+        return viewerFullscreen;
+    }
+
+    public void setViewerFullscreen(final boolean viewerFullscreen) {
+        this.viewerFullscreen = viewerFullscreen;
+    }
+
     public static ApplicationSettings get(final Context context) {
         if (instance == null) {
             instance = new ApplicationSettings(context);
@@ -67,6 +78,7 @@ public class ApplicationSettings {
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
         this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
         this.tutorialViewerPassed = sharedPreferences.getBoolean(TUTORIAL_VIEWER_PASSED_FIELD, false);
+        this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
         }
@@ -91,6 +103,7 @@ public class ApplicationSettings {
         editor.putString(DOWNLOAD_PATH_FIELD, downloadPath);
         editor.putString(MANGA_DOWNLOAD_BASE_PATH_FIELD, mangaDownloadBasePath);
         editor.putBoolean(TUTORIAL_VIEWER_PASSED_FIELD, tutorialViewerPassed);
+        editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.commit();
     }
 
