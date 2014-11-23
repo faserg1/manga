@@ -7,8 +7,8 @@ import android.content.Context;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.Pair;
+import com.danilov.manga.core.util.Promise;
 import com.danilov.manga.core.util.Utils;
-import com.danilov.promise.Promise;
 
 import java.util.ArrayList;
 import java.util.List;

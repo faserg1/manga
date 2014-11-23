@@ -1,4 +1,4 @@
-package com.danilov.promise;
+package com.danilov.manga.core.util;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;

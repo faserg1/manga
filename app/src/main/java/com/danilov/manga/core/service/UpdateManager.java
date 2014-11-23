@@ -7,8 +7,8 @@ import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Pair;
-import com.danilov.promise.Promise;
-import com.danilov.promise.Promise.Action;
+import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.Promise.Action;
 
 import java.util.List;
 
