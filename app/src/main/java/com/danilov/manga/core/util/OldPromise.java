@@ -3,7 +3,7 @@ package com.danilov.manga.core.util;
 /**
  * Created by Semyon Danilov on 21.09.2014.
  */
-public class Promise<ARG> {
+public class OldPromise<ARG> {
 
     private boolean isOver;
 
@@ -13,7 +13,7 @@ public class Promise<ARG> {
 
     private boolean success = false;
 
-    public Promise() {
+    public OldPromise() {
 
     }
 

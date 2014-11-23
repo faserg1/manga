@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "20.0.0"
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
         applicationId "com.danilov.manga"
@@ -24,4 +24,5 @@ dependencies {
     compile 'rapid.decoder:library:0.2.6'
     compile 'rapid.decoder:jpeg-decoder:0.2.6'
     compile 'rapid.decoder:png-decoder:0.2.6'
+    compile project(':Promise')
 }

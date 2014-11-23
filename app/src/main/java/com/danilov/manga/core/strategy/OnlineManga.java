@@ -9,7 +9,7 @@ import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.service.DownloadManager;
-import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.OldPromise;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 
@@ -157,8 +157,8 @@ public class OnlineManga implements MangaShowStrategy {
     private int savedCurrentImageNumber = 0;
 
     @Override
-    public Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
-        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
+    public OldPromise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
+        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
         this.currentChapter = i;
         this.savedCurrentImageNumber = this.currentImageNumber;
         this.currentImageNumber = -1;
@@ -201,7 +201,7 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public Promise<MangaShowStrategy> next() throws ShowMangaException {
+    public OldPromise<MangaShowStrategy> next() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
             return showChapter(currentChapter + 1);
         }
@@ -215,8 +215,8 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public Promise<MangaShowStrategy> initStrategy() throws ShowMangaException {
-        final Promise<MangaShowStrategy> promise = new Promise<MangaShowStrategy>();
+    public OldPromise<MangaShowStrategy> initStrategy() throws ShowMangaException {
+        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
         if (manga.getChapters() != null) {
             promise.finish(this, true);
         } else {

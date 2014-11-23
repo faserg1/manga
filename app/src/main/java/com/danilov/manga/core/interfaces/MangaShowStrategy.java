@@ -1,7 +1,7 @@
 package com.danilov.manga.core.interfaces;
 
 import com.danilov.manga.core.strategy.ShowMangaException;
-import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.OldPromise;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ public interface MangaShowStrategy {
 
     void showImage(final int i) throws ShowMangaException;
 
-    Promise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException;
+    OldPromise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException;
 
-    Promise<MangaShowStrategy> next() throws ShowMangaException;
+    OldPromise<MangaShowStrategy> next() throws ShowMangaException;
 
     void previous() throws ShowMangaException;
 
-    Promise<MangaShowStrategy> initStrategy() throws ShowMangaException;
+    OldPromise<MangaShowStrategy> initStrategy() throws ShowMangaException;
 
     int getCurrentImageNumber();
 

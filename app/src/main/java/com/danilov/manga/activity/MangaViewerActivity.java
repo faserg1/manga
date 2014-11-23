@@ -26,10 +26,9 @@ import com.danilov.manga.core.strategy.OfflineManga;
 import com.danilov.manga.core.strategy.OnlineManga;
 import com.danilov.manga.core.strategy.ShowMangaException;
 import com.danilov.manga.core.util.Constants;
-import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.OldPromise;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
-import com.danilov.manga.core.view.AnimatedActionView;
 import com.danilov.manga.core.view.InAndOutAnim;
 import com.danilov.manga.core.view.MangaImageSwitcher;
 import com.danilov.manga.core.view.SubsamplingScaleImageView;
@@ -165,7 +164,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         currentStrategy.restoreState(uris, currentChapterNumber, currentImageNumber);
         try {
             progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
-            currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
+            currentStrategy.initStrategy().after(new OldPromise.Action<MangaShowStrategy>() {
 
                 @Override
                 public void action(final MangaShowStrategy strategy, final boolean success) {
@@ -178,8 +177,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                                 Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
                             }
                         } else {
-                            Promise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
-                            promise.after(new Promise.Action<MangaShowStrategy>() {
+                            OldPromise<MangaShowStrategy> promise = currentStrategy.showChapter(currentChapterNumber);
+                            promise.after(new OldPromise.Action<MangaShowStrategy>() {
 
                                 @Override
                                 public void action(final MangaShowStrategy strategy, final boolean success) {
@@ -208,7 +207,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private void init() {
         try {
             progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
-            currentStrategy.initStrategy().after(new Promise.Action<MangaShowStrategy>() {
+            currentStrategy.initStrategy().after(new OldPromise.Action<MangaShowStrategy>() {
                 @Override
                 public void action(final MangaShowStrategy strategy, final boolean success) {
                     progressDialog.dismiss();
@@ -217,7 +216,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                             fromChapter = manga.getChapters().get(0).getNumber();
                         }
                         try {
-                            currentStrategy.showChapter(fromChapter).after(new Promise.Action<MangaShowStrategy>() {
+                            currentStrategy.showChapter(fromChapter).after(new OldPromise.Action<MangaShowStrategy>() {
                                 @Override
                                 public void action(final MangaShowStrategy strategy, final boolean success) {
                                     try {
@@ -279,7 +278,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         String chapterString = currentChapterEditText.getText().toString();
         Integer chapterNum = Integer.valueOf(chapterString) - 1;
         try {
-            currentStrategy.showChapter(chapterNum).after(new Promise.Action<MangaShowStrategy>() {
+            currentStrategy.showChapter(chapterNum).after(new OldPromise.Action<MangaShowStrategy>() {
                 @Override
                 public void action(final MangaShowStrategy strategy, final boolean success) {
                     try {
@@ -328,9 +327,9 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private void onNext() {
         try {
-            Promise<MangaShowStrategy> promise = currentStrategy.next();
+            OldPromise<MangaShowStrategy> promise = currentStrategy.next();
             if (promise != null) {
-                promise.after(new Promise.Action<MangaShowStrategy>() {
+                promise.after(new OldPromise.Action<MangaShowStrategy>() {
                     @Override
                     public void action(final MangaShowStrategy strategy, final boolean success) {
                         try {
