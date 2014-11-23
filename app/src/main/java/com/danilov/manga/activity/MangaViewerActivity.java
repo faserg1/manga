@@ -109,12 +109,13 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         }
 
         Intent intent = getIntent();
-        manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        if (manga == null) {
-            if (savedInstanceState != null) {
-                manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
+        if (savedInstanceState != null) {
+            manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
+            if (manga == null) {
+                manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
             }
-            return;
+        } else {
+            manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         }
         TextView mangaTitleTextView = (TextView) findViewById(R.id.manga_title);
         mangaTitleTextView.setText(manga.getTitle());
@@ -158,7 +159,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
         if (chapters != null) {
             manga.setChapters(chapters);
-            manga.setChaptersQuantity(chapters.size());
         }
         final ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
         Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
