@@ -3,6 +3,7 @@ package com.danilov.manga.core.service;
 import android.os.Handler;
 
 import com.danilov.manga.core.model.Manga;
+import com.danilov.manga.core.model.MangaChapter;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Pair;
@@ -45,7 +46,11 @@ public class UpdateManager {
                 try {
                     int oldQuantity = manga.getChaptersQuantity();
                     if (engine.queryForChapters(manga)) {
-                        int quantity = manga.getChaptersQuantity();
+                        List<MangaChapter> chapters = manga.getChapters();
+                        int quantity = 0;
+                        if (chapters != null) {
+                            quantity = chapters.size();
+                        }
                         int diff = quantity - oldQuantity;
                         resolver.resolve(Pair.obtain(manga, diff));
                     }

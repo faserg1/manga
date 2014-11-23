@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class MangaUpdateService extends IntentService {
 
-    private static final String UPDATE = "com.danilov.manga.INTENTFILTER_ACTION_UPDATE";
+    public static final String UPDATE = "com.danilov.manga.INTENTFILTER_ACTION_UPDATE";
 
     private static final String ACTION_UPDATE_ALL = "updateall";
     private static final String ACTION_UPDATE_LIST = "updatelist";
@@ -39,7 +39,7 @@ public class MangaUpdateService extends IntentService {
      *
      * @see IntentService
      */
-    public static void startUpdateList(Context context, final List<Manga> mangas) {
+    public static void startUpdateList(Context context, final List<? extends Manga> mangas) {
         Intent intent = new Intent(context, MangaUpdateService.class);
         intent.setAction(ACTION_UPDATE_LIST);
         ArrayList<Manga> mangasArrayList = Utils.listToArrayList(mangas);
