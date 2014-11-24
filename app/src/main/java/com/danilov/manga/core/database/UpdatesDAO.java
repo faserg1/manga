@@ -12,6 +12,7 @@ import com.danilov.manga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +81,56 @@ public class UpdatesDAO {
             db.close();
         }
         return element;
+    }
+
+    public int getUnseenUpdatesQuantity() throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openReadable();
+        try {
+            Cursor cursor = db.rawQuery("select count(*) from " + TABLE_NAME, null);
+            if (!cursor.moveToFirst()) {
+                return 0;
+            }
+            return cursor.getInt(0);
+        } catch (Exception e) {
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
+    public List<UpdatesElement> getAllUnseenUpdates() throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openReadable();
+        DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        List<UpdatesElement> mangaList = null;
+        try {
+            Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+            if (!cursor.moveToFirst()) {
+                return null;
+            }
+            mangaList = new ArrayList<UpdatesElement>(cursor.getCount());
+            int idIndex = cursor.getColumnIndex(ID);
+            int localIdIndex = cursor.getColumnIndex(LOCAL_MANGA_ID);
+            int differenceIndex = cursor.getColumnIndex(DIFFERENCE);
+            int timestampIndex = cursor.getColumnIndex(TIMESTAMP);
+            do {
+                int localId = cursor.getInt(localIdIndex);
+                int id = cursor.getInt(idIndex);
+                long timestamp = cursor.getInt(timestampIndex);
+                int difference = cursor.getInt(differenceIndex);
+                LocalManga manga = downloadedMangaDAO.getById(localId);
+                UpdatesElement element = new UpdatesElement();
+                element.setId(id);
+                element.setDifference(difference);
+                element.setManga(manga);
+                element.setTimestamp(new Date(timestamp));
+                mangaList.add(element);
+            } while (cursor.moveToNext());
+        } catch (Exception e) {
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+        return mangaList;
     }
 
     public List<UpdatesElement> getAllUpdates() throws DatabaseAccessException {

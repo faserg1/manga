@@ -61,10 +61,14 @@ public class MainFragment extends BaseFragment {
     public void onActivityCreated(final Bundle savedInstanceState) {
         updatesView = findViewById(R.id.updates);
         update = findViewById(R.id.update);
+        List<UpdatesElement> _updates = null;
         try {
-            updates = updatesDAO.getAllUpdates();
+            _updates = updatesDAO.getAllUpdates();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (_updates != null) {
+            updates = _updates;
         }
         adapter = new UpdatesAdapter(getActivity(), 0, updates);
         updatesView.setAdapter(adapter);
@@ -76,6 +80,7 @@ public class MainFragment extends BaseFragment {
             public void onClick(final View view) {
                 try {
                     updates.clear();
+                    updatesView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     List<LocalManga> mangaList = downloadedMangaDAO.getAllManga();
                     for (Manga manga : mangaList) {
@@ -125,6 +130,9 @@ public class MainFragment extends BaseFragment {
 
         @Override
         public int getCount() {
+            if (updates == null) {
+                return 0;
+            }
             return updates.size();
         }
 

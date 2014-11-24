@@ -15,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.manga.R;
+import com.danilov.manga.core.database.DatabaseAccessException;
+import com.danilov.manga.core.database.UpdatesDAO;
 import com.danilov.manga.core.util.DrawerStub;
+import com.danilov.manga.core.util.Promise;
+import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.fragment.DownloadManagerFragment;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
@@ -27,6 +31,8 @@ import com.danilov.manga.fragment.RepositoryPickerFragment;
  * Created by Semyon Danilov on 07.10.2014.
  */
 public class MainActivity extends ActionBarActivity {
+
+    private UpdatesDAO updatesDAO = null;
 
     private View drawerLayout;
 
@@ -40,16 +46,22 @@ public class MainActivity extends ActionBarActivity {
 
     private boolean isLargeLandscape = false;
 
+    private int updatesQuantity = 0;
+
+    private DrawerListAdapter adapter;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
+        updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
         drawerLayout = findViewById(R.id.drawer_layout);
         isLargeLandscape = findViewById(R.id.is_large) != null; //dealing with landscape pads
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
-        drawerList.setAdapter(new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values()));
+        adapter = new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values());
+        drawerList.setAdapter(adapter);
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         if (!isLargeLandscape) {
@@ -82,6 +94,29 @@ public class MainActivity extends ActionBarActivity {
             showMainFragment();
         }
         syncToggle();
+        updateQuantity();
+    }
+
+    public void updateQuantity() {
+        Promise<Integer> promise = Promise.run(new Promise.PromiseRunnable<Integer>() {
+            @Override
+            public void run(final Promise<Integer>.Resolver resolver) {
+                try {
+                    updatesQuantity = updatesDAO.getUnseenUpdatesQuantity();
+                    resolver.resolve(updatesQuantity);
+                } catch (DatabaseAccessException e) {
+                    e.printStackTrace();
+                    resolver.except(e);
+                }
+            }
+        }, true);
+        promise.then(new Promise.Action<Integer, Void>() {
+            @Override
+            public Void action(final Integer data, final boolean success) {
+                adapter.notifyDataSetChanged();
+                return null;
+            }
+        });
     }
 
 
@@ -113,6 +148,7 @@ public class MainActivity extends ActionBarActivity {
 
     private enum DrawerMenuItem {
 
+        UPDATES(R.drawable.ic_action_cloud, R.string.menu_updates),
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
         HISTORY(R.drawable.ic_action_time, R.string.menu_history),
         FAVORITE(R.drawable.ic_action_important, R.string.menu_favorite),
@@ -316,6 +352,11 @@ public class MainActivity extends ActionBarActivity {
                 view.setSelected(true);
             } else {
                 view.setSelected(false);
+            }
+            if (item == DrawerMenuItem.UPDATES) {
+                TextView quantityNew = (TextView) view.findViewById(R.id.quantity_new);
+                quantityNew.setVisibility(View.VISIBLE);
+                quantityNew.setText(updatesQuantity + "");
             }
             text.setText(context.getString(item.getStringId()));
             icon.setImageResource(item.getIconId());
