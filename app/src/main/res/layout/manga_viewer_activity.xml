@@ -142,12 +142,6 @@
 
                         </LinearLayout>
 
-                        <Button android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/sv_disable_full_screen"
-                                style="@style/Manga.ButtonBlue"
-                                android:id="@+id/disable_full_screen"/>
-
                     </LinearLayout>
 
                 </ScrollView>

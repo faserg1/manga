@@ -60,7 +60,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
     private Button imageOk;
     private Button chapterOk;
-    private Button disableFullscreen;
 
     private MangaShowStrategy currentStrategy;
     private Manga manga;
@@ -72,6 +71,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private View tutorialView;
 
     private DialogFragment progressDialog = null;
+    private boolean isFullscreen = false;
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +89,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         this.imageOk = (Button) findViewById(R.id.imageOk);
         this.chapterOk = (Button) findViewById(R.id.chapterOk);
-        this.disableFullscreen = (Button) findViewById(R.id.disable_full_screen);
         this.tutorialView = findViewById(R.id.tutorialView);
         settings = ApplicationSettings.get(this);
         nextBtn.setOnClickListener(this);
@@ -98,7 +97,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         prevBtnBottom.setOnClickListener(this);
         imageOk.setOnClickListener(this);
         chapterOk.setOnClickListener(this);
-        disableFullscreen.setOnClickListener(this);
         toggleFullscreen(settings.isViewerFullscreen());
         Button closeTutorial = (Button) findViewById(R.id.close_tutorial);
         closeTutorial.setOnClickListener(this);
@@ -262,9 +260,6 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
                 break;
             case R.id.chapterOk:
                 goToChapterFromChapterPicker();
-                break;
-            case R.id.disable_full_screen:
-                toggleFullscreen(false);
                 break;
             case R.id.close_tutorial:
                 this.tutorialView.setVisibility(View.GONE);
@@ -463,7 +458,17 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (this.isFullscreen) {
+            toggleFullscreen(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void toggleFullscreen(final boolean fullscreen) {
+        this.isFullscreen = fullscreen;
         boolean oldFullscreen = settings.isViewerFullscreen();
         if (oldFullscreen != fullscreen) {
             settings.setViewerFullscreen(fullscreen);
@@ -471,10 +476,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         }
         if (fullscreen) {
             getSupportActionBar().hide();
-            this.disableFullscreen.setVisibility(View.VISIBLE);
         } else {
             getSupportActionBar().show();
-            this.disableFullscreen.setVisibility(View.GONE);
         }
     }
 

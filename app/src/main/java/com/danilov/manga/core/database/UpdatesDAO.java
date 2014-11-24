@@ -77,8 +77,6 @@ public class UpdatesDAO {
             element.setTimestamp(new Date(timestamp));
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return element;
     }
@@ -93,8 +91,6 @@ public class UpdatesDAO {
             return cursor.getInt(0);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -127,8 +123,6 @@ public class UpdatesDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return mangaList;
     }
@@ -162,8 +156,6 @@ public class UpdatesDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return mangaList;
     }
@@ -176,8 +168,6 @@ public class UpdatesDAO {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -192,8 +182,6 @@ public class UpdatesDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -212,8 +200,6 @@ public class UpdatesDAO {
                 updatesElement.setDifference(difference);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
-            } finally {
-                db.close();
             }
             return updatesElement;
         } else {

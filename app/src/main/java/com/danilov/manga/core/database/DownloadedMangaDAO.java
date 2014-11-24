@@ -65,8 +65,6 @@ public class DownloadedMangaDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -105,8 +103,6 @@ public class DownloadedMangaDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return mangaList;
     }
@@ -143,8 +139,6 @@ public class DownloadedMangaDAO {
             manga.setChaptersQuantity(chaptersQuantity);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return manga;
     }
@@ -157,8 +151,6 @@ public class DownloadedMangaDAO {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -195,8 +187,6 @@ public class DownloadedMangaDAO {
             manga.setChaptersQuantity(chaptersQuantity);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return manga;
     }
@@ -213,8 +203,6 @@ public class DownloadedMangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
-            } finally {
-                db.close();
             }
             return localManga;
         } else {
@@ -235,8 +223,6 @@ public class DownloadedMangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
-            } finally {
-                db.close();
             }
             return localManga;
         }

@@ -41,7 +41,7 @@ public class MangaImageSwitcher extends ImageSwitcher {
         if (prevImage != null) {
             state = prevImage.getState();
             if (state != null) {
-                state.setCenter(10000, 0);
+                state.setCenter(0, 10000);
             }
         }
         image.setImageFile(filePath, state);
