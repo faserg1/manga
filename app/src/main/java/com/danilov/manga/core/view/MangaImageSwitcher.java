@@ -1,6 +1,7 @@
 package com.danilov.manga.core.view;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.widget.ImageSwitcher;
 
@@ -24,7 +25,11 @@ public class MangaImageSwitcher extends ImageSwitcher {
         ImageViewState state = null;
         if (prevImage != null) {
             state = prevImage.getState();
+            if (state != null) {
+                state.setCenter(10000, 0);
+            }
         }
+        image.getSWidth();
         image.setImageFile(filePath, state);
         showNext();
     }
@@ -35,6 +40,9 @@ public class MangaImageSwitcher extends ImageSwitcher {
         ImageViewState state = null;
         if (prevImage != null) {
             state = prevImage.getState();
+            if (state != null) {
+                state.setCenter(10000, 0);
+            }
         }
         image.setImageFile(filePath, state);
         showPrevious();

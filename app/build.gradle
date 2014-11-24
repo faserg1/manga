@@ -24,5 +24,4 @@ dependencies {
     compile 'rapid.decoder:library:0.2.6'
     compile 'rapid.decoder:jpeg-decoder:0.2.6'
     compile 'rapid.decoder:png-decoder:0.2.6'
-    compile project(':Promise')
 }

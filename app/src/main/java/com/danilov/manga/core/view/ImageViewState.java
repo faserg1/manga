@@ -33,4 +33,9 @@ public class ImageViewState implements Serializable {
         return orientation;
     }
 
+    public void setCenter(final float centerX, final float centerY) {
+        this.centerX = centerX;
+        this.centerY = centerY;
+    }
+
 }

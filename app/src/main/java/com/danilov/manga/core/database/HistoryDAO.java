@@ -150,6 +150,8 @@ public class HistoryDAO {
                 String selection = ID + " = ?";
                 String id = String.valueOf(historyElement.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
+                historyElement.setChapter(chapter);
+                historyElement.setPage(page);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
             } finally {

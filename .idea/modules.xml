@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MangAGradle.iml" filepath="$PROJECT_DIR$/MangAGradle.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Promise/Promise.iml" filepath="$PROJECT_DIR$/Promise/Promise.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

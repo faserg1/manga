@@ -7,11 +7,12 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.danilov.manga.core.model.LocalManga;
-import com.danilov.manga.core.model.Manga;
-import com.danilov.manga.core.repository.RepositoryEngine;
+import com.danilov.manga.core.model.UpdatesElement;
+import com.danilov.manga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,27 +20,22 @@ import java.util.List;
  */
 public class UpdatesDAO {
 
-    private final static String TAG = "DownloadedMangaDAO";
+    private final static String TAG = "UpdatesDAO";
     private static final String packageName = "com.danilov.manga";
 
     private static final int DAOVersion = 1;
-    private static final String TABLE_NAME = "downloadedManga";
+    private static final String TABLE_NAME = "updatesManga";
     private static final String DB_NAME = "manga.db";
-
     private static final String ID = "id";
-    private static final String CHAPTERS_QUANTITY = "chapters_quantity";
-    private static final String MANGA_TITLE = "manga_title";
-    private static final String MANGA_DESCRIPTION = "manga_description";
-    private static final String MANGA_REPOSITORY = "manga_repository";
-    private static final String MANGA_AUTHOR = "manga_author";
-    private static final String MANGA_URI = "manga_uri";
-    private static final String MANGA_INET_URI = "manga_inet_uri";
+    private static final String LOCAL_MANGA_ID = "local_manga_id";
+    private static final String TIMESTAMP = "timestamp";
+    private static final String DIFFERENCE = "difference";
 
     public DatabaseHelper databaseHelper = null;
 
     public UpdatesDAO() {
         File externalStorageDir = Environment.getExternalStorageDirectory();
-        //{SD_PATH}/Android/data/com.danilov.manga/download
+        //{SD_PATH}/Android/data/com.danilov.manga/db/
         File dbPathFile = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + packageName + File.separator + "db");
         if (!dbPathFile.exists()) {
             boolean created = dbPathFile.mkdirs();
@@ -48,61 +44,70 @@ public class UpdatesDAO {
             }
         }
         String dbPath = dbPathFile + "/" + DB_NAME;
-        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
+        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler(), true, TABLE_NAME);
     }
 
-    public synchronized void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
-        ContentValues cv = new ContentValues();
-        cv.put(MANGA_TITLE, manga.getTitle());
-        cv.put(MANGA_DESCRIPTION, manga.getDescription());
-        cv.put(MANGA_AUTHOR, manga.getAuthor());
-        cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
-        cv.put(MANGA_URI, localUri);
-        cv.put(MANGA_INET_URI, manga.getUri());
-        cv.put(CHAPTERS_QUANTITY, chaptersQuantity);
+    /**
+     * @param manga
+     * @return
+     * @throws DatabaseAccessException
+     */
+    public UpdatesElement getUpdatesByManga(final LocalManga manga) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openReadable();
+        String selection = LOCAL_MANGA_ID + " = ?";
+        String[] selectionArgs = new String[] {"" + manga.getLocalId()};
+        UpdatesElement element = null;
         try {
-            db.insertOrThrow(TABLE_NAME, null, cv);
+            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            if (!cursor.moveToFirst()) {
+                return null;
+            }
+            int idIndex = cursor.getColumnIndex(ID);
+            int differenceIndex = cursor.getColumnIndex(DIFFERENCE);
+            int timestampIndex = cursor.getColumnIndex(TIMESTAMP);
+
+            int id = cursor.getInt(idIndex);
+            long timestamp = cursor.getInt(timestampIndex);
+            int difference = cursor.getInt(differenceIndex);
+            element = new UpdatesElement();
+            element.setId(id);
+            element.setDifference(difference);
+            element.setManga(manga);
+            element.setTimestamp(new Date(timestamp));
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
         } finally {
             db.close();
         }
+        return element;
     }
 
-    public synchronized List<LocalManga> getAllManga() throws DatabaseAccessException {
+    public List<UpdatesElement> getAllUpdates() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        List<LocalManga> mangaList = new ArrayList<LocalManga>();
+        DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        List<UpdatesElement> mangaList = null;
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return new ArrayList<LocalManga>(0);
+                return null;
             }
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
-            int uriIndex = cursor.getColumnIndex(MANGA_URI);
-            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+            mangaList = new ArrayList<UpdatesElement>(cursor.getCount());
             int idIndex = cursor.getColumnIndex(ID);
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
+            int localIdIndex = cursor.getColumnIndex(LOCAL_MANGA_ID);
+            int differenceIndex = cursor.getColumnIndex(DIFFERENCE);
+            int timestampIndex = cursor.getColumnIndex(TIMESTAMP);
             do {
-                String title = cursor.getString(titleIndex);
-                String description = cursor.getString(descriptionIndex);
-                String author = cursor.getString(authorIndex);
-                RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
-                String uri = cursor.getString(uriIndex);
-                String inetUri = cursor.getString(inetUriIndex);
+                int localId = cursor.getInt(localIdIndex);
                 int id = cursor.getInt(idIndex);
-                int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-                LocalManga manga = new LocalManga(title, inetUri, repository);
-                manga.setDescription(description);
-                manga.setAuthor(author);
-                manga.setLocalUri(uri);
-                manga.setChaptersQuantity(chaptersQuantity);
-                manga.setLocalId(id);
-                mangaList.add(manga);
+                long timestamp = cursor.getInt(timestampIndex);
+                int difference = cursor.getInt(differenceIndex);
+                LocalManga manga = downloadedMangaDAO.getById(localId);
+                UpdatesElement element = new UpdatesElement();
+                element.setId(id);
+                element.setDifference(difference);
+                element.setManga(manga);
+                element.setTimestamp(new Date(timestamp));
+                mangaList.add(element);
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
@@ -112,47 +117,9 @@ public class UpdatesDAO {
         return mangaList;
     }
 
-    public synchronized LocalManga getByLinkAndRepository(final String _inetUri, final RepositoryEngine.Repository repository) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
-        String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
-        String[] selectionArgs = new String[] {_inetUri, repository.toString()};
-        LocalManga manga = null;
-        try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
-            if (!cursor.moveToFirst()) {
-                return null;
-            }
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int uriIndex = cursor.getColumnIndex(MANGA_URI);
-            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
-            int idIndex = cursor.getColumnIndex(ID);
-            String title = cursor.getString(titleIndex);
-            String description = cursor.getString(descriptionIndex);
-            String author = cursor.getString(authorIndex);
-            String uri = cursor.getString(uriIndex);
-            String inetUri = cursor.getString(inetUriIndex);
-            int id = cursor.getInt(idIndex);
-            int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-            manga = new LocalManga(title, inetUri, repository);
-            manga.setDescription(description);
-            manga.setAuthor(author);
-            manga.setLocalId(id);
-            manga.setLocalUri(uri);
-            manga.setChaptersQuantity(chaptersQuantity);
-        } catch (Exception e) {
-            throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
-        }
-        return manga;
-    }
-
-    public synchronized void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
+    public void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
-        String selection = ID + " = ?";
+        String selection = LOCAL_MANGA_ID + " = ?";
         String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
@@ -163,63 +130,43 @@ public class UpdatesDAO {
         }
     }
 
-    public synchronized LocalManga getById(final int id) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
-        String selection = ID + " = ?";
-        String[] selectionArgs = new String[] {"" + id};
-        LocalManga manga = null;
+    public void addUpdatesElement(final LocalManga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openWritable();
+        ContentValues cv = new ContentValues();
+        cv.put(TIMESTAMP, timestamp.getTime());
+        cv.put(LOCAL_MANGA_ID, manga.getLocalId());
+        cv.put(DIFFERENCE, difference);
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
-            if (!cursor.moveToFirst()) {
-                return null;
-            }
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int uriIndex = cursor.getColumnIndex(MANGA_URI);
-            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
-            int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
-            String title = cursor.getString(titleIndex);
-            String description = cursor.getString(descriptionIndex);
-            String author = cursor.getString(authorIndex);
-            String uri = cursor.getString(uriIndex);
-            String inetUri = cursor.getString(inetUriIndex);
-            String repositoryString = cursor.getString(repositoryIndex);
-            RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(repositoryString);
-            int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-            manga = new LocalManga(title, inetUri, repository);
-            manga.setDescription(description);
-            manga.setAuthor(author);
-            manga.setLocalId(id);
-            manga.setLocalUri(uri);
-            manga.setChaptersQuantity(chaptersQuantity);
+            db.insertOrThrow(TABLE_NAME, null, cv);
         } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
         } finally {
             db.close();
         }
-        return manga;
     }
 
-    public synchronized LocalManga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException{
-        LocalManga localManga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
-        if (localManga != null) {
+    public UpdatesElement updateLocalInfo(final LocalManga manga, final int difference, final Date timestamp) throws DatabaseAccessException{
+        UpdatesElement updatesElement = getUpdatesByManga(manga);
+        if (updatesElement != null) {
             SQLiteDatabase db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
-                cv.put(CHAPTERS_QUANTITY, chapters);
+                cv.put(DIFFERENCE, difference);
+                cv.put(TIMESTAMP, timestamp.getTime());
                 String selection = ID + " = ?";
-                String id = String.valueOf(localManga.getLocalId());
+                String id = String.valueOf(updatesElement.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
+                updatesElement.setTimestamp(timestamp);
+                updatesElement.setDifference(difference);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
             } finally {
                 db.close();
             }
-            return localManga;
+            return updatesElement;
         } else {
-            addManga(manga, chapters, localUri);
+            addUpdatesElement(manga, difference, timestamp);
         }
         return null;
     }
@@ -231,13 +178,9 @@ public class UpdatesDAO {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
-            builder.addColumn(CHAPTERS_QUANTITY, DatabaseOptions.Type.INT, false, false);
-            builder.addColumn(MANGA_TITLE, DatabaseOptions.Type.TEXT, false, false);
-            builder.addColumn(MANGA_DESCRIPTION, DatabaseOptions.Type.TEXT, false, false);
-            builder.addColumn(MANGA_REPOSITORY, DatabaseOptions.Type.TEXT, false, false);
-            builder.addColumn(MANGA_AUTHOR, DatabaseOptions.Type.TEXT, false, false);
-            builder.addColumn(MANGA_URI, DatabaseOptions.Type.TEXT, false, false);
-            builder.addColumn(MANGA_INET_URI, DatabaseOptions.Type.TEXT, false, false);
+            builder.addColumn(LOCAL_MANGA_ID, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(TIMESTAMP, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(DIFFERENCE, DatabaseOptions.Type.INT, false, false);
             DatabaseOptions options = builder.build();
             String sqlStatement = options.toSQLStatement();
             try {
@@ -249,4 +192,5 @@ public class UpdatesDAO {
         }
 
     }
+
 }

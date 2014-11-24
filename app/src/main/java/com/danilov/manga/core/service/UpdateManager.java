@@ -51,6 +51,7 @@ public class UpdateManager {
                         if (chapters != null) {
                             quantity = chapters.size();
                         }
+                        manga.setChaptersQuantity(quantity);
                         int diff = quantity - oldQuantity;
                         resolver.resolve(Pair.obtain(manga, diff));
                     }
