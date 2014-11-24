@@ -47,7 +47,7 @@ public class DownloadedMangaDAO {
             }
         }
         String dbPath = dbPathFile + "/" + DB_NAME;
-        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler());
+        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler(), true, TABLE_NAME);
     }
 
     public synchronized void addManga(final Manga manga, final int chaptersQuantity, final String localUri) throws DatabaseAccessException {
