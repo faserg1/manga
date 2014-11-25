@@ -87,7 +87,7 @@ public class MainFragment extends BaseFragment {
                     adapter.notifyDataSetChanged();
                     List<LocalManga> mangaList = downloadedMangaDAO.getAllManga();
                     for (Manga manga : mangaList) {
-                        updatesDAO.deleteManga((LocalManga) manga);
+                        updatesDAO.deleteByManga((LocalManga) manga);
                     }
                     MangaUpdateService.startUpdateList(getActivity(), mangaList);
                 } catch (DatabaseAccessException e) {
@@ -117,11 +117,13 @@ public class MainFragment extends BaseFragment {
 
     private void onUpdate(final Manga manga, final Integer difference) {
         try {
-            updatesDAO.updateLocalInfo((LocalManga) manga, difference, new Date());
             downloadedMangaDAO.updateInfo(manga, manga.getChaptersQuantity());
-            UpdatesElement element = updatesDAO.getUpdatesByManga((LocalManga) manga);
-            updates.add(element);
-            adapter.notifyDataSetChanged();
+            if (difference != 0) {
+                updatesDAO.updateLocalInfo((LocalManga) manga, difference, new Date());
+                UpdatesElement element = updatesDAO.getUpdatesByManga((LocalManga) manga);
+                updates.add(element);
+                adapter.notifyDataSetChanged();
+            }
         } catch (DatabaseAccessException e) {
             e.printStackTrace();
         }
@@ -163,13 +165,19 @@ public class MainFragment extends BaseFragment {
                 v.setTag(h);
             }
 
-            UpdatesElement element = updates.get(position);
+            final UpdatesElement element = updates.get(position);
             int difference = element.getDifference();
             Resources res = getResources();
             String diff = res.getQuantityString(R.plurals.updates_plural, difference, difference);
 
             h.title.setText(element.getManga().getTitle());
             h.quantityNew.setText(diff);
+            h.okBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    deleteUpdate(element);
+                }
+            });
             return v;
         }
 
@@ -187,6 +195,19 @@ public class MainFragment extends BaseFragment {
 
         }
 
+    }
+
+    private void deleteUpdate(final UpdatesElement element) {
+        try {
+            updatesDAO.delete(element);
+        } catch (DatabaseAccessException e) {
+            //TODO: error handling
+            e.printStackTrace();
+        }
+        if (updates != null) {
+            updates.remove(element);
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }
