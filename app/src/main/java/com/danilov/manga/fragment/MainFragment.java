@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -144,12 +146,47 @@ public class MainFragment extends BaseFragment {
 
         @Override
         public View getView(final int position, final View convertView, final ViewGroup parent) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TextView view = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, null);
+            View v = convertView;
+            Holder h = null;
+            if (v != null) {
+                Object tag = v.getTag();
+                if (tag instanceof Holder) {
+                    h = (Holder) tag;
+                } else {
+                    h = new Holder(v);
+                    v.setTag(h);
+                }
+            } else {
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = inflater.inflate(R.layout.updates_item, null);
+                h = new Holder(v);
+                v.setTag(h);
+            }
+
             UpdatesElement element = updates.get(position);
-            view.setText(element.getManga().getTitle() + " +" + element.getDifference());
-            return view;
+            int difference = element.getDifference();
+            Resources res = getResources();
+            String diff = res.getQuantityString(R.plurals.updates_plural, difference, difference);
+
+            h.title.setText(element.getManga().getTitle());
+            h.quantityNew.setText(diff);
+            return v;
         }
+
+        private class Holder {
+
+            public ImageButton okBtn;
+            public TextView title;
+            public TextView quantityNew;
+
+            public Holder (final View v) {
+                okBtn = (ImageButton) v.findViewById(R.id.ok_btn);
+                title = (TextView) v.findViewById(R.id.title);
+                quantityNew = (TextView) v.findViewById(R.id.quantity_new);
+            }
+
+        }
+
     }
 
 }

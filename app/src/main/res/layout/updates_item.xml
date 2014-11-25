@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+    <!--card-->
+    <RelativeLayout
+        android:id="@+id/card_wrapper"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:background="@drawable/list_item_background"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textSize="22sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:layout_marginRight="5dp"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:layout_toLeftOf="@+id/btn_separator"
+            android:layout_toStartOf="@+id/btn_separator"
+            android:layout_alignTop="@+id/btn_separator"/>
+
+
+        <TextView
+            android:id="@+id/quantity_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_below="@+id/title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+        <View android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/btn_separator"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/ok_btn"
+            android:layout_toStartOf="@+id/ok_btn"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_orange"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_action_accept"
+            android:id="@+id/ok_btn"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

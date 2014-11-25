@@ -20,7 +20,6 @@ import com.danilov.manga.core.database.UpdatesDAO;
 import com.danilov.manga.core.util.DrawerStub;
 import com.danilov.manga.core.util.Promise;
 import com.danilov.manga.core.util.ServiceContainer;
-import com.danilov.manga.core.util.Utils;
 import com.danilov.manga.fragment.DownloadManagerFragment;
 import com.danilov.manga.fragment.DownloadedMangaFragment;
 import com.danilov.manga.fragment.HistoryMangaFragment;
@@ -102,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run(final Promise<Integer>.Resolver resolver) {
                 try {
-                    updatesQuantity = updatesDAO.getUnseenUpdatesQuantity();
+                    updatesQuantity = updatesDAO.getUpdatesQuantity();
                     resolver.resolve(updatesQuantity);
                 } catch (DatabaseAccessException e) {
                     e.printStackTrace();

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <plurals name="updates_plural">
+        <item quantity="zero">%d new chapters</item>
+        <item quantity="one">%d new chapter</item>
+        <item quantity="two">%d new chapters</item>
+        <item quantity="few">%d new chapters</item>
+        <item quantity="many">%d new chapters</item>
+        <item quantity="other">%d new chapters</item>
+    </plurals>
+
+</resources>

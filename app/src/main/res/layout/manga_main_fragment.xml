@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/updates"
         android:layout_alignParentBottom="true"
+        android:divider="@null"
         android:layout_below="@id/update"/>
 
 
