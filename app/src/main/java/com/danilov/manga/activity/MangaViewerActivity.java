@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -61,6 +62,9 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     private Button imageOk;
     private Button chapterOk;
 
+    private View drawerRightOffsetTop;
+    private View drawerRightOffsetBottom;
+
     private MangaShowStrategy currentStrategy;
     private Manga manga;
     private int fromChapter;
@@ -89,6 +93,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
         this.imageOk = (Button) findViewById(R.id.imageOk);
         this.chapterOk = (Button) findViewById(R.id.chapterOk);
+        this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
+        this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorialView = findViewById(R.id.tutorialView);
         settings = ApplicationSettings.get(this);
         nextBtn.setOnClickListener(this);
@@ -97,6 +103,8 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         prevBtnBottom.setOnClickListener(this);
         imageOk.setOnClickListener(this);
         chapterOk.setOnClickListener(this);
+        drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
+        drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(settings.isViewerFullscreen());
         Button closeTutorial = (Button) findViewById(R.id.close_tutorial);
         closeTutorial.setOnClickListener(this);
@@ -479,6 +487,16 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
         } else {
             getSupportActionBar().show();
         }
+    }
+
+    private class DisabledTouchEvent implements View.OnTouchListener {
+
+        @Override
+        public boolean onTouch(final View view, final MotionEvent motionEvent) {
+            motionEvent.setSource(4099);
+            return false;
+        }
+
     }
 
 }

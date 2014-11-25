@@ -14,6 +14,53 @@
 
     </com.danilov.manga.core.view.MangaImageSwitcher>
 
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1">
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/prevBtn"/>
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/nextBtn"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="0dp"
+                      android:layout_weight="0.8"/>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1">
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/prevBtnBottom"/>
+
+            <View   android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="0.5"
+                    android:id="@+id/nextBtnBottom"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <com.danilov.manga.core.view.SlidingLayer
             xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
             android:id="@+id/selector"
@@ -30,9 +77,9 @@
                 android:layout_height="fill_parent">
 
             <LinearLayout android:layout_width="50dp" android:layout_height="fill_parent" android:orientation="vertical" android:layout_alignParentRight="true">
-                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
+                <View android:id="@+id/drawer_right_offset_top" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
                 <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.8"/>
-                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
+                <View android:id="@+id/drawer_right_offset_bottom" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
             </LinearLayout>
 
             <LinearLayout
@@ -153,53 +200,6 @@
         </RelativeLayout>
 
     </com.danilov.manga.core.view.SlidingLayer>
-
-
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:orientation="vertical"
-            android:layout_height="fill_parent">
-
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.1">
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/prevBtn"/>
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/nextBtn"/>
-
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="0dp"
-                      android:layout_height="0dp"
-                      android:layout_weight="0.8"/>
-
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.1">
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/prevBtnBottom"/>
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/nextBtnBottom"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
 
     <!--stydyview-->
 

@@ -72,8 +72,6 @@ public class HistoryDAO {
             historyElement.setId(id);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return historyElement;
     }
@@ -104,8 +102,6 @@ public class HistoryDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
         return mangaList;
     }
@@ -118,8 +114,6 @@ public class HistoryDAO {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -134,8 +128,6 @@ public class HistoryDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
-        } finally {
-            db.close();
         }
     }
 
@@ -154,8 +146,6 @@ public class HistoryDAO {
                 historyElement.setPage(page);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
-            } finally {
-                db.close();
             }
             return historyElement;
         } else {

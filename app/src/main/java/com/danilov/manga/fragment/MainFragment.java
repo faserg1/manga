@@ -79,6 +79,7 @@ public class MainFragment extends BaseFragment {
             @Override
             public void onClick(final View view) {
                 try {
+                    //TODO: update activity's [new quantity] value
                     updates.clear();
                     updatesView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();

@@ -200,6 +200,9 @@ public class MainActivity extends ActionBarActivity {
             prevSelected = item;
             Intent intent = null;
             switch (item) {
+                case UPDATES:
+                    showMainFragment();
+                    break;
                 case SEARCH:
                     showRepositoryPickerFragment();
                     break;
