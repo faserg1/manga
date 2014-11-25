@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.danilov.manga.R;
+import com.danilov.manga.activity.MainActivity;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.UpdatesDAO;
@@ -42,7 +43,7 @@ public class MainFragment extends BaseFragment {
 
     private UpdatesAdapter adapter;
 
-    private FragmentActivity activity;
+    private MainActivity activity;
 
     private UpdateBroadcastReceiver receiver;
 
@@ -74,7 +75,7 @@ public class MainFragment extends BaseFragment {
         }
         adapter = new UpdatesAdapter(getActivity(), 0, updates);
         updatesView.setAdapter(adapter);
-        activity = getActivity();
+        activity = (MainActivity) getActivity();
         receiver = new UpdateBroadcastReceiver();
         activity.registerReceiver(receiver, new IntentFilter(MangaUpdateService.UPDATE));
         update.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +84,7 @@ public class MainFragment extends BaseFragment {
                 try {
                     //TODO: update activity's [new quantity] value
                     updates.clear();
+                    activity.changeUpdatesQuantity(updates.size());
                     updatesView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     List<LocalManga> mangaList = downloadedMangaDAO.getAllManga();
@@ -121,8 +123,10 @@ public class MainFragment extends BaseFragment {
             if (difference != 0) {
                 updatesDAO.updateLocalInfo((LocalManga) manga, difference, new Date());
                 UpdatesElement element = updatesDAO.getUpdatesByManga((LocalManga) manga);
+                updates.remove(element);
                 updates.add(element);
                 adapter.notifyDataSetChanged();
+                activity.changeUpdatesQuantity(updates.size());
             }
         } catch (DatabaseAccessException e) {
             e.printStackTrace();
@@ -207,6 +211,7 @@ public class MainFragment extends BaseFragment {
         if (updates != null) {
             updates.remove(element);
             adapter.notifyDataSetChanged();
+            activity.changeUpdatesQuantity(updates.size());
         }
     }
 

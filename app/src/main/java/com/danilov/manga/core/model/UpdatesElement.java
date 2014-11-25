@@ -47,4 +47,21 @@ public class UpdatesElement {
         this.difference = difference;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UpdatesElement element = (UpdatesElement) o;
+
+        if (id != element.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
 }

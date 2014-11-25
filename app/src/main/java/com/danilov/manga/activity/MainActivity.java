@@ -309,6 +309,11 @@ public class MainActivity extends ActionBarActivity {
         isOnMainFragment = true;
     }
 
+    public void changeUpdatesQuantity(final int updatesQuantity) {
+        this.updatesQuantity = updatesQuantity;
+        adapter.notifyDataSetChanged();
+    }
+
     private class DrawerListAdapter extends ArrayAdapter<DrawerMenuItem> {
 
         private DrawerMenuItem[] objects;
