@@ -12,13 +12,16 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/update"/>
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/updates"
-        android:layout_alignParentBottom="true"
-        android:divider="@null"
-        android:layout_below="@id/update"/>
+    <GridView android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_below="@+id/update"
+              android:layout_alignParentBottom="true"
+              android:id="@+id/updates"
+              android:numColumns="1"
+              android:listSelector="#00000000"
+              android:cacheColorHint="@android:color/transparent">
+
+    </GridView>
 
 
 </RelativeLayout>

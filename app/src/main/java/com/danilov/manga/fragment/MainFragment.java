@@ -10,14 +10,17 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.danilov.manga.R;
 import com.danilov.manga.activity.MainActivity;
+import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.UpdatesDAO;
@@ -35,10 +38,10 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class MainFragment extends BaseFragment {
+public class MainFragment extends BaseFragment implements AdapterView.OnItemClickListener{
 
     private Button update;
-    private ListView updatesView;
+    private GridView updatesView;
     private List<UpdatesElement> updates = new ArrayList<UpdatesElement>();
 
     private UpdatesAdapter adapter;
@@ -75,6 +78,7 @@ public class MainFragment extends BaseFragment {
         }
         adapter = new UpdatesAdapter(getActivity(), 0, updates);
         updatesView.setAdapter(adapter);
+        updatesView.setOnItemClickListener(this);
         activity = (MainActivity) getActivity();
         receiver = new UpdateBroadcastReceiver();
         activity.registerReceiver(receiver, new IntentFilter(MangaUpdateService.UPDATE));
@@ -104,6 +108,17 @@ public class MainFragment extends BaseFragment {
     public void onDetach() {
         activity.unregisterReceiver(receiver);
         super.onDetach();
+    }
+
+    @Override
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        UpdatesElement el = updates.get(i);
+        Manga manga = el.getManga();
+        Manga mangaToParcel = new Manga(manga.getTitle(), manga.getUri(), manga.getRepository());
+        mangaToParcel.setAuthor(manga.getAuthor());
+        Intent intent = new Intent(activity, MangaInfoActivity.class);
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, mangaToParcel);
+        startActivity(intent);
     }
 
     private class UpdateBroadcastReceiver extends BroadcastReceiver {

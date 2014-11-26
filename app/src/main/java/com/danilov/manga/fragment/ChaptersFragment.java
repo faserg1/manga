@@ -330,18 +330,15 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
                 view = activity.getLayoutInflater().inflate(R.layout.chapter_list_item, null);
                 h = new Holder();
                 TextView title = (TextView) view.findViewById(R.id.chapterTitle);
-                TextView subtitle = (TextView) view.findViewById(R.id.chapterSubtitle);
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
                 h.checkBox = checkBox;
                 h.title = title;
-                h.subtitle = subtitle;
                 view.setTag(h);
             } else {
                 h = (Holder) view.getTag();
             }
             MangaChapter chapter = chapters.get(position);
             h.title.setText((chapter.getNumber() + 1) + ". " + chapter.getTitle());
-
             h.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
@@ -403,8 +400,6 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
             public CheckBox checkBox;
 
             public TextView title;
-
-            public TextView subtitle;
 
         }
 

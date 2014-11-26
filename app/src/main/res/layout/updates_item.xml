@@ -20,7 +20,8 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:paddingTop="15dp"
-        android:paddingBottom="15dp">
+        android:paddingBottom="15dp"
+        android:descendantFocusability="blocksDescendants">
 
 
         <TextView
@@ -63,6 +64,8 @@
             android:background="@drawable/background_orange"
             android:layout_centerHorizontal="true"
             android:layout_alignParentRight="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:src="@drawable/ic_action_accept"
             android:id="@+id/ok_btn"/>
 
@@ -73,5 +76,11 @@
         android:src="@drawable/card_shadow"
         android:layout_height="@dimen/card_shadow"
         android:layout_width="fill_parent"/>
+
+
+    <View android:layout_width="fill_parent"
+          android:layout_height="80dp"
+          android:background="@drawable/selectable_item_background">
+    </View>
 
 </RelativeLayout>
