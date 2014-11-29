@@ -21,7 +21,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile files('libs/jsoup-1.7.3.jar')
-    compile 'rapid.decoder:library:0.2.6'
-    compile 'rapid.decoder:jpeg-decoder:0.2.6'
-    compile 'rapid.decoder:png-decoder:0.2.6'
+    compile 'rapid.decoder:library:0.2.8'
+    compile 'rapid.decoder:jpeg-decoder:0.2.8'
+    compile 'rapid.decoder:png-decoder:0.2.8'
 }

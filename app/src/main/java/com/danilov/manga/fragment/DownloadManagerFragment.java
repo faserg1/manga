@@ -82,15 +82,6 @@ public class DownloadManagerFragment extends BaseFragment {
 
         handler = new ServiceMessagesHandler();
 
-        Intent i = actionBarActivity.getIntent();
-        final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        final ArrayList<Integer> selectedChapters = i.getIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY);
-        if (selectedChapters != null) {
-            startDownload(manga, selectedChapters);
-            i.removeExtra(Constants.SELECTED_CHAPTERS_KEY);
-        }
-
-
         restartButton = (Button) findViewById(R.id.restart);
         skipButton = (Button) findViewById(R.id.skip);
         restartButton.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +225,15 @@ public class DownloadManagerFragment extends BaseFragment {
             DownloadManagerFragment.this.service = service;
             service.addObserver(handler);
             actionBarActivity.startService(serviceIntent);
+
+            Intent i = actionBarActivity.getIntent();
+            final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+            final ArrayList<Integer> selectedChapters = i.getIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY);
+            if (selectedChapters != null) {
+                startDownload(manga, selectedChapters);
+                i.removeExtra(Constants.SELECTED_CHAPTERS_KEY);
+            }
+
         }
 
         @Override

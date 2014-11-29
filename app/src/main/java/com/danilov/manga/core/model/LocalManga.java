@@ -64,4 +64,9 @@ public class LocalManga extends Manga {
         parcel.writeString(localUri);
     }
 
+    @Override
+    public boolean isDownloaded() {
+        return true;
+    }
+
 }

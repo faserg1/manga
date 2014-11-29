@@ -19,6 +19,8 @@ public class Manga implements Parcelable {
 
     private String coverUri;
 
+    private boolean isFavorite;
+
     private RepositoryEngine.Repository repository;
 
     public Manga(final String title, final String uri, final RepositoryEngine.Repository repository) {
@@ -91,6 +93,14 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(final boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
     public MangaChapter getChapterByNumber(final int number) {
         if (chapters == null) {
             return null;
@@ -141,6 +151,7 @@ public class Manga implements Parcelable {
         description = parcel.readString();
         chaptersQuantity = parcel.readInt();
         repository = RepositoryEngine.Repository.valueOf(parcel.readString());
+        isFavorite = parcel.readInt() == 1;
     }
 
     @Override
@@ -157,6 +168,11 @@ public class Manga implements Parcelable {
         parcel.writeString(description);
         parcel.writeInt(chaptersQuantity);
         parcel.writeString(repository.toString());
+        parcel.writeInt(isFavorite ? 1 : 0);
+    }
+
+    public boolean isDownloaded() {
+        return false;
     }
 
 }
