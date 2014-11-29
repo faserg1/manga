@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class Manga implements Parcelable {
 
+    private int id;
+
     private String uri;
 
     private String title;
@@ -93,6 +95,14 @@ public class Manga implements Parcelable {
         this.author = author;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(final int id) {
+        this.id = id;
+    }
+
     public boolean isFavorite() {
         return isFavorite;
     }
@@ -151,6 +161,7 @@ public class Manga implements Parcelable {
         description = parcel.readString();
         chaptersQuantity = parcel.readInt();
         repository = RepositoryEngine.Repository.valueOf(parcel.readString());
+        id = parcel.readInt();
         isFavorite = parcel.readInt() == 1;
     }
 
@@ -168,6 +179,7 @@ public class Manga implements Parcelable {
         parcel.writeString(description);
         parcel.writeInt(chaptersQuantity);
         parcel.writeString(repository.toString());
+        parcel.writeInt(id);
         parcel.writeInt(isFavorite ? 1 : 0);
     }
 
