@@ -40,7 +40,7 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
         setContentView(R.layout.history_activity);
         gridView = (GridView) findViewById(R.id.grid_view);
         try {
-            List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
+            List<HistoryElement> history = historyDAO.getMangaHistory();
             GridViewAdapter adapter = new GridViewAdapter(this, history);
             gridView.setAdapter(adapter);
         } catch (DatabaseAccessException e) {

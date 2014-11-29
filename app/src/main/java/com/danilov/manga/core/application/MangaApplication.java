@@ -8,6 +8,7 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.HistoryDAO;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.database.UpdatesDAO;
 import com.danilov.manga.core.http.ExtendedHttpClient;
 import com.danilov.manga.core.http.HttpBitmapReader;
@@ -36,6 +37,7 @@ public class MangaApplication extends Application {
         HistoryDAO historyDAO = new HistoryDAO();
         UpdatesDAO updatesDAO = new UpdatesDAO();
         DownloadedMangaDAO downloadedMangaDAO = new DownloadedMangaDAO();
+        MangaDAO mangaDAO = new MangaDAO();
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);
@@ -43,5 +45,6 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(downloadedMangaDAO);
         ServiceContainer.addService(historyDAO);
         ServiceContainer.addService(updatesDAO);
+        ServiceContainer.addService(mangaDAO);
     }
 }

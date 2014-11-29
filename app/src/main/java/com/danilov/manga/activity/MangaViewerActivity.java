@@ -373,14 +373,14 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
     protected void onDestroy() {
         int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
         int currentImageNumber = currentStrategy.getCurrentImageNumber();
-        if (manga instanceof LocalManga) {
-            HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
-            try {
-                historyDAO.updateLocalInfo((LocalManga) manga, currentChapterNumber, currentImageNumber);
-            } catch (DatabaseAccessException e) {
-                Log.e(TAG, "Failed to update history: " + e.getMessage());
-            }
+
+        HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+        try {
+            historyDAO.updateHistory(manga, currentChapterNumber, currentImageNumber);
+        } catch (DatabaseAccessException e) {
+            Log.e(TAG, "Failed to update history: " + e.getMessage());
         }
+
         super.onDestroy();
     }
 
@@ -493,7 +493,7 @@ public class MangaViewerActivity extends ActionBarActivity implements MangaShowO
 
         @Override
         public boolean onTouch(final View view, final MotionEvent motionEvent) {
-            motionEvent.setSource(4099);
+            motionEvent.setEdgeFlags(4099);
             return false;
         }
 

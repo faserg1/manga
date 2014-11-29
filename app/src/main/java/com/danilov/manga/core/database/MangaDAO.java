@@ -36,6 +36,7 @@ public class MangaDAO {
     private static final String IS_FAVORITE = "is_favorite";
     private static final String LOCAL_ID = "local_id";
     private static final String MANGA_INET_URI = "manga_inet_uri";
+    private static final String MANGA_COVER_URI = "manga_cover_uri";
 
     public DatabaseHelper databaseHelper = null;
 
@@ -63,6 +64,7 @@ public class MangaDAO {
             cv.put(LOCAL_ID, localManga.getLocalId());
         } else {
             cv.put(MANGA_TITLE, manga.getTitle());
+            cv.put(MANGA_COVER_URI, manga.getCoverUri());
             cv.put(MANGA_DESCRIPTION, manga.getDescription());
             cv.put(MANGA_AUTHOR, manga.getAuthor());
             cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
@@ -99,6 +101,7 @@ public class MangaDAO {
             int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
             int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
             int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
 
             do {
                 int id = cursor.getInt(idIndex);
@@ -117,10 +120,12 @@ public class MangaDAO {
                     RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
                     String author = cursor.getString(authorIndex);
                     String inetUri = cursor.getString(inetUriIndex);
+                    String coverUri = cursor.getString(coverUriIndex);
 
                     manga = new Manga(title, inetUri, repository);
                     manga.setDescription(description);
                     manga.setAuthor(author);
+                    manga.setCoverUri(coverUri);
                     manga.setChaptersQuantity(chaptersQuantity);
                 }
                 manga.setId(id);
@@ -151,6 +156,7 @@ public class MangaDAO {
             int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
             int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
             int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
+            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
 
             int localId = cursor.isNull(localIdIndex) ? -1 : cursor.getInt(localIdIndex);
 
@@ -165,10 +171,12 @@ public class MangaDAO {
                 String title = cursor.getString(titleIndex);
                 String description = cursor.getString(descriptionIndex);
                 String author = cursor.getString(authorIndex);
+                String coverUri = cursor.getString(coverUriIndex);
 
                 manga = new Manga(title, inetUri, repository);
                 manga.setDescription(description);
                 manga.setAuthor(author);
+                manga.setCoverUri(coverUri);
                 manga.setChaptersQuantity(chaptersQuantity);
             }
             manga.setId(id);
@@ -198,6 +206,7 @@ public class MangaDAO {
             int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
             int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
             int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
 
             int localId = cursor.isNull(localIdIndex) ? -1 : cursor.getInt(localIdIndex);
 
@@ -213,10 +222,12 @@ public class MangaDAO {
                 RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
                 String author = cursor.getString(authorIndex);
                 String inetUri = cursor.getString(inetUriIndex);
+                String coverUri = cursor.getString(coverUriIndex);
 
                 manga = new Manga(title, inetUri, repository);
                 manga.setDescription(description);
                 manga.setAuthor(author);
+                manga.setCoverUri(coverUri);
                 manga.setChaptersQuantity(chaptersQuantity);
             }
             manga.setId(id);
@@ -279,6 +290,7 @@ public class MangaDAO {
             builder.addColumn(MANGA_TITLE, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(MANGA_DESCRIPTION, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(MANGA_AUTHOR, DatabaseOptions.Type.TEXT, false, false);
+            builder.addColumn(MANGA_COVER_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(IS_FAVORITE, DatabaseOptions.Type.INT, false, false);
 
             builder.addColumn(LOCAL_ID, DatabaseOptions.Type.INT, false, false, constraintLocalId);

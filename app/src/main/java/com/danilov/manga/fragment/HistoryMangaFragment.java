@@ -3,6 +3,7 @@ package com.danilov.manga.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -17,14 +18,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.R;
 import com.danilov.manga.activity.MangaViewerActivity;
-import com.danilov.manga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.manga.core.database.DatabaseAccessException;
-import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.HistoryDAO;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.HistoryElement;
 import com.danilov.manga.core.model.LocalManga;
+import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
@@ -48,6 +50,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
     private HistoryMangaAdapter adapter = null;
 
     private LocalImageManager localImageManager = null;
+    private HttpImageManager httpImageManager = null;
     private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
@@ -66,6 +69,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
+        httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
@@ -83,7 +87,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                 boolean _success = true;
                 String _error = null;
                 try {
-                    List<HistoryElement> history = historyDAO.getAllLocalMangaHistory();
+                    List<HistoryElement> history = historyDAO.getMangaHistory();
                     if (history != null && !history.isEmpty()) {
                         Log.d(TAG, "Context is " + context);
                         Log.d(TAG, "HistoryDAO is " + history);
@@ -163,12 +167,22 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                 holder.mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
                 holder.mangaTitle = (TextView) view.findViewById(R.id.manga_title);
             }
-            LocalManga manga = (LocalManga) history.get(position).getManga();
+            Manga manga = history.get(position).getManga();
             holder.mangaTitle.setText(manga.getTitle());
-            String mangaUri = manga.getLocalUri();
-            Bitmap bitmap = localImageManager.loadBitmap(holder.mangaCover, mangaUri + "/cover", sizeOfImage);
-            if (bitmap != null) {
-                holder.mangaCover.setImageBitmap(bitmap);
+            if (manga.isDownloaded()) {
+                LocalManga localManga = (LocalManga) manga;
+                String mangaUri = localManga.getLocalUri();
+                Bitmap bitmap = localImageManager.loadBitmap(holder.mangaCover, mangaUri + "/cover", sizeOfImage);
+                if (bitmap != null) {
+                    holder.mangaCover.setImageBitmap(bitmap);
+                }
+            } else {
+                Uri coverUri = Uri.parse(manga.getCoverUri());
+                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, sizeOfImage);
+                Bitmap bitmap = httpImageManager.loadImage(request);
+                if (bitmap != null) {
+                    holder.mangaCover.setImageBitmap(bitmap);
+                }
             }
             return view;
         }

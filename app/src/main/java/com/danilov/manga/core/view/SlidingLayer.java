@@ -499,7 +499,7 @@ public class SlidingLayer extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getSource() == 4099) {
+        if (ev.getEdgeFlags() == 4099) {
             return false;
         }
         if (!mEnabled || !mIsDragging && !mLastTouchAllowed && !allowSlidingFromHereX(ev, mInitialX)
