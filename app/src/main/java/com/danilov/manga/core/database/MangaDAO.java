@@ -62,6 +62,8 @@ public class MangaDAO {
             //its local manga
             LocalManga localManga = (LocalManga) manga;
             cv.put(LOCAL_ID, localManga.getLocalId());
+            cv.put(MANGA_INET_URI, manga.getUri());
+            cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
         } else {
             cv.put(MANGA_TITLE, manga.getTitle());
             cv.put(MANGA_COVER_URI, manga.getCoverUri());
@@ -239,6 +241,33 @@ public class MangaDAO {
         return manga;
     }
 
+    public synchronized Manga getByLocalId(final int localId) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openReadable();
+        String selection = LOCAL_ID + " = ?";
+        String[] selectionArgs = new String[] {"" + localId};
+        Manga manga = null;
+        try {
+            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            if (!cursor.moveToFirst()) {
+                return null;
+            }
+
+            int idIndex = cursor.getColumnIndex(ID);
+            int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
+
+            boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
+            int id = cursor.getInt(idIndex);
+            DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+            manga = downloadedMangaDAO.getById(localId);
+            manga.setId(id);
+            manga.setFavorite(isFavorite);
+
+        } catch (Exception e) {
+            throw new DatabaseAccessException(e.getMessage());
+        }
+        return manga;
+    }
+
     public synchronized void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         String selection = ID + " = ?";
@@ -252,7 +281,12 @@ public class MangaDAO {
 
     public synchronized Manga updateInfo(final Manga manga, final int chapters, final String localUri) throws DatabaseAccessException {
         //TODO: update local with DownloadedDAO
-        Manga _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
+        Manga _manga = null;
+        if (manga.isDownloaded()) {
+            _manga = getByLocalId(((LocalManga) manga).getLocalId());
+        } else {
+            _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
+        }
         if (_manga != null) {
             if (_manga.isDownloaded()) {
                 DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
@@ -273,6 +307,19 @@ public class MangaDAO {
         } else {
             addManga(manga);
         }
+        return null;
+    }
+
+    private Manga resolve(final Cursor cursor) {
+        int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
+        int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
+        int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
+        int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
+        int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
+        int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
+        int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
+        int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
+        int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
         return null;
     }
 

@@ -307,13 +307,13 @@ public class ReadmangaEngine implements RepositoryEngine {
         String coverUri = null;
         if (coverContainer.size() >= 1) {
             Element cover = coverContainer.get(0);
-            Elements coverUriElements = cover.getElementsByClass(coverClass);
+            Elements coverUriElements = cover.getElementsByClass(coverClass); //cover.getElementsByClass(altCoverClass);
             if (coverUriElements.size() >= 1) {
                 //a lot of images
                 Element e = coverUriElements.get(0);
                 coverUri = e.attr("href");
             } else {
-                coverUriElements = cover.getElementsByClass(altCoverClass);
+                coverUriElements = cover.getElementsByClass(altCoverClass); // cover.getElementsByClass(coverClass);
                 if (coverUriElements.size() >= 1) {
                     //more than one
                     coverUri = coverUriElements.get(0).attr("href");
