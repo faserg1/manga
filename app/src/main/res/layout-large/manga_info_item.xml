@@ -65,6 +65,7 @@
                             android:id="@+id/manga_cover"
                             android:layout_height="fill_parent"
                             android:layout_width="fill_parent"
+                            android:scaleType="fitStart"
                             android:adjustViewBounds="true"/>
 
                     </LinearLayout>
