@@ -27,6 +27,7 @@ public class MangaDAO {
     private static final String TABLE_NAME = "manga";
     private static final String DB_NAME = "manga.db";
 
+    //COMMON
     private static final String ID = "id";
     private static final String CHAPTERS_QUANTITY = "chapters_quantity";
     private static final String MANGA_TITLE = "manga_title";
@@ -34,9 +35,12 @@ public class MangaDAO {
     private static final String MANGA_REPOSITORY = "manga_repository";
     private static final String MANGA_AUTHOR = "manga_author";
     private static final String IS_FAVORITE = "is_favorite";
-    private static final String LOCAL_ID = "local_id";
     private static final String MANGA_INET_URI = "manga_inet_uri";
     private static final String MANGA_COVER_URI = "manga_cover_uri";
+    private static final String IS_DOWNLOADED = "is_downloaded";
+
+    //LOCAL
+    private static final String LOCAL_URI = "local_uri";
 
     public DatabaseHelper databaseHelper = null;
 
@@ -58,22 +62,20 @@ public class MangaDAO {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
 
+        cv.put(MANGA_TITLE, manga.getTitle());
+        cv.put(MANGA_COVER_URI, manga.getCoverUri());
+        cv.put(MANGA_DESCRIPTION, manga.getDescription());
+        cv.put(MANGA_AUTHOR, manga.getAuthor());
+        cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
+        cv.put(MANGA_INET_URI, manga.getUri());
+        cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
+        cv.put(IS_FAVORITE, manga.isFavorite());
+
         if (manga.isDownloaded()) {
             //its local manga
             LocalManga localManga = (LocalManga) manga;
-            cv.put(LOCAL_ID, localManga.getLocalId());
-            cv.put(MANGA_INET_URI, manga.getUri());
-            cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
-        } else {
-            cv.put(MANGA_TITLE, manga.getTitle());
-            cv.put(MANGA_COVER_URI, manga.getCoverUri());
-            cv.put(MANGA_DESCRIPTION, manga.getDescription());
-            cv.put(MANGA_AUTHOR, manga.getAuthor());
-            cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
-            cv.put(MANGA_INET_URI, manga.getUri());
-            cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
+            cv.put(LOCAL_URI, localManga.getLocalUri());
         }
-        cv.put(IS_FAVORITE, manga.isFavorite());
 
         try {
             db.insertOrThrow(TABLE_NAME, null, cv);
@@ -91,47 +93,9 @@ public class MangaDAO {
             if (!cursor.moveToFirst()) {
                 return new ArrayList<Manga>(0);
             }
-
-            DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
-
-            int idIndex = cursor.getColumnIndex(ID);
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
-            int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
-            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
-            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
-
             do {
-                int id = cursor.getInt(idIndex);
-                int localId = cursor.isNull(localIdIndex) ? -1 : cursor.getInt(localIdIndex);
-
-                boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
-
                 Manga manga = null;
-
-                if (localId != -1) {
-                    manga = downloadedMangaDAO.getById(localId);
-                } else {
-                    int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-                    String title = cursor.getString(titleIndex);
-                    String description = cursor.getString(descriptionIndex);
-                    RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
-                    String author = cursor.getString(authorIndex);
-                    String inetUri = cursor.getString(inetUriIndex);
-                    String coverUri = cursor.getString(coverUriIndex);
-
-                    manga = new Manga(title, inetUri, repository);
-                    manga.setDescription(description);
-                    manga.setAuthor(author);
-                    manga.setCoverUri(coverUri);
-                    manga.setChaptersQuantity(chaptersQuantity);
-                }
-                manga.setId(id);
-                manga.setFavorite(isFavorite);
+                manga = resolve(cursor);
                 mangaList.add(manga);
             } while (cursor.moveToNext());
         } catch (Exception e) {
@@ -150,39 +114,7 @@ public class MangaDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-
-            int idIndex = cursor.getColumnIndex(ID);
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
-            int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
-            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
-
-            int localId = cursor.isNull(localIdIndex) ? -1 : cursor.getInt(localIdIndex);
-
-            boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
-            int id = cursor.getInt(idIndex);
-
-            if (localId != -1) {
-                DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
-                manga = downloadedMangaDAO.getById(localId);
-            } else {
-                int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-                String title = cursor.getString(titleIndex);
-                String description = cursor.getString(descriptionIndex);
-                String author = cursor.getString(authorIndex);
-                String coverUri = cursor.getString(coverUriIndex);
-
-                manga = new Manga(title, inetUri, repository);
-                manga.setDescription(description);
-                manga.setAuthor(author);
-                manga.setCoverUri(coverUri);
-                manga.setChaptersQuantity(chaptersQuantity);
-            }
-            manga.setId(id);
-            manga.setFavorite(isFavorite);
+            manga = resolve(cursor);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         }
@@ -199,42 +131,7 @@ public class MangaDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-
-            int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
-            int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
-            int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
-            int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
-            int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
-            int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
-            int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
-            int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
-            int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
-
-            int localId = cursor.isNull(localIdIndex) ? -1 : cursor.getInt(localIdIndex);
-
-            boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
-
-            if (localId != -1) {
-                DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
-                manga = downloadedMangaDAO.getById(localId);
-            } else {
-                int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
-                String title = cursor.getString(titleIndex);
-                String description = cursor.getString(descriptionIndex);
-                RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
-                String author = cursor.getString(authorIndex);
-                String inetUri = cursor.getString(inetUriIndex);
-                String coverUri = cursor.getString(coverUriIndex);
-
-                manga = new Manga(title, inetUri, repository);
-                manga.setDescription(description);
-                manga.setAuthor(author);
-                manga.setCoverUri(coverUri);
-                manga.setChaptersQuantity(chaptersQuantity);
-            }
-            manga.setId(id);
-            manga.setFavorite(isFavorite);
-
+            manga = resolve(cursor);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         }
@@ -311,22 +208,53 @@ public class MangaDAO {
     }
 
     private Manga resolve(final Cursor cursor) {
+        int idIndex = cursor.getColumnIndex(ID);
         int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
         int titleIndex = cursor.getColumnIndex(MANGA_TITLE);
         int descriptionIndex = cursor.getColumnIndex(MANGA_DESCRIPTION);
         int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
         int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
         int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
-        int localIdIndex = cursor.getColumnIndex(LOCAL_ID);
         int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
         int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
-        return null;
+
+        int isDownloadedIndex = cursor.getColumnIndex(IS_DOWNLOADED);
+        int localUriIndex = cursor.getColumnIndex(LOCAL_URI);
+
+        boolean isDownloaded = cursor.getInt(isDownloadedIndex) == 1;
+        boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
+
+        int id = cursor.getInt(idIndex);
+        String title = cursor.getString(titleIndex);
+        String author = cursor.getString(authorIndex);
+        String description = cursor.getString(descriptionIndex);
+        RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
+        String uri = cursor.getString(inetUriIndex);
+        String coverUri = cursor.getString(coverUriIndex);
+        int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
+
+        Manga manga = null;
+        if (isDownloaded) {
+            String localUri = cursor.getString(localUriIndex);
+            LocalManga localManga = new LocalManga(title, uri, repository);
+            manga = localManga;
+            localManga.setLocalUri(localUri);
+        } else {
+            manga = new Manga(title, uri, repository);
+        }
+        manga.setId(id);
+        manga.setUri(uri);
+        manga.setDescription(description);
+        manga.setChaptersQuantity(chaptersQuantity);
+        manga.setAuthor(author);
+        manga.setCoverUri(coverUri);
+        manga.setFavorite(isFavorite);
+        return manga;
     }
 
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 
         private String constraint = "repo_uri";
-        private String constraintLocalId = "local_id_constraint";
 
         @Override
         public void onUpgrade(final SQLiteDatabase database) {
@@ -340,7 +268,7 @@ public class MangaDAO {
             builder.addColumn(MANGA_COVER_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(IS_FAVORITE, DatabaseOptions.Type.INT, false, false);
 
-            builder.addColumn(LOCAL_ID, DatabaseOptions.Type.INT, false, false, constraintLocalId);
+            builder.addColumn(IS_DOWNLOADED, DatabaseOptions.Type.INT, false, false);
 
             builder.addColumn(MANGA_REPOSITORY, DatabaseOptions.Type.TEXT, false, false, constraint);
             builder.addColumn(MANGA_INET_URI, DatabaseOptions.Type.TEXT, false, false, constraint);
