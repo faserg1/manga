@@ -25,6 +25,7 @@ import com.danilov.manga.core.adapter.PopupButtonClickListener;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.HistoryDAO;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.service.LocalImageManager;
 import com.danilov.manga.core.util.Constants;
@@ -49,7 +50,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     private ProgressBar downloadedProgressBar;
 
     private LocalImageManager localImageManager = null;
-    private DownloadedMangaDAO downloadedMangaDAO = null;
+    private MangaDAO mangaDAO = null;
     private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
@@ -74,7 +75,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     public void onActivityCreated(final Bundle savedInstanceState) {
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
-        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        mangaDAO = ServiceContainer.getService(MangaDAO.class);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
@@ -93,7 +94,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
                 boolean _success = true;
                 String _error = null;
                 try {
-                    List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
+                    List<LocalManga> localMangas = mangaDAO.getAllDownloaded();
                     adapter = new DownloadedMangaAdapter(context, localMangas, DownloadedMangaFragment.this);
                 } catch (DatabaseAccessException e) {
                     _success = false;
@@ -225,7 +226,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
                     IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
                     try {
                         historyDAO.deleteManga(localManga);
-                        downloadedMangaDAO.deleteManga(localManga);
+                        mangaDAO.deleteManga(localManga);
                     } catch (DatabaseAccessException e) {
                         _success = false;
                         _error = e.getMessage();

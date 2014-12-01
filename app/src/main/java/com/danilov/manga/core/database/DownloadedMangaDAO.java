@@ -197,6 +197,9 @@ public class DownloadedMangaDAO {
             SQLiteDatabase db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
+                if (manga.getCoverUri() != null) {
+                    cv.put(CHAPTERS_QUANTITY, chapters);
+                }
                 cv.put(CHAPTERS_QUANTITY, chapters);
                 String selection = ID + " = ?";
                 String id = String.valueOf(localManga.getLocalId());

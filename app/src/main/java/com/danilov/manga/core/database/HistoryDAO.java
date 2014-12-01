@@ -120,10 +120,10 @@ public class HistoryDAO {
     public void addHistory(final Manga manga, final int chapter, final int page) throws DatabaseAccessException {
 
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-        Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
+        Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
         if (_manga == null) {
             mangaDAO.addManga(manga);
-            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
+            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
         }
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();

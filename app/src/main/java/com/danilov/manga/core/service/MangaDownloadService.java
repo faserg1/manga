@@ -11,6 +11,7 @@ import android.os.Message;
 import android.util.Log;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.DownloadedMangaDAO;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
@@ -20,6 +21,7 @@ import com.danilov.manga.core.util.IoUtils;
 import com.danilov.manga.core.util.Pair;
 import com.danilov.manga.core.util.ServiceContainer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -46,7 +48,7 @@ public class MangaDownloadService extends Service {
 
     private DownloadManager downloadManager = null;
 
-    private DownloadedMangaDAO downloadedMangaDAO = null;
+    private MangaDAO mangaDAO = null;
 
     private final List<Handler> observerHandlers = new LinkedList<Handler>();
 
@@ -62,7 +64,7 @@ public class MangaDownloadService extends Service {
         super.onCreate();
         downloadManager = new DownloadManager();
         downloadManager.setListener(new MangaDownloadListener());
-        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        mangaDAO = ServiceContainer.getService(MangaDAO.class);
         serviceHandler = new DownloadServiceHandler();
     }
 
@@ -267,10 +269,20 @@ public class MangaDownloadService extends Service {
             }
             int curChapterNumber = request.getCurrentChapterNumber();
             String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
+            String coverUri = mangaPath + "/cover";
             try {
-                LocalManga localManga = downloadedMangaDAO.updateInfo(manga, manga.getChaptersQuantity(), mangaPath);
+
+                LocalManga _local = new LocalManga(manga.getTitle(), manga.getUri(), manga.getRepository());
+                _local.setLocalUri(mangaPath);
+                _local.setAuthor(manga.getAuthor());
+                _local.setChaptersQuantity(manga.getChaptersQuantity());
+                _local.setDescription(manga.getDescription());
+                _local.setCoverUri(coverUri);
+                _local.setFavorite(manga.isFavorite());
+
+                Manga localManga = mangaDAO.updateInfo(_local, manga.getChaptersQuantity(), true);
                 if (localManga != null) {
-                    mangaPath = localManga.getLocalUri();
+                    mangaPath = ((LocalManga)localManga).getLocalUri();
                 }
             } catch (DatabaseAccessException e) {
                 //TODO: decide what do we need to do if can't store manga
@@ -282,8 +294,10 @@ public class MangaDownloadService extends Service {
             String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             int i = 0;
             currentImage = 0;
-            currentImageQuantity = urls.size() + 1;
-            downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
+            currentImageQuantity = urls.size();
+            if (!new File(coverUri).exists()) {
+                downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
+            }
             sendStatus();
             for (String url : urls) {
                 downloadManager.startDownload(url, chapterPath + i + ".png", curChapterNumber);
