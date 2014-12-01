@@ -283,6 +283,7 @@ public class MangaDownloadService extends Service {
                 Manga localManga = mangaDAO.updateInfo(_local, manga.getChaptersQuantity(), true);
                 if (localManga != null) {
                     mangaPath = ((LocalManga)localManga).getLocalUri();
+                    coverUri = mangaPath + "/cover";
                 }
             } catch (DatabaseAccessException e) {
                 //TODO: decide what do we need to do if can't store manga
@@ -297,6 +298,7 @@ public class MangaDownloadService extends Service {
             currentImageQuantity = urls.size();
             if (!new File(coverUri).exists()) {
                 downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
+                currentImageQuantity++;
             }
             sendStatus();
             for (String url : urls) {
