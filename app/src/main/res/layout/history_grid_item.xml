@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
@@ -9,10 +9,11 @@
               android:paddingTop="2dp"
               android:paddingBottom="2dp">
 
-    <LinearLayout android:layout_width="fill_parent"
+    <RelativeLayout android:layout_width="fill_parent"
                   android:layout_height="210dp"
                   android:background="@drawable/grid_item_background"
                   android:orientation="vertical"
+                  android:id="@+id/card_wrapper"
                   android:padding="10dp">
 
 
@@ -24,14 +25,34 @@
         <TextView android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:id="@+id/manga_title"
+                  android:layout_below="@+id/manga_cover"
                   android:text="Bakuman"
                   android:textColor="@android:color/black"/>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/is_online"
+        android:visibility="invisible"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:background="#CC000000"
+        android:layout_alignParentTop="true">
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="22sp"
+                  android:layout_centerVertical="true"
+                  android:text="ONLINE"
+                  android:textColor="@android:color/white"/>
+
+    </RelativeLayout>
 
     <ImageView
+            android:id="@+id/bottom"
+            android:layout_below="@+id/card_wrapper"
             android:src="@drawable/card_shadow"
             android:layout_height="@dimen/card_shadow"
             android:layout_width="fill_parent"/>
 
-</LinearLayout>
+</RelativeLayout>

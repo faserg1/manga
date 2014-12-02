@@ -166,10 +166,12 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                 holder = new GridItemHolder();
                 holder.mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
                 holder.mangaTitle = (TextView) view.findViewById(R.id.manga_title);
+                holder.isOnline = view.findViewById(R.id.is_online);
             }
             Manga manga = history.get(position).getManga();
             holder.mangaTitle.setText(manga.getTitle());
             if (manga.isDownloaded()) {
+                holder.isOnline.setVisibility(View.INVISIBLE);
                 LocalManga localManga = (LocalManga) manga;
                 String mangaUri = localManga.getLocalUri();
                 Bitmap bitmap = localImageManager.loadBitmap(holder.mangaCover, mangaUri + "/cover", sizeOfImage);
@@ -177,6 +179,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                     holder.mangaCover.setImageBitmap(bitmap);
                 }
             } else {
+                holder.isOnline.setVisibility(View.VISIBLE);
                 Uri coverUri = Uri.parse(manga.getCoverUri());
                 HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, sizeOfImage);
                 Bitmap bitmap = httpImageManager.loadImage(request);
@@ -191,6 +194,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
 
             public ImageView mangaCover;
             public TextView mangaTitle;
+            private View isOnline;
 
         }
 
