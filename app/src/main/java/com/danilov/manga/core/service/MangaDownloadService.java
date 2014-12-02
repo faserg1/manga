@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import com.danilov.manga.core.database.DatabaseAccessException;
-import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;

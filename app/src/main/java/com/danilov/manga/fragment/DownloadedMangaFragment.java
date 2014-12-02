@@ -23,7 +23,6 @@ import com.danilov.manga.activity.MangaViewerActivity;
 import com.danilov.manga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.manga.core.adapter.PopupButtonClickListener;
 import com.danilov.manga.core.database.DatabaseAccessException;
-import com.danilov.manga.core.database.DownloadedMangaDAO;
 import com.danilov.manga.core.database.HistoryDAO;
 import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.LocalManga;
