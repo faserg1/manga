@@ -1,85 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:background="#ffe3e3e3"
               android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Chapters: "/>
+        <!--card-->
+        <RelativeLayout
+            android:id="@+id/card_wrapper"
+            android:layout_width="fill_parent"
+            android:layout_height="130dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:background="@drawable/list_item_background"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:descendantFocusability="blocksDescendants">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="~/~"
-            android:id="@+id/chaptersProgress"/>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:textSize="22sp"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:layout_marginRight="5dp"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:layout_toLeftOf="@+id/btn_separator"
+                android:layout_toStartOf="@+id/btn_separator"
+                android:layout_alignTop="@+id/btn_separator"/>
 
-    </LinearLayout>
+            <View android:layout_width="0dp"
+                  android:layout_height="fill_parent"
+                  android:id="@+id/btn_separator"
+                  android:layout_alignParentTop="true"
+                  android:layout_toLeftOf="@+id/resume_btn"
+                  android:layout_toStartOf="@+id/resume_btn"/>
 
-    <ProgressBar
-        style="@style/Manga.ProgressBar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/chaptersProgressBar"/>
+            <ImageButton
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_orange"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentRight="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_action_pause"
+                android:id="@+id/pause_btn"/>
+
+            <ImageButton
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_orange"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentRight="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_action_play"
+                android:id="@+id/resume_btn"/>
+
+            <ImageButton
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_orange"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentRight="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_action_replay"
+                android:id="@+id/restart_btn"/>
+
+            <ImageButton
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_orange"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/resume_btn"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_action_next"
+                android:id="@+id/skip_btn"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/btn_separator"
+                android:layout_alignParentLeft="true"
+                android:paddingRight="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/title"
+                android:orientation="vertical"
+                tools:ignore="RtlSymmetry">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chapters: "/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="~/~"
+                        android:id="@+id/chaptersProgress"/>
+
+                </LinearLayout>
+
+                <ProgressBar
+                    style="@style/Manga.DownloadFragmentProgressBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/chaptersProgressBar"/>
 
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Images: "/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Images: "/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="~/~"
-            android:id="@+id/imageProgress"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="~/~"
+                        android:id="@+id/imageProgress"/>
 
-    </LinearLayout>
+                </LinearLayout>
 
-    <ProgressBar
-        style="@style/Manga.ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageProgressBar"/>
+                <ProgressBar
+                    style="@style/Manga.DownloadFragmentProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageProgressBar"/>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Manga.ButtonCommon"
-            android:text="Restart if error"
-            android:id="@+id/restart"/>
+        </RelativeLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Manga.ButtonCommon"
-            android:text="Skip"
-            android:id="@+id/skip"/>
+        <ImageView
+            android:layout_below="@+id/card_wrapper"
+            android:src="@drawable/card_shadow"
+            android:layout_height="@dimen/card_shadow"
+            android:layout_width="fill_parent"/>
 
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"

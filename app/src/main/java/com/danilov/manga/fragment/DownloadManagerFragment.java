@@ -14,11 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.danilov.manga.R;
+import com.danilov.manga.core.adapter.BaseAdapter;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.service.MangaDownloadService;
@@ -42,6 +44,7 @@ public class DownloadManagerFragment extends BaseFragment {
     private ProgressBar chaptersProgressBar;
     private ProgressBar imageProgressBar;
 
+    private TextView title;
     private TextView chaptersProgress;
     private TextView imagesProgress;
 
@@ -49,8 +52,10 @@ public class DownloadManagerFragment extends BaseFragment {
 
     private Intent serviceIntent;
 
-    private Button restartButton;
-    private Button skipButton;
+    private ImageButton resumeButton;
+    private ImageButton restartButton;
+    private ImageButton pauseButton;
+    private ImageButton skipButton;
 
     private ListView listView;
 
@@ -74,6 +79,7 @@ public class DownloadManagerFragment extends BaseFragment {
         actionBarActivity = (ActionBarActivity) getActivity();
         context = actionBarActivity;
 
+        title = findViewById(R.id.title);
         chaptersProgressBar = findViewById(R.id.chaptersProgressBar);
         imageProgressBar = findViewById(R.id.imageProgressBar);
         chaptersProgress = findViewById(R.id.chaptersProgress);
@@ -82,8 +88,11 @@ public class DownloadManagerFragment extends BaseFragment {
 
         handler = new ServiceMessagesHandler();
 
-        restartButton = (Button) findViewById(R.id.restart);
-        skipButton = (Button) findViewById(R.id.skip);
+        resumeButton = findViewById(R.id.resume_btn);
+        pauseButton = findViewById(R.id.pause_btn);
+        restartButton = findViewById(R.id.restart_btn);
+        skipButton = findViewById(R.id.skip_btn);
+
         restartButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -100,6 +109,9 @@ public class DownloadManagerFragment extends BaseFragment {
             }
 
         });
+
+        showPauseBtn();
+
     }
 
     @Override
@@ -205,6 +217,12 @@ public class DownloadManagerFragment extends BaseFragment {
         imagesProgress.setText(progressText);
         int currentChapter = request.getCurrentChapterInList();
         int quantity = request.quantity;
+        title.setText(request.manga.getTitle());
+
+        if (request.isHasError()) {
+            showRestartBtn();
+        }
+
         chaptersProgressBar.setMax(quantity);
         chaptersProgressBar.setProgress(currentChapter);
         progressText = ++currentChapter + "/" + quantity;
@@ -261,7 +279,28 @@ public class DownloadManagerFragment extends BaseFragment {
         t.start();
     }
 
-    private class RequestsAdapter extends ArrayAdapter<MangaDownloadService.MangaDownloadRequest> {
+    private void showResumeBtn() {
+        resumeButton.setVisibility(View.VISIBLE);
+        pauseButton.setVisibility(View.INVISIBLE);
+        restartButton.setVisibility(View.INVISIBLE);
+        skipButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void showPauseBtn() {
+        pauseButton.setVisibility(View.VISIBLE);
+        resumeButton.setVisibility(View.INVISIBLE);
+        restartButton.setVisibility(View.INVISIBLE);
+        skipButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void showRestartBtn() {
+        restartButton.setVisibility(View.VISIBLE);
+        skipButton.setVisibility(View.VISIBLE);
+        resumeButton.setVisibility(View.INVISIBLE);
+        pauseButton.setVisibility(View.INVISIBLE);
+    }
+
+    private class RequestsAdapter extends BaseAdapter<Holder, MangaDownloadService.MangaDownloadRequest> {
 
         private List<MangaDownloadService.MangaDownloadRequest> requests = null;
 
@@ -271,12 +310,36 @@ public class DownloadManagerFragment extends BaseFragment {
         }
 
         @Override
-        public View getView(final int position, final View convertView, final ViewGroup parent) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TextView view = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, null);
+        public void onBindViewHolder(final Holder holder, final int position) {
             MangaDownloadService.MangaDownloadRequest request = requests.get(position);
-            view.setText(request.getManga().getTitle());
-            return view;
+            holder.title.setText(request.getManga().getTitle());
+        }
+
+        @Override
+        public int getCount() {
+            if (requests == null) {
+                return 0;
+            }
+            return requests.size();
+        }
+
+        @Override
+        public Holder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.downloading_item, viewGroup, false);
+            return new Holder(v);
+        }
+
+    }
+
+    private static class Holder extends BaseAdapter.BaseHolder {
+
+        public ImageButton removeButton;
+        public TextView title;
+
+        protected Holder(final View view) {
+            super(view);
+            removeButton = findViewById(R.id.remove_btn);
+            title = findViewById(R.id.title);
         }
 
     }

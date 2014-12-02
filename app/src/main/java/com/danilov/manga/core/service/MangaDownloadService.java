@@ -161,6 +161,7 @@ public class MangaDownloadService extends Service {
                     (new MangaDownloadThread(nextRequest)).start();
                     break;
                 case RESTART_ERROR:
+                    currentRequest.setHasError(false);
                     downloadManager.restartError();
                     break;
                 case SKIP_PICTURE:
@@ -321,6 +322,8 @@ public class MangaDownloadService extends Service {
 
         public List<Integer> whichChapters;
 
+        private boolean hasError;
+
         public synchronized void incCurChapter() {
             currentChapterInList++;
         }
@@ -362,6 +365,14 @@ public class MangaDownloadService extends Service {
 
         public Manga getManga() {
             return manga;
+        }
+
+        public synchronized boolean isHasError() {
+            return hasError;
+        }
+
+        public synchronized void setHasError(final boolean hasError) {
+            this.hasError = hasError;
         }
 
     }
@@ -439,6 +450,7 @@ public class MangaDownloadService extends Service {
 
         @Override
         public void onError(final DownloadManager.Download download, final String errorMsg) {
+            currentRequest.setHasError(true);
             sendError(currentRequest, errorMsg);
         }
 

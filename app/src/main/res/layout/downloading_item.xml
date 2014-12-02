@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+    <!--card-->
+    <RelativeLayout
+        android:id="@+id/card_wrapper"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:background="@drawable/list_item_background"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:descendantFocusability="blocksDescendants">
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textSize="22sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:layout_marginRight="5dp"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:layout_toLeftOf="@+id/btn_separator"
+            android:layout_toStartOf="@+id/btn_separator"
+            android:layout_alignTop="@+id/btn_separator"/>
+
+        <View android:layout_width="0dp"
+              android:layout_height="fill_parent"
+              android:id="@+id/btn_separator"
+              android:layout_alignParentTop="true"
+              android:layout_toLeftOf="@+id/remove_btn"
+              android:layout_toStartOf="@+id/remove_btn"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_orange"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:src="@drawable/ic_action_discard_white"
+            android:id="@+id/remove_btn"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_below="@+id/card_wrapper"
+        android:src="@drawable/card_shadow"
+        android:layout_height="@dimen/card_shadow"
+        android:layout_width="fill_parent"/>
+
+
+    <View android:layout_width="fill_parent"
+          android:layout_height="80dp"
+          android:background="@drawable/selectable_item_background">
+    </View>
+
+</RelativeLayout>
