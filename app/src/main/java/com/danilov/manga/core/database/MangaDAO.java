@@ -181,10 +181,10 @@ public class MangaDAO {
         return manga;
     }
 
-    public synchronized void deleteManga(final LocalManga localManga) throws DatabaseAccessException {
+    public synchronized void deleteManga(final Manga manga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         String selection = ID + " = ?";
-        String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
+        String[] selectionArgs = new String[] {"" + manga.getId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
