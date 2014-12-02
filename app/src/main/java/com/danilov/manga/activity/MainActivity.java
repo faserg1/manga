@@ -364,6 +364,9 @@ public class MainActivity extends ActionBarActivity {
                 TextView quantityNew = (TextView) view.findViewById(R.id.quantity_new);
                 quantityNew.setVisibility(View.VISIBLE);
                 quantityNew.setText(updatesQuantity + "");
+            } else {
+                TextView quantityNew = (TextView) view.findViewById(R.id.quantity_new);
+                quantityNew.setVisibility(View.INVISIBLE);
             }
             text.setText(context.getString(item.getStringId()));
             icon.setImageResource(item.getIconId());

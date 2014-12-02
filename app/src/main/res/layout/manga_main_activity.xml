@@ -17,7 +17,7 @@
               android:layout_gravity="start"
               android:choiceMode="singleChoice"
               android:divider="#ff454546"
-              android:listSelector="@drawable/red_color"
+              android:listSelector="@drawable/red_selector"
               android:cacheColorHint="#00000000"
               android:dividerHeight="1dp"
               android:background="#99000000"/>
