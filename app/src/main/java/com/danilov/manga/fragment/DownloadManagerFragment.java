@@ -97,6 +97,7 @@ public class DownloadManagerFragment extends BaseFragment {
 
             @Override
             public void onClick(final View v) {
+                showPauseBtn();
                 service.restartDownload();
             }
 
@@ -199,6 +200,7 @@ public class DownloadManagerFragment extends BaseFragment {
     }
 
     private void onError(final Message message) {
+        showRestartBtn();
         Pair p = (Pair) message.obj;
         Utils.showToast(context, String.valueOf(p.second));
     }

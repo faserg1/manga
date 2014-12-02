@@ -20,7 +20,7 @@
         <RelativeLayout
             android:id="@+id/card_wrapper"
             android:layout_width="fill_parent"
-            android:layout_height="130dp"
+            android:layout_height="140dp"
             android:orientation="horizontal"
             android:baselineAligned="false"
             android:background="@drawable/list_item_background"
@@ -36,16 +36,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:textSize="22sp"
-                android:singleLine="true"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:scrollHorizontally="true"
                 android:focusable="true"
                 android:layout_marginRight="5dp"
                 android:focusableInTouchMode="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
                 android:layout_toLeftOf="@+id/btn_separator"
                 android:layout_toStartOf="@+id/btn_separator"
-                android:layout_alignTop="@+id/btn_separator"/>
+                android:layout_alignTop="@+id/btn_separator"
+                android:layout_alignBottom="@+id/resume_btn"/>
 
             <View android:layout_width="0dp"
                   android:layout_height="fill_parent"
@@ -97,7 +97,7 @@
                 android:background="@drawable/background_orange"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/resume_btn"
+                android:layout_alignParentBottom="true"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:src="@drawable/ic_action_next"
@@ -106,13 +106,13 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/btn_separator"
-                android:layout_alignParentLeft="true"
                 android:paddingRight="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/title"
                 android:orientation="vertical"
-                tools:ignore="RtlSymmetry">
+                tools:ignore="RtlSymmetry"
+                android:layout_alignBottom="@+id/skip_btn"
+                android:layout_alignRight="@+id/title"
+                android:layout_alignParentLeft="true"
+                android:layout_alignEnd="@+id/title">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
