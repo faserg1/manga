@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.danilov.manga.R;
 import com.danilov.manga.activity.MainActivity;
 import com.danilov.manga.activity.MangaInfoActivity;
 import com.danilov.manga.core.database.DatabaseAccessException;
-import com.danilov.manga.core.database.DownloadedMangaDAO;
+import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.database.UpdatesDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
@@ -50,7 +48,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private UpdateBroadcastReceiver receiver;
 
-    private DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+    private MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
     private UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
 
     public static MainFragment newInstance() {
@@ -91,10 +89,8 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                     activity.changeUpdatesQuantity(updates.size());
                     updatesView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                    List<LocalManga> mangaList = downloadedMangaDAO.getAllManga();
-                    for (Manga manga : mangaList) {
-                        updatesDAO.deleteByManga((LocalManga) manga);
-                    }
+
+                    List<Manga> mangaList = mangaDAO.getAllManga();
                     MangaUpdateService.startUpdateList(getActivity(), mangaList);
                 } catch (DatabaseAccessException e) {
                     e.printStackTrace();
@@ -134,10 +130,10 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void onUpdate(final Manga manga, final Integer difference) {
         try {
-            downloadedMangaDAO.updateInfo(manga, manga.getChaptersQuantity());
+            mangaDAO.updateInfo(manga, manga.getChaptersQuantity(), manga.isDownloaded());
             if (difference != 0) {
-                updatesDAO.updateLocalInfo((LocalManga) manga, difference, new Date());
-                UpdatesElement element = updatesDAO.getUpdatesByManga((LocalManga) manga);
+                updatesDAO.updateInfo(manga, difference, new Date());
+                UpdatesElement element = updatesDAO.getUpdatesByManga(manga);
                 updates.remove(element);
                 updates.add(element);
                 adapter.notifyDataSetChanged();

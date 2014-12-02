@@ -7,12 +7,12 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.danilov.manga.core.model.LocalManga;
+import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.UpdatesElement;
 import com.danilov.manga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class UpdatesDAO {
     private static final String TABLE_NAME = "updatesManga";
     private static final String DB_NAME = "manga.db";
     private static final String ID = "id";
-    private static final String LOCAL_MANGA_ID = "local_manga_id";
+    private static final String MANGA_ID = "manga_id";
     private static final String TIMESTAMP = "timestamp";
     private static final String DIFFERENCE = "difference";
 
@@ -53,10 +53,10 @@ public class UpdatesDAO {
      * @return
      * @throws DatabaseAccessException
      */
-    public UpdatesElement getUpdatesByManga(final LocalManga manga) throws DatabaseAccessException {
+    public UpdatesElement getUpdatesByManga(final Manga manga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        String selection = LOCAL_MANGA_ID + " = ?";
-        String[] selectionArgs = new String[] {"" + manga.getLocalId()};
+        String selection = MANGA_ID + " = ?";
+        String[] selectionArgs = new String[] {"" + manga.getId()};
         UpdatesElement element = null;
         try {
             Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
@@ -96,7 +96,7 @@ public class UpdatesDAO {
 
     public List<UpdatesElement> getAllUpdates() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        DownloadedMangaDAO downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
+        MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
         List<UpdatesElement> mangaList = null;
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
@@ -105,15 +105,15 @@ public class UpdatesDAO {
             }
             mangaList = new ArrayList<UpdatesElement>(cursor.getCount());
             int idIndex = cursor.getColumnIndex(ID);
-            int localIdIndex = cursor.getColumnIndex(LOCAL_MANGA_ID);
+            int mangaIdIndex = cursor.getColumnIndex(MANGA_ID);
             int differenceIndex = cursor.getColumnIndex(DIFFERENCE);
             int timestampIndex = cursor.getColumnIndex(TIMESTAMP);
             do {
-                int localId = cursor.getInt(localIdIndex);
+                int mangaId = cursor.getInt(mangaIdIndex);
                 int id = cursor.getInt(idIndex);
                 long timestamp = cursor.getInt(timestampIndex);
                 int difference = cursor.getInt(differenceIndex);
-                LocalManga manga = downloadedMangaDAO.getById(localId);
+                Manga manga = mangaDAO.getById(mangaId);
                 UpdatesElement element = new UpdatesElement();
                 element.setId(id);
                 element.setDifference(difference);
@@ -127,10 +127,10 @@ public class UpdatesDAO {
         return mangaList;
     }
 
-    public void deleteByManga(final LocalManga localManga) throws DatabaseAccessException {
+    public void deleteByManga(final Manga manga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
-        String selection = LOCAL_MANGA_ID + " = ?";
-        String[] selectionArgs = new String[] {"" + localManga.getLocalId()};
+        String selection = MANGA_ID + " = ?";
+        String[] selectionArgs = new String[] {"" + manga.getId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
@@ -149,11 +149,11 @@ public class UpdatesDAO {
         }
     }
 
-    public void addUpdatesElement(final LocalManga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
+    public void addUpdatesElement(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(TIMESTAMP, timestamp.getTime());
-        cv.put(LOCAL_MANGA_ID, manga.getLocalId());
+        cv.put(MANGA_ID, manga.getId());
         cv.put(DIFFERENCE, difference);
         try {
             db.insertOrThrow(TABLE_NAME, null, cv);
@@ -163,19 +163,19 @@ public class UpdatesDAO {
         }
     }
 
-    public UpdatesElement updateLocalInfo(final LocalManga manga, final int difference, final Date timestamp) throws DatabaseAccessException{
+    public UpdatesElement updateInfo(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException{
         UpdatesElement updatesElement = getUpdatesByManga(manga);
         if (updatesElement != null) {
             SQLiteDatabase db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
-                cv.put(DIFFERENCE, difference);
+                cv.put(DIFFERENCE, updatesElement.getDifference() + difference);
                 cv.put(TIMESTAMP, timestamp.getTime());
                 String selection = ID + " = ?";
                 String id = String.valueOf(updatesElement.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
                 updatesElement.setTimestamp(timestamp);
-                updatesElement.setDifference(difference);
+                updatesElement.setDifference(updatesElement.getDifference() + difference);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
             }
@@ -193,7 +193,7 @@ public class UpdatesDAO {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
-            builder.addColumn(LOCAL_MANGA_ID, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(MANGA_ID, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(TIMESTAMP, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(DIFFERENCE, DatabaseOptions.Type.INT, false, false);
             DatabaseOptions options = builder.build();
