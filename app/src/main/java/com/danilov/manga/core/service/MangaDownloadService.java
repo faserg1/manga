@@ -449,7 +449,11 @@ public class MangaDownloadService extends Service {
 
         @Override
         public void onError(final DownloadManager.Download download, final String errorMsg) {
-            currentRequest.setHasError(true);
+            if (currentRequest != null) {
+                currentRequest.setHasError(true);
+            } else {
+                Log.d(TAG, download.getUri());
+            }
             sendError(currentRequest, errorMsg);
         }
 

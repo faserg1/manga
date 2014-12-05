@@ -3,6 +3,10 @@
 
     <style name="Manga" parent="MangaBaseTheme">
         <item name="android:buttonStyle">@style/Manga.ButtonCommon</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="colorPrimary">#ffe97823</item>
+        <item name="android:textColorSecondary">#fff</item>
     </style>
 
 </resources>

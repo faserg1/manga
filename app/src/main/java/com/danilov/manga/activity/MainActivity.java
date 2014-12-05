@@ -3,12 +3,13 @@ package com.danilov.manga.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +54,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
         drawerLayout = findViewById(R.id.drawer_layout);
         isLargeLandscape = findViewById(R.id.is_large) != null; //dealing with landscape pads
@@ -65,8 +70,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (!isLargeLandscape) {
             castedDrawerLayout = (DrawerLayout) drawerLayout;
-            drawerToggle = new ActionBarDrawerToggle(this, castedDrawerLayout,
-                    R.drawable.ic_navigation_drawer, R.string.sv_drawer_open, R.string.sv_drawer_close) {
+            drawerToggle = new ActionBarDrawerToggle(this, castedDrawerLayout, R.string.sv_drawer_open, R.string.sv_drawer_close) {
 
                 /** Called when a drawer has settled in a completely closed state. */
                 public void onDrawerClosed(View view) {

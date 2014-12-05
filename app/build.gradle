@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
 
     defaultConfig {
         applicationId "com.danilov.manga"
         minSdkVersion 10
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
 
     buildTypes {
@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.0.+'
+    compile "com.android.support:appcompat-v7:21.0.+"
     compile files('libs/jsoup-1.7.3.jar')
     compile 'rapid.decoder:library:0.2.8'
     compile 'rapid.decoder:jpeg-decoder:0.2.8'
