@@ -30,7 +30,7 @@ import com.danilov.manga.fragment.RepositoryPickerFragment;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseToolbarActivity {
 
     private UpdatesDAO updatesDAO = null;
 
@@ -54,9 +54,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -90,7 +87,6 @@ public class MainActivity extends ActionBarActivity {
             castedDrawerLayout = new DrawerStub(this);
         }
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setHomeButtonEnabled(true);
         //TODO: check if we need to display main fragment or we need to show restored
         if (savedInstanceState == null) {
@@ -234,15 +230,11 @@ public class MainActivity extends ActionBarActivity {
             drawerToggle.syncState();
         }
         ActionBar actionBar = getSupportActionBar();
-        if (!isOnMainFragment) {
+        if (drawerToggle != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            drawerToggle.setDrawerIndicatorEnabled(true);
         } else {
-            if (drawerToggle != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                drawerToggle.setDrawerIndicatorEnabled(true);
-            } else {
-                actionBar.setDisplayHomeAsUpEnabled(false);
-            }
+            actionBar.setDisplayHomeAsUpEnabled(false);
         }
     }
 

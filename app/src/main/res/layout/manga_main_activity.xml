@@ -6,13 +6,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical" >
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        theme="@style/Manga"
-        android:background="@drawable/orange_square" />
+    <include layout="@layout/toolbar"/>
 
     <android.support.v4.widget.DrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,7 +29,7 @@
                   android:listSelector="@drawable/red_selector"
                   android:cacheColorHint="#00000000"
                   android:dividerHeight="1dp"
-                  android:background="#99000000"/>
+                  android:background="#DD000000"/>
 
     </android.support.v4.widget.DrawerLayout>
 

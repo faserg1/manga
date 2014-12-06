@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 26.07.2014.
  */
-public class MangaQueryActivity extends ActionBarActivity implements View.OnClickListener,
+public class MangaQueryActivity extends BaseToolbarActivity implements View.OnClickListener,
                                                             AdapterView.OnItemClickListener,
         PopupButtonClickListener {
 
@@ -76,6 +76,7 @@ public class MangaQueryActivity extends ActionBarActivity implements View.OnClic
             engine = repository.getEngine();
         }
         setContentView(R.layout.manga_query_activity);
+
         searchResultsView = (GridView) findViewById(R.id.search_results);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(repository.getName());

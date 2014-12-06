@@ -63,7 +63,7 @@
     <View android:layout_width="fill_parent"
         android:layout_height="210dp"
         android:id="@+id/selectorBackground"
-        android:background="@drawable/abc_list_selector_background_transition_holo_light">
+        android:background="@color/selected_color">
     </View>
 
     <View android:layout_width="fill_parent"

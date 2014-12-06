@@ -39,7 +39,7 @@ import java.util.ArrayList;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends ActionBarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
+public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
 
     private static final String TAG = "MangaViewerActivity";
 

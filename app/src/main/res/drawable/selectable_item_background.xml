@@ -2,6 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/abc_list_pressed_holo_light" android:state_pressed="true"/>
+    <item android:drawable="@color/selected_color" android:state_pressed="true"/>
 
 </selector>

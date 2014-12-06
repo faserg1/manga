@@ -1,67 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#ff373737">
+                android:layout_height="match_parent">
 
-    <com.danilov.manga.core.view.MangaImageSwitcher
+    <include layout="@layout/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff373737">
+
+
+        <com.danilov.manga.core.view.MangaImageSwitcher
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/imageSwitcher">
-
-
-    </com.danilov.manga.core.view.MangaImageSwitcher>
-
-
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:orientation="vertical"
-        android:layout_height="fill_parent">
+            android:id="@+id/imageSwitcher"/>
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1">
+            android:orientation="vertical"
+            android:layout_height="fill_parent">
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/prevBtn"/>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.1">
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/nextBtn"/>
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:id="@+id/prevBtn"/>
+
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:id="@+id/nextBtn"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp"
+                          android:layout_height="0dp"
+                          android:layout_weight="0.8"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.1">
+
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:id="@+id/prevBtnBottom"/>
+
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:id="@+id/nextBtnBottom"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout android:layout_width="0dp"
-                      android:layout_height="0dp"
-                      android:layout_weight="0.8"/>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1">
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/prevBtnBottom"/>
-
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:id="@+id/nextBtnBottom"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <com.danilov.manga.core.view.SlidingLayer
+        <com.danilov.manga.core.view.SlidingLayer
             xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
             android:id="@+id/selector"
             android:layout_width="@dimen/viewer_slider_outer_width"
@@ -72,17 +74,17 @@
             slidingLayer:closeOnTapEnabled="false"
             slidingLayer:offsetWidth="50dp">
 
-        <RelativeLayout
+            <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <LinearLayout android:layout_width="50dp" android:layout_height="fill_parent" android:orientation="vertical" android:layout_alignParentRight="true">
-                <View android:id="@+id/drawer_right_offset_top" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
-                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.8"/>
-                <View android:id="@+id/drawer_right_offset_bottom" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
-            </LinearLayout>
+                <LinearLayout android:layout_width="50dp" android:layout_height="fill_parent" android:orientation="vertical" android:layout_alignParentRight="true">
+                    <View android:id="@+id/drawer_right_offset_top" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
+                    <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.8"/>
+                    <View android:id="@+id/drawer_right_offset_bottom" android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1"/>
+                </LinearLayout>
 
-            <LinearLayout
+                <LinearLayout
                     android:layout_width="@dimen/viewer_slider_inner_width"
                     android:layout_height="fill_parent"
                     android:orientation="vertical"
@@ -92,119 +94,119 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="5dp">
 
-                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
+                    <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
 
-                <TextView android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:id="@+id/manga_title"
-                          android:textColor="#ffffffff"
-                          android:textSize="35sp"
-                          android:singleLine="true"
-                          android:ellipsize="marquee"
-                          android:focusable="true"
-                          android:focusableInTouchMode="true"
-                          android:marqueeRepeatLimit="marquee_forever"
-                          android:scrollHorizontally="true"/>
+                    <TextView android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:id="@+id/manga_title"
+                              android:textColor="#ffffffff"
+                              android:textSize="35sp"
+                              android:singleLine="true"
+                              android:ellipsize="marquee"
+                              android:focusable="true"
+                              android:focusableInTouchMode="true"
+                              android:marqueeRepeatLimit="marquee_forever"
+                              android:scrollHorizontally="true"/>
 
 
-                <ScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.7">
-
-                    <LinearLayout
+                    <ScrollView
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical">
+                        android:layout_height="0dp"
+                        android:layout_weight="0.7">
 
-                        <TextView android:layout_width="fill_parent"
-                                  android:layout_height="wrap_content"
-                                  android:textColor="#ffffffff"
-                                  android:textSize="25sp"
-                                  android:text="@string/cap_page"/>
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="vertical">
 
-                        <LinearLayout android:layout_width="fill_parent"
-                                      android:layout_height="wrap_content"
-                                      android:orientation="horizontal">
-
-                            <Button android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@android:string/ok"
-                                    style="@style/Manga.ButtonBlue"
-                                    android:id="@+id/imageOk"/>
-
-                            <EditText android:layout_width="wrap_content"
+                            <TextView android:layout_width="fill_parent"
                                       android:layout_height="wrap_content"
                                       android:textColor="#ffffffff"
-                                      android:inputType="numberDecimal"
-                                      android:id="@+id/imagePicker"/>
+                                      android:textSize="25sp"
+                                      android:text="@string/cap_page"/>
 
-                            <TextView android:layout_width="wrap_content"
+                            <LinearLayout android:layout_width="fill_parent"
+                                          android:layout_height="wrap_content"
+                                          android:orientation="horizontal">
+
+                                <Button android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@android:string/ok"
+                                        style="@style/Manga.ButtonBlue"
+                                        android:id="@+id/imageOk"/>
+
+                                <EditText android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:inputType="numberDecimal"
+                                          android:id="@+id/imagePicker"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:textSize="18sp"
+                                          android:text=" / "/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:textSize="18sp"
+                                          android:id="@+id/imageQuantity"/>
+
+                            </LinearLayout>
+
+                            <TextView android:layout_width="fill_parent"
                                       android:layout_height="wrap_content"
                                       android:textColor="#ffffffff"
-                                      android:textSize="18sp"
-                                      android:text=" / "/>
+                                      android:textSize="25sp"
+                                      android:text="@string/cap_chapter"/>
 
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textColor="#ffffffff"
-                                      android:textSize="18sp"
-                                      android:id="@+id/imageQuantity"/>
+                            <LinearLayout android:layout_width="fill_parent"
+                                          android:layout_height="wrap_content"
+                                          android:orientation="horizontal">
+
+                                <Button android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@android:string/ok"
+                                        style="@style/Manga.ButtonBlue"
+                                        android:id="@+id/chapterOk"/>
+
+                                <EditText android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:inputType="numberDecimal"
+                                          android:id="@+id/chapterPicker"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:textSize="18sp"
+                                          android:text=" / "/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textColor="#ffffffff"
+                                          android:textSize="18sp"
+                                          android:id="@+id/chapterQuantity"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                        <TextView android:layout_width="fill_parent"
-                                  android:layout_height="wrap_content"
-                                  android:textColor="#ffffffff"
-                                  android:textSize="25sp"
-                                  android:text="@string/cap_chapter"/>
+                    </ScrollView>
 
-                        <LinearLayout android:layout_width="fill_parent"
-                                      android:layout_height="wrap_content"
-                                      android:orientation="horizontal">
+                    <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
 
-                            <Button android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@android:string/ok"
-                                    style="@style/Manga.ButtonBlue"
-                                    android:id="@+id/chapterOk"/>
+                </LinearLayout>
 
-                            <EditText android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textColor="#ffffffff"
-                                      android:inputType="numberDecimal"
-                                      android:id="@+id/chapterPicker"/>
+            </RelativeLayout>
 
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textColor="#ffffffff"
-                                      android:textSize="18sp"
-                                      android:text=" / "/>
+        </com.danilov.manga.core.view.SlidingLayer>
 
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textColor="#ffffffff"
-                                      android:textSize="18sp"
-                                      android:id="@+id/chapterQuantity"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </ScrollView>
-
-                <View android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="0.1" android:clickable="false"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </com.danilov.manga.core.view.SlidingLayer>
-
-    <!--stydyview-->
+        <!--stydyview-->
 
 
-    <LinearLayout
+        <LinearLayout
             android:layout_width="fill_parent"
             android:orientation="vertical"
             android:background="#99000000"
@@ -212,98 +214,98 @@
             android:layout_height="fill_parent"
             android:id="@+id/tutorialView">
 
-        <LinearLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.1">
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rect_blue"/>
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rect_blue"/>
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rect_blue"/>
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rect_blue"/>
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <View android:layout_width="fill_parent"
-                      android:layout_height="0dp"
-                      android:layout_weight="0.1"/>
+            <View android:layout_width="fill_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="0.1"/>
 
-        <LinearLayout android:layout_width="fill_parent"
-                      android:layout_height="0dp"
-                      android:layout_weight="0.5"
-                      android:orientation="horizontal">
+            <LinearLayout android:layout_width="fill_parent"
+                          android:layout_height="0dp"
+                          android:layout_weight="0.5"
+                          android:orientation="horizontal">
 
-            <View android:layout_weight="0.2"
-                  android:layout_width="0dp"
-                  android:layout_height="fill_parent"/>
+                <View android:layout_weight="0.2"
+                      android:layout_width="0dp"
+                      android:layout_height="fill_parent"/>
 
-            <RelativeLayout android:layout_width="0dp"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="0.6">
+                <RelativeLayout android:layout_width="0dp"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="0.6">
 
-                <ScrollView android:layout_width="fill_parent"
+                    <ScrollView android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:id="@+id/tutorialText"
+                                android:layout_above="@+id/close_tutorial">
+
+                        <TextView android:layout_width="fill_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="10dp"
+                                  android:paddingBottom="10dp"
+                                  android:textColor="#ffffff"
+                                  android:textSize="25sp"
+                                  android:text="@string/tutorial_viewer"/>
+
+                    </ScrollView>
+
+
+                    <Button android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:id="@+id/tutorialText"
-                            android:layout_above="@+id/close_tutorial">
+                            android:text="@android:string/ok"
+                            style="@style/Manga.ButtonBlue"
+                            android:id="@+id/close_tutorial"
+                            android:layout_centerHorizontal="true"
+                            android:layout_alignParentBottom="true"/>
 
-                    <TextView android:layout_width="fill_parent"
-                              android:layout_height="wrap_content"
-                              android:layout_marginTop="10dp"
-                              android:paddingBottom="10dp"
-                              android:textColor="#ffffff"
-                              android:textSize="25sp"
-                              android:text="@string/tutorial_viewer"/>
+                </RelativeLayout>
 
-                </ScrollView>
+                <View android:layout_width="0dp"
+                      android:layout_height="fill_parent"
+                      android:layout_weight="0.2"/>
 
+            </LinearLayout>
 
-                <Button android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@android:string/ok"
-                        style="@style/Manga.ButtonBlue"
-                        android:id="@+id/close_tutorial"
-                        android:layout_centerHorizontal="true"
-                        android:layout_alignParentBottom="true"/>
-
-            </RelativeLayout>
-
-            <View android:layout_width="0dp"
-                  android:layout_height="fill_parent"
+            <View android:layout_width="fill_parent"
+                  android:layout_height="0dp"
                   android:layout_weight="0.2"/>
 
-        </LinearLayout>
-
-        <View android:layout_width="fill_parent"
-              android:layout_height="0dp"
-              android:layout_weight="0.2"/>
-
-        <LinearLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.1">
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rect_blue"/>
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rect_blue"/>
 
-            <View   android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rect_blue"/>
+                <View   android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rect_blue"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
 
-
-    <ProgressBar
+        <ProgressBar
             style="@style/Manga.ProgressBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -311,4 +313,7 @@
             android:layout_alignParentTop="true"
             android:visibility="gone"/>
 
-</RelativeLayout>
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -4,9 +4,18 @@
     <style name="Manga" parent="MangaBaseTheme">
         <item name="android:buttonStyle">@style/Manga.ButtonCommon</item>
         <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
         <item name="android:textColorPrimary">#fff</item>
         <item name="colorPrimary">#ffe97823</item>
+        <item name="colorPrimaryDark">@color/status_bar_color</item>
+        <item name="actionModeBackground">@color/action_mode_background</item>
         <item name="android:textColorSecondary">#fff</item>
+
+
+        <item name="colorControlNormal">#fff</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlHighlight">@color/accent</item>
+
     </style>
 
 </resources>
