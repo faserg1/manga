@@ -6,6 +6,8 @@
               android:background="#ffe3e3e3"
               android:layout_height="fill_parent">
 
+    <include layout="@layout/toolbar"/>
+
     <!-- The main content view -->
     <FrameLayout
         android:id="@+id/content_frame"

@@ -15,7 +15,7 @@ import com.danilov.manga.fragment.RepositoryPickerFragment;
 /**
  * Created by Semyon on 15.11.2014.
  */
-public class SingleFragmentActivity extends ActionBarActivity {
+public class SingleFragmentActivity extends BaseToolbarActivity {
 
     public static final int DOWNLOAD_MANAGER_FRAGMENT = 0;
 

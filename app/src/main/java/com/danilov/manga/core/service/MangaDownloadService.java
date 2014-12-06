@@ -417,13 +417,14 @@ public class MangaDownloadService extends Service {
             if (currentImage == currentImageQuantity) {
                 if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {
                     //go to next request
+                    Manga manga = currentRequest.getManga();
                     Message message = Message.obtain();
                     message.what = DownloadServiceHandler.START_NEXT_REQUEST;
                     serviceHandler.sendMessage(message);
 
                     message = Message.obtain(); //that's a new message
                     message.what = REQUEST_COMPLETE;
-                    message.obj = currentRequest.manga;
+                    message.obj = manga;
                     notifyObservers(message);
                 } else {
                     //go to next chapter
@@ -453,6 +454,7 @@ public class MangaDownloadService extends Service {
                 currentRequest.setHasError(true);
             } else {
                 Log.d(TAG, download.getUri());
+                currentRequest.setHasError(true);
             }
             sendError(currentRequest, errorMsg);
         }

@@ -123,21 +123,26 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         public void onReceive(final Context context, final Intent intent) {
             Manga manga = intent.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
             int difference = intent.getIntExtra(Constants.MANGA_CHAPTERS_DIFFERENCE, 0);
-            onUpdate(manga, difference);
+            onUpdate(manga);
         }
 
     }
 
-    private void onUpdate(final Manga manga, final Integer difference) {
+    private void onUpdate(final Manga manga) {
         try {
-            mangaDAO.updateInfo(manga, manga.getChaptersQuantity(), manga.isDownloaded());
-            if (difference != 0) {
-                updatesDAO.updateInfo(manga, difference, new Date());
-                UpdatesElement element = updatesDAO.getUpdatesByManga(manga);
-                updates.remove(element);
-                updates.add(element);
-                adapter.notifyDataSetChanged();
-                activity.changeUpdatesQuantity(updates.size());
+            synchronized (this) {
+                Manga _manga = mangaDAO.getById(manga.getId());
+                int oldQuantity = _manga.getChaptersQuantity();
+                int newQuantity = manga.getChaptersQuantity();
+                if (newQuantity != oldQuantity) {
+                    mangaDAO.updateInfo(manga, newQuantity, manga.isDownloaded());
+                    updatesDAO.updateInfo(manga, newQuantity - oldQuantity, new Date());
+                    UpdatesElement element = updatesDAO.getUpdatesByManga(manga);
+                    updates.remove(element);
+                    updates.add(element);
+                    adapter.notifyDataSetChanged();
+                    activity.changeUpdatesQuantity(updates.size());
+                }
             }
         } catch (DatabaseAccessException e) {
             e.printStackTrace();

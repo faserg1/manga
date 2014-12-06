@@ -3,6 +3,7 @@ package com.danilov.manga.core.service;
 import android.util.Log;
 import com.danilov.manga.core.interfaces.Pool;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
@@ -252,7 +253,7 @@ public class DownloadManager {
                     stateChanged();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Error while downloading: " + e.getMessage());
+                Log.e(TAG, "Error while downloading: " + e.getClass().getName() + " - " +  e.getMessage());
                 error(e.getMessage());
             } finally {
                 // Close file.
