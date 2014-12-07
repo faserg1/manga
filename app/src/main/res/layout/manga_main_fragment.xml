@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
 
     <GridView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:layout_below="@+id/update"
+              android:layout_below="@+id/ripple"
               android:layout_alignParentBottom="true"
               android:id="@+id/updates"
               android:numColumns="1"
@@ -22,6 +23,26 @@
               android:cacheColorHint="@android:color/transparent">
 
     </GridView>
+
+    <com.danilov.manga.core.view.RippleView
+        android:id="@+id/ripple"
+        android:background="#fff"
+        android:layout_below="@+id/update"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:paddingBottom="40dp"
+        app:rippleColorOne="#33b5e5"
+        app:rippleColorTwo="#ffe5000d"
+        app:fillOnEnd="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Нажми на меня"
+            android:layout_centerInParent="true"/>
+
+    </com.danilov.manga.core.view.RippleView>
+
 
 
 </RelativeLayout>

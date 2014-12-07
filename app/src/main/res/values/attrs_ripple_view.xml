@@ -1,0 +1,8 @@
+<resources>
+    <declare-styleable name="RippleView">
+        <attr name="rippleColorOne" format="color" />
+        <attr name="rippleColorTwo" format="color" />
+        <attr name="fillOnEnd" format="boolean" />
+        <attr name="isInAdapter" format="boolean" />
+    </declare-styleable>
+</resources>
