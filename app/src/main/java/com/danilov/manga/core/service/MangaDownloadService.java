@@ -442,6 +442,10 @@ public class MangaDownloadService extends Service {
             if (currentImage == currentImageQuantity) {
                 if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {
                     //go to next request
+
+                    //old bug: currentRequest  становился нулём после хэндла этого сообшения и ДО отправки следующего, и возника NPE (там было currentRequest.manga - NPE!)
+                    //а уже в DownloadManager это просто ловилось и передавалось в OnError
+                    //ппц
                     Manga manga = currentRequest.getManga();
                     Message message = Message.obtain();
                     message.what = DownloadServiceHandler.START_NEXT_REQUEST;
