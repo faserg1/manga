@@ -15,6 +15,7 @@
             android:layout_width="0dp"
             android:layout_weight="0.4"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:inputType="numberDecimal"
             android:ems="10"
             android:id="@+id/from"/>
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:ems="10"
+            android:textColor="@android:color/black"
             android:id="@+id/to"/>
 
     </LinearLayout>
@@ -40,6 +42,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/max"/>
 

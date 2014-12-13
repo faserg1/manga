@@ -4,16 +4,21 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+
+import com.android.httpimage.HttpImageManager;
 import com.danilov.manga.core.database.DatabaseAccessException;
 import com.danilov.manga.core.database.MangaDAO;
 import com.danilov.manga.core.model.LocalManga;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.model.MangaChapter;
+import com.danilov.manga.core.notification.NotificationHelper;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.IoUtils;
@@ -58,9 +63,15 @@ public class MangaDownloadService extends Service {
     private int currentImageQuantity;
     private int currentImage;
 
+    private HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
+
+    private NotificationHelper helper = null;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
+        helper = new NotificationHelper(this);
         downloadManager = new DownloadManager();
         downloadManager.setListener(new MangaDownloadListener());
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
@@ -137,6 +148,7 @@ public class MangaDownloadService extends Service {
                 case ADD_DOWNLOAD:
                     MangaDownloadRequest mangaDownloadRequest = (MangaDownloadRequest) msg.obj;
                     if (requests.isEmpty()) {
+                        showNotification(mangaDownloadRequest.getManga());
                         currentRequest = mangaDownloadRequest;
                         requests.add(mangaDownloadRequest);
                         (new MangaDownloadThread(mangaDownloadRequest)).start();
@@ -157,6 +169,7 @@ public class MangaDownloadService extends Service {
                     }
                     MangaDownloadRequest nextRequest = requests.peek();
                     currentRequest = nextRequest;
+                    showNotification(currentRequest.getManga());
                     (new MangaDownloadThread(nextRequest)).start();
                     break;
                 case RESTART_ERROR:
@@ -170,6 +183,18 @@ public class MangaDownloadService extends Service {
                     break;
             }
         }
+    }
+
+    private void showNotification(final Manga manga) {
+        helper.buildNotification();
+
+        Uri coverUri = Uri.parse(manga.getCoverUri());
+        HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, helper.getIconView(), 110);
+        Bitmap bitmap = httpImageManager.loadImage(request);
+        if (bitmap != null) {
+            helper.setIcon(bitmap);
+        }
+
     }
 
     private void sendStatus() {

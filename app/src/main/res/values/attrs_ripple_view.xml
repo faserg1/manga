@@ -4,5 +4,6 @@
         <attr name="rippleColorTwo" format="color" />
         <attr name="fillOnEnd" format="boolean" />
         <attr name="isInAdapter" format="boolean" />
+        <attr name="backgroundColor" format="color" />
     </declare-styleable>
 </resources>

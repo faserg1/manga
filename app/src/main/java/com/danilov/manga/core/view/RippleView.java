@@ -32,9 +32,9 @@ public class RippleView extends RelativeLayout implements Checkable {
 
     private int rippleColorOne = Color.RED;
     private int rippleColorTwo = Color.WHITE;
+    private int backgroundColor = Color.WHITE;
 
     private boolean fillOnEnd = false;
-    private boolean isInAdapter = false;
 
     private float mDownX;
     private float mDownY;
@@ -77,23 +77,26 @@ public class RippleView extends RelativeLayout implements Checkable {
                 R.styleable.RippleView_fillOnEnd,
                 fillOnEnd);
 
-        isInAdapter = a.getBoolean(
-                R.styleable.RippleView_isInAdapter,
-                isInAdapter);
-
         a.recycle();
         paintOne = new Paint();
         paintTwo = new Paint();
+
+        backgroundColor = a.getColor(
+                R.styleable.RippleView_backgroundColor,
+                backgroundColor);
+
+        setBackgroundColor(backgroundColor);
 
         rippleColor = rippleColorOne;
         paintOne.setColor(rippleColorOne);
         paintTwo.setColor(rippleColorTwo);
         currentPaint = paintOne;
+        setDrawingCacheEnabled(false);
     }
 
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mDownX = event.getX();
             mDownY = event.getY();
 
@@ -129,15 +132,6 @@ public class RippleView extends RelativeLayout implements Checkable {
     @Override
     protected void onDraw(@NonNull final Canvas canvas) {
         super.onDraw(canvas);
-        if (isInAdapter) {
-            if (spots.isEmpty()) {
-                if (isPressed() || isActivated() || isSelected()) {
-                    setBackgroundColor(rippleColorOne);
-                } else {
-                    setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-        }
         for (InkSpot inkSpot : spots) {
             Paint paint = inkSpot.getPaint();
             float radius = inkSpot.getRadius();
@@ -255,7 +249,7 @@ public class RippleView extends RelativeLayout implements Checkable {
         public void onAnimationEnd(final Animator animator) {
             spots.remove(this);
             setRadius(0.0f);
-            if (fillOnEnd && !isInAdapter) {
+            if (fillOnEnd) {
                 setBackgroundColor(paint.getColor());
             }
         }
