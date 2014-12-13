@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -11,6 +12,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sv_select_all"/>
+
+    <RelativeLayout
+        android:id="@+id/select_last"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/select_all"
+        android:layout_alignBottom="@+id/select_all"
+        android:layout_alignTop="@+id/select_all">
+
+        <com.danilov.manga.core.view.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rippleColorOne="#33b5e5"
+            app:rippleColorTwo="#ffe5000d"
+            android:padding="5dp"
+            app:backgroundColor="@android:color/transparent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_centerInParent="true"
+                android:text="Выбрать последнюю"/>
+
+        </com.danilov.manga.core.view.RippleView>
+
+    </RelativeLayout>
 
     <ListView
         android:layout_below="@+id/select_all"

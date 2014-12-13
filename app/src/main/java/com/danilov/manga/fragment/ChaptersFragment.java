@@ -37,6 +37,7 @@ import com.danilov.manga.core.repository.RepositoryException;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
+import com.danilov.manga.core.view.RippleView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
     private Button download;
     private Button selectRange;
     private CheckBox checkBox;
+    private View selectLast;
 
     private Manga manga;
 
@@ -92,6 +94,7 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         download = (Button) view.findViewById(R.id.download);
         selectRange = (Button) view.findViewById(R.id.number_select);
         checkBox = (CheckBox) view.findViewById(R.id.select_all);
+        selectLast = view.findViewById(R.id.select_last);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
@@ -116,6 +119,22 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
                 intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
                 startActivity(intent);
                 activity.showInfoFragment();
+            }
+        });
+        selectLast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                int size = chaptersListView.getCount();
+                if (size == 0) {
+                    return;
+                }
+                int pos = size - 1;
+                if (adapter != null) {
+                    if (!adapter.isSelected(pos)) {
+                        adapter.select(pos);
+                    }
+                    chaptersListView.setSelection(pos);
+                }
             }
         });
         selectRange.setOnClickListener(new View.OnClickListener() {
@@ -386,6 +405,10 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
         public void select(final int position, final boolean isChecked) {
             selectedChapters[position] = isChecked;
+        }
+
+        public boolean isSelected(final int position) {
+            return selectedChapters.length >= position && selectedChapters[position];
         }
 
         public void all(final boolean select) {
