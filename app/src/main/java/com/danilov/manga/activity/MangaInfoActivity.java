@@ -34,7 +34,7 @@ import com.danilov.manga.fragment.InfoFragment;
 /**
  * Created by Semyon Danilov on 21.05.2014.
  */
-public class MangaInfoActivity extends ActionBarActivity implements RefreshableActivity {
+public class MangaInfoActivity extends BaseToolbarActivity implements RefreshableActivity {
 
     private final String TAG = "MangaInfoActivity";
     private AnimatedActionView refreshSign;

@@ -150,7 +150,7 @@ public class HttpImageManager {
             this(uri, (OnLoadResponseListener) null);
         }
 
-        private LoadRequest(final Uri uri, final OnLoadResponseListener l) {
+        public LoadRequest(final Uri uri, final OnLoadResponseListener l) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -160,7 +160,19 @@ public class HttpImageManager {
             this.mListener = l;
         }
 
-        private LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
+        public LoadRequest(final Uri uri, final OnLoadResponseListener l, final int newSize) {
+            if (uri == null) {
+                throw new NullPointerException("uri must not be null");
+            }
+
+            this.mUri = uri;
+            this.newSize = newSize;
+            this.mHashedUri = this.computeHashedName(uri.toString());
+            this.mListener = l;
+        }
+
+
+        public LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }

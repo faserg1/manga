@@ -3,8 +3,13 @@ package com.danilov.manga.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.Allocation;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -24,6 +29,7 @@ import com.danilov.manga.core.interfaces.RefreshableActivity;
 import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.repository.RepositoryEngine;
 import com.danilov.manga.core.repository.RepositoryException;
+import com.danilov.manga.core.util.BitmapUtils;
 import com.danilov.manga.core.util.Constants;
 import com.danilov.manga.core.util.ServiceContainer;
 import com.danilov.manga.core.util.Utils;
@@ -100,10 +106,11 @@ public class InfoFragment extends Fragment {
             hasCoverLoaded = true;
             Uri coverUri = Uri.parse(coverUrl);
             final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
-            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, sizeOfImage);
-            Bitmap bitmap = httpImageManager.loadImage(request);
+
+            Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), sizeOfImage));
+
             if (bitmap != null) {
-                mangaCover.setImageBitmap(bitmap);
+                setCover(bitmap);
             }
         }
         mangaTitle.setText(manga.getTitle());
@@ -182,11 +189,13 @@ public class InfoFragment extends Fragment {
                             if (coverUrl != null) {
                                 hasCoverLoaded = true;
                                 Uri coverUri = Uri.parse(coverUrl);
+
                                 final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
-                                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, sizeOfImage);
-                                Bitmap bitmap = httpImageManager.loadImage(request);
+
+                                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), sizeOfImage));
+
                                 if (bitmap != null) {
-                                    mangaCover.setImageBitmap(bitmap);
+                                    setCover(bitmap);
                                 }
                             }
                         }
@@ -202,6 +211,37 @@ public class InfoFragment extends Fragment {
             });
         }
 
+    }
+
+    private class LoadResponseListener implements HttpImageManager.OnLoadResponseListener {
+
+        @Override
+        public void beforeLoad(final HttpImageManager.LoadRequest r) {
+
+        }
+
+        @Override
+        public void onLoadResponse(final HttpImageManager.LoadRequest r, final Bitmap data) {
+            setCover(data);
+        }
+
+        @Override
+        public void onLoadError(final HttpImageManager.LoadRequest r, final Throwable e) {
+
+        }
+
+    }
+
+    private void setCover(final Bitmap bmp) {
+        mangaCover.setImageBitmap(bmp);
+        ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+        if (bigView != null) {
+            blur(bmp, bigView);
+        }
+    }
+
+    private void blur(Bitmap bkg, ImageView view) {
+        view.setImageBitmap(BitmapUtils.blur(bkg, 5));
     }
 
     private class ButtonClickListener implements View.OnClickListener {
