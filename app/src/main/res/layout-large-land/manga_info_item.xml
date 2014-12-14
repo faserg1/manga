@@ -67,6 +67,7 @@
                                     android:layout_weight="0.7"
                                     android:id="@+id/manga_title"
                                     android:textSize="45sp"
+                                    android:textStyle="bold"
                                     android:singleLine="true"
                                     android:ellipsize="marquee"
                                     android:focusable="true"
