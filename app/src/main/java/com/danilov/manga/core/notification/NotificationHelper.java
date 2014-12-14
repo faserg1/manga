@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import com.danilov.manga.R;
+import com.danilov.manga.core.model.Manga;
 import com.danilov.manga.core.service.MangaDownloadService;
 
 /**
@@ -30,9 +31,13 @@ public class NotificationHelper {
 
     private static final int MANGA_DOWNLOAD_SERVICE = 1;
 
+    private static final int FINISHED_DOWNLOAD_ID = 2;
+
     private RemoteViews contentView;
 
     private NotificationManager notificationManager;
+
+    private String title;
 
     public NotificationHelper(final MangaDownloadService downloadService) {
         this.downloadService = downloadService;
@@ -42,14 +47,15 @@ public class NotificationHelper {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void buildNotification() {
+    public void buildNotification(final Manga manga) {
         final Intent emptyIntent = new Intent();
         PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        this.title = manga.getTitle();
+
         contentView = new RemoteViews(downloadService.getPackageName(), R.layout.notification_layout);
-        contentView.setImageViewResource(R.id.icon, R.drawable.ic_russia);
-        contentView.setTextViewText(R.id.title, "My notification");
-        contentView.setTextViewText(R.id.text, "Hello World!");
+        contentView.setImageViewResource(R.id.icon, R.drawable.ic_launcher);
+        contentView.setTextViewText(R.id.text, title);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
@@ -58,7 +64,52 @@ public class NotificationHelper {
                         .setContent(contentView);
         this.notification = mBuilder.build();
         this.notification.contentView = contentView;
+
+        notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
+        notification.flags = notification.flags | Notification.FLAG_INSISTENT;
+
         downloadService.startForeground(MANGA_DOWNLOAD_SERVICE, notification);
+    }
+
+    public void updateProgress(final int max, final int progress) {
+        StringBuilder sb = new StringBuilder(title);
+        sb.append(" (").append(progress + 1).append('/').append(max).append(')');
+        contentView.setTextViewText(R.id.text, sb.toString());
+        contentView.setProgressBar(R.id.progress_bar, max, progress, false);
+        notificationManager.notify(MANGA_DOWNLOAD_SERVICE, notification);
+    }
+
+    public void finish() {
+
+        notification.flags = notification.flags & (~Notification.FLAG_ONGOING_EVENT);
+
+        contentView.setTextViewText(R.id.text, title);
+        contentView.setProgressBar(R.id.progress_bar, 1, 1, false);
+        notificationManager.notify(MANGA_DOWNLOAD_SERVICE, notification);
+        downloadService.stopForeground(true);
+        buildFinishedNotification();
+    }
+
+    private void buildFinishedNotification() {
+        final Intent emptyIntent = new Intent();
+        PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews contentView = new RemoteViews(downloadService.getPackageName(), R.layout.notification_layout);
+        contentView.setImageViewResource(R.id.icon, R.drawable.ic_launcher);
+        contentView.setTextViewText(R.id.text, title);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(ctx)
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContent(contentView)
+                        .setAutoCancel(true)
+                        .setTicker("Download finished");
+
+        Notification notification = mBuilder.build();
+        notification.contentView = contentView;
+        notification.flags = notification.flags | Notification.FLAG_INSISTENT;
+        notificationManager.notify(FINISHED_DOWNLOAD_ID, notification);
     }
 
     public void setIcon(final Bitmap bitmap) {

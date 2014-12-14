@@ -150,6 +150,7 @@ public class MangaDownloadService extends Service {
                     if (requests.isEmpty()) {
                         showNotification(mangaDownloadRequest.getManga());
                         currentRequest = mangaDownloadRequest;
+                        updateNotificationProgress(currentRequest.quantity, 0);
                         requests.add(mangaDownloadRequest);
                         (new MangaDownloadThread(mangaDownloadRequest)).start();
                     } else {
@@ -159,12 +160,14 @@ public class MangaDownloadService extends Service {
                     break;
                 case START_NEXT_CHAPTER:
                     MangaDownloadRequest request = requests.peek();
+                    updateNotificationProgress(request.quantity, request.getCurrentChapterInList());
                     (new MangaDownloadThread(request)).start();
                     break;
                 case START_NEXT_REQUEST:
                     requests.remove();
                     if (requests.isEmpty()) {
                         currentRequest = null;
+                        helper.finish();
                         return;
                     }
                     MangaDownloadRequest nextRequest = requests.peek();
@@ -186,7 +189,7 @@ public class MangaDownloadService extends Service {
     }
 
     private void showNotification(final Manga manga) {
-        helper.buildNotification();
+        helper.buildNotification(manga);
 
         Uri coverUri = Uri.parse(manga.getCoverUri());
         HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, helper.getIconView(), 110);
@@ -195,6 +198,10 @@ public class MangaDownloadService extends Service {
             helper.setIcon(bitmap);
         }
 
+    }
+
+    private void updateNotificationProgress(final int max, final int progress) {
+        helper.updateProgress(max, progress);
     }
 
     private void sendStatus() {
