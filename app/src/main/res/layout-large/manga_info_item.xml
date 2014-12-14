@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <ScrollView
+    <ImageView
+        android:id="@+id/very_big"
+        android:scaleType="centerCrop"
+        android:layout_width="fill_parent"
+        android:layout_height="350dp"
+        android:alpha="0.7"/>
+
+    <com.danilov.manga.core.view.ScrollViewParallax
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        app:viewToParallax="@+id/very_big"
+        app:startOffset="250dp"
+        app:topOffset="250dp"
         android:fillViewport="true">
 
         <!--Actually a main layout-->
@@ -35,7 +46,8 @@
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:id="@+id/manga_title"
-                              android:textSize="25sp"
+                              android:textSize="40sp"
+                              android:textStyle="bold"
                               android:singleLine="true"
                               android:ellipsize="marquee"
                               android:focusable="true"
@@ -45,7 +57,7 @@
 
                     <View
                         android:background="#000"
-                        android:layout_height="1dp"
+                        android:layout_height="2dp"
                         android:layout_width="fill_parent"/>
 
                 </LinearLayout>
@@ -101,11 +113,15 @@
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
+                                      android:textSize="25sp"
+                                      android:textStyle="bold"
                                       android:text="@string/sv_chapters"/>
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="25sp"
                                       android:id="@+id/chapters_quantity"/>
 
                         </LinearLayout>
@@ -119,6 +135,7 @@
                     android:layout_height="fill_parent">
                     <TextView android:layout_width="fill_parent"
                               android:layout_height="fill_parent"
+                              android:textSize="25sp"
                               android:id="@+id/manga_description"/>
 
                 </LinearLayout>
@@ -128,6 +145,6 @@
         </LinearLayout>
         <!--end of main layout-->
 
-    </ScrollView>
+    </com.danilov.manga.core.view.ScrollViewParallax>
 
-</LinearLayout>
+</RelativeLayout>
