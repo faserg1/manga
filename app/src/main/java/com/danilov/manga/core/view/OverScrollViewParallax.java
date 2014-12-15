@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ScrollView;
 
 import com.danilov.manga.R;
 import com.danilov.manga.core.view.library.OverScrollView;
@@ -14,24 +13,24 @@ import com.danilov.manga.core.view.library.OverScrollView;
 /**
  * Created by Semyon on 14.12.2014.
  */
-public class ScrollViewParallax extends ScrollView {
+public class OverScrollViewParallax extends OverScrollView {
 
     private ParallaxView viewToParallax;
     private int offsetTop;
     private int startOffset;
     private int viewToParallaxId;
 
-    public ScrollViewParallax(final Context context) {
+    public OverScrollViewParallax(final Context context) {
         super(context);
         init(null, 0);
     }
 
-    public ScrollViewParallax(final Context context, final AttributeSet attrs) {
+    public OverScrollViewParallax(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public ScrollViewParallax(final Context context, final AttributeSet attrs, final int defStyleAttr) {
+    public OverScrollViewParallax(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
