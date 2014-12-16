@@ -24,7 +24,7 @@
 
     </GridView>
 
-    <com.danilov.manga.core.view.RippleView
+    <com.danilov.mangareader.core.view.RippleView
         android:id="@+id/ripple"
         android:background="#fff"
         android:layout_below="@+id/update"
@@ -41,7 +41,7 @@
             android:text="Нажми на меня"
             android:layout_centerInParent="true"/>
 
-    </com.danilov.manga.core.view.RippleView>
+    </com.danilov.mangareader.core.view.RippleView>
 
 
 

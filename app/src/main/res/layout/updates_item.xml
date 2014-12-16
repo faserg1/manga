@@ -10,7 +10,7 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
 
-    <com.danilov.manga.core.view.RippleView
+    <com.danilov.mangareader.core.view.RippleView
         android:id="@+id/ripple"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
@@ -87,7 +87,7 @@
             android:layout_height="@dimen/card_shadow"
             android:layout_width="fill_parent"/>
 
-    </com.danilov.manga.core.view.RippleView>
+    </com.danilov.mangareader.core.view.RippleView>
 
 
 </RelativeLayout>

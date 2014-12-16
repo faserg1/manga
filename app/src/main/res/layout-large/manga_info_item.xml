@@ -13,7 +13,7 @@
         android:layout_height="350dp"
         android:alpha="0.7"/>
 
-    <com.danilov.manga.core.view.ScrollViewParallax
+    <com.danilov.mangareader.core.view.ScrollViewParallax
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:viewToParallax="@+id/very_big"
@@ -145,6 +145,6 @@
         </LinearLayout>
         <!--end of main layout-->
 
-    </com.danilov.manga.core.view.ScrollViewParallax>
+    </com.danilov.mangareader.core.view.ScrollViewParallax>
 
 </RelativeLayout>

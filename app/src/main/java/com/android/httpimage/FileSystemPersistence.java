@@ -3,8 +3,8 @@ package com.android.httpimage;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import com.danilov.manga.core.cache.CacheDirectoryManager;
-import com.danilov.manga.core.util.IoUtils;
+import com.danilov.mangareader.core.cache.CacheDirectoryManager;
+import com.danilov.mangareader.core.util.IoUtils;
 
 import java.io.*;
 
