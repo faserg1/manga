@@ -84,13 +84,36 @@
 
                       </LinearLayout>
 
+                      <LinearLayout android:layout_width="fill_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/chapters_quantity_wrapper"
+                                    android:layout_below="@+id/title_and_download"
+                                    android:layout_toRightOf="@+id/manga_fake_cover"
+                                    android:paddingLeft="5dp"
+                                    android:orientation="horizontal">
+
+                          <TextView android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"
+                                    android:text="@string/sv_chapters"/>
+
+                          <TextView android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"
+                                    android:layout_marginLeft="5dp"
+                                    android:id="@+id/chapters_quantity"/>
+
+                      </LinearLayout>
+
                       <!--cover and buttons-->
                       <LinearLayout
-                          android:layout_below="@+id/title_and_download"
+                          android:layout_below="@+id/chapters_quantity_wrapper"
+                          android:layout_toRightOf="@+id/manga_fake_cover"
                           android:layout_width="fill_parent"
                           android:layout_height="fill_parent"
                           android:baselineAligned="false"
-                          android:layout_toRightOf="@+id/manga_fake_cover"
                           android:orientation="horizontal">
 
                           <TextView android:layout_width="0dp"
@@ -116,26 +139,6 @@
                                       style="@style/Manga.ButtonCommon"
                                       android:id="@+id/read_online"
                                       android:text="@string/sv_read_online"/>
-
-                              <LinearLayout android:layout_width="fill_parent"
-                                            android:layout_height="match_parent"
-                                            android:paddingLeft="5dp"
-                                            android:orientation="horizontal">
-
-                                  <TextView android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:textSize="20sp"
-                                            android:textStyle="bold"
-                                            android:text="@string/sv_chapters"/>
-
-                                  <TextView android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:textSize="20sp"
-                                            android:textStyle="bold"
-                                            android:layout_marginLeft="5dp"
-                                            android:id="@+id/chapters_quantity"/>
-
-                              </LinearLayout>
 
                           </LinearLayout>
 

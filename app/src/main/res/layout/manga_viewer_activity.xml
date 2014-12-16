@@ -13,7 +13,7 @@
         android:background="#ff373737">
 
 
-        <com.danilov.manga.core.view.MangaImageSwitcher
+        <com.danilov.mangareader.core.view.MangaImageSwitcher
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/imageSwitcher"/>
@@ -63,7 +63,7 @@
 
         </LinearLayout>
 
-        <com.danilov.manga.core.view.SlidingLayer
+        <com.danilov.mangareader.core.view.SlidingLayer
             xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
             android:id="@+id/selector"
             android:layout_width="@dimen/viewer_slider_outer_width"
@@ -201,7 +201,7 @@
 
             </RelativeLayout>
 
-        </com.danilov.manga.core.view.SlidingLayer>
+        </com.danilov.mangareader.core.view.SlidingLayer>
 
         <!--stydyview-->
 

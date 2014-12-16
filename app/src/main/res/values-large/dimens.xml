@@ -7,6 +7,7 @@
     <dimen name="manga_list_image_height">110dp</dimen>
     <dimen name="manga_list_item_height">140dp</dimen>
     <dimen name="manga_info_height">420dp</dimen>
+    <dimen name="manga_info_height_half">210dp</dimen>
     <dimen name="viewer_slider_inner_width">300dp</dimen>
     <dimen name="viewer_slider_outer_width">350dp</dimen>
 
