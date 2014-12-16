@@ -64,7 +64,7 @@
         </LinearLayout>
 
         <com.danilov.mangareader.core.view.SlidingLayer
-            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.manga"
+            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.mangareader"
             android:id="@+id/selector"
             android:layout_width="@dimen/viewer_slider_outer_width"
             android:layout_height="fill_parent"

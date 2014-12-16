@@ -27,7 +27,7 @@ public class MangaApplication extends Application {
     @Override
     public void onCreate() {
         File mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
-        FileSystemPersistence fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), "com.danilov.manga"));
+        FileSystemPersistence fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), "com.danilov.mangareader"));
         HttpStreamReader httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
         HttpBytesReader httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         HttpBitmapReader httpBitmapReader = new HttpBitmapReader(httpBytesReader);

@@ -5,7 +5,7 @@ android {
     buildToolsVersion '21.1.1'
 
     defaultConfig {
-        applicationId "com.danilov.manga"
+        applicationId "com.danilov.mangareader"
         minSdkVersion 10
         targetSdkVersion 21
     }

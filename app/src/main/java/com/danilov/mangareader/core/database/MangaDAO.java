@@ -20,7 +20,7 @@ import java.util.List;
 public class MangaDAO {
 
     private final static String TAG = "MangaDAO";
-    private static final String packageName = "com.danilov.manga";
+    private static final String packageName = "com.danilov.mangareader";
 
     private static final int DAOVersion = 1;
     private static final String TABLE_NAME = "manga";
