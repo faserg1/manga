@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.test.UiThreadTest;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,9 @@ import android.widget.*;
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.UpdatesDAO;
+import com.danilov.mangareader.core.notification.headsup.HeadsUpNotification;
+import com.danilov.mangareader.core.notification.headsup.remote.HRemoteViews;
+import com.danilov.mangareader.core.notification.headsup.remote.impl.RemoteTextView;
 import com.danilov.mangareader.core.util.DrawerStub;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
@@ -94,6 +98,19 @@ public class MainActivity extends BaseToolbarActivity {
         updateQuantity();
     }
 
+    @UiThreadTest
+    private void testShowHeadsUp() {
+
+        HRemoteViews remoteViews = new HRemoteViews(R.layout.test_headsup_notification);
+        RemoteTextView rtv = new RemoteTextView(R.id.test_headsup_textview);
+        rtv.setText("OHMYGOD");
+        remoteViews.addView(rtv);
+
+        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, remoteViews);
+        headsUpNotification.show();
+
+    }
+
     public void updateQuantity() {
         Promise<Integer> promise = Promise.run(new Promise.PromiseRunnable<Integer>() {
             @Override
@@ -119,6 +136,8 @@ public class MainActivity extends BaseToolbarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        testShowHeadsUp();
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:

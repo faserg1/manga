@@ -16,6 +16,8 @@
         android:xlargeScreens="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -61,6 +63,10 @@
         <activity
             android:name=".activity.HistoryActivity"
             android:label="History" />
+        <activity
+            android:theme="@style/Theme.CustomPanel"
+            android:name=".core.notification.headsup.HeadsUpNotification$HeadsUpActivity"
+            android:label="Notification" />
 
         <service android:name=".core.service.MangaDownloadService" />
         <service
