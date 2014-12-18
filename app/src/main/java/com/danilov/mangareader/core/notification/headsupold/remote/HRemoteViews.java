@@ -1,10 +1,9 @@
-package com.danilov.mangareader.core.notification.headsup.remote;
+package com.danilov.mangareader.core.notification.headsupold.remote;
 
 import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

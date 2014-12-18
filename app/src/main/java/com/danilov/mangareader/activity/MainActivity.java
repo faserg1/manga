@@ -18,8 +18,6 @@ import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.UpdatesDAO;
 import com.danilov.mangareader.core.notification.headsup.HeadsUpNotification;
-import com.danilov.mangareader.core.notification.headsup.remote.HRemoteViews;
-import com.danilov.mangareader.core.notification.headsup.remote.impl.RemoteTextView;
 import com.danilov.mangareader.core.util.DrawerStub;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
@@ -100,15 +98,8 @@ public class MainActivity extends BaseToolbarActivity {
 
     @UiThreadTest
     private void testShowHeadsUp() {
-
-        HRemoteViews remoteViews = new HRemoteViews(R.layout.test_headsup_notification);
-        RemoteTextView rtv = new RemoteTextView(R.id.test_headsup_textview);
-        rtv.setText("OHMYGOD");
-        remoteViews.addView(rtv);
-
-        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, remoteViews);
+        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, R.layout.test_headsup_notification);
         headsUpNotification.show();
-
     }
 
     public void updateQuantity() {

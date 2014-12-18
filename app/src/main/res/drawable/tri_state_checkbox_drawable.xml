@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <item android:state_checked="false"
+        android:state_pressed="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_off_pressed_holo_light" /> <!-- unchecked pressed -->
+
+    <item android:state_checked="false"
+        android:state_selected="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_off_focused_holo_light" /> <!-- unchecked selected -->
+
+    <item android:state_checked="true"
+        android:state_pressed="false"
+        android:state_focused="false"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_holo_light" /> <!-- checked -->
+
+    <item android:state_checked="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_pressed_holo_light" /> <!-- checked pressed-->
+
+    <item android:state_checked="true"
+        android:state_selected="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_focused_holo_light" /> <!-- checked selected-->
+
+    <item android:state_middle="true"
+        android:state_pressed="false"
+        android:state_focused="false"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light" /> <!-- middle -->
+
+    <item android:state_middle="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light" /> <!-- middle pressed-->
+
+    <item android:state_middle="true"
+        android:state_selected="true"
+        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light"  /> <!-- middle selected-->
+
+    <item android:drawable="@drawable/mangaholotheme_btn_check_off_holo_light" /> <!-- unchecked -->
+</selector>

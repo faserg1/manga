@@ -1,8 +1,8 @@
-package com.danilov.mangareader.core.notification.headsup.remote.impl;
+package com.danilov.mangareader.core.notification.headsupold.remote.impl;
 
 import android.widget.TextView;
 
-import com.danilov.mangareader.core.notification.headsup.remote.HRemoteView;
+import com.danilov.mangareader.core.notification.headsupold.remote.HRemoteView;
 
 /**
  * Created by semyon on 17.12.14.

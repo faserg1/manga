@@ -1,4 +1,4 @@
-package com.danilov.mangareader.core.notification.headsup.remote;
+package com.danilov.mangareader.core.notification.headsupold.remote;
 
 /**
  * Created by semyon on 17.12.14.

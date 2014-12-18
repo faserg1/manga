@@ -15,12 +15,12 @@
 
     <GridView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:layout_below="@+id/ripple"
               android:layout_alignParentBottom="true"
               android:id="@+id/updates"
               android:numColumns="1"
               android:listSelector="#00000000"
-              android:cacheColorHint="@android:color/transparent">
+              android:cacheColorHint="@android:color/transparent"
+        android:layout_below="@+id/view2">
 
     </GridView>
 
@@ -43,6 +43,14 @@
 
     </com.danilov.mangareader.core.view.RippleView>
 
+    <com.danilov.mangareader.core.widget.TriStateCheckbox
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text=""
+        android:textColor="#000"
+        android:id="@+id/view2"
+        android:layout_below="@+id/ripple"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
