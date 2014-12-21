@@ -284,11 +284,31 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addToFavorites() {
+
+        try {
+            mangaDAO.setFavorite(manga, manga.isDownloaded(), true);
+        } catch (DatabaseAccessException e) {
+            Context context = getActivity();
+            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
+            Utils.showToast(context, message);
+            return;
+        }
+
         addToFavorites.setVisibility(View.GONE);
         removeFromFavorites.setVisibility(View.VISIBLE);
     }
 
     private void removeFromFavorites() {
+
+        try {
+            mangaDAO.setFavorite(manga, manga.isDownloaded(), false);
+        } catch (DatabaseAccessException e) {
+            Context context = getActivity();
+            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
+            Utils.showToast(context, message);
+            return;
+        }
+
         addToFavorites.setVisibility(View.VISIBLE);
         removeFromFavorites.setVisibility(View.GONE);
     }

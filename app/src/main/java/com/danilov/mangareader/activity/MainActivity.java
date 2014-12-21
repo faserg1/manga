@@ -23,6 +23,7 @@ import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.fragment.DownloadManagerFragment;
 import com.danilov.mangareader.fragment.DownloadedMangaFragment;
+import com.danilov.mangareader.fragment.FavoritesFragment;
 import com.danilov.mangareader.fragment.HistoryMangaFragment;
 import com.danilov.mangareader.fragment.MainFragment;
 import com.danilov.mangareader.fragment.RepositoryPickerFragment;
@@ -217,6 +218,7 @@ public class MainActivity extends BaseToolbarActivity {
                     showHistoryFragment();
                     break;
                 case FAVORITE:
+                    showFavoriteMangaFragment();
                     break;
                 case LOCAL:
                     showDownloadedMangaFragment();
@@ -267,6 +269,18 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showDownloadedMangaFragment() {
         Fragment fragment = DownloadedMangaFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+    }
+
+    private void showFavoriteMangaFragment() {
+        Fragment fragment = FavoritesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)

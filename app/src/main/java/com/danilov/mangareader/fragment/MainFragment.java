@@ -89,7 +89,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                     updatesView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
 
-                    List<Manga> mangaList = mangaDAO.getAllManga();
+                    List<Manga> mangaList = mangaDAO.getFavorite();
                     MangaUpdateService.startUpdateList(getActivity(), mangaList);
                 } catch (DatabaseAccessException e) {
                     e.printStackTrace();
