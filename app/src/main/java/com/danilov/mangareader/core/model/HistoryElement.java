@@ -1,5 +1,7 @@
 package com.danilov.mangareader.core.model;
 
+import java.util.Date;
+
 /**
  * Created by Semyon Danilov on 02.10.2014.
  */
@@ -13,10 +15,20 @@ public class HistoryElement {
 
     private int id;
 
+    private Date date;
+
     public HistoryElement(final Manga manga, final int chapter, final int page) {
         this.manga = manga;
         this.chapter = chapter;
         this.page = page;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(final Date date) {
+        this.date = date;
     }
 
     public Manga getManga() {

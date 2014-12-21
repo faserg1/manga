@@ -7,6 +7,7 @@
     <string name="sv_back">Назад</string>
     <string name="sv_delete">Удалить</string>
     <string name="sv_add_to_favorites">Добавить в Избранное</string>
+    <string name="sv_remove_from_favorites">Убрать из Избранного</string>
     <string name="sv_chapters">Кол-во глав:</string>
     <string name="sv_selected">Выбрано: </string>
     <string name="sv_queued">В очереди: </string>

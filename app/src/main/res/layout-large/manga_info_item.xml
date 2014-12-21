@@ -17,7 +17,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:viewToParallax="@+id/very_big"
-        app:startOffset="250dp"
+        app:startOffset="0dp"
         app:topOffset="250dp"
         android:fillViewport="true">
 
@@ -37,108 +37,119 @@
                 android:padding="15dp"
                 android:background="@drawable/list_item_background">
 
-                <!--title-->
-                <LinearLayout android:layout_width="fill_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="vertical"
-                              android:layout_marginBottom="10dp">
-
-                    <TextView android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:id="@+id/manga_title"
-                              android:textSize="40sp"
-                              android:textStyle="bold"
-                              android:singleLine="true"
-                              android:ellipsize="marquee"
-                              android:focusable="true"
-                              android:focusableInTouchMode="true"
-                              android:marqueeRepeatLimit="marquee_forever"
-                              android:scrollHorizontally="true"/>
-
-                    <View
-                        android:background="#000"
-                        android:layout_height="2dp"
-                        android:layout_width="fill_parent"/>
-
-                </LinearLayout>
-
-                <!--cover and buttons-->
-                <LinearLayout
+                <com.danilov.mangareader.core.view.ParentSizeLinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="@dimen/manga_info_height"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_height="fill_parent">
 
-                    <LinearLayout android:layout_width="0dp"
-                                  android:layout_weight="0.4"
-                                  android:layout_height="fill_parent">
+                    <!--title-->
+                    <LinearLayout android:layout_width="fill_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="vertical"
+                                  android:layout_marginBottom="10dp">
 
-                        <ImageView
-                            android:id="@+id/manga_cover"
-                            android:layout_height="fill_parent"
-                            android:layout_width="fill_parent"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitStart"/>
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:id="@+id/manga_title"
+                                  android:textSize="40sp"
+                                  android:textStyle="bold"
+                                  android:singleLine="true"
+                                  android:ellipsize="marquee"
+                                  android:focusable="true"
+                                  android:focusableInTouchMode="true"
+                                  android:marqueeRepeatLimit="marquee_forever"
+                                  android:scrollHorizontally="true"/>
 
                     </LinearLayout>
 
-                    <LinearLayout android:layout_width="0dp"
-                                  android:layout_weight="0.6"
-                                  android:layout_marginTop="-3dp"
-                                  android:orientation="vertical"
-                                  android:layout_height="fill_parent">
+                    <!--cover and buttons-->
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/manga_info_height"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                        <Button android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/add_to_favorites"
-                                android:text="@string/sv_add_to_favorites"
-                                style="@style/Manga.ButtonCommon"/>
+                        <LinearLayout android:layout_width="0dp"
+                                      android:layout_weight="0.4"
+                                      android:layout_height="fill_parent">
 
-                        <Button android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                style="@style/Manga.ButtonCommon"
-                                android:id="@+id/download"
-                                android:text="@string/sv_download"/>
-
-                        <Button android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                style="@style/Manga.ButtonCommon"
-                                android:id="@+id/read_online"
-                                android:text="@string/sv_read_online"/>
-
-                        <LinearLayout android:layout_width="fill_parent"
-                                      android:layout_height="match_parent"
-                                      android:paddingLeft="5dp"
-                                      android:orientation="horizontal">
-
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textSize="25sp"
-                                      android:textStyle="bold"
-                                      android:text="@string/sv_chapters"/>
-
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:layout_marginLeft="5dp"
-                                      android:textStyle="bold"
-                                      android:textSize="25sp"
-                                      android:id="@+id/chapters_quantity"/>
+                            <ImageView
+                                android:id="@+id/manga_cover"
+                                android:layout_height="fill_parent"
+                                android:layout_width="fill_parent"
+                                android:adjustViewBounds="true"
+                                android:scaleType="fitStart"/>
 
                         </LinearLayout>
 
+                        <LinearLayout android:layout_width="0dp"
+                                      android:layout_weight="0.6"
+                                      android:layout_marginTop="-3dp"
+                                      android:orientation="vertical"
+                                      android:layout_height="fill_parent">
+
+                            <Button android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/add_to_favorites"
+                                    android:text="@string/sv_add_to_favorites"
+                                    style="@style/Manga.ButtonCommon"/>
+
+                            <Button android:visibility="gone"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/remove_from_favorites"
+                                    android:text="@string/sv_remove_from_favorites"
+                                    style="@style/Manga.ButtonCommon"/>
+
+                            <Button android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/Manga.ButtonCommon"
+                                    android:id="@+id/download"
+                                    android:text="@string/sv_download"/>
+
+                            <Button android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/Manga.ButtonCommon"
+                                    android:id="@+id/read_online"
+                                    android:text="@string/sv_read_online"/>
+
+                            <LinearLayout android:layout_width="fill_parent"
+                                          android:layout_height="match_parent"
+                                          android:paddingLeft="5dp"
+                                          android:orientation="horizontal">
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textSize="25sp"
+                                          android:textStyle="bold"
+                                          android:text="@string/sv_chapters"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginLeft="5dp"
+                                          android:textStyle="bold"
+                                          android:textSize="25sp"
+                                          android:id="@+id/chapters_quantity"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout> <!--cover and buttons end-->
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <TextView android:layout_width="fill_parent"
+                                  android:layout_height="fill_parent"
+                                  android:textSize="25sp"
+                                  android:id="@+id/manga_description"/>
+
                     </LinearLayout>
 
-                </LinearLayout> <!--cover and buttons end-->
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
-                    <TextView android:layout_width="fill_parent"
-                              android:layout_height="fill_parent"
-                              android:textSize="25sp"
-                              android:id="@+id/manga_description"/>
+                </com.danilov.mangareader.core.view.ParentSizeLinearLayout>
 
-                </LinearLayout>
 
             </LinearLayout>
 

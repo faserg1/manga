@@ -104,7 +104,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         chapterOk.setOnClickListener(this);
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
-        toggleFullscreen(settings.isViewerFullscreen());
+        toggleFullscreen(true);
         Button closeTutorial = (Button) findViewById(R.id.close_tutorial);
         closeTutorial.setOnClickListener(this);
         boolean isTutorialPassed = settings.isTutorialViewerPassed();

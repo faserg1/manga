@@ -44,8 +44,8 @@
     </com.danilov.mangareader.core.view.RippleView>
 
     <com.danilov.mangareader.core.widget.TriStateCheckbox
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text=""
         android:textColor="#000"
         android:id="@+id/view2"

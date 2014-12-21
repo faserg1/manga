@@ -212,6 +212,28 @@ public class MangaDAO {
         return null;
     }
 
+    public synchronized Manga setFavorite(final Manga manga, final boolean downloaded, final boolean isFavorite) throws DatabaseAccessException {
+        Manga _manga = null;
+        _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository(), downloaded);
+        if (_manga != null) {
+            SQLiteDatabase db = databaseHelper.openWritable();
+            try {
+                ContentValues cv = new ContentValues();
+                cv.put(IS_FAVORITE, isFavorite ? 1 : 0);
+                String selection = ID + " = ?";
+                String id = String.valueOf(_manga.getId());
+                db.update(TABLE_NAME, cv, selection, new String[] {id});
+            } catch (Exception e) {
+                throw new DatabaseAccessException(e.getMessage());
+            }
+            return _manga;
+        } else {
+            addManga(manga);
+        }
+        return null;
+
+    }
+
     private Manga resolve(final Cursor cursor) {
         int idIndex = cursor.getColumnIndex(ID);
         int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);

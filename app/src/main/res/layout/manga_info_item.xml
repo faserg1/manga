@@ -89,11 +89,19 @@
                         android:orientation="vertical"
                         android:layout_height="fill_parent">
 
-                        <Button android:layout_width="fill_parent"
+                        <Button
+                            android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/add_to_favorites"
                             android:text="@string/sv_add_to_favorites"
                             style="@style/Manga.ButtonCommon"/>
+
+                        <Button android:visibility="gone"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/remove_from_favorites"
+                                android:text="@string/sv_remove_from_favorites"
+                                style="@style/Manga.ButtonCommon"/>
 
                         <Button android:layout_width="fill_parent"
                             android:layout_height="wrap_content"

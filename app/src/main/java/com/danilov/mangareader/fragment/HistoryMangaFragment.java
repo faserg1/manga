@@ -31,6 +31,9 @@ import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,7 +89,7 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
                 boolean _success = true;
                 String _error = null;
                 try {
-                    List<HistoryElement> history = historyDAO.getMangaHistory();
+                    List<HistoryElement> history = getHistorySorted();
                     if (history != null && !history.isEmpty()) {
                         Log.d(TAG, "Context is " + context);
                         Log.d(TAG, "HistoryDAO is " + history);
@@ -197,6 +200,25 @@ public class HistoryMangaFragment extends Fragment implements AdapterView.OnItem
 
         }
 
+    }
+
+    private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {
+        List<HistoryElement> history = historyDAO.getMangaHistory();
+        if (history == null) {
+            return null;
+        }
+        Collections.sort(history, new Comparator<HistoryElement>() {
+            @Override
+            public int compare(final HistoryElement l, final HistoryElement r) {
+                Date lDate = l.getDate();
+                Date rDate = r.getDate();
+                if (lDate.equals(rDate)) {
+                    return 0;
+                }
+                return lDate.after(rDate) ? -1 : 1;
+            }
+        });
+        return history;
     }
 
 }

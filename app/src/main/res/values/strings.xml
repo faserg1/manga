@@ -6,6 +6,7 @@
     <string name="sv_back">Back</string>
     <string name="sv_delete">Delete</string>
     <string name="sv_add_to_favorites">Add to Favorites</string>
+    <string name="sv_remove_from_favorites">Remove from Favorites</string>
     <string name="sv_chapters">Chapters:</string>
     <string name="sv_selected">Selected: </string>
     <string name="sv_queued">Queued: </string>

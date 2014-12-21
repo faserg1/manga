@@ -11,6 +11,7 @@ import com.danilov.mangareader.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class HistoryDAO {
     private static final String MANGA_ID = "manga_id";
     private static final String CHAPTER = "chapter";
     private static final String PAGE = "page";
+    private static final String DATE = "date";
 
     public DatabaseHelper databaseHelper = null;
 
@@ -65,11 +67,15 @@ public class HistoryDAO {
             int idIndex = cursor.getColumnIndex(ID);
             int chapterIndex = cursor.getColumnIndex(CHAPTER);
             int pageIndex = cursor.getColumnIndex(PAGE);
+            int dateIndex = cursor.getColumnIndex(DATE);
             int id = cursor.getInt(idIndex);
             int chapter = cursor.getInt(chapterIndex);
             int page = cursor.getInt(pageIndex);
+            int dateMillis = cursor.getInt(dateIndex);
+            Date date = new Date(dateMillis);
             historyElement = new HistoryElement(manga, chapter, page);
             historyElement.setId(id);
+            historyElement.setDate(date);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         }
@@ -90,14 +96,18 @@ public class HistoryDAO {
             int localIdIndex = cursor.getColumnIndex(MANGA_ID);
             int chapterIndex = cursor.getColumnIndex(CHAPTER);
             int pageIndex = cursor.getColumnIndex(PAGE);
+            int dateIndex = cursor.getColumnIndex(DATE);
             do {
                 int localId = cursor.getInt(localIdIndex);
                 int id = cursor.getInt(idIndex);
                 int chapter = cursor.getInt(chapterIndex);
                 int page = cursor.getInt(pageIndex);
+                int dateMillis = cursor.getInt(dateIndex);
                 Manga manga = mangaDAO.getById(localId);
                 HistoryElement historyElement = new HistoryElement(manga, chapter, page);
+                Date date = new Date(dateMillis);
                 historyElement.setId(id);
+                historyElement.setDate(date);
                 mangaList.add(historyElement);
             } while (cursor.moveToNext());
         } catch (Exception e) {
@@ -130,6 +140,7 @@ public class HistoryDAO {
         cv.put(CHAPTER, chapter);
         cv.put(MANGA_ID, _manga.getId());
         cv.put(PAGE, page);
+        cv.put(DATE, new Date().getTime());
         try {
             db.insertOrThrow(TABLE_NAME, null, cv);
         } catch (Exception e) {
@@ -146,6 +157,7 @@ public class HistoryDAO {
                 ContentValues cv = new ContentValues();
                 cv.put(PAGE, page);
                 cv.put(CHAPTER, chapter);
+                cv.put(DATE, new Date().getTime());
                 String selection = ID + " = ?";
                 String id = String.valueOf(historyElement.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
@@ -171,6 +183,7 @@ public class HistoryDAO {
             builder.addColumn(MANGA_ID, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(PAGE, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(CHAPTER, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(DATE, DatabaseOptions.Type.INT, false, false);
             DatabaseOptions options = builder.build();
             String sqlStatement = options.toSQLStatement();
             try {

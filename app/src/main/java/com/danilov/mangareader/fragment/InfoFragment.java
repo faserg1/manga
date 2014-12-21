@@ -18,6 +18,8 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.activity.MangaInfoActivity;
 import com.danilov.mangareader.activity.MangaViewerActivity;
+import com.danilov.mangareader.core.database.DatabaseAccessException;
+import com.danilov.mangareader.core.database.MangaDAO;
 import com.danilov.mangareader.core.interfaces.RefreshableActivity;
 import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
@@ -30,7 +32,7 @@ import com.danilov.mangareader.core.util.Utils;
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements View.OnClickListener {
 
     private final String TAG = "InfoFragment";
 
@@ -46,6 +48,11 @@ public class InfoFragment extends Fragment {
 
     private Button downloadButton;
     private Button readOnlineButton;
+
+    private Button addToFavorites;
+    private Button removeFromFavorites;
+
+    private MangaDAO mangaDAO = null;
 
     private View view;
 
@@ -77,10 +84,17 @@ public class InfoFragment extends Fragment {
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
         downloadButton = (Button) view.findViewById(R.id.download);
         readOnlineButton = (Button) view.findViewById(R.id.read_online);
-        ButtonClickListener buttonClickListener = new ButtonClickListener();
-        downloadButton.setOnClickListener(buttonClickListener);
-        readOnlineButton.setOnClickListener(buttonClickListener);
+        downloadButton.setOnClickListener(this);
+        readOnlineButton.setOnClickListener(this);
+        mangaDAO = ServiceContainer.getService(MangaDAO.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
+
+        addToFavorites = (Button) view.findViewById(R.id.add_to_favorites);
+        removeFromFavorites = (Button) view.findViewById(R.id.remove_from_favorites);
+
+        addToFavorites.setOnClickListener(this);
+        removeFromFavorites.setOnClickListener(this);
+
         if (savedInstanceState == null) {
             Intent i = activity.getIntent();
             manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
@@ -165,6 +179,14 @@ public class InfoFragment extends Fragment {
                 error = e.getMessage();
                 Log.d(TAG, e.getMessage());
             }
+            try {
+                Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+                boolean isFavorite = _manga.isFavorite();
+                manga.setFavorite(isFavorite);
+            } catch (DatabaseAccessException e) {
+                error = e.getMessage();
+                Log.d(TAG, e.getMessage());
+            }
             activity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -236,23 +258,36 @@ public class InfoFragment extends Fragment {
         view.setImageBitmap(BitmapUtils.blur(bkg, 5));
     }
 
-    private class ButtonClickListener implements View.OnClickListener {
+    @Override
+    public void onClick(final View v) {
+        Intent intent = null;
+        switch (v.getId()) {
+            case R.id.download:
+                activity.showChaptersFragment();
+                break;
+            case R.id.add_to_favorites:
+                addToFavorites();
+                break;
+            case R.id.remove_from_favorites:
+                removeFromFavorites();
+                break;
+            case R.id.read_online:
+                intent = new Intent(activity, MangaViewerActivity.class);
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                startActivity(intent);
+                break;
 
-        @Override
-        public void onClick(final View v) {
-            Intent intent = null;
-            switch (v.getId()) {
-                case R.id.download:
-                    activity.showChaptersFragment();
-                    break;
-                case R.id.add_to_favorites:
-                    break;
-                case R.id.read_online:
-                    intent = new Intent(activity, MangaViewerActivity.class);
-                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-                    startActivity(intent);
-                    break;
-            }
         }
     }
+
+    private void addToFavorites() {
+        addToFavorites.setVisibility(View.GONE);
+        removeFromFavorites.setVisibility(View.VISIBLE);
+    }
+
+    private void removeFromFavorites() {
+        addToFavorites.setVisibility(View.VISIBLE);
+        removeFromFavorites.setVisibility(View.GONE);
+    }
+
 }
