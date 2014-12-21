@@ -181,8 +181,11 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
             }
             try {
                 Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
-                boolean isFavorite = _manga.isFavorite();
-                manga.setFavorite(isFavorite);
+                boolean isFavorite = false;
+                if (_manga != null) {
+                    manga.setId(_manga.getId());
+                    manga.setFavorite(_manga.isFavorite());
+                }
             } catch (DatabaseAccessException e) {
                 error = e.getMessage();
                 Log.d(TAG, e.getMessage());
