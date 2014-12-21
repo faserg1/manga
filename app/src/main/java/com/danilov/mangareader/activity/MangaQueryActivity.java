@@ -79,6 +79,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         searchResultsView = (GridView) findViewById(R.id.search_results);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(repository.getName());
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -315,6 +316,16 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             }
         });
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class MangaSuggestionsAdapter extends CursorAdapter {

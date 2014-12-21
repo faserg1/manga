@@ -282,15 +282,16 @@ public class AdultmangaEngine implements RepositoryEngine {
 
     private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
         Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
-        if (mangaDescriptionElements.isEmpty()) {
-            return false;
+        Elements links = null;
+        if (!mangaDescriptionElements.isEmpty()) {
+            Element mangaDescription = mangaDescriptionElements.first();
+            links = mangaDescription.getElementsByTag("a");
+            if (!links.isEmpty()) {
+                links.remove();
+            }
+            String description = mangaDescription.text();
+            manga.setDescription(description);
         }
-        Element mangaDescription = mangaDescriptionElements.first();
-        Elements links = mangaDescription.getElementsByTag("a");
-        if (!links.isEmpty()) {
-            links.remove();
-        }
-        String description = mangaDescription.text();
         Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
         int quantity = 0;
         if (chaptersElements.isEmpty()) {
@@ -301,7 +302,6 @@ public class AdultmangaEngine implements RepositoryEngine {
             quantity = links.size();
         }
         manga.setChaptersQuantity(quantity);
-        manga.setDescription(description);
         if (manga.getCoverUri() != null) {
             return true;
         }
@@ -309,13 +309,13 @@ public class AdultmangaEngine implements RepositoryEngine {
         String coverUri = null;
         if (coverContainer.size() >= 1) {
             Element cover = coverContainer.get(0);
-            Elements coverUriElements = cover.getElementsByClass(coverClass);
+            Elements coverUriElements = cover.getElementsByClass(coverClass); //cover.getElementsByClass(altCoverClass);
             if (coverUriElements.size() >= 1) {
                 //a lot of images
                 Element e = coverUriElements.get(0);
                 coverUri = e.attr("href");
             } else {
-                coverUriElements = cover.getElementsByClass(altCoverClass);
+                coverUriElements = cover.getElementsByClass(altCoverClass); // cover.getElementsByClass(coverClass);
                 if (coverUriElements.size() >= 1) {
                     //more than one
                     coverUri = coverUriElements.get(0).attr("href");

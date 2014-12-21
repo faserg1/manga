@@ -280,15 +280,16 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
         Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
-        if (mangaDescriptionElements.isEmpty()) {
-            return false;
+        Elements links = null;
+        if (!mangaDescriptionElements.isEmpty()) {
+            Element mangaDescription = mangaDescriptionElements.first();
+            links = mangaDescription.getElementsByTag("a");
+            if (!links.isEmpty()) {
+                links.remove();
+            }
+            String description = mangaDescription.text();
+            manga.setDescription(description);
         }
-        Element mangaDescription = mangaDescriptionElements.first();
-        Elements links = mangaDescription.getElementsByTag("a");
-        if (!links.isEmpty()) {
-            links.remove();
-        }
-        String description = mangaDescription.text();
         Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
         int quantity = 0;
         if (chaptersElements.isEmpty()) {
@@ -299,7 +300,6 @@ public class ReadmangaEngine implements RepositoryEngine {
             quantity = links.size();
         }
         manga.setChaptersQuantity(quantity);
-        manga.setDescription(description);
         if (manga.getCoverUri() != null) {
             return true;
         }
