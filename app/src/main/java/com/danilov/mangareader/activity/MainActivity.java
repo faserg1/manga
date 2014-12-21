@@ -128,7 +128,7 @@ public class MainActivity extends BaseToolbarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        testShowHeadsUp();
+//        testShowHeadsUp();
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:

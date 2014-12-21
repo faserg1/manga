@@ -1,41 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
 
-    <item android:state_checked="false"
+    <item
+        android:state_checked="false"
         android:state_pressed="true"
+        app:state_checked_cross="false"
         android:drawable="@drawable/mangaholotheme_btn_check_off_pressed_holo_light" /> <!-- unchecked pressed -->
 
-    <item android:state_checked="false"
+    <item
+        app:state_checked_cross="false"
+        android:state_checked="false"
         android:state_selected="true"
         android:drawable="@drawable/mangaholotheme_btn_check_off_focused_holo_light" /> <!-- unchecked selected -->
 
-    <item android:state_checked="true"
+    <item
+        android:state_checked="true"
         android:state_pressed="false"
         android:state_focused="false"
+        app:state_checked_cross="false"
         android:drawable="@drawable/mangaholotheme_btn_check_on_holo_light" /> <!-- checked -->
 
-    <item android:state_checked="true"
+    <item
+        android:state_checked="true"
         android:state_pressed="true"
+        app:state_checked_cross="false"
         android:drawable="@drawable/mangaholotheme_btn_check_on_pressed_holo_light" /> <!-- checked pressed-->
 
-    <item android:state_checked="true"
+    <item
+        app:state_checked_cross="false"
+        android:state_checked="true"
         android:state_selected="true"
         android:drawable="@drawable/mangaholotheme_btn_check_on_focused_holo_light" /> <!-- checked selected-->
 
-    <item android:state_middle="true"
+    <item
+        app:state_checked_cross="true"
         android:state_pressed="false"
         android:state_focused="false"
-        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light" /> <!-- middle -->
+        android:drawable="@drawable/crossed" /> <!-- crossed -->
 
-    <item android:state_middle="true"
+    <item
+        app:state_checked_cross="true"
+        android:state_checked="false"
         android:state_pressed="true"
-        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light" /> <!-- middle pressed-->
+        android:drawable="@drawable/crossed_pressed" /> <!-- crossed pressed-->
 
-    <item android:state_middle="true"
+    <item
+        app:state_checked_cross="true"
         android:state_selected="true"
-        android:drawable="@drawable/mangaholotheme_btn_check_on_disabled_holo_light"  /> <!-- middle selected-->
+        android:drawable="@drawable/crossed_selected"  /> <!-- crossed selected-->
 
     <item android:drawable="@drawable/mangaholotheme_btn_check_off_holo_light" /> <!-- unchecked -->
 </selector>

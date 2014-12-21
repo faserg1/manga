@@ -5,4 +5,9 @@
         <attr name="panEnabled" format="boolean"/>
         <attr name="zoomEnabled" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="TriStateCheckbox">
+        <attr name="state_checked_cross" format="boolean" />
+    </declare-styleable>
+
 </resources>
