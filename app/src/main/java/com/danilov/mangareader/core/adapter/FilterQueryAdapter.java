@@ -5,13 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.widget.TriStateCheckbox;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Semyon on 22.12.2014.
@@ -19,6 +23,7 @@ import java.util.List;
 
 public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, RepositoryEngine.FilterGroup> {
 
+    private Map<RepositoryEngine.Filter, Object> values = new HashMap<>();
 
     private int elementsInRow = 0;
     private List<RepositoryEngine.FilterGroup> filterGroups;
@@ -112,7 +117,7 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
 
     @Override
     public void onBindViewHolder(final Holder holder, final int position) {
-        RepositoryEngine.Filter filter = getFilterByPos(position);
+        final RepositoryEngine.Filter filter = getFilterByPos(position);
         String filterGroupName = getFilterGroupNameOrTitleByPos(position);
         if (filterGroupName == null) {
             holder.hide();
@@ -122,12 +127,36 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
         if (filter == null) {
             holder.setTitle(filterGroupName);
         } else {
+            Integer value = (Integer) values.get(filter);
             switch (filter.getType()) {
                 case TRI_STATE:
                     holder.setTriStateCheckboxText(filter.getName());
+                    holder.triStateCheckbox.setTriStateListener(null);
+                    if (value != null) {
+                        holder.triStateCheckbox.setState(value);
+                    } else {
+                        holder.triStateCheckbox.setState(TriStateCheckbox.UNCHECKED);
+                    }
+                    holder.triStateCheckbox.setTriStateListener(new TriStateCheckbox.TriStateListener() {
+                        @Override
+                        public void onStateChanged(final int state) {
+                            values.put(filter, state);
+                        }
+                    });
                     break;
                 case TWO_STATE:
                     holder.setCheckboxText(filter.getName());
+                    if (value != null) {
+                        holder.checkBox.setChecked(value != 0);
+                    } else {
+                        holder.checkBox.setChecked(false);
+                    }
+                    holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
+                            values.put(filter, b ? 1 : 0);
+                        }
+                    });
                     break;
             }
         }

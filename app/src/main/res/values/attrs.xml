@@ -8,6 +8,7 @@
 
     <declare-styleable name="TriStateCheckbox">
         <attr name="state_checked_cross" format="boolean" />
+        <attr name="state_checked" format="boolean" />
     </declare-styleable>
 
 </resources>

@@ -18,8 +18,10 @@ public class TriStateCheckbox extends CompoundButton implements CompoundButton.O
     private int state = UNCHECKED;
 
     private boolean isCheckedCross = false;
+    private boolean isChecked = false;
 
     private static final int[] STATE_CHECKED_CROSS = {R.attr.state_checked_cross};
+    private static final int[] STATE_CHECKED = {R.attr.state_checked};
 
     private TriStateListener _listener;
 
@@ -38,6 +40,33 @@ public class TriStateCheckbox extends CompoundButton implements CompoundButton.O
         setOnCheckedChangeListener(this);
     }
 
+    public void setState(final int state) {
+        this.state = state;
+        switch (state) {
+            case UNCHECKED:
+                setCheckedCross(false);
+                setCChecked(false);
+                break;
+            case CHECKED:
+                setCheckedCross(false);
+                setCChecked(true);
+                break;
+            case CROSSED:
+                setCChecked(false);
+                setCheckedCross(true);
+                break;
+        }
+        refreshDrawableState();
+    }
+
+    public void setTriStateListener(final TriStateListener _listener) {
+        this._listener = _listener;
+    }
+
+    public void setCChecked(final boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+
     @Override
     public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
         state++;
@@ -46,21 +75,25 @@ public class TriStateCheckbox extends CompoundButton implements CompoundButton.O
         }
         switch (state) {
             case UNCHECKED:
-                setChecked(false);
                 setCheckedCross(false);
+                setCChecked(false);
                 break;
             case CHECKED:
-                setChecked(true);
                 setCheckedCross(false);
+                setCChecked(true);
                 break;
             case CROSSED:
-                setChecked(false);
                 setCheckedCross(true);
+                setCChecked(false);
                 break;
         }
         if (_listener != null) {
             _listener.onStateChanged(state);
         }
+    }
+
+    public boolean isCChecked() {
+        return isChecked;
     }
 
     public void onCheckChanged(TriStateCheckbox view, int state){
@@ -81,10 +114,13 @@ public class TriStateCheckbox extends CompoundButton implements CompoundButton.O
         if (isCheckedCross) {
             mergeDrawableStates(drawableState, STATE_CHECKED_CROSS);
         }
+        if (isChecked) {
+            mergeDrawableStates(drawableState, STATE_CHECKED);
+        }
         return drawableState;
     }
 
-    private interface TriStateListener {
+    public interface TriStateListener {
         public void onStateChanged(final int state);
     }
 
