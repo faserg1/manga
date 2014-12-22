@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:padding="15dp"
+              android:layout_height="70dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content"/>
+
+    <com.danilov.mangareader.core.widget.TriStateCheckbox
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:textColor="@android:color/black"
+        android:id="@+id/triStateCheckbox"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:text="Эччи"
+        android:id="@+id/checkbox"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

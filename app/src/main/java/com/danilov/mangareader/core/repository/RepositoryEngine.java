@@ -5,6 +5,7 @@ import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.model.MangaSuggestion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public interface RepositoryEngine {
      * @param query user input
      * @return list of mangas matching query
      */
-    List<Manga> queryRepository(final String query);
+    List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues);
 
     /**
      * Getting info about manga (description and chapters)
@@ -46,6 +47,8 @@ public interface RepositoryEngine {
     String getBaseSearchUri();
 
     String getBaseUri();
+
+    public List<FilterGroup> getFilters();
 
     //enum of names containing matched engines
     public enum Repository {
@@ -87,6 +90,86 @@ public interface RepositoryEngine {
 
         public RepositoryEngine getEngine() {
             return engine;
+        }
+
+    }
+
+    public class FilterGroup {
+
+        private List<Filter> filters;
+
+        private String name;
+
+        public FilterGroup(final String name, final int size) {
+            this.name = name;
+            filters = new ArrayList<>(size);
+        }
+
+        public int size() {
+            return filters.size();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void add(final Filter filter) {
+            this.filters.add(filter);
+        }
+
+        public Filter get(final int i) {
+            return filters.get(i);
+        }
+
+    }
+
+    public abstract class Filter<T> {
+
+        private String name;
+
+        public Filter(final String name) {
+            this.name = name;
+        }
+
+        public abstract FilterType getType();
+
+        public String getName() {
+            return name;
+        }
+
+        public FilterValue newValue() {
+            return new FilterValue(this);
+        }
+
+        public abstract String apply(final String uri, final FilterValue value);
+
+        public enum FilterType {
+            TRI_STATE,
+            TWO_STATE;
+        }
+
+        public class FilterValue {
+
+            private Filter<T> filter;
+
+            private T value;
+
+            public FilterValue(final Filter<T> filter) {
+                this.filter = filter;
+            }
+
+            private void setValue(final T value) {
+                this.value = value;
+            }
+
+            public T getValue() {
+                return value;
+            }
+
+            public String apply(final String uri) {
+                return filter.apply(uri, this);
+            }
+
         }
 
     }

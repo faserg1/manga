@@ -25,7 +25,7 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final String query) {
+    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) {
         return null;
     }
 
@@ -174,6 +174,11 @@ public class OfflineEngine implements RepositoryEngine {
 
     @Override
     public String getBaseUri() {
+        return null;
+    }
+
+    @Override
+    public List<FilterGroup> getFilters() {
         return null;
     }
 

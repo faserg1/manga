@@ -43,7 +43,7 @@ public class QueryTestActivity extends Activity implements View.OnClickListener,
             public void run() {
                 RepositoryEngine repositoryEngine = new ReadmangaEngine();
                 String q = query.getText().toString();
-                final List<Manga> mangaList = repositoryEngine.queryRepository(q);
+                final List<Manga> mangaList = repositoryEngine.queryRepository(q, null);
                 runOnUiThread(new Runnable() {
 
                     @Override

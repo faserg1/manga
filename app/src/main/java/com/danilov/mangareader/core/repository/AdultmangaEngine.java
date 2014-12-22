@@ -5,6 +5,7 @@ import com.danilov.mangareader.core.http.*;
 import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.model.MangaSuggestion;
+import com.danilov.mangareader.core.repository.filter.BasicFilters;
 import com.danilov.mangareader.core.util.IoUtils;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
@@ -72,7 +73,7 @@ public class AdultmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final String query) {
+    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         if (httpBytesReader != null) {
@@ -367,5 +368,78 @@ public class AdultmangaEngine implements RepositoryEngine {
     public String getBaseUri() {
         return baseUri;
     }
+
+
+
+    private List<FilterGroup> filterGroups = new ArrayList<>(2);
+
+    {
+        FilterGroup categories = new FilterGroup("Категории", 13);
+        categories.add(new BasicFilters.RABaseTriState("В цвете", "el_7290"));
+        categories.add(new BasicFilters.RABaseTriState("Веб", "el_2160"));
+        categories.add(new BasicFilters.RABaseTriState("Ёнкома", "el_2161"));
+        categories.add(new BasicFilters.RABaseTriState("Комикс западный", "el_3515"));
+        categories.add(new BasicFilters.RABaseTriState("Манхва", "el_3001"));
+        categories.add(new BasicFilters.RABaseTriState("Маньхуа", "el_3002"));
+        categories.add(new BasicFilters.RABaseTriState("Сборник", "el_2157"));
+        categories.add(new BasicFilters.RABaseTriState("Высокий рейтинг", "s_high_rate"));
+        categories.add(new BasicFilters.RABaseTriState("Сингл", "s_single"));
+        categories.add(new BasicFilters.RABaseTriState("Для взрослых", "s_mature"));
+        categories.add(new BasicFilters.RABaseTriState("Завершенная", "s_completed"));
+        categories.add(new BasicFilters.RABaseTriState("Переведено", "s_translated"));
+        categories.add(new BasicFilters.RABaseTriState("Ожидает загрузки", "s_wait_upload"));
+        FilterGroup genres = new FilterGroup("Жанр", 40);
+
+        genres.add(new BasicFilters.RABaseTriState("Арт", "el_5685"));
+        genres.add(new BasicFilters.RABaseTriState("Боевик", "el_2155"));
+        genres.add(new BasicFilters.RABaseTriState("Боевые искусства", "el_2143"));
+        genres.add(new BasicFilters.RABaseTriState("Вампиры", "el_2148"));
+        genres.add(new BasicFilters.RABaseTriState("Гарем", "el_2142"));
+        genres.add(new BasicFilters.RABaseTriState("Гендерная интрига", "el_2156"));
+        genres.add(new BasicFilters.RABaseTriState("Героическое фэнтези", "el_2146"));
+        genres.add(new BasicFilters.RABaseTriState("Детектив", "el_2152"));
+        genres.add(new BasicFilters.RABaseTriState("Дзёсэй", "el_2158"));
+        genres.add(new BasicFilters.RABaseTriState("Додзинси", "el_2141"));
+        genres.add(new BasicFilters.RABaseTriState("Драма", "el_2118"));
+        genres.add(new BasicFilters.RABaseTriState("Игра", "el_2154"));
+        genres.add(new BasicFilters.RABaseTriState("История", "el_2119"));
+        genres.add(new BasicFilters.RABaseTriState("Кодомо", "el_2137"));
+        genres.add(new BasicFilters.RABaseTriState("Комедия", "el_2136"));
+        genres.add(new BasicFilters.RABaseTriState("Махо-сёдзё", "el_2147"));
+        genres.add(new BasicFilters.RABaseTriState("Меха", "el_2126"));
+        genres.add(new BasicFilters.RABaseTriState("Мистика", "el_2132"));
+        genres.add(new BasicFilters.RABaseTriState("Научная фантастика", "el_2133"));
+        genres.add(new BasicFilters.RABaseTriState("Повседневность", "el_2135"));
+        genres.add(new BasicFilters.RABaseTriState("Постапокалиптика", "el_2151"));
+        genres.add(new BasicFilters.RABaseTriState("Приключения", "el_2130"));
+        genres.add(new BasicFilters.RABaseTriState("Психология", "el_2144"));
+        genres.add(new BasicFilters.RABaseTriState("Романтика", "el_2121"));
+        genres.add(new BasicFilters.RABaseTriState("Самурайский боевик", "el_2124"));
+        genres.add(new BasicFilters.RABaseTriState("Сверхъестественное", "el_2159"));
+        genres.add(new BasicFilters.RABaseTriState("Сёдзё", "el_2122"));
+        genres.add(new BasicFilters.RABaseTriState("Сёдзё-ай", "el_2128"));
+        genres.add(new BasicFilters.RABaseTriState("Сёнэн", "el_2134"));
+        genres.add(new BasicFilters.RABaseTriState("Сёнэн-ай", "el_2139"));
+        genres.add(new BasicFilters.RABaseTriState("Спорт", "el_2129"));
+        genres.add(new BasicFilters.RABaseTriState("Сэйнэн", "el_2138"));
+        genres.add(new BasicFilters.RABaseTriState("Трагедия", "el_2153"));
+        genres.add(new BasicFilters.RABaseTriState("Триллер", "el_2150"));
+        genres.add(new BasicFilters.RABaseTriState("Ужасы", "el_2125"));
+        genres.add(new BasicFilters.RABaseTriState("Фантастика", "el_2140"));
+        genres.add(new BasicFilters.RABaseTriState("Фэнтези", "el_2131"));
+        genres.add(new BasicFilters.RABaseTriState("Школа", "el_2127"));
+        genres.add(new BasicFilters.RABaseTriState("Этти", "el_2149"));
+        genres.add(new BasicFilters.RABaseTriState("Юри", "el_2123"));
+
+        filterGroups.add(genres);
+        filterGroups.add(categories);
+
+    }
+
+    @Override
+    public List<FilterGroup> getFilters() {
+        return filterGroups;
+    }
+
 
 }

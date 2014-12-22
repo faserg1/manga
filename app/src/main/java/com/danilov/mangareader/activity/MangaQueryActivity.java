@@ -20,6 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.danilov.mangareader.R;
+import com.danilov.mangareader.core.adapter.FilterQueryAdapter;
 import com.danilov.mangareader.core.adapter.MangaListAdapter;
 import com.danilov.mangareader.core.adapter.PopupButtonClickListener;
 import com.danilov.mangareader.core.model.Manga;
@@ -47,6 +48,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     public static final String[] COLUMNS = {CURSOR_ID, CURSOR_NAME, CURSOR_LINK};
 
     private GridView searchResultsView;
+
+    private GridView filters;
 
     private SearchView searchView;
 
@@ -80,6 +83,10 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(repository.getName());
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        filters = (GridView) findViewById(R.id.filters);
+        filters.setAdapter(new FilterQueryAdapter(getApplicationContext(), 2, engine.getFilters()));
+
     }
 
     @Override
@@ -142,7 +149,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             if (params == null || params.length < 1) {
                 return null;
             }
-            return engine.queryRepository(params[0]);
+            return engine.queryRepository(params[0], null);
         }
 
         @Override

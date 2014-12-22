@@ -1,0 +1,14 @@
+function asd() {
+    var str = "";
+    var params = $(".cTable .js-link");
+    var pattern = "this, '(.*)'";
+    for (var i = 0; i < params.length; i++) {
+         var param = params[i];
+         var name = param.title;
+         name = name.charAt(0).toUpperCase() + name.substring(1, name.length);
+         var onclick = param.onclick.toString();
+         var v = onclick.match(pattern)[1];
+         str += 'categories.add(new BasicFilters.RABaseTriState("' + name + '", "' + v + '"));\n'
+    }
+    console.log(str);
+}

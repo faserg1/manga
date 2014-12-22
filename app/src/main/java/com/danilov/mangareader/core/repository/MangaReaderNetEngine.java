@@ -81,7 +81,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(String query) {
+    public List<Manga> queryRepository(String query, final List<Filter.FilterValue> filterValues) {
         return null;
     }
 
@@ -216,6 +216,11 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     @Override
     public String getBaseUri() {
         return baseUri;
+    }
+
+    @Override
+    public List<FilterGroup> getFilters() {
+        return null;
     }
 
     private String imgContainerId = "mangaimg";
