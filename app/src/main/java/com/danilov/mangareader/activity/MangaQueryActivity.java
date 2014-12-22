@@ -85,8 +85,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         filters = (GridView) findViewById(R.id.filters);
-        filters.setAdapter(new FilterQueryAdapter(getApplicationContext(), 2, engine.getFilters()));
-
+        Integer numCols = Integer.valueOf(filters.getTag().toString());
+        filters.setAdapter(new FilterQueryAdapter(getApplicationContext(), numCols, engine.getFilters()));
     }
 
     @Override

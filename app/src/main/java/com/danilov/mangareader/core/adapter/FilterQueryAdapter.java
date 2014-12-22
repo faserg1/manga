@@ -32,8 +32,10 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
 
     private int totalSize = 0;
 
+    //размеры груп фильтров
     private int[] sizes;
 
+    //номер фильтра по позиции в списке (пустота тоже считается)
     private int[] posWithFilters;
 
     private void init() {
@@ -42,7 +44,7 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
             int filterGroupSize = filterGroups.get(i).size();
             int left = filterGroupSize % elementsInRow;
 
-            int sz = filterGroupSize + (left != 0 ? elementsInRow - left : 0) + (elementsInRow - 1);
+            int sz = filterGroupSize + (left != 0 ? elementsInRow - left : 0) + elementsInRow;
             totalSize += sz;
 
             sizes[i] = sz;
@@ -75,7 +77,7 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
         inGroupPos -= szToRemove;
 
         if (inGroupPos < 0) {
-            //это название
+            //это название или пустота
             return null;
         }
 
@@ -95,8 +97,12 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
         inGroupPos -= szToRemove;
 
         if (inGroupPos < 0) {
-            //это название
-            return filterGroup.getName();
+            //это название или пустота
+            if (Math.abs(inGroupPos) == elementsInRow) {
+                return filterGroup.getName();
+            } else {
+                return null;
+            }
         }
 
         return filterGroup.size() > inGroupPos ? filterGroup.get(inGroupPos).getName() : null;
