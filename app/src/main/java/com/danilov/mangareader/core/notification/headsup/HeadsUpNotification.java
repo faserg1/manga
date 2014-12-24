@@ -52,6 +52,7 @@ public class HeadsUpNotification {
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
         lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+        lp.y = 50;
         wm.addView(contentView, lp);
     }
 
