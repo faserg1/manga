@@ -55,6 +55,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private MangaListAdapter adapter = null;
 
+    private FilterQueryAdapter filterQueryAdapter = null;
+
     private List<Manga> foundManga = null;
 
     private RepositoryEngine.Repository repository;
@@ -86,7 +88,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
         filters = (GridView) findViewById(R.id.filters);
         Integer numCols = Integer.valueOf(filters.getTag().toString());
-        filters.setAdapter(new FilterQueryAdapter(getApplicationContext(), numCols, engine.getFilters()));
+        filterQueryAdapter = new FilterQueryAdapter(getApplicationContext(), numCols, engine.getFilters());
+        filters.setAdapter(filterQueryAdapter);
     }
 
     @Override
@@ -149,7 +152,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             if (params == null || params.length < 1) {
                 return null;
             }
-            return engine.queryRepository(params[0], null);
+            return engine.queryRepository(params[0], filterQueryAdapter.getFilterValues());
         }
 
         @Override
@@ -271,6 +274,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
             @Override
             public boolean onQueryTextSubmit(final String query) {
+                filters.setVisibility(View.INVISIBLE);
                 QueryTask task = new QueryTask();
                 task.execute(query);
                 closeKeyboard();

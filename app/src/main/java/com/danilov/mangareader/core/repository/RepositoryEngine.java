@@ -138,7 +138,7 @@ public interface RepositoryEngine {
         }
 
         public FilterValue newValue() {
-            return new FilterValue(this);
+            return new FilterValue();
         }
 
         public abstract String apply(final String uri, final FilterValue value);
@@ -150,15 +150,12 @@ public interface RepositoryEngine {
 
         public class FilterValue {
 
-            private Filter<T> filter;
-
             private T value;
 
-            public FilterValue(final Filter<T> filter) {
-                this.filter = filter;
+            public FilterValue() {
             }
 
-            private void setValue(final T value) {
+            public void setValue(final T value) {
                 this.value = value;
             }
 
@@ -167,7 +164,7 @@ public interface RepositoryEngine {
             }
 
             public String apply(final String uri) {
-                return filter.apply(uri, this);
+                return Filter.this.apply(uri, this);
             }
 
         }

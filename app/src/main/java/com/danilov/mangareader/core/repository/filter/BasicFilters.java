@@ -28,7 +28,7 @@ public class BasicFilters {
         public String apply(final String uri, final FilterValue value) {
             Integer val = value.getValue();
             String strVal = vals[val];
-            return uri + "&" + paramName + strVal;
+            return uri + "&" + paramName + "=" + strVal;
         }
 
     }

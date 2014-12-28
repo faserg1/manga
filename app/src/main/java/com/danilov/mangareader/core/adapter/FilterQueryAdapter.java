@@ -12,6 +12,7 @@ import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.widget.TriStateCheckbox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,8 +114,6 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
         return filterGroup.size() > inGroupPos ? filterGroup.get(inGroupPos).getName() : null;
     }
 
-
-
     @Override
     public void onBindViewHolder(final Holder holder, final int position) {
         final RepositoryEngine.Filter filter = getFilterByPos(position);
@@ -160,6 +159,17 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
                     break;
             }
         }
+    }
+
+    public List<RepositoryEngine.Filter.FilterValue> getFilterValues() {
+        List<RepositoryEngine.Filter.FilterValue> filterValues = new ArrayList<>(values.size());
+        for (Map.Entry<RepositoryEngine.Filter, Object> entry : values.entrySet()) {
+            RepositoryEngine.Filter f = entry.getKey();
+            RepositoryEngine.Filter.FilterValue filterValue = f.newValue();
+            filterValue.setValue(entry.getValue());
+            filterValues.add(filterValue);
+        }
+        return filterValues;
     }
 
     @Override
