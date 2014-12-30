@@ -57,7 +57,7 @@ public class MangaDAO {
         databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler(), true, TABLE_NAME);
     }
 
-    public synchronized void addManga(final Manga manga) throws DatabaseAccessException {
+    public synchronized long addManga(final Manga manga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
 
@@ -80,7 +80,7 @@ public class MangaDAO {
         }
 
         try {
-            db.insertOrThrow(TABLE_NAME, null, cv);
+            return db.insertOrThrow(TABLE_NAME, null, cv);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());

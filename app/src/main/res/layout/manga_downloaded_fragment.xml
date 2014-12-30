@@ -9,7 +9,7 @@
      <GridView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:numColumns="auto_fit"
-              android:columnWidth="130dp"
+              android:columnWidth="@dimen/grid_item_width"
               android:listSelector="#00000000"
               android:id="@+id/grid_view"
               android:cacheColorHint="@android:color/transparent">

@@ -17,6 +17,7 @@ import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.application.ApplicationSettings;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.HistoryDAO;
+import com.danilov.mangareader.core.database.MangaDAO;
 import com.danilov.mangareader.core.interfaces.MangaShowObserver;
 import com.danilov.mangareader.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareader.core.model.LocalManga;
@@ -85,13 +86,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         this.prevBtn = findViewById(R.id.prevBtn);
         this.nextBtnBottom = findViewById(R.id.nextBtnBottom);
         this.prevBtnBottom = findViewById(R.id.prevBtnBottom);
-        this.currentImageEditText = (EditText) findViewById(R.id.imagePicker);
-        this.totalImagesTextView = (TextView)findViewById(R.id.imageQuantity);
-        this.currentChapterEditText = (EditText) findViewById(R.id.chapterPicker);
-        this.totalChaptersTextView = (TextView) findViewById(R.id.chapterQuantity);
-        this.imageProgressBar = (ProgressBar) findViewById(R.id.imageProgressBar);
-        this.imageOk = (Button) findViewById(R.id.imageOk);
-        this.chapterOk = (Button) findViewById(R.id.chapterOk);
+        this.currentImageEditText = findViewWithId(R.id.imagePicker);
+        this.totalImagesTextView = findViewWithId(R.id.imageQuantity);
+        this.currentChapterEditText = findViewWithId(R.id.chapterPicker);
+        this.totalChaptersTextView = findViewWithId(R.id.chapterQuantity);
+        this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
+        this.imageOk = findViewWithId(R.id.imageOk);
+        this.chapterOk = findViewWithId(R.id.chapterOk);
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorialView = findViewById(R.id.tutorialView);
@@ -105,7 +106,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(true);
-        Button closeTutorial = (Button) findViewById(R.id.close_tutorial);
+        Button closeTutorial = findViewWithId(R.id.close_tutorial);
         closeTutorial.setOnClickListener(this);
         boolean isTutorialPassed = settings.isTutorialViewerPassed();
         if (isTutorialPassed) {
@@ -137,9 +138,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         InAndOutAnim prev = new InAndOutAnim(prevInAnim, prevOutAnim);
         prev.setDuration(150);
 
-        if (manga instanceof LocalManga) {
+        if (manga.isDownloaded()) {
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
         } else {
+            prepareOnlineManga();
             currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
         }
         currentStrategy.setOnStrategyListener(this);
@@ -150,6 +152,33 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             init();
         }
         closeKeyboard();
+    }
+
+    private void prepareOnlineManga() {
+
+        //TODO: if got id don't go to DAO
+        MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+
+        Manga _manga = null;
+        try {
+            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+            //TODO: show dialog "HISTORY WILL NOT BE SAVED" etc
+        }
+        if (_manga != null) {
+            manga.setId(_manga.getId());
+            manga.setFavorite(_manga.isFavorite());
+        } else {
+            try {
+                long id = mangaDAO.addManga(manga);
+                manga.setId((int) id);
+            } catch (DatabaseAccessException e) {
+                e.printStackTrace();
+                //TODO: show dialog "HISTORY WILL NOT BE SAVED" etc
+            }
+        }
+
     }
 
     /**

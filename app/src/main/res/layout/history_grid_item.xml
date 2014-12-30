@@ -53,6 +53,7 @@
             android:layout_below="@+id/card_wrapper"
             android:src="@drawable/card_shadow"
             android:layout_height="@dimen/card_shadow"
+            android:scaleType="centerCrop"
             android:layout_width="fill_parent"/>
 
 </RelativeLayout>

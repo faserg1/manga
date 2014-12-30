@@ -91,7 +91,7 @@ public class HistoryDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-            mangaList = new ArrayList<HistoryElement>(cursor.getCount());
+            mangaList = new ArrayList<>(cursor.getCount());
             int idIndex = cursor.getColumnIndex(ID);
             int localIdIndex = cursor.getColumnIndex(MANGA_ID);
             int chapterIndex = cursor.getColumnIndex(CHAPTER);

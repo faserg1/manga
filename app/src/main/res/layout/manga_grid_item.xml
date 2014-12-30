@@ -10,7 +10,7 @@
               android:paddingBottom="2dp">
 
     <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="210dp"
+                  android:layout_height="@dimen/grid_item_height"
                   android:background="@drawable/grid_item_background"
                   android:orientation="vertical"
                   android:padding="10dp"
@@ -18,7 +18,8 @@
 
 
         <ImageView android:layout_width="fill_parent"
-                   android:layout_height="170dp"
+                   android:layout_height="@dimen/grid_item_image_height"
+                   android:scaleType="centerCrop"
                    android:id="@+id/manga_cover"/>
 
         <RelativeLayout
@@ -34,6 +35,7 @@
                 android:layout_toStartOf="@+id/popup_button"
                 android:ellipsize="marquee"
                 android:focusable="true"
+                android:textSize="@dimen/grid_item_text_size"
                 android:focusableInTouchMode="true"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
@@ -61,13 +63,13 @@
             android:layout_below="@id/card_wrapper"/>
 
     <View android:layout_width="fill_parent"
-        android:layout_height="210dp"
+        android:layout_height="@dimen/grid_item_height"
         android:id="@+id/selectorBackground"
         android:background="@color/selected_color">
     </View>
 
     <View android:layout_width="fill_parent"
-        android:layout_height="210dp"
+        android:layout_height="@dimen/grid_item_height"
         android:id="@+id/background"
         android:background="@drawable/selectable_item_background">
     </View>
