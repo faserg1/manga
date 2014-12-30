@@ -17,8 +17,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.danilov.mangareader.R;
+import com.danilov.mangareader.activity.FolderPickerActivity;
 import com.danilov.mangareader.activity.MainActivity;
 import com.danilov.mangareader.activity.MangaInfoActivity;
+import com.danilov.mangareader.core.application.ApplicationSettings;
+import com.danilov.mangareader.core.application.MangaApplication;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.MangaDAO;
 import com.danilov.mangareader.core.database.UpdatesDAO;
@@ -35,7 +38,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class MainFragment extends BaseFragment implements AdapterView.OnItemClickListener{
+public class MainFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private Button update;
     private GridView updatesView;
@@ -61,9 +64,24 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String path = data.getStringExtra(FolderPickerActivity.FOLDER_KEY);
+        ApplicationSettings settings = ApplicationSettings.get(getActivity());
+        settings.setMangaDownloadBasePath(path);
+        settings.update(getActivity());
+    }
+
+    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         updatesView = findViewById(R.id.updates);
         update = findViewById(R.id.update);
+        ((Button) findViewById(R.id.select_folder)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                startActivityForResult(new Intent(activity, FolderPickerActivity.class), 1);
+            }
+        });
         List<UpdatesElement> _updates = null;
         try {
             _updates = updatesDAO.getAllUpdates();

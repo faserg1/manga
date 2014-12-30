@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Manga Reader+</string>
-    <!--sv means string values-->
+    <!-- sv means string values -->
     <string name="sv_download">Download</string>
     <string name="sv_back">Back</string>
     <string name="sv_delete">Delete</string>
@@ -19,17 +20,14 @@
     <string name="sv_toggle_full_screen">Toggle full screen</string>
     <string name="sv_disable_full_screen">Disable full screen</string>
     <string name="sv_filter">Filter</string>
-
     <string name="p_internet_error">Problems with internet connection</string>
     <string name="p_failed_to_load_chapter_info">Failed to load chapter info: </string>
     <string name="p_failed_to_show_loaded">Failed to show downloaded manga: </string>
     <string name="p_failed_to_delete">Failed delete manga: </string>
-
     <string name="sv_search">Search</string>
     <string name="sv_read_online">Read online</string>
     <string name="sv_drawer_open">Open menu</string>
     <string name="sv_drawer_close">Close menu</string>
-
     <string name="menu_updates">Updates</string>
     <string name="menu_search">Search</string>
     <string name="menu_history">History</string>
@@ -37,9 +35,11 @@
     <string name="menu_local">Downloads</string>
     <string name="menu_download">Download Manager</string>
     <string name="menu_settings">Settings</string>
-
     <string name="cap_page">Page</string>
     <string name="cap_chapter">Chapter</string>
     <string name="tutorial_viewer">Click on the blue highlighted area to move backward and forward through the chapter</string>
+    <string name="title_activity_folder_picker">FolderPickerActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

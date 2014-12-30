@@ -65,15 +65,20 @@
             android:name=".activity.HistoryActivity"
             android:label="History" />
         <activity
-            android:theme="@style/Theme.CustomPanel"
             android:name=".core.notification.headsupold.HeadsUpNotification$HeadsUpActivity"
-            android:label="Notification" />
+            android:label="Notification"
+            android:theme="@style/Theme.CustomPanel" />
 
         <service android:name=".core.service.MangaDownloadService" />
         <service
             android:name=".core.service.MangaUpdateService"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".activity.FolderPickerActivity"
+            android:label="@string/title_activity_folder_picker" >
+        </activity>
     </application>
 
 </manifest>

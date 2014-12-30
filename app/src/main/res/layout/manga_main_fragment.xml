@@ -11,7 +11,16 @@
         android:layout_height="wrap_content"
         android:text="Обновить"
         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ripple"
         android:id="@+id/update"/>
+
+    <Button
+        android:id="@+id/select_folder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Выбрать путь"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/update"/>
 
     <GridView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
@@ -20,14 +29,13 @@
               android:numColumns="1"
               android:listSelector="#00000000"
               android:cacheColorHint="@android:color/transparent"
-        android:layout_below="@+id/view2">
+              android:layout_below="@+id/select_folder">
 
     </GridView>
 
     <com.danilov.mangareader.core.view.RippleView
         android:id="@+id/ripple"
         android:background="#fff"
-        android:layout_below="@+id/update"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:paddingBottom="40dp"
@@ -43,14 +51,6 @@
 
     </com.danilov.mangareader.core.view.RippleView>
 
-    <com.danilov.mangareader.core.widget.TriStateCheckbox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="#000"
-        android:id="@+id/view2"
-        android:layout_below="@+id/ripple"
-        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
