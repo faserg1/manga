@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:background="#ffe3e3e3"
               android:orientation="vertical">
 
     <include layout="@layout/toolbar"/>
-    
+
     <RelativeLayout android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:paddingTop="10dp"
@@ -18,7 +18,7 @@
         <GridView android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:id="@+id/search_results"
-                  android:numColumns="1"
+                  android:numColumns="2"
                   android:listSelector="#00000000"
                   android:cacheColorHint="@android:color/transparent">
 
@@ -27,8 +27,8 @@
         <GridView android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:id="@+id/filters"
-                  android:numColumns="1"
-                  android:tag="1"
+                  android:numColumns="2"
+                  android:tag="2"
                   android:listSelector="#00000000"
                   android:cacheColorHint="@android:color/transparent">
 

@@ -15,7 +15,8 @@
 
     <com.danilov.mangareader.core.widget.TriStateCheckbox
         android:layout_width="wrap_content"
-        android:visibility="gone"
+        android:paddingLeft="30dp"
+        android:paddingTop="5dp"
         android:textColor="@android:color/black"
         android:id="@+id/triStateCheckbox"
         android:layout_height="wrap_content"/>
