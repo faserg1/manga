@@ -53,7 +53,7 @@ public class DatabaseHelper {
             database.beginTransaction();
             try {
                 if (handler != null) {
-                    handler.onUpgrade(database);
+                    handler.onUpgrade(database, v);
                 }
                 database.setVersion(version);
                 database.setTransactionSuccessful();
@@ -85,7 +85,7 @@ public class DatabaseHelper {
             database.beginTransaction();
             try {
                 if (handler != null) {
-                    handler.onUpgrade(database);
+                    handler.onUpgrade(database, v);
                 }
                 database.setVersion(version);
                 database.setTransactionSuccessful();
@@ -118,7 +118,7 @@ public class DatabaseHelper {
             database.beginTransaction();
             try {
                 if (handler != null) {
-                    handler.onUpgrade(database);
+                    handler.onUpgrade(database, v);
                 }
                 database.setVersion(version);
                 database.setTransactionSuccessful();
@@ -147,7 +147,7 @@ public class DatabaseHelper {
             database.beginTransaction();
             try {
                 if (handler != null) {
-                    handler.onUpgrade(database);
+                    handler.onUpgrade(database, v);
                 }
                 database.setVersion(version);
                 database.setTransactionSuccessful();
@@ -160,7 +160,7 @@ public class DatabaseHelper {
 
     public static interface DatabaseUpgradeHandler {
 
-        void onUpgrade(final SQLiteDatabase database);
+        void onUpgrade(final SQLiteDatabase database, final int currentVersion);
 
     }
 

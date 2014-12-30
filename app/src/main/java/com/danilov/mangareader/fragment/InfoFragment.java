@@ -18,6 +18,8 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.activity.MangaInfoActivity;
 import com.danilov.mangareader.activity.MangaViewerActivity;
+import com.danilov.mangareader.core.animation.OverXFlipper;
+import com.danilov.mangareader.core.animation.XRotation;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.MangaDAO;
 import com.danilov.mangareader.core.interfaces.RefreshableActivity;
@@ -26,6 +28,7 @@ import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.util.BitmapUtils;
 import com.danilov.mangareader.core.util.Constants;
+import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
 
@@ -61,6 +64,8 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     private boolean isLoading = false;
     private boolean hasCoverLoaded = false;
 
+    private OverXFlipper flipper;
+
     public static InfoFragment newInstance(final Manga manga) {
         InfoFragment infoFragment = new InfoFragment();
         infoFragment.manga = manga;
@@ -94,6 +99,8 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
 
         addToFavorites.setOnClickListener(this);
         removeFromFavorites.setOnClickListener(this);
+
+        flipper = new OverXFlipper(addToFavorites, removeFromFavorites, 300);
 
         if (savedInstanceState == null) {
             Intent i = activity.getIntent();
@@ -284,7 +291,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addToFavorites() {
-
+        flipper.flip();
         try {
             mangaDAO.setFavorite(manga, manga.isDownloaded(), true);
         } catch (DatabaseAccessException e) {
@@ -293,13 +300,10 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
             Utils.showToast(context, message);
             return;
         }
-
-        addToFavorites.setVisibility(View.GONE);
-        removeFromFavorites.setVisibility(View.VISIBLE);
     }
 
     private void removeFromFavorites() {
-
+        flipper.flip();
         try {
             mangaDAO.setFavorite(manga, manga.isDownloaded(), false);
         } catch (DatabaseAccessException e) {
@@ -308,9 +312,6 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
             Utils.showToast(context, message);
             return;
         }
-
-        addToFavorites.setVisibility(View.VISIBLE);
-        removeFromFavorites.setVisibility(View.GONE);
     }
 
 }

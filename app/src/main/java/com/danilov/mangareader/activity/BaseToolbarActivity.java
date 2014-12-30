@@ -24,6 +24,10 @@ public class BaseToolbarActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
     }
 
+    public <T> T findViewWithId(final int id) {
+        return (T) super.findViewById(id);
+    }
+
     @Override
     public void setContentView(final int layoutResID) {
         super.setContentView(layoutResID);

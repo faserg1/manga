@@ -188,7 +188,7 @@ public class UpdatesDAO {
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 
         @Override
-        public void onUpgrade(final SQLiteDatabase database) {
+        public void onUpgrade(final SQLiteDatabase database, final int currentVersion) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
