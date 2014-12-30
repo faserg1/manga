@@ -3,10 +3,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:yourapp="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:title="@string/sv_filter"
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_action_storage"
+        yourapp:showAsAction="always"
+        android:visible="true">
+    </item>
+
     <item android:id="@+id/search"
           android:title="@string/sv_search"
           android:icon="@drawable/ic_action_search"
           yourapp:showAsAction="always"
           yourapp:actionViewClass="android.support.v7.widget.SearchView" />
+
 
 </menu>

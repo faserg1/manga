@@ -335,6 +335,13 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.filter:
+                if (filters.getVisibility() != View.VISIBLE) {
+                    filters.setVisibility(View.VISIBLE);
+                } else {
+                    filters.setVisibility(View.INVISIBLE);
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
