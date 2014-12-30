@@ -38,8 +38,5 @@
     <string name="cap_page">Page</string>
     <string name="cap_chapter">Chapter</string>
     <string name="tutorial_viewer">Click on the blue highlighted area to move backward and forward through the chapter</string>
-    <string name="title_activity_folder_picker">FolderPickerActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
 
 </resources>
