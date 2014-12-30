@@ -10,7 +10,7 @@
               android:paddingBottom="2dp">
 
     <RelativeLayout android:layout_width="fill_parent"
-                  android:layout_height="210dp"
+                  android:layout_height="@dimen/grid_item_height"
                   android:background="@drawable/grid_item_background"
                   android:orientation="vertical"
                   android:id="@+id/card_wrapper"
@@ -18,13 +18,14 @@
 
 
         <ImageView android:layout_width="fill_parent"
-                   android:layout_height="170dp"
+                   android:layout_height="@dimen/grid_item_image_height"
                    android:id="@+id/manga_cover"
                    android:src="@drawable/test_manga_front"/>
 
         <TextView android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:id="@+id/manga_title"
+                  android:textSize="@dimen/grid_item_text_size"
                   android:layout_below="@+id/manga_cover"
                   android:text="Bakuman"
                   android:textColor="@android:color/black"/>
@@ -54,5 +55,9 @@
             android:src="@drawable/card_shadow"
             android:layout_height="@dimen/card_shadow"
             android:layout_width="fill_parent"/>
+
+    <View android:layout_width="fill_parent"
+          android:layout_height="@dimen/grid_item_height"
+          android:background="@drawable/selectable_item_background"/>
 
 </RelativeLayout>
