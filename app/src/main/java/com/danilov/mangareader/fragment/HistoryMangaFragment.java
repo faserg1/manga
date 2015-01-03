@@ -39,15 +39,12 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class HistoryMangaFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class HistoryMangaFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private static final String TAG = "HistoryMangaFragment";
 
-    private View view;
     private GridView gridView;
     private ProgressBar historyProgressBar;
-
-    private Handler handler = new Handler();
 
     private HistoryMangaAdapter adapter = null;
 

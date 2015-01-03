@@ -23,6 +23,7 @@ import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.service.MangaDownloadService;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.util.Pair;
+import com.danilov.mangareader.core.util.SafeHandler;
 import com.danilov.mangareader.core.util.Utils;
 
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ public class DownloadManagerFragment extends BaseFragment {
 
     private static final String TAG = "DownloadManagerFragment";
 
-    private Handler handler;
     private MangaDownloadService service;
 
     private ProgressBar chaptersProgressBar;
@@ -121,7 +121,7 @@ public class DownloadManagerFragment extends BaseFragment {
         Log.d(TAG, "Connecting to service");
     }
 
-    private class ServiceMessagesHandler extends Handler {
+    private class ServiceMessagesHandler extends SafeHandler {
 
         @Override
         public void handleMessage(final Message message) {

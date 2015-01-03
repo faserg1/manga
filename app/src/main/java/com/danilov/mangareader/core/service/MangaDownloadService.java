@@ -23,6 +23,7 @@ import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.util.IoUtils;
 import com.danilov.mangareader.core.util.Pair;
+import com.danilov.mangareader.core.util.SafeHandler;
 import com.danilov.mangareader.core.util.ServiceContainer;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class MangaDownloadService extends Service {
 
     private MangaDAO mangaDAO = null;
 
-    private final List<Handler> observerHandlers = new LinkedList<Handler>();
+    private final List<SafeHandler> observerHandlers = new LinkedList<SafeHandler>();
 
     private Queue<MangaDownloadRequest> requests = new LinkedList<MangaDownloadRequest>();
 
@@ -496,7 +497,7 @@ public class MangaDownloadService extends Service {
 
     }
 
-    public void addObserver(final Handler handler) {
+    public void addObserver(final SafeHandler handler) {
         synchronized (observerHandlers) {
             observerHandlers.add(handler);
         }
@@ -505,13 +506,13 @@ public class MangaDownloadService extends Service {
 
     private void notifyObservers(final Message message) {
         synchronized (observerHandlers) {
-            for (Handler handler : observerHandlers) {
+            for (SafeHandler handler : observerHandlers) {
                 handler.sendMessage(message);
             }
         }
     }
 
-    public void removeObserver(final Handler handler) {
+    public void removeObserver(final SafeHandler handler) {
         synchronized (observerHandlers) {
             observerHandlers.remove(handler);
         }

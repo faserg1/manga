@@ -39,13 +39,12 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class DownloadedMangaFragment extends Fragment implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
+public class DownloadedMangaFragment extends BaseFragment implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
 
     private static final String TAG = "DownloadedMangaFragment";
 
     private boolean isInMultiChoice = false;
 
-    private View view;
     private ProgressBar downloadedProgressBar;
 
     private LocalImageManager localImageManager = null;
@@ -57,8 +56,6 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     private DownloadedMangaAdapter adapter = null;
     private GridView gridView = null;
     private ActionMode actionMode;
-
-    private SafeHandler handler = new SafeHandler();
 
     public static DownloadedMangaFragment newInstance() {
         return new DownloadedMangaFragment();

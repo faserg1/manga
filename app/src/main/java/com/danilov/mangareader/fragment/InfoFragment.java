@@ -35,7 +35,7 @@ import com.danilov.mangareader.core.util.Utils;
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class InfoFragment extends Fragment implements View.OnClickListener {
+public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
     private final String TAG = "InfoFragment";
 
@@ -56,8 +56,6 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     private Button removeFromFavorites;
 
     private MangaDAO mangaDAO = null;
-
-    private View view;
 
     private Manga manga;
 

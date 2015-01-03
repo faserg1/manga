@@ -22,6 +22,7 @@ import com.danilov.mangareader.core.service.MangaDownloadService;
 import com.danilov.mangareader.core.service.MangaDownloadService.MangaDownloadRequest;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.util.Pair;
+import com.danilov.mangareader.core.util.SafeHandler;
 import com.danilov.mangareader.core.util.Utils;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class DownloadsActivity extends ActionBarActivity {
 
     private static final String TAG = "DownloadsActivity";
 
-    private Handler handler;
+    private SafeHandler handler;
     private MangaDownloadService service;
 
     private ProgressBar chaptersProgressBar;
@@ -103,7 +104,7 @@ public class DownloadsActivity extends ActionBarActivity {
         Log.d(TAG, "Connecting to service");
     }
 
-    private class ServiceMessagesHandler extends Handler {
+    private class ServiceMessagesHandler extends SafeHandler {
 
         @Override
         public void handleMessage(final Message message) {

@@ -60,8 +60,6 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
     private GridView gridView = null;
     private ActionMode actionMode;
 
-    private Handler handler = new Handler();
-
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
     }

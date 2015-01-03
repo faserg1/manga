@@ -42,6 +42,10 @@ public class SafeHandler {
         return isHandling && handler.post(new SafeRunnable(runnable));
     }
 
+    public void handleMessage(final Message message) {
+
+    }
+
     private class SafeRunnable implements Runnable {
 
         private Runnable runnable;
