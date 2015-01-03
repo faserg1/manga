@@ -3,7 +3,6 @@ package com.danilov.mangareader.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -29,6 +28,7 @@ import com.danilov.mangareader.core.model.LocalManga;
 import com.danilov.mangareader.core.service.LocalImageManager;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.util.IoUtils;
+import com.danilov.mangareader.core.util.SafeHandler;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
 
@@ -58,7 +58,7 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
     private GridView gridView = null;
     private ActionMode actionMode;
 
-    private Handler handler = new Handler();
+    private SafeHandler handler = new SafeHandler();
 
     public static DownloadedMangaFragment newInstance() {
         return new DownloadedMangaFragment();
@@ -257,6 +257,12 @@ public class DownloadedMangaFragment extends Fragment implements AdapterView.OnI
             }
         };
         thread.start();
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        handler.stopHandling();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
