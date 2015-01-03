@@ -33,4 +33,26 @@ public class BasicFilters {
 
     }
 
+    public static class MangaReaderTriState extends RepositoryEngine.Filter<Integer> {
+
+        private static String[] vals = new String[]{"0", "1", "2"};
+
+        public MangaReaderTriState(final String name) {
+            super(name);
+        }
+
+        @Override
+        public FilterType getType() {
+            return FilterType.TRI_STATE;
+        }
+
+        @Override
+        public String apply(final String uri, final FilterValue value) {
+            Integer val = value.getValue();
+            String strVal = vals[val];
+            return uri + strVal;
+        }
+
+    }
+
 }

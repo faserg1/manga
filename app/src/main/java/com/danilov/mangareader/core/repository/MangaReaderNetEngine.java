@@ -7,6 +7,7 @@ import com.danilov.mangareader.core.http.HttpRequestException;
 import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.model.MangaSuggestion;
+import com.danilov.mangareader.core.repository.filter.BasicFilters;
 import com.danilov.mangareader.core.util.IoUtils;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
@@ -218,10 +219,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         return baseUri;
     }
 
-    @Override
-    public List<FilterGroup> getFilters() {
-        return null;
-    }
 
     private String imgContainerId = "mangaimg";
     private String descriptionContainerId = "readmangasum";
@@ -313,6 +310,59 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             return null;
         }
         return imgs.get(0).attr("src");
+    }
+
+
+    private List<FilterGroup> filterGroups = new ArrayList<>(2);
+
+    {
+        FilterGroup genres = new FilterGroup("Genre", 37);
+
+        genres.add(new BasicFilters.MangaReaderTriState("Action"));
+        genres.add(new BasicFilters.MangaReaderTriState("Adventure"));
+        genres.add(new BasicFilters.MangaReaderTriState("Comedy"));
+        genres.add(new BasicFilters.MangaReaderTriState("Demons"));
+        genres.add(new BasicFilters.MangaReaderTriState("Drama"));
+        genres.add(new BasicFilters.MangaReaderTriState("Ecchi"));
+        genres.add(new BasicFilters.MangaReaderTriState("Fantasy"));
+        genres.add(new BasicFilters.MangaReaderTriState("Gender Bender"));
+        genres.add(new BasicFilters.MangaReaderTriState("Harem"));
+        genres.add(new BasicFilters.MangaReaderTriState("Historical"));
+        genres.add(new BasicFilters.MangaReaderTriState("Horror"));
+        genres.add(new BasicFilters.MangaReaderTriState("Josei"));
+        genres.add(new BasicFilters.MangaReaderTriState("Magic"));
+        genres.add(new BasicFilters.MangaReaderTriState("Martial Arts"));
+        genres.add(new BasicFilters.MangaReaderTriState("Mature"));
+        genres.add(new BasicFilters.MangaReaderTriState("Mecha"));
+        genres.add(new BasicFilters.MangaReaderTriState("Military"));
+        genres.add(new BasicFilters.MangaReaderTriState("Mystery"));
+        genres.add(new BasicFilters.MangaReaderTriState("One Shot"));
+        genres.add(new BasicFilters.MangaReaderTriState("Psychological"));
+        genres.add(new BasicFilters.MangaReaderTriState("Romance"));
+        genres.add(new BasicFilters.MangaReaderTriState("School Life"));
+        genres.add(new BasicFilters.MangaReaderTriState("Sci-Fi"));
+        genres.add(new BasicFilters.MangaReaderTriState("Seinen"));
+        genres.add(new BasicFilters.MangaReaderTriState("Shoujo"));
+        genres.add(new BasicFilters.MangaReaderTriState("Shoujoai"));
+        genres.add(new BasicFilters.MangaReaderTriState("Shounen"));
+        genres.add(new BasicFilters.MangaReaderTriState("Shounenai"));
+        genres.add(new BasicFilters.MangaReaderTriState("Slice of Life"));
+        genres.add(new BasicFilters.MangaReaderTriState("Smut"));
+        genres.add(new BasicFilters.MangaReaderTriState("Sports"));
+        genres.add(new BasicFilters.MangaReaderTriState("Super Power"));
+        genres.add(new BasicFilters.MangaReaderTriState("Supernatural"));
+        genres.add(new BasicFilters.MangaReaderTriState("Tragedy"));
+        genres.add(new BasicFilters.MangaReaderTriState("Vampire"));
+        genres.add(new BasicFilters.MangaReaderTriState("Yaoi"));
+        genres.add(new BasicFilters.MangaReaderTriState("Yuri"));
+
+        filterGroups.add(genres);
+
+    }
+
+    @Override
+    public List<FilterGroup> getFilters() {
+        return filterGroups;
     }
 
 }
