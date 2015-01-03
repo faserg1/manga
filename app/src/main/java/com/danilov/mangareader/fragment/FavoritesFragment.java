@@ -156,11 +156,14 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
                 }
             } else {
                 holder.isOnline.setVisibility(View.VISIBLE);
-                Uri coverUri = Uri.parse(manga.getCoverUri());
-                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, sizeOfImage);
-                Bitmap bitmap = httpImageManager.loadImage(request);
-                if (bitmap != null) {
-                    holder.mangaCover.setImageBitmap(bitmap);
+                if (manga.getCoverUri() != null) {
+                    //TODO: временный хак! Потом заблочить добавление в избранное если нет картинки (или придумать что-то ещё)
+                    Uri coverUri = Uri.parse(manga.getCoverUri());
+                    HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, sizeOfImage);
+                    Bitmap bitmap = httpImageManager.loadImage(request);
+                    if (bitmap != null) {
+                        holder.mangaCover.setImageBitmap(bitmap);
+                    }
                 }
             }
 
