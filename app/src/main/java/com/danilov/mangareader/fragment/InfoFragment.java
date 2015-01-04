@@ -290,24 +290,24 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private void addToFavorites() {
         flipper.flip();
         try {
+            manga.setFavorite(true);
             mangaDAO.setFavorite(manga, manga.isDownloaded(), true);
         } catch (DatabaseAccessException e) {
             Context context = getActivity();
             String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
             Utils.showToast(context, message);
-            return;
         }
     }
 
     private void removeFromFavorites() {
         flipper.flip();
         try {
+            manga.setFavorite(false);
             mangaDAO.setFavorite(manga, manga.isDownloaded(), false);
         } catch (DatabaseAccessException e) {
             Context context = getActivity();
             String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
             Utils.showToast(context, message);
-            return;
         }
     }
 
