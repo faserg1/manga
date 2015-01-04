@@ -494,14 +494,14 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (this.isFullscreen) {
-            toggleFullscreen(false);
-        } else {
-            super.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (this.isFullscreen) {
+//            toggleFullscreen(false);
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
 
     private void toggleFullscreen(final boolean fullscreen) {
         this.isFullscreen = fullscreen;
