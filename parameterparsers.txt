@@ -1,3 +1,4 @@
+readmanga + adultmanga
 function asd() {
     var str = "";
     var params = $(".cTable .js-link");
@@ -12,3 +13,19 @@ function asd() {
     }
     console.log(str);
 }
+
+
+mangareader
+function asd() {
+    var str = "";
+    var params = $(".genre");
+    for (var i = 0; i < params.length; i++) {
+         var param = $(params[i]);
+         var name = param.text();
+         name = name.charAt(0).toUpperCase() + name.substring(1, name.length);
+         str += 'genres.add(new BasicFilters.MangaReaderTriState("' + name + '"));\n'
+    }
+    console.log(str);
+}
+
+Peopledie95

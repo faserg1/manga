@@ -15,19 +15,19 @@ public class SafeHandler {
     private boolean isHandling = true;
 
     public SafeHandler(final Looper looper, final Callback callback) {
-        handler = new Handler(looper, callback);
+        handler = new InternalSafeHandler(looper, callback);
     }
 
     public SafeHandler(final Looper looper) {
-        handler = new Handler(looper);
+        handler = new InternalSafeHandler(looper);
     }
 
     public SafeHandler(final Callback callback) {
-        handler = new Handler(callback);
+        handler = new InternalSafeHandler(callback);
     }
 
     public SafeHandler() {
-        handler = new Handler();
+        handler = new InternalSafeHandler();
     }
 
     public void stopHandling() {
@@ -43,6 +43,31 @@ public class SafeHandler {
     }
 
     public void handleMessage(final Message message) {
+
+    }
+
+    private class InternalSafeHandler extends Handler {
+
+        public InternalSafeHandler(final Looper looper, final Callback callback) {
+            super(looper, callback);
+        }
+
+        public InternalSafeHandler(final Looper looper) {
+            super(looper);
+        }
+
+        public InternalSafeHandler(final Callback callback) {
+            super(callback);
+        }
+
+        public InternalSafeHandler() {
+            super();
+        }
+
+        @Override
+        public void handleMessage(final Message msg) {
+            SafeHandler.this.handleMessage(msg);
+        }
 
     }
 
