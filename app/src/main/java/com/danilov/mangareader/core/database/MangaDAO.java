@@ -212,6 +212,37 @@ public class MangaDAO {
         return null;
     }
 
+    public synchronized Manga updateFromDownloadService(LocalManga localManga, final int chapters) throws DatabaseAccessException {
+        Manga _manga = null;
+        _manga = getByLinkAndRepository(localManga.getUri(), localManga.getRepository(), false);
+        if (_manga == null) {
+            _manga = getByLinkAndRepository(localManga.getUri(), localManga.getRepository(), true);
+            if (_manga != null) {
+                localManga = (LocalManga) _manga;
+            }
+        }
+        if (_manga != null) {
+            SQLiteDatabase db = databaseHelper.openWritable();
+            try {
+                ContentValues cv = new ContentValues();
+                cv.put(CHAPTERS_QUANTITY, chapters);
+                cv.put(IS_DOWNLOADED, 1);
+                cv.put(LOCAL_URI, localManga.getLocalUri());
+                cv.put(MANGA_COVER_URI, localManga.getCoverUri());
+                cv.put(IS_FAVORITE, 1);
+                String selection = ID + " = ?";
+                String id = String.valueOf(_manga.getId());
+                db.update(TABLE_NAME, cv, selection, new String[] {id});
+            } catch (Exception e) {
+                throw new DatabaseAccessException(e.getMessage());
+            }
+            return localManga;
+        } else {
+            addManga(localManga);
+        }
+        return null;
+    }
+
     public synchronized Manga setFavorite(final Manga manga, final boolean downloaded, final boolean isFavorite) throws DatabaseAccessException {
         Manga _manga = null;
         _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository(), downloaded);

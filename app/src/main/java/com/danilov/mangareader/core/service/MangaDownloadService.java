@@ -312,7 +312,7 @@ public class MangaDownloadService extends Service {
                 _local.setCoverUri(coverUri);
                 _local.setFavorite(manga.isFavorite());
 
-                Manga localManga = mangaDAO.updateInfo(_local, manga.getChaptersQuantity(), true);
+                Manga localManga = mangaDAO.updateFromDownloadService(_local, manga.getChaptersQuantity());
                 if (localManga != null) {
                     mangaPath = ((LocalManga)localManga).getLocalUri();
                     coverUri = mangaPath + "/cover";
