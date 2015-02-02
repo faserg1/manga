@@ -17,7 +17,7 @@ public interface MangaShowStrategy {
 
     Promise<Result> showChapter(final int i) throws ShowMangaException;
 
-    OldPromise<MangaShowStrategy> next() throws ShowMangaException;
+    Promise<Result> next() throws ShowMangaException;
 
     void previous() throws ShowMangaException;
 

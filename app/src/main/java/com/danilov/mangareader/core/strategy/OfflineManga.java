@@ -98,7 +98,7 @@ public class OfflineManga implements MangaShowStrategy {
 
     @Override
     public Promise<Result> showChapter(final int i) throws ShowMangaException {
-        OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
+        Promise<Result> promise = new Promise<Result>();
         this.currentChapter = i;
         this.currentImageNumber = -1;
         MangaChapter chapter = manga.getChapterByNumber(currentChapter);
@@ -108,7 +108,7 @@ public class OfflineManga implements MangaShowStrategy {
             throw new ShowMangaException(e.getMessage());
         }
         updateObserver();
-        promise.finish(this, true);
+        promise.finish(Result.SUCCESS, true);
         return promise;
     }
 
@@ -119,7 +119,7 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public OldPromise<MangaShowStrategy> next() throws ShowMangaException {
+    public Promise<Result> next() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
             List<MangaChapter> chapters = manga.getChapters();
             boolean nextIsNeeded = false;
