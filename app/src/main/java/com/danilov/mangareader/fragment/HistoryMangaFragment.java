@@ -72,9 +72,14 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
-        loadHistory();
         gridView.setOnItemClickListener(this);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadHistory();
     }
 
     private void loadHistory() {

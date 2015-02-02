@@ -17,6 +17,8 @@ public class HistoryElement {
 
     private Date date;
 
+    //TODO: add isOnline
+
     public HistoryElement(final Manga manga, final int chapter, final int page) {
         this.manga = manga;
         this.chapter = chapter;

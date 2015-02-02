@@ -505,9 +505,13 @@ public class MangaDownloadService extends Service {
     }
 
     private void notifyObservers(final Message message) {
+        Message currentMessage = message;
         synchronized (observerHandlers) {
             for (SafeHandler handler : observerHandlers) {
-                handler.sendMessage(message);
+                Message tmp = Message.obtain();
+                tmp.copyFrom(currentMessage);
+                handler.sendMessage(currentMessage);
+                currentMessage = tmp;
             }
         }
     }

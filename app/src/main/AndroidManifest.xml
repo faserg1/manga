@@ -53,9 +53,6 @@
         <activity
             android:name=".activity.DownloadsActivity"
             android:label="DownloadsActivity" />
-        <activity
-            android:name=".test.MangaViewTestActivity"
-            android:label="MangaViewTestActivity" />
         <activity android:name=".test.LocalImageActivity" />
         <activity
             android:name=".activity.MangaQueryActivity"

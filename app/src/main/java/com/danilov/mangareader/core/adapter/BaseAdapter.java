@@ -37,7 +37,7 @@ public abstract class BaseAdapter<H extends BaseAdapter.BaseHolder, T> extends A
     }
 
     @Override
-    public View getView(final int position, final View convertView, final ViewGroup parent) {
+    public final View getView(final int position, final View convertView, final ViewGroup parent) {
         H holder = null;
         if (convertView == null) {
             holder = onCreateViewHolder(parent, position);

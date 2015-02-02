@@ -1,6 +1,8 @@
 package com.danilov.mangareader.core.strategy;
 
 import android.os.Handler;
+import android.util.Log;
+
 import com.danilov.mangareader.core.interfaces.MangaShowObserver;
 import com.danilov.mangareader.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareader.core.model.LocalManga;
@@ -8,6 +10,7 @@ import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.util.OldPromise;
+import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.view.InAndOutAnim;
 import com.danilov.mangareader.core.view.MangaImageSwitcher;
 
@@ -18,6 +21,8 @@ import java.util.List;
  * Created by Semyon Danilov on 21.06.2014.
  */
 public class OfflineManga implements MangaShowStrategy {
+
+    private static final String TAG = "OfflineManga";
 
     private LocalManga manga;
     private MangaImageSwitcher mangaImageSwitcher;
@@ -47,10 +52,10 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public OldPromise<MangaShowStrategy> initStrategy() throws ShowMangaException {
-        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
+    public Promise<Result> initStrategy() {
+        final Promise<Result> promise = new Promise<>();
         if (manga.getChapters() != null) {
-            promise.finish(this, true);
+            promise.finish(Result.SUCCESS, true);
             return promise;
         }
         try {
@@ -58,11 +63,12 @@ public class OfflineManga implements MangaShowStrategy {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    promise.finish(OfflineManga.this, true);
+                    promise.finish(Result.SUCCESS, true);
                 }
             });
         } catch (Exception e) {
-            throw new ShowMangaException(e.getMessage());
+            Log.e(TAG, "Failed to load chapters: " + e.getMessage());
+            promise.finish(Result.ERROR, false);
         }
         return promise;
     }
@@ -91,7 +97,7 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public OldPromise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
+    public Promise<Result> showChapter(final int i) throws ShowMangaException {
         OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
         this.currentChapter = i;
         this.currentImageNumber = -1;

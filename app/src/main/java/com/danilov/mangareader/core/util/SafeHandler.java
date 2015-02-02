@@ -66,7 +66,9 @@ public class SafeHandler {
 
         @Override
         public void handleMessage(final Message msg) {
-            SafeHandler.this.handleMessage(msg);
+            if (isHandling) {
+                SafeHandler.this.handleMessage(msg);
+            }
         }
 
     }

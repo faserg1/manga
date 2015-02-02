@@ -2,6 +2,8 @@ package com.danilov.mangareader.core.strategy;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
+
 import com.danilov.mangareader.core.interfaces.MangaShowObserver;
 import com.danilov.mangareader.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareader.core.model.Manga;
@@ -10,6 +12,7 @@ import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.service.DownloadManager;
 import com.danilov.mangareader.core.util.OldPromise;
+import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.view.InAndOutAnim;
 import com.danilov.mangareader.core.view.MangaImageSwitcher;
 
@@ -23,6 +26,8 @@ import java.util.List;
  *
  */
 public class OnlineManga implements MangaShowStrategy {
+
+    private static final String TAG = "OnlineManga";
 
     private MangaImageSwitcher mangaImageSwitcher;
     private InAndOutAnim nextImageAnim;
@@ -157,8 +162,7 @@ public class OnlineManga implements MangaShowStrategy {
     private int savedCurrentImageNumber = 0;
 
     @Override
-    public OldPromise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException {
-        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
+    public Promise<Result> showChapter(final int i) throws ShowMangaException {
         this.currentChapter = i;
         this.savedCurrentImageNumber = this.currentImageNumber;
         this.currentImageNumber = -1;
@@ -169,6 +173,7 @@ public class OnlineManga implements MangaShowStrategy {
         if (chapter == null) {
             throw new ShowMangaException("No chapter ");
         }
+        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
         listener.onChapterInfoLoadStart(this);
         Thread thread = new Thread() {
 
@@ -215,10 +220,10 @@ public class OnlineManga implements MangaShowStrategy {
     }
 
     @Override
-    public OldPromise<MangaShowStrategy> initStrategy() throws ShowMangaException {
-        final OldPromise<MangaShowStrategy> promise = new OldPromise<MangaShowStrategy>();
+    public Promise<Result> initStrategy() {
+        final Promise<Result> promise = new Promise<Result>();
         if (manga.getChapters() != null) {
-            promise.finish(this, true);
+            promise.finish(Result.SUCCESS, true);
         } else {
             Thread t = new Thread() {
 
@@ -233,12 +238,13 @@ public class OnlineManga implements MangaShowStrategy {
                                 if (destroyed) {
                                     return;
                                 }
-                                promise.finish(OnlineManga.this, true);
+                                promise.finish(Result.SUCCESS, true);
                             }
 
                         });
                     } catch (RepositoryException e) {
-                        promise.finish(OnlineManga.this, false);
+                        Log.e(TAG, "Failed to load chapters: " + e.getMessage());
+                        promise.finish(Result.ERROR, false);
                     }
                 }
 

@@ -2,6 +2,7 @@ package com.danilov.mangareader.core.interfaces;
 
 import com.danilov.mangareader.core.strategy.ShowMangaException;
 import com.danilov.mangareader.core.util.OldPromise;
+import com.danilov.mangareader.core.util.Promise;
 
 import java.util.List;
 
@@ -14,13 +15,13 @@ public interface MangaShowStrategy {
 
     void showImage(final int i) throws ShowMangaException;
 
-    OldPromise<MangaShowStrategy> showChapter(final int i) throws ShowMangaException;
+    Promise<Result> showChapter(final int i) throws ShowMangaException;
 
     OldPromise<MangaShowStrategy> next() throws ShowMangaException;
 
     void previous() throws ShowMangaException;
 
-    OldPromise<MangaShowStrategy> initStrategy() throws ShowMangaException;
+    Promise<Result> initStrategy();
 
     int getCurrentImageNumber();
 
@@ -37,6 +38,13 @@ public interface MangaShowStrategy {
     void setOnStrategyListener(MangaStrategyListener mangaStrategyListener);
 
     void destroy();
+
+    public enum Result {
+        ERROR,
+        SUCCESS,
+        FINAL_CHAPTER,
+        NO_MORE_DOWNLOADED
+    }
 
     public interface MangaStrategyListener {
 
