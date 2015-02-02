@@ -318,14 +318,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         String chapterString = currentChapterEditText.getText().toString();
         Integer chapterNum = Integer.valueOf(chapterString) - 1;
         try {
-            currentStrategy.showChapter(chapterNum).after(new OldPromise.Action<MangaShowStrategy>() {
+            currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                 @Override
-                public void action(final MangaShowStrategy strategy, final boolean success) {
+                public Object action(final MangaShowStrategy.Result data, final boolean success) {
                     try {
-                        strategy.showImage(0);
+                        currentStrategy.showImage(0);
                     } catch (ShowMangaException e) {
                         Log.e(TAG, e.getMessage(), e);
                     }
+                    return null;
                 }
             });
         } catch (ShowMangaException e) {
@@ -367,16 +368,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     private void onNext() {
         try {
-            OldPromise<MangaShowStrategy> promise = currentStrategy.next();
+            Promise<MangaShowStrategy.Result> promise = currentStrategy.next();
             if (promise != null) {
-                promise.after(new OldPromise.Action<MangaShowStrategy>() {
+                promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                     @Override
-                    public void action(final MangaShowStrategy strategy, final boolean success) {
+                    public Object action(final MangaShowStrategy.Result data, final boolean success) {
                         try {
-                            strategy.showImage(0);
+                            currentStrategy.showImage(0);
                         } catch (ShowMangaException e) {
                             Log.e(TAG, e.getMessage(), e);
                         }
+                        return null;
                     }
                 });
             }
