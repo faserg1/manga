@@ -198,7 +198,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
         currentStrategy.restoreState(uris, currentChapterNumber, currentImageNumber);
 
-
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
         currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Promise<MangaShowStrategy.Result>>() {
