@@ -182,6 +182,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     }
 
+    //TODO: merge restoreState and init methods (i want to believe)
     /**
      * Not standard method, because I want to handle
      * restorations in OnCreate

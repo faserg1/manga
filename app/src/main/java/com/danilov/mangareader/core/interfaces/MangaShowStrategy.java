@@ -39,6 +39,7 @@ public interface MangaShowStrategy {
 
     void destroy();
 
+    //TODO: return them actually!
     public enum Result {
         ERROR,
         SUCCESS,
