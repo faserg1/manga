@@ -81,7 +81,7 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public void showImage(final int i) throws ShowMangaException {
+    public void showImage(final int i) {
         if (i == currentImageNumber || i >= uris.size() || i < 0) {
             return;
         }
@@ -131,6 +131,9 @@ public class OfflineManga implements MangaShowStrategy {
             List<MangaChapter> chapters = manga.getChapters();
             boolean nextIsNeeded = false;
             int chapterToShow = currentChapter + 1;
+            //TODO: UGLY! Rewrite somehow, n^2 detected (first here, then in showChapter#getChapterAndIsLastByNumber
+            //TODO: возможно нужно убрать это, и добавить проверку тупо в showChapter (т.е. если есть глава 1 и глава 3)
+            //TODO: спрашивать юзера, хочет ли он с 1 сразу к 3 перейти
             for (MangaChapter chapter : chapters) {
                 if (nextIsNeeded) {
                     chapterToShow = chapter.getNumber();

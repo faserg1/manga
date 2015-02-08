@@ -13,7 +13,7 @@ public interface MangaShowStrategy {
 
     void restoreState(final List<String> uris, final int chapter, final int image);
 
-    void showImage(final int i) throws ShowMangaException;
+    void showImage(final int i);
 
     Promise<Result> showChapter(final int i) throws ShowMangaException;
 

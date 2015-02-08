@@ -178,74 +178,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     }
 
-    //TODO: merge restoreState and init methods (i want to believe)
-    /**
-     * Not standard method, because I want to handle
-     * restorations in OnCreate
-     * @param savedState
-     */
-    @Deprecated
-    private void restoreState(final Bundle savedState) {
-        final int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
-        final int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
-        ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
-        if (chapters != null) {
-            manga.setChapters(chapters);
-        }
-        final ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
-        Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-        currentStrategy.restoreState(uris, currentChapterNumber, currentImageNumber);
-
-        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
-
-        currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Promise<MangaShowStrategy.Result>>() {
-
-            @Override
-            public Promise<MangaShowStrategy.Result> action(final MangaShowStrategy.Result data, final boolean success) {
-
-                try {
-                    progressDialog.dismiss();
-                    if (uris != null) {
-                        try {
-                            currentStrategy.showImage(currentImageNumber);
-                        } catch (ShowMangaException e) {
-                            Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
-                        }
-                    } else {
-                        return currentStrategy.showChapter(currentChapterNumber);
-                    }
-                } catch (ShowMangaException e) {
-                    Log.e(TAG, "Failed to show chapter: " + e.getMessage(), e);
-                }
-                return null;
-            }
-
-        }).then(new Promise.Action<Promise<MangaShowStrategy.Result>, Object>() {
-
-            @Override
-            public Object action(final Promise<MangaShowStrategy.Result> promise, final boolean success) {
-                if (promise != null) {
-                    promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-
-                        @Override
-                        public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                            if (success) {
-                                try {
-                                    currentStrategy.showImage(currentImageNumber);
-                                } catch (ShowMangaException e) {
-                                    Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
-                                }
-                            }
-                            return null;
-                        }
-
-                    });
-                }
-                return null;
-            }
-        });
-    }
-
     private void init(final Bundle savedState) {
         int _currentChapterNumber = fromChapter;
         int _currentImageNumber = fromPage;
@@ -276,11 +208,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                 try {
                     progressDialog.dismiss();
                     if (hasUrisLoaded) {
-                        try {
-                            currentStrategy.showImage(currentImageNumber);
-                        } catch (ShowMangaException e) {
-                            Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
-                        }
+                        currentStrategy.showImage(currentImageNumber);
                     } else {
                         return currentStrategy.showChapter(currentChapterNumber);
                     }
@@ -300,53 +228,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                         @Override
                         public Object action(final MangaShowStrategy.Result data, final boolean success) {
                             if (success) {
-                                try {
-                                    currentStrategy.showImage(currentImageNumber);
-                                } catch (ShowMangaException e) {
-                                    Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
-                                }
+                                currentStrategy.showImage(currentImageNumber);
                             }
                             return null;
                         }
 
                     });
-                }
-                return null;
-            }
-        });
-    }
-
-    @Deprecated
-    private void init() {
-        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
-        currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-
-            @Override
-            public Object action(final MangaShowStrategy.Result result, final boolean success) {
-                progressDialog.dismiss();
-                if (manga.getChaptersQuantity() > 0) {
-                    if (fromChapter == -1) {
-                        fromChapter = manga.getChapters().get(0).getNumber();
-                    }
-                    try {
-                        currentStrategy.showChapter(fromChapter).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-                            @Override
-                            public Object action(final MangaShowStrategy.Result result, final boolean success) {
-                                try {
-                                    if (fromPage != -1) {
-                                        currentStrategy.showImage(fromPage);
-                                    } else {
-                                        currentStrategy.showImage(0);
-                                    }
-                                } catch (ShowMangaException e) {
-                                    Log.e(TAG, e.getMessage(), e);
-                                }
-                                return null;
-                            }
-                        });
-                    } catch (ShowMangaException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
                 }
                 return null;
             }
@@ -389,11 +276,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                 @Override
                 public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                    try {
-                        currentStrategy.showImage(0);
-                    } catch (ShowMangaException e) {
-                        Log.e(TAG, e.getMessage(), e);
-                    }
+                    currentStrategy.showImage(0);
                     return null;
                 }
             });
@@ -406,11 +289,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private void goToImageFromImagePicker() {
         String imageString = currentImageEditText.getText().toString();
         Integer imageNum = Integer.valueOf(imageString) - 1;
-        try {
-            currentStrategy.showImage(imageNum);
-        } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
+        currentStrategy.showImage(imageNum);
         closeKeyboard();
     }
 
@@ -440,12 +319,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             if (promise != null) {
                 promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                     @Override
-                    public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                        try {
-                            currentStrategy.showImage(0);
-                        } catch (ShowMangaException e) {
-                            Log.e(TAG, e.getMessage(), e);
+                    public Object action(final MangaShowStrategy.Result result, final boolean success) {
+                        switch (result) {
+                            case LAST_DOWNLOADED:
+                                Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                                break;
+                            case NO_MORE_DOWNLOADED:
+                                Toast.makeText(MangaViewerActivity.this, "Больше глав не скачано", Toast.LENGTH_LONG).show();
+                                break;
                         }
+                        currentStrategy.showImage(0);
                         return null;
                     }
                 });
