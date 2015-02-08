@@ -10,6 +10,7 @@ import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.util.OldPromise;
+import com.danilov.mangareader.core.util.Pair;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.view.InAndOutAnim;
 import com.danilov.mangareader.core.view.MangaImageSwitcher;
@@ -101,14 +102,20 @@ public class OfflineManga implements MangaShowStrategy {
         Promise<Result> promise = new Promise<Result>();
         this.currentChapter = i;
         this.currentImageNumber = -1;
-        MangaChapter chapter = manga.getChapterByNumber(currentChapter);
+        Pair pair = manga.getChapterAndIsLastByNumber(currentChapter);
+        if (pair == null) {
+            promise.finish(Result.NO_MORE_DOWNLOADED, true);
+            return promise;
+        }
+        MangaChapter chapter = (MangaChapter) pair.first;
+        boolean isLast = (boolean) pair.second;
         try {
             uris = engine.getChapterImages(chapter);
         } catch (RepositoryException e) {
             throw new ShowMangaException(e.getMessage());
         }
         updateObserver();
-        promise.finish(Result.SUCCESS, true);
+        promise.finish(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, true);
         return promise;
     }
 

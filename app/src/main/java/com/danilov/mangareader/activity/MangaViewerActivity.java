@@ -147,11 +147,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         }
         currentStrategy.setOnStrategyListener(this);
         currentStrategy.setObserver(this);
-        if (savedInstanceState != null) {
-            restoreState(savedInstanceState);
-        } else {
-            init();
-        }
+        init(savedInstanceState);
         closeKeyboard();
     }
 
@@ -188,6 +184,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
      * restorations in OnCreate
      * @param savedState
      */
+    @Deprecated
     private void restoreState(final Bundle savedState) {
         final int currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
         final int currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
@@ -249,6 +246,77 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         });
     }
 
+    private void init(final Bundle savedState) {
+        int _currentChapterNumber = fromChapter;
+        int _currentImageNumber = fromPage;
+        boolean _hasUriLoaded = false;
+        if (savedState != null) {
+            _currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
+            _currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+            ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
+            if (chapters != null) {
+                manga.setChapters(chapters);
+            }
+            ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
+            _hasUriLoaded = uris != null;
+            Log.d(TAG, "RESTORE CCN: " + _currentChapterNumber + " CIN: " + _currentImageNumber);
+            currentStrategy.restoreState(uris, _currentChapterNumber, _currentImageNumber);
+        }
+        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
+
+        final boolean hasUrisLoaded = _hasUriLoaded;
+        final int currentChapterNumber = _currentChapterNumber != -1 ? _currentChapterNumber : 0;
+        final int currentImageNumber = _currentImageNumber != -1 ? _currentImageNumber : 0;
+
+        currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Promise<MangaShowStrategy.Result>>() {
+
+            @Override
+            public Promise<MangaShowStrategy.Result> action(final MangaShowStrategy.Result data, final boolean success) {
+
+                try {
+                    progressDialog.dismiss();
+                    if (hasUrisLoaded) {
+                        try {
+                            currentStrategy.showImage(currentImageNumber);
+                        } catch (ShowMangaException e) {
+                            Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                        }
+                    } else {
+                        return currentStrategy.showChapter(currentChapterNumber);
+                    }
+                } catch (ShowMangaException e) {
+                    Log.e(TAG, "Failed to show chapter: " + e.getMessage(), e);
+                }
+                return null;
+            }
+
+        }).then(new Promise.Action<Promise<MangaShowStrategy.Result>, Object>() {
+
+            @Override
+            public Object action(final Promise<MangaShowStrategy.Result> promise, final boolean success) {
+                if (promise != null) {
+                    promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
+
+                        @Override
+                        public Object action(final MangaShowStrategy.Result data, final boolean success) {
+                            if (success) {
+                                try {
+                                    currentStrategy.showImage(currentImageNumber);
+                                } catch (ShowMangaException e) {
+                                    Log.e(TAG, "Failed to show image: " + e.getMessage(), e);
+                                }
+                            }
+                            return null;
+                        }
+
+                    });
+                }
+                return null;
+            }
+        });
+    }
+
+    @Deprecated
     private void init() {
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
         currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Object>() {

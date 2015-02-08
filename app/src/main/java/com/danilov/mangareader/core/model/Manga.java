@@ -3,6 +3,7 @@ package com.danilov.mangareader.core.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
+import com.danilov.mangareader.core.util.Pair;
 
 import java.util.List;
 
@@ -111,6 +112,11 @@ public class Manga implements Parcelable {
         this.isFavorite = isFavorite;
     }
 
+    /**
+     * Getting chapter by its number (e.g. chapter #1 is getChapterByNumber(0)
+     * @param number
+     * @return
+     */
     public MangaChapter getChapterByNumber(final int number) {
         if (chapters == null) {
             return null;
@@ -123,6 +129,34 @@ public class Manga implements Parcelable {
         return null;
     }
 
+    /**
+     * Getting chapter (in Pair.first) by its number (e.g. chapter #1 is getChapterByNumber(0)
+     * also returns boolean isLast in Pair.second
+     * @param number
+     * @return
+     */
+    public Pair getChapterAndIsLastByNumber(final int number) {
+        if (chapters == null) {
+            return null;
+        }
+        int size = chapters.size();
+        for (int i = 0; i < size; i++) {
+            MangaChapter chapter = chapters.get(i);
+            if (chapter.getNumber() == number) {
+                Pair pair = Pair.obtain();
+                pair.first = chapter;
+                pair.second = i == (size - 1);
+                return pair;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Getting chapter by it's position in list
+     * @param pos
+     * @return
+     */
     public MangaChapter getChapterByListPos(final int pos) {
         if (chapters == null) {
             return null;

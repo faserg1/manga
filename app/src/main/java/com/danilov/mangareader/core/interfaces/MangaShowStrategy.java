@@ -44,6 +44,7 @@ public interface MangaShowStrategy {
         ERROR,
         SUCCESS,
         FINAL_CHAPTER,
+        LAST_DOWNLOADED,
         NO_MORE_DOWNLOADED
     }
 

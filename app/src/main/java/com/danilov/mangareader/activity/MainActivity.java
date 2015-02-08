@@ -95,13 +95,13 @@ public class MainActivity extends BaseToolbarActivity {
         }
         syncToggle();
         updateQuantity();
-        testShowHeadsUp();
+//        testShowHeadsUp();
     }
 
     @UiThreadTest
     private void testShowHeadsUp() {
-//        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, R.layout.test_headsup_notification);
-//        headsUpNotification.show();
+        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, R.layout.test_headsup_notification);
+        headsUpNotification.show();
     }
 
     public void updateQuantity() {
