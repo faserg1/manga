@@ -27,7 +27,6 @@ import com.danilov.mangareader.core.strategy.OfflineManga;
 import com.danilov.mangareader.core.strategy.OnlineManga;
 import com.danilov.mangareader.core.strategy.ShowMangaException;
 import com.danilov.mangareader.core.util.Constants;
-import com.danilov.mangareader.core.util.OldPromise;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
@@ -276,7 +275,20 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                 @Override
                 public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                    currentStrategy.showImage(0);
+                    switch (data) {
+                        case ERROR:
+                            break;
+                        case SUCCESS:
+                            currentStrategy.showImage(0);
+                            break;
+                        case FINAL_CHAPTER:
+                            break;
+                        case LAST_DOWNLOADED:
+                            break;
+                        case NOT_DOWNLOADED:
+                            Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                            break;
+                    }
                     return null;
                 }
             });
@@ -324,7 +336,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                             case LAST_DOWNLOADED:
                                 Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
                                 break;
-                            case NO_MORE_DOWNLOADED:
+                            case NOT_DOWNLOADED:
                                 Toast.makeText(MangaViewerActivity.this, "Больше глав не скачано", Toast.LENGTH_LONG).show();
                                 break;
                         }

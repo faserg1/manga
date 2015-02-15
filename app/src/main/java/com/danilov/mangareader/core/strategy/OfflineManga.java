@@ -9,7 +9,6 @@ import com.danilov.mangareader.core.model.LocalManga;
 import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.repository.RepositoryException;
-import com.danilov.mangareader.core.util.OldPromise;
 import com.danilov.mangareader.core.util.Pair;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.view.InAndOutAnim;
@@ -98,15 +97,15 @@ public class OfflineManga implements MangaShowStrategy {
     }
 
     @Override
-    public Promise<Result> showChapter(final int i) throws ShowMangaException {
+    public Promise<Result> showChapter(final int chapterToShow) throws ShowMangaException {
         Promise<Result> promise = new Promise<Result>();
-        this.currentChapter = i;
-        this.currentImageNumber = -1;
-        Pair pair = manga.getChapterAndIsLastByNumber(currentChapter);
+        Pair pair = manga.getChapterAndIsLastByNumber(chapterToShow);
         if (pair == null) {
-            promise.finish(Result.NO_MORE_DOWNLOADED, true);
+            promise.finish(Result.NOT_DOWNLOADED, true);
             return promise;
         }
+        this.currentChapter = chapterToShow;
+        this.currentImageNumber = -1;
         MangaChapter chapter = (MangaChapter) pair.first;
         boolean isLast = (boolean) pair.second;
         try {
@@ -154,7 +153,7 @@ public class OfflineManga implements MangaShowStrategy {
             }
         }
         if (chapter == null) {
-            promise.finish(Result.NO_MORE_DOWNLOADED, true);
+            promise.finish(Result.NOT_DOWNLOADED, true);
             return promise;
         }
         this.currentChapter = chapter.getNumber();

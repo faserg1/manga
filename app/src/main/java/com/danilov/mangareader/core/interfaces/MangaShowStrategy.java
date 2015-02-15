@@ -45,7 +45,7 @@ public interface MangaShowStrategy {
         SUCCESS,
         FINAL_CHAPTER,
         LAST_DOWNLOADED,
-        NO_MORE_DOWNLOADED
+        NOT_DOWNLOADED
     }
 
     public interface MangaStrategyListener {
