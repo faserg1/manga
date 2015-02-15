@@ -128,25 +128,45 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public Promise<Result> next() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
-            List<MangaChapter> chapters = manga.getChapters();
-            boolean nextIsNeeded = false;
-            int chapterToShow = currentChapter + 1;
-            //TODO: UGLY! Rewrite somehow, n^2 detected (first here, then in showChapter#getChapterAndIsLastByNumber
-            //TODO: возможно нужно убрать это, и добавить проверку тупо в showChapter (т.е. если есть глава 1 и глава 3)
-            //TODO: спрашивать юзера, хочет ли он с 1 сразу к 3 перейти
-            for (MangaChapter chapter : chapters) {
-                if (nextIsNeeded) {
-                    chapterToShow = chapter.getNumber();
-                    break;
-                }
-                if (chapter.getNumber() == currentChapter) {
-                    nextIsNeeded = true;
-                }
-            }
-            return showChapter(chapterToShow);
+            //TODO: переход с 1 до 3 главы, если вторая не скачана - спрашивать юзера?
+            return showChapterFromNext();
         }
         showImage(currentImageNumber + 1);
         return null;
+    }
+
+
+    private Promise<Result> showChapterFromNext() throws ShowMangaException {
+        Promise<Result> promise = new Promise<Result>();
+        List<MangaChapter> chapters = manga.getChapters();
+        boolean nextIsNeeded = false;
+        MangaChapter chapter = null;
+        boolean isLast = false;
+        for (int i = 0; i < chapters.size(); i++) {
+            MangaChapter _chapter = chapters.get(i);
+            if (nextIsNeeded) {
+                chapter = _chapter;
+                isLast = (i == (chapters.size() - 1));
+                break;
+            }
+            if (_chapter.getNumber() == currentChapter) {
+                nextIsNeeded = true;
+            }
+        }
+        if (chapter == null) {
+            promise.finish(Result.NO_MORE_DOWNLOADED, true);
+            return promise;
+        }
+        this.currentChapter = chapter.getNumber();
+        this.currentImageNumber = -1;
+        try {
+            uris = engine.getChapterImages(chapter);
+        } catch (RepositoryException e) {
+            throw new ShowMangaException(e.getMessage());
+        }
+        updateObserver();
+        promise.finish(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, true);
+        return promise;
     }
 
     @Override
