@@ -43,7 +43,7 @@ public interface MangaShowStrategy {
     public enum Result {
         ERROR,
         SUCCESS,
-        FINAL_CHAPTER,
+        ALREADY_FINAL_CHAPTER,
         LAST_DOWNLOADED,
         NOT_DOWNLOADED
     }

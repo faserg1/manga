@@ -278,12 +278,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                     switch (data) {
                         case ERROR:
                             break;
-                        case SUCCESS:
-                            currentStrategy.showImage(0);
-                            break;
-                        case FINAL_CHAPTER:
+                        case ALREADY_FINAL_CHAPTER:
                             break;
                         case LAST_DOWNLOADED:
+                            Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                        case SUCCESS:
+                            currentStrategy.showImage(0);
                             break;
                         case NOT_DOWNLOADED:
                             Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
@@ -337,7 +337,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                                 Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
                                 break;
                             case NOT_DOWNLOADED:
-                                Toast.makeText(MangaViewerActivity.this, "Больше глав не скачано", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
                                 break;
                         }
                         currentStrategy.showImage(0);
