@@ -152,6 +152,27 @@ public class Manga implements Parcelable {
         return null;
     }
 
+
+    /**
+     * Getting first chapter (in Pair.first) in list
+     * also returns boolean isLast in Pair.second
+     * @return
+     */
+    public Pair getFirstExistingChapterAndIsLast() {
+        if (chapters == null) {
+            return null;
+        }
+        int size = chapters.size();
+        if (size == 0) {
+            return null;
+        }
+        MangaChapter chapter = chapters.get(0);
+        Pair pair = Pair.obtain();
+        pair.first = chapter;
+        pair.second = 0 == (size - 1);
+        return pair;
+    }
+
     /**
      * Getting chapter by it's position in list
      * @param pos

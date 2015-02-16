@@ -99,15 +99,24 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public Promise<Result> showChapter(final int chapterToShow) throws ShowMangaException {
         Promise<Result> promise = new Promise<Result>();
-        Pair pair = manga.getChapterAndIsLastByNumber(chapterToShow);
+        Pair pair = null;
+        if (chapterToShow == -1) {
+            pair = manga.getFirstExistingChapterAndIsLast();
+        } else {
+            pair = manga.getChapterAndIsLastByNumber(chapterToShow);
+        }
         if (pair == null) {
             promise.finish(Result.NOT_DOWNLOADED, true);
             return promise;
         }
-        this.currentChapter = chapterToShow;
-        this.currentImageNumber = -1;
         MangaChapter chapter = (MangaChapter) pair.first;
         boolean isLast = (boolean) pair.second;
+        if (chapterToShow == -1) {
+            this.currentChapter = chapter.getNumber();
+        } else {
+            this.currentChapter = chapterToShow;
+        }
+        this.currentImageNumber = -1;
         try {
             uris = engine.getChapterImages(chapter);
         } catch (RepositoryException e) {

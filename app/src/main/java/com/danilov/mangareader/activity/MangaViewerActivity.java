@@ -182,7 +182,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         int _currentImageNumber = fromPage;
         boolean _hasUriLoaded = false;
         if (savedState != null) {
-            _currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, 0);
+            _currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, -1);
             _currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
             ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
             if (chapters != null) {
@@ -196,14 +196,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
         final boolean hasUrisLoaded = _hasUriLoaded;
-        final int currentChapterNumber = _currentChapterNumber != -1 ? _currentChapterNumber : 0;
-        final int currentImageNumber = _currentImageNumber != -1 ? _currentImageNumber : 0;
+        final int currentChapterNumber = _currentChapterNumber;
+        final int currentImageNumber = _currentImageNumber == -1 ? 0 : _currentImageNumber;
 
         currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Promise<MangaShowStrategy.Result>>() {
 
             @Override
             public Promise<MangaShowStrategy.Result> action(final MangaShowStrategy.Result data, final boolean success) {
-
                 try {
                     progressDialog.dismiss();
                     if (hasUrisLoaded) {
