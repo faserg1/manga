@@ -270,6 +270,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private void goToChapterFromChapterPicker() {
         String chapterString = currentChapterEditText.getText().toString();
         Integer chapterNum = Integer.valueOf(chapterString) - 1;
+        if (chapterNum < 0) {
+            chapterNum = 0;
+        }
         try {
             currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                 @Override
@@ -300,6 +303,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private void goToImageFromImagePicker() {
         String imageString = currentImageEditText.getText().toString();
         Integer imageNum = Integer.valueOf(imageString) - 1;
+        if (imageNum < 0) {
+            imageNum = 0;
+        }
         currentStrategy.showImage(imageNum);
         closeKeyboard();
     }
