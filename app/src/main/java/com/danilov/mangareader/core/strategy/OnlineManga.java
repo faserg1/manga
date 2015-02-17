@@ -164,17 +164,20 @@ public class OnlineManga implements MangaShowStrategy {
     @Override
     public Promise<Result> showChapter(final int i) throws ShowMangaException {
         int chapterNum = i < 0 ? 0 : i;
-        if (manga.getChaptersQuantity() <= 0) {
+        int chaptersQuantity = manga.getChaptersQuantity();
+        if (chaptersQuantity <= 0) {
             throw new ShowMangaException("No chapters to show");
         }
         final MangaChapter chapter = manga.getChapterByNumber(chapterNum);
+        final Promise<Result> promise = new Promise<Result>();
         if (chapter == null) {
-            throw new ShowMangaException("No chapter");
+            boolean isOnLastChapterAndTappedNext = currentChapter == (chaptersQuantity - 1) && chapterNum == chaptersQuantity;
+            promise.finish(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, true);
+            return promise;
         }
         this.currentChapter = chapterNum;
         this.savedCurrentImageNumber = this.currentImageNumber;
         this.currentImageNumber = -1;
-        final Promise<Result> promise = new Promise<Result>();
         listener.onChapterInfoLoadStart(this);
         Thread thread = new Thread() {
 

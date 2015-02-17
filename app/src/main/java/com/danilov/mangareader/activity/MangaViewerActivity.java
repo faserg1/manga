@@ -280,8 +280,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                     switch (data) {
                         case ERROR:
                             break;
-                        case ALREADY_FINAL_CHAPTER:
-                            break;
                         case LAST_DOWNLOADED:
                             Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
                         case SUCCESS:
@@ -290,6 +288,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                         case NOT_DOWNLOADED:
                             Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
                             break;
+                        case NO_SUCH_CHAPTER:
+                            Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                            return null;
+                        case ALREADY_FINAL_CHAPTER:
+                            Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                            return null;
                     }
                     return null;
                 }
@@ -343,7 +347,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                                 break;
                             case NOT_DOWNLOADED:
                                 Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
-                                break;
+                                return null;
+                            case NO_SUCH_CHAPTER:
+                                Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                                return null;
+                            case ALREADY_FINAL_CHAPTER:
+                                Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                                return null;
                         }
                         currentStrategy.showImage(0);
                         return null;
