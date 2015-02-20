@@ -218,41 +218,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     }
 
-    private class PageImageThread extends Thread {
-
-        private HttpBytesReader httpBytesReader;
-        private String pageUri;
-        private int pos;
-
-        private String[] arrayRef;
-
-        public PageImageThread(final HttpBytesReader reader, final String pageUri, final int pos, final String[] arrayRef) {
-            this.httpBytesReader = reader;
-            this.pageUri = pageUri;
-            this.arrayRef = arrayRef;
-            this.pos = pos;
-        }
-
-        @Override
-        public void run() {
-            String uri = baseUri + pageUri;
-            byte[] response = null;
-            try {
-                response = httpBytesReader.fromUri(uri);
-            } catch (HttpRequestException e) {
-                if (e.getMessage() != null) {
-                    Log.d(TAG, e.getMessage());
-                } else {
-                    Log.d(TAG, "Failed to load manga description");
-                }
-            }
-            String responseString = IoUtils.convertBytesToString(response);
-            String imageUri = parsePageForImageUrl(Utils.toDocument(responseString));
-            arrayRef[pos] = imageUri;
-        }
-
-    }
-
     @Override
     public String getBaseSearchUri() {
         return null;
@@ -263,6 +228,20 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         return baseUri;
     }
 
+    private String RESULTS_ID = "mangaresults";
+    private String RESULT_CLASS = "mangaresultinner";
+
+    private List<Manga> parseMangaSearchResponse(final Document document) {
+        Element results = document.getElementById(RESULTS_ID);
+        Elements mangaResults = results.getElementsByClass(RESULT_CLASS);
+        for (Element mangaResult : mangaResults) {
+            Element nameElement = mangaResult.select(".manga_name a").get(0);
+
+        }
+
+
+        return null;
+    }
 
     private String imgContainerId = "mangaimg";
     private String descriptionContainerId = "readmangasum";

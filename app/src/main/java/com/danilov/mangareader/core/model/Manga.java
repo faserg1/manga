@@ -24,6 +24,8 @@ public class Manga implements Parcelable {
 
     private boolean isFavorite;
 
+    //TODO: add genre (strings) and type (MANGA, MANHWA)
+
     private RepositoryEngine.Repository repository;
 
     public Manga(final String title, final String uri, final RepositoryEngine.Repository repository) {
