@@ -1,5 +1,6 @@
 package com.danilov.mangareader.core.util;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -13,6 +14,8 @@ public class Promise<Type> {
     protected static ThreadPoolExecutor defaultExecutor = new ThreadPoolExecutor(10, 10,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>());
+
+    private Object monitor;
 
     private Type data;
 
@@ -40,12 +43,26 @@ public class Promise<Type> {
         if (shouldExecute) {
             onFinish.action(data, success);
         }
+        if (monitor != null) {
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        }
     }
 
     //TODO: what if already executed and got exception?
     public void exception(final Exception e) {
-        if (onCatch != null) {
-            onCatch.action(e, false);
+        synchronized (this) {
+            isDone = true;
+            isSuccessful = false;
+            if (onCatch != null) {
+                onCatch.action(e, false);
+            }
+        }
+        if (monitor != null) {
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
         }
     }
 
@@ -57,7 +74,8 @@ public class Promise<Type> {
                 @Override
                 public Void action(final Exception e, final boolean success) {
                     X _data = handler.action(e, isSuccessful);
-                    nPromise.finish(_data, true);
+                    finishExecuted = true;
+//                    nPromise.finish(_data, isSuccessful);
                     return null;
                 }
             };
@@ -67,7 +85,7 @@ public class Promise<Type> {
             }
         }
         if (shouldExecute) {
-            this.onFinish.action(data, isSuccessful);
+//            this.onFinish.action(data, isSuccessful);
         }
         return nPromise;
     }
@@ -128,6 +146,18 @@ public class Promise<Type> {
             });
         }
         return promise;
+    }
+
+    public void waitForIt() {
+        monitor = new Object();
+        synchronized (monitor) {
+            while (!isDone) {
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
     }
 
     private static class Counter {

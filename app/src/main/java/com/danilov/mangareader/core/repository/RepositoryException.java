@@ -9,4 +9,8 @@ public class RepositoryException extends Exception {
         super(message);
     }
 
+    public RepositoryException(final Throwable throwable) {
+        super(throwable);
+    }
+
 }

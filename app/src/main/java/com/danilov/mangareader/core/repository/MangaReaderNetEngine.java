@@ -9,6 +9,7 @@ import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.model.MangaSuggestion;
 import com.danilov.mangareader.core.repository.filter.BasicFilters;
 import com.danilov.mangareader.core.util.IoUtils;
+import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
 import com.danilov.mangareader.core.util.Utils;
 
@@ -136,7 +137,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
-        String[] imageUrisArray = null;
         if (httpBytesReader != null) {
             String uri = baseUri + chapter.getUri();
             byte[] response = null;
@@ -152,26 +152,70 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             }
             String responseString = IoUtils.convertBytesToString(response);
             List<String> pageUris = getImagePagesUris(Utils.toDocument(responseString));
-            imageUrisArray = new String[pageUris.size()];
-            List<Thread> threads = new LinkedList<Thread>();
+            final String[] imageUrisArray = new String[pageUris.size()];
+            Promise[] promises = new Promise[pageUris.size()];
             int i = 0;
             for (String pageUri : pageUris) {
-                PageImageThread pageImageThread = new PageImageThread(httpBytesReader, pageUri, i, imageUrisArray);
-                threads.add(pageImageThread);
-                pageImageThread.start();
+                PagePromiseRunnable pageImageThread = new PagePromiseRunnable(httpBytesReader, pageUri);
+                Promise p = Promise.run(pageImageThread, true);
+                promises[i] = p;
                 i++;
             }
-            for (Thread t : threads) {
-                while (t.isAlive()) {
-                    try {
-                        t.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            Promise<Object[]> allImages = Promise.all(promises);
+            final Exception[] holder = new Exception[1];
+
+            allImages.catchException(new Promise.Action<Exception, Object>() {
+                @Override
+                public Object action(final Exception data, final boolean success) {
+                    holder[0] = data;
+                    return null;
                 }
+            });
+            allImages.then(new Promise.Action<Object[], Object>() {
+                @Override
+                public Object action(final Object[] data, final boolean success) {
+                    System.arraycopy(data, 0, imageUrisArray, 0, data.length);
+                    return null;
+                }
+            });
+            allImages.waitForIt();
+            if (holder[0] != null) {
+                throw new RepositoryException(holder[0]);
             }
+            return Arrays.asList(imageUrisArray);
         }
-        return Arrays.asList(imageUrisArray);
+        return null;
+    }
+
+    private class PagePromiseRunnable implements Promise.PromiseRunnable<String> {
+
+        private HttpBytesReader httpBytesReader;
+        private String pageUri;
+
+        public PagePromiseRunnable(final HttpBytesReader reader, final String pageUri) {
+            this.httpBytesReader = reader;
+            this.pageUri = pageUri;
+        }
+
+        @Override
+        public void run(final Promise<String>.Resolver resolver) {
+            String uri = baseUri + pageUri;
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+                resolver.except(e);
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            String imageUri = parsePageForImageUrl(Utils.toDocument(responseString));
+            resolver.resolve(imageUri);
+        }
+
     }
 
     private class PageImageThread extends Thread {
