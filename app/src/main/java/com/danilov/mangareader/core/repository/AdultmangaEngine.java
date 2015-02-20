@@ -79,6 +79,9 @@ public class AdultmangaEngine implements RepositoryEngine {
         if (httpBytesReader != null) {
             try {
                 String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
+                for (Filter.FilterValue filterValue : filterValues) {
+                    uri = filterValue.apply(uri);
+                }
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseSearchResponse(Utils.toDocument(responseString));
