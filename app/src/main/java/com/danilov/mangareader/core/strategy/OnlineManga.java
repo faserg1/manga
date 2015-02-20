@@ -183,12 +183,15 @@ public class OnlineManga implements MangaShowStrategy {
 
             @Override
             public void run() {
+                boolean _success = true;
                 try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
                 } catch (Exception e) {
+                    _success = false;
                     listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
                 }
+                final boolean success = _success;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -197,7 +200,7 @@ public class OnlineManga implements MangaShowStrategy {
                         }
                         listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
                         updateObserver();
-                        promise.finish(Result.SUCCESS, true);
+                        promise.finish(success ? Result.SUCCESS : Result.ERROR, true);
                     }
                 });
             }

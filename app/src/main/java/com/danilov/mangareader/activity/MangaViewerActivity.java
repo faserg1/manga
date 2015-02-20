@@ -224,9 +224,24 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                     promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
 
                         @Override
-                        public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                            if (success) {
-                                currentStrategy.showImage(currentImageNumber);
+                        public Object action(final MangaShowStrategy.Result result, final boolean success) {
+                            switch (result) {
+                                case ERROR:
+                                    break;
+                                case LAST_DOWNLOADED:
+                                    Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                                case SUCCESS:
+                                    currentStrategy.showImage(currentImageNumber);
+                                    break;
+                                case NOT_DOWNLOADED:
+                                    Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                                    break;
+                                case NO_SUCH_CHAPTER:
+                                    Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                                    return null;
+                                case ALREADY_FINAL_CHAPTER:
+                                    Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                                    return null;
                             }
                             return null;
                         }
