@@ -76,7 +76,6 @@ public class RippleView extends RelativeLayout implements Checkable {
                 R.styleable.RippleView_fillOnEnd,
                 fillOnEnd);
 
-        a.recycle();
         paintOne = new Paint();
         paintTwo = new Paint();
 
@@ -91,6 +90,7 @@ public class RippleView extends RelativeLayout implements Checkable {
         paintTwo.setColor(rippleColorTwo);
         currentPaint = paintOne;
         setDrawingCacheEnabled(false);
+        a.recycle();
     }
 
     @Override

@@ -37,6 +37,8 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     private String baseUri = "http://www.mangareader.net";
 
+    private String baseSearchUri = "http://www.mangareader.net/search/?w=";
+
     @Override
     public String getLanguage() {
         return "English";
@@ -84,7 +86,24 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(String query, final List<Filter.FilterValue> filterValues) {
-        return null;
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<Manga> mangaList = null;
+        if (httpBytesReader != null) {
+            try {
+                String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
+//                for (Filter.FilterValue filterValue : filterValues) {
+//                    uri = filterValue.apply(uri);
+//                }
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (HttpRequestException e) {
+                e.printStackTrace();
+            }
+        }
+        return mangaList;
     }
 
     @Override
@@ -228,19 +247,34 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         return baseUri;
     }
 
+
+
+    //html values
+    private String linkValueAttr = "href";
     private String RESULTS_ID = "mangaresults";
     private String RESULT_CLASS = "mangaresultinner";
+    private String BACKGROUND_HOLDER_CLASS = "imgsearchresults";
 
     private List<Manga> parseMangaSearchResponse(final Document document) {
         Element results = document.getElementById(RESULTS_ID);
         Elements mangaResults = results.getElementsByClass(RESULT_CLASS);
+
+        List<Manga> mangas = new ArrayList<>();
         for (Element mangaResult : mangaResults) {
             Element nameElement = mangaResult.select(".manga_name a").get(0);
+            String title = nameElement.text();
+            String url = nameElement.attr(linkValueAttr);
 
+            Element backgroundHolder = mangaResult.getElementsByClass(BACKGROUND_HOLDER_CLASS).get(0);
+            String style = backgroundHolder.attr("style");
+            String imageUrl = style.replace("background-image:url('", "").replace("')", "");
+
+            Manga manga = new Manga(title, url, Repository.MANGAREADERNET);
+            manga.setCoverUri(imageUrl);
+            mangas.add(manga);
         }
 
-
-        return null;
+        return mangas;
     }
 
     private String imgContainerId = "mangaimg";
@@ -281,10 +315,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         }
         return true;
     }
-
-
-    //html values
-    private String linkValueAttr = "href";
 
     private List<MangaChapter> parseMangaChaptersResponse(final Manga manga, final Document document) {
         Element chaptersContainer = document.getElementById(chaptersContainerId);

@@ -76,7 +76,7 @@
 
     <View android:layout_width="fill_parent"
                   android:layout_height="@dimen/manga_list_item_height"
-                  android:background="?attr/selectableItemBackground">
+                  android:background="@drawable/selectable_item_background">
 
     </View>
 

@@ -421,8 +421,6 @@ public class AdultmangaEngine implements RepositoryEngine {
         genres.add(new BasicFilters.RABaseTriState("Юри", "el_1315"));
         genres.add(new BasicFilters.RABaseTriState("Яой", "el_1336"));
 
-
-
         FilterGroup categories = new FilterGroup("Категории", 15);
 
         categories.add(new BasicFilters.RABaseTriState("В цвете", "el_4614"));
