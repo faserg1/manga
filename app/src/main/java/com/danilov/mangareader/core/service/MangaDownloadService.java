@@ -140,6 +140,8 @@ public class MangaDownloadService extends Service {
         public static final int START_NEXT_REQUEST = 2;
         public static final int RESTART_ERROR = 3;
         public static final int SKIP_PICTURE = 4;
+        public static final int PAUSE = 5;
+        public static final int RESUME = 6;
 
         @Override
         public void handleMessage(final Message msg) {
@@ -181,6 +183,12 @@ public class MangaDownloadService extends Service {
                     break;
                 case SKIP_PICTURE:
                     downloadManager.skipDownload();
+                    break;
+                case PAUSE:
+                    downloadManager.pauseDownload();
+                    break;
+                case RESUME:
+                    downloadManager.resumeDownload();
                     break;
                 default:
                     break;
@@ -260,6 +268,18 @@ public class MangaDownloadService extends Service {
     public void skipImage() {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.SKIP_PICTURE;
+        serviceHandler.sendMessage(message);
+    }
+
+    public void pause() {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.PAUSE;
+        serviceHandler.sendMessage(message);
+    }
+
+    public void resume() {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.RESUME;
         serviceHandler.sendMessage(message);
     }
 
@@ -354,6 +374,7 @@ public class MangaDownloadService extends Service {
         public List<Integer> whichChapters;
 
         private boolean hasError;
+        private boolean isPaused = false;
 
         public synchronized void incCurChapter() {
             currentChapterInList++;
@@ -406,6 +427,14 @@ public class MangaDownloadService extends Service {
             this.hasError = hasError;
         }
 
+        public synchronized boolean isPaused() {
+            return isPaused;
+        }
+
+        public synchronized void setIsPaused(final boolean isPaused) {
+            this.isPaused = isPaused;
+        }
+
     }
 
     private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {
@@ -423,11 +452,15 @@ public class MangaDownloadService extends Service {
 
         @Override
         public void onPause(final DownloadManager.Download download) {
-
+            currentRequest.setIsPaused(true);
+            Message message = Message.obtain();
+            message.what = PAUSE;
+            notifyObservers(message);
         }
 
         @Override
         public void onResume(final DownloadManager.Download download) {
+            currentRequest.setIsPaused(false);
             Message message = Message.obtain();
             message.what = RESUME;
             currentSize = download.getSize();

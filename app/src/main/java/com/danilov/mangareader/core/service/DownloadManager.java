@@ -108,6 +108,31 @@ public class DownloadManager {
         }
     }
 
+    public void pauseDownload() {
+        lock.lock();
+        try {
+            Download d = downloads.peek();
+            if (d != null) {
+                d.pause();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void resumeDownload() {
+        lock.lock();
+        try {
+            Download d = downloads.peek();
+            if (d.getStatus() == DownloadStatus.PAUSED) {
+                d.setStatus(DownloadStatus.DOWNLOADING);
+                wakeUp(); //!
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public class Download implements Runnable {
 
         private int tag = 0;
@@ -116,7 +141,7 @@ public class DownloadManager {
         private String filePath;
         private int size = -1;
         private int downloaded = 0;
-        private DownloadStatus status;
+        private DownloadStatus status = DownloadStatus.DOWNLOADING;
 
         public Download() {
         }
@@ -149,23 +174,36 @@ public class DownloadManager {
             this.size = -1;
             this.tag = 0;
             this.downloaded = 0;
-            this.status = null;
+            this.status = DownloadStatus.DOWNLOADING;
         }
 
         @Override
         public void run() {
-            if (getStatus() == DownloadStatus.SKIPPED) {
-                lock.lock();
-                try {
-                    downloads.remove(this);
-                } finally {
-                    lock.unlock();
+            lock.lock();
+            try {
+                DownloadStatus s = getStatus();
+                if (s == DownloadStatus.SKIPPED) {
+                    lock.lock();
+                    try {
+                        downloads.remove(this);
+                    } finally {
+                        lock.unlock();
+                    }
+                    stateChanged();
+                    return;
                 }
-                stateChanged();
-                return;
+                if (s == DownloadStatus.PAUSED) {
+                    stateChanged();
+                }
+                if (s != DownloadStatus.DOWNLOADING) {
+                    return;
+                }
+            } finally {
+                lock.unlock();
             }
             RandomAccessFile file = null;
             InputStream stream = null;
+            Log.d(TAG, "I AM HERE1");
             try {
                 // Open connection to URL.
                 URL url = new URL(uri);
@@ -198,8 +236,9 @@ public class DownloadManager {
                         size = contentLength;
                     }
                 }
-                setStatus(DownloadStatus.DOWNLOADING);
-                stateChanged();
+                if (getStatus() == DownloadStatus.DOWNLOADING) {
+                    stateChanged();
+                }
 
                 // Open file and seek to the end of it.
                 file = new RandomAccessFile(filePath, "rw");
@@ -249,6 +288,9 @@ public class DownloadManager {
                     } finally {
                         lock.unlock();
                     }
+                    stateChanged();
+                }
+                if (getStatus() == DownloadStatus.PAUSED) {
                     stateChanged();
                 }
             } catch (Exception e) {
@@ -333,6 +375,10 @@ public class DownloadManager {
 
         public synchronized void skip() {
             status = DownloadStatus.SKIPPED;
+        }
+
+        public synchronized void pause() {
+            status = DownloadStatus.PAUSED;
         }
 
         public synchronized int getSize() {

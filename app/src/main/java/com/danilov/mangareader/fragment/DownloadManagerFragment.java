@@ -99,6 +99,18 @@ public class DownloadManagerFragment extends BaseFragment {
             }
 
         });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                service.pause();
+            }
+        });
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                service.resume();
+            }
+        });
         skipButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -163,9 +175,11 @@ public class DownloadManagerFragment extends BaseFragment {
     }
 
     private void onPause(final Message message) {
+        showResumeBtn();
     }
 
     private void onResume(final Message message) {
+        showPauseBtn();
         int max = message.arg1;
         imageProgressBar.setMax(max);
         imageProgressBar.setProgress(0);
@@ -221,6 +235,10 @@ public class DownloadManagerFragment extends BaseFragment {
         if (request.isHasError()) {
             showRestartBtn();
         }
+        if (request.isPaused()) {
+            showResumeBtn();
+        }
+
 
         chaptersProgressBar.setMax(quantity);
         chaptersProgressBar.setProgress(currentChapter);

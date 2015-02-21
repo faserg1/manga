@@ -14,7 +14,7 @@
         android:id="@+id/ripple"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
-        app:rippleColorOne="#33b5e5"
+        app:rippleColorOne="@color/manga_main_orange"
         app:rippleColorTwo="#ffe5000d"
         app:backgroundColor="#fff"
         app:fillOnEnd="false">
