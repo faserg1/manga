@@ -6,6 +6,7 @@ import com.danilov.mangareader.core.model.MangaChapter;
 import com.danilov.mangareader.core.model.MangaSuggestion;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -94,7 +95,7 @@ public interface RepositoryEngine {
 
     }
 
-    public class FilterGroup {
+    public class FilterGroup implements Iterable<Filter> {
 
         private List<Filter> filters;
 
@@ -121,6 +122,11 @@ public interface RepositoryEngine {
             return filters.get(i);
         }
 
+        @Override
+        public Iterator<Filter> iterator() {
+            return filters.iterator();
+        }
+
     }
 
     public abstract class Filter<T> {
@@ -142,6 +148,8 @@ public interface RepositoryEngine {
         }
 
         public abstract String apply(final String uri, final FilterValue value);
+
+        public abstract T getDefault();
 
         public enum FilterType {
             TRI_STATE,

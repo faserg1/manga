@@ -31,6 +31,11 @@ public class BasicFilters {
             return uri + "&" + paramName + "=" + strVal;
         }
 
+        @Override
+        public Integer getDefault() {
+            return 0;
+        }
+
     }
 
     public static class MangaReaderTriState extends RepositoryEngine.Filter<Integer> {
@@ -51,6 +56,11 @@ public class BasicFilters {
             Integer val = value.getValue();
             String strVal = vals[val];
             return uri + strVal;
+        }
+
+        @Override
+        public Integer getDefault() {
+            return 0;
         }
 
     }

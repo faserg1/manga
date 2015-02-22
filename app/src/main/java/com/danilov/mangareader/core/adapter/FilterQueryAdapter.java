@@ -63,6 +63,15 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
                 a++;
             }
         }
+        setDefaults();
+    }
+
+    private void setDefaults() {
+        for (RepositoryEngine.FilterGroup filterGroup : filterGroups) {
+            for (RepositoryEngine.Filter filter : filterGroup) {
+                values.put(filter, filter.getDefault());
+            }
+        }
     }
 
     @Override
@@ -163,11 +172,13 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
 
     public List<RepositoryEngine.Filter.FilterValue> getFilterValues() {
         List<RepositoryEngine.Filter.FilterValue> filterValues = new ArrayList<>(values.size());
-        for (Map.Entry<RepositoryEngine.Filter, Object> entry : values.entrySet()) {
-            RepositoryEngine.Filter f = entry.getKey();
-            RepositoryEngine.Filter.FilterValue filterValue = f.newValue();
-            filterValue.setValue(entry.getValue());
-            filterValues.add(filterValue);
+        for (RepositoryEngine.FilterGroup filterGroup : filterGroups) {
+            for (RepositoryEngine.Filter filter : filterGroup) {
+                Object val = values.get(filter);
+                RepositoryEngine.Filter.FilterValue filterValue = filter.newValue();
+                filterValue.setValue(val);
+                filterValues.add(filterValue);
+            }
         }
         return filterValues;
     }

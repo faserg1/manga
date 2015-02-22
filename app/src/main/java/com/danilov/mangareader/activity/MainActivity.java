@@ -95,13 +95,12 @@ public class MainActivity extends BaseToolbarActivity {
         }
         syncToggle();
         updateQuantity();
-//        testShowHeadsUp();
     }
 
     @UiThreadTest
     private void testShowHeadsUp() {
-        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, R.layout.test_headsup_notification);
-        headsUpNotification.show();
+//        HeadsUpNotification headsUpNotification = new HeadsUpNotification(getApplicationContext(), 1, R.layout.test_headsup_notification);
+//        headsUpNotification.show();
     }
 
     public void updateQuantity() {
@@ -129,8 +128,6 @@ public class MainActivity extends BaseToolbarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        testShowHeadsUp();
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:

@@ -91,9 +91,11 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         if (httpBytesReader != null) {
             try {
                 String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
-//                for (Filter.FilterValue filterValue : filterValues) {
-//                    uri = filterValue.apply(uri);
-//                }
+                uri += "&genre=";
+                for (Filter.FilterValue filterValue : filterValues) {
+                    uri = filterValue.apply(uri);
+                }
+                uri += "&order=2";
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
