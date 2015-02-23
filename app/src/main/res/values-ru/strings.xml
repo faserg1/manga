@@ -40,7 +40,8 @@
 
     <string name="cap_page">Страница</string>
     <string name="cap_chapter">Глава</string>
-    <string name="tutorial_viewer">Нажимайте на выделенные синим области для перехода назад и вперёд по главе</string>
+    <string name="tutorial_viewer_1">Нажимайте на выделенные синим области для перехода назад и вперёд по главе</string>
+    <string name="tutorial_viewer_2">Потяните слева направо, чтобы открыть меню просмотра</string>
     <string name="sv_select_last">Выбрать последнюю</string>
 
 </resources>

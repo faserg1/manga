@@ -73,10 +73,11 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     private ApplicationSettings settings;
 
-    private View tutorialView;
+    private View tutorials;
 
     private DialogFragment progressDialog = null;
     private boolean isFullscreen = false;
+    private boolean isTutorialPassed = false;
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +97,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         this.chapterOk = findViewWithId(R.id.chapterOk);
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
-        this.tutorialView = findViewById(R.id.tutorialView);
+        this.tutorials = findViewById(R.id.tutorials);
         settings = ApplicationSettings.get(this);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
@@ -107,12 +108,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(true);
-        Button closeTutorial = findViewWithId(R.id.close_tutorial);
-        closeTutorial.setOnClickListener(this);
-        boolean isTutorialPassed = settings.isTutorialViewerPassed();
-        if (isTutorialPassed) {
-            this.tutorialView.setVisibility(View.GONE);
-        }
+        isTutorialPassed = settings.isTutorialViewerPassed();
+        showTutorial(isTutorialPassed ? -1 : 1);
 
         Intent intent = getIntent();
         if (savedInstanceState != null) {
@@ -274,11 +271,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                 break;
             case R.id.chapterOk:
                 goToChapterFromChapterPicker();
-                break;
-            case R.id.close_tutorial:
-                this.tutorialView.setVisibility(View.GONE);
-                settings.setTutorialViewerPassed(true);
-                settings.update(this);
                 break;
         }
     }
@@ -511,6 +503,44 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getSupportActionBar().show();
+        }
+    }
+
+    private void showTutorial(final int number) {
+        View tutorialView = null;
+        switch (number) {
+            case -1:
+                tutorials.setVisibility(View.GONE);
+                break;
+            case 1:
+                tutorials.setVisibility(View.VISIBLE);
+                findViewById(R.id.tutorialView2).setVisibility(View.INVISIBLE);
+                tutorialView = tutorials.findViewById(R.id.tutorialView);
+                break;
+            case 2:
+                tutorials.setVisibility(View.VISIBLE);
+                findViewById(R.id.tutorialView).setVisibility(View.INVISIBLE);
+                tutorialView = tutorials.findViewById(R.id.tutorialView2);
+                break;
+        }
+        if (tutorialView != null) {
+            tutorialView.setVisibility(View.VISIBLE);
+            Button closeTutorial = (Button) tutorialView.findViewById(R.id.close_tutorial);
+            closeTutorial.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                   switch (number) {
+                       case 1:
+                           showTutorial(2);
+                           break;
+                       case 2:
+                           showTutorial(-1);
+                           settings.setTutorialViewerPassed(true);
+                           settings.update(getApplicationContext());
+                           break;
+                   }
+                }
+            });
         }
     }
 

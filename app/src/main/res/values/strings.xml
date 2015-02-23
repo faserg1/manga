@@ -37,7 +37,8 @@
     <string name="menu_settings">Settings</string>
     <string name="cap_page">Page</string>
     <string name="cap_chapter">Chapter</string>
-    <string name="tutorial_viewer">Click on the blue highlighted area to move backward and forward through the chapter</string>
+    <string name="tutorial_viewer_1">Click on the blue highlighted area to move backward and forward through the chapter</string>
+    <string name="tutorial_viewer_2">Drag from left to right to open the viewer menu</string>
     <string name="sv_select_last">Select last</string>
 
 </resources>
