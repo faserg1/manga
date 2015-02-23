@@ -19,6 +19,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Medium Text"
+                android:textColor="@color/dialog_text"
                 android:id="@+id/text"
                 android:layout_below="@+id/progressBar"
                 android:layout_centerHorizontal="true"/>

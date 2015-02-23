@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Medium Text"
+            android:textColor="@color/dialog_text"
             android:id="@+id/text"
             android:layout_centerHorizontal="true"/>
 

@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:layout_centerInParent="true"
-                android:text="Выбрать последнюю"/>
+                android:text="@string/sv_select_last"/>
 
         </com.danilov.mangareader.core.view.RippleView>
 

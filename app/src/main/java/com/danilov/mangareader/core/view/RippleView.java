@@ -94,7 +94,7 @@ public class RippleView extends RelativeLayout implements Checkable {
     }
 
     @Override
-    public boolean onTouchEvent(final MotionEvent event) {
+    public boolean onTouchEvent(@NonNull final MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mDownX = event.getX();
             mDownY = event.getY();

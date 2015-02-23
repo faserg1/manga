@@ -11,4 +11,6 @@
     <color name="status_bar_color">#ffcd6b24</color>
     <color name="accent">#CCDC5F2F</color>
 
+    <color name="dialog_text">#000</color>
+
 </resources>

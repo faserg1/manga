@@ -16,6 +16,16 @@
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
 
+
+        <item name="textAppearanceLargePopupMenu">@style/Manga.PopupMenu.TextAppearanceLarge</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/Manga.PopupMenu.TextAppearanceLarge</item>
+
+        <item name="textAppearanceSmallPopupMenu">@style/Manga.PopupMenu.TextAppearanceSmall</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/Manga.PopupMenu.TextAppearanceSmall</item>
+
+        <item name="popupMenuStyle">@style/Manga.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Manga.PopupMenu</item>
+
     </style>
 
     <style name="Theme.CustomPanel" parent="@android:style/Theme.Dialog">

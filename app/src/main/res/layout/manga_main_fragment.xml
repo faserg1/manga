@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:text="Обновить"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/ripple"
         android:id="@+id/update"/>
 
     <Button
@@ -32,25 +31,6 @@
               android:layout_below="@+id/select_folder">
 
     </GridView>
-
-    <com.danilov.mangareader.core.view.RippleView
-        android:id="@+id/ripple"
-        android:background="#fff"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:paddingBottom="40dp"
-        app:rippleColorOne="#33b5e5"
-        app:rippleColorTwo="#ffe5000d"
-        app:fillOnEnd="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Нажми на меня"
-            android:layout_centerInParent="true"/>
-
-    </com.danilov.mangareader.core.view.RippleView>
-
 
 
 </RelativeLayout>
