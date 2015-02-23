@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +33,8 @@ import com.danilov.mangareader.fragment.HistoryMangaFragment;
 import com.danilov.mangareader.fragment.MainFragment;
 import com.danilov.mangareader.fragment.RepositoryPickerFragment;
 import com.danilov.mangareader.fragment.SettingsFragment;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
@@ -59,6 +62,10 @@ public class MainActivity extends BaseToolbarActivity {
     private DrawerListAdapter adapter;
 
     private boolean firstLaunch = true;
+
+
+    //advertisment
+    private InterstitialAd interstitial;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -101,7 +108,7 @@ public class MainActivity extends BaseToolbarActivity {
 
         ApplicationSettings applicationSettings = ApplicationSettings.get(this.getApplicationContext());
         firstLaunch = applicationSettings.isFirstLaunch();
-
+        boolean showAdvertisement = applicationSettings.isShowAdvertisement();
         //TODO: check if we need to display main fragment or we need to show restored
         if (firstLaunch) {
             if (savedInstanceState == null) {
@@ -117,8 +124,63 @@ public class MainActivity extends BaseToolbarActivity {
         if (firstLaunch) {
             showFirstLaunchDialog();
         }
+        if (!firstLaunch && savedInstanceState == null) {
+            if (showAdvertisement) {
+                showAds();
+            }
+        }
     }
 
+    private CountDownTimer mCountDownTimer;
+
+    private void initTimer() {
+        mCountDownTimer = new CountDownTimer(7000, 1000) {
+
+            @Override
+            public void onTick(long millisUnitFinished) {
+                displayInterstitial();
+            }
+
+            @Override
+            public void onFinish() {
+                displayInterstitial();
+            }
+        };
+        mCountDownTimer.start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        // Cancel the timer if the game is paused.
+        if (mCountDownTimer != null) {
+            mCountDownTimer.cancel();
+        }
+        super.onPause();
+    }
+
+    private void showAds() {
+        // Create the interstitial.
+        interstitial = new InterstitialAd(this);
+        interstitial.setAdUnitId(getString(R.string.banner_ad_unit_id));
+        // Create ad request.
+        AdRequest adRequest = new AdRequest.Builder().build();
+        // Begin loading your interstitial.
+        interstitial.loadAd(adRequest);
+        initTimer();
+    }
+
+    // Invoke displayInterstitial() when you are ready to display an interstitial.
+    public void displayInterstitial() {
+        if (interstitial.isLoaded()) {
+            mCountDownTimer.cancel();
+            interstitial.show();
+        }
+    }
 
     private CustomDialogFragment dialogFragment = null;
 
@@ -148,10 +210,6 @@ public class MainActivity extends BaseToolbarActivity {
         dialogFragment.setDialog(dialog);
         dialogFragment.setDismissOnDestroy(true);
         dialogFragment.show(getSupportFragmentManager(), "show-ads-question");
-    }
-
-    private void showAds() {
-
     }
 
     @Override

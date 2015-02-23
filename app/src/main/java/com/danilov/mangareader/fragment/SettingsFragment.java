@@ -55,11 +55,11 @@ public class SettingsFragment extends BaseFragment {
                 startActivityForResult(intent, FOLDER_PICKER_REQUEST);
             }
         });
-        disableAds.setChecked(settings.isShowAdvertisement());
+        disableAds.setChecked(!settings.isShowAdvertisement());
         disableAds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-                settings.setShowAdvertisement(b);
+                settings.setShowAdvertisement(!b);
                 settings.setFirstLaunch(false);
                 settings.update(getActivity());
             }
