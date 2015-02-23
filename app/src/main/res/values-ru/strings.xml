@@ -50,5 +50,5 @@
     <string name="sv_disable_ads">Отключить рекламу</string>
     <string name="sv_update">Обновить</string>
     <string name="p_useful_main_fragment">Здесь будет появляться информация о выходе новых глав. В следующей версии это будет происходить автоматически, а сейчас нужно нажимать кнопку \'Обновить\'</string>
-
+    <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
 </resources>
