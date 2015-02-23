@@ -13,14 +13,6 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/update"/>
 
-    <Button
-        android:id="@+id/select_folder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Выбрать путь"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/update"/>
-
     <GridView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:layout_alignParentBottom="true"
@@ -28,7 +20,7 @@
               android:numColumns="1"
               android:listSelector="#00000000"
               android:cacheColorHint="@android:color/transparent"
-              android:layout_below="@+id/select_folder">
+              android:layout_below="@+id/update">
 
     </GridView>
 

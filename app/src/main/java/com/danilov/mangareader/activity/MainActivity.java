@@ -27,6 +27,7 @@ import com.danilov.mangareader.fragment.FavoritesFragment;
 import com.danilov.mangareader.fragment.HistoryMangaFragment;
 import com.danilov.mangareader.fragment.MainFragment;
 import com.danilov.mangareader.fragment.RepositoryPickerFragment;
+import com.danilov.mangareader.fragment.SettingsFragment;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
@@ -154,12 +155,12 @@ public class MainActivity extends BaseToolbarActivity {
 
     private enum DrawerMenuItem {
 
-        UPDATES(R.drawable.ic_action_cloud, R.string.menu_updates),
+        UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
         HISTORY(R.drawable.ic_action_time, R.string.menu_history),
         FAVORITE(R.drawable.ic_action_important, R.string.menu_favorite),
         LOCAL(R.drawable.ic_action_download, R.string.menu_local),
-        DOWNLOAD_MANAGER(R.drawable.ic_action_settings, R.string.menu_download),
+        DOWNLOAD_MANAGER(R.drawable.ic_download_manager, R.string.menu_download),
         SETTINGS(R.drawable.ic_action_settings, R.string.menu_settings);
 
         private int iconId;
@@ -225,6 +226,7 @@ public class MainActivity extends BaseToolbarActivity {
                     showDownloadManagerFragment();
                     break;
                 case SETTINGS:
+                    showSettingsFragment();
                     break;
             }
             syncToggle();
@@ -291,6 +293,18 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showDownloadManagerFragment() {
         Fragment fragment = DownloadManagerFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+    }
+
+    private void showSettingsFragment() {
+        Fragment fragment = SettingsFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)

@@ -64,24 +64,9 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        String path = data.getStringExtra(FolderPickerActivity.FOLDER_KEY);
-        ApplicationSettings settings = ApplicationSettings.get(getActivity());
-        settings.setMangaDownloadBasePath(path);
-        settings.update(getActivity());
-    }
-
-    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         updatesView = findViewById(R.id.updates);
         update = findViewById(R.id.update);
-        ((Button) findViewById(R.id.select_folder)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                startActivityForResult(new Intent(activity, FolderPickerActivity.class), 1);
-            }
-        });
         List<UpdatesElement> _updates = null;
         try {
             _updates = updatesDAO.getAllUpdates();

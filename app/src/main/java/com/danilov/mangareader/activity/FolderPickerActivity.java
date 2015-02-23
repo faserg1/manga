@@ -2,6 +2,7 @@ package com.danilov.mangareader.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,9 +16,11 @@ import android.widget.TextView;
 
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.adapter.BaseAdapter;
+import com.danilov.mangareader.core.util.StorageUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,9 +35,12 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
 
     private FolderAdapter adapter;
 
-    private File baseFolder = new File("/mnt/");
+    private File baseFolder = new File("basefolder");
 
     private File threeDotsFile = new File("...");
+
+    private List<File> parents = null;
+    private List<File> baseFolders = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,19 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         } else {
             curFolder = baseFolder;
         }
+
+        List<StorageUtils.StorageInfo> storages = StorageUtils.getStorageList();
+        parents = new ArrayList<>(storages.size());
+        baseFolders = new ArrayList<>(storages.size());
+        for (StorageUtils.StorageInfo storageInfo : storages) {
+            if (!storageInfo.readonly) {
+                SDFile file = new SDFile(storageInfo.path);
+                file.setDisplayName("sdcard" + file.getName());
+                baseFolders.add(file);
+                parents.add(file.getParentFile());
+            }
+        }
+
         adapter = new FolderAdapter(getApplicationContext(), R.layout.folder_layout, getFiles(curFolder));
         foldersView.setOnItemClickListener(this);
         foldersView.setAdapter(adapter);
@@ -63,8 +82,12 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         int id = item.getItemId();
         if (id == R.id.ok) {
             Intent intent = new Intent();
-            intent.putExtra(FOLDER_KEY, curFolder.getPath());
-            setResult(RESULT_OK, intent);
+            if (curFolder == baseFolder) {
+                setResult(RESULT_CANCELED, intent);
+            } else {
+                intent.putExtra(FOLDER_KEY, curFolder.getPath());
+                setResult(RESULT_OK, intent);
+            }
             finish();
             return true;
         }
@@ -77,15 +100,22 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         File file = files.get(i);
         if (file == threeDotsFile) { //no mistake, threeDots is the one and only!
             curFolder = curFolder.getParentFile();
+            for (File parentFile : parents) {
+                if (curFolder.equals(parentFile)) {
+                    curFolder = baseFolder;
+                    break;
+                }
+            }
         } else {
             curFolder = file;
         }
         files.clear();
-        if (!curFolder.equals(baseFolder)) {
-            files.add(threeDotsFile);
-        }
         files.addAll(getFiles(curFolder));
         adapter.notifyDataSetChanged();
+    }
+
+    private List<File> getBaseFolders() {
+        return new ArrayList<>(baseFolders);
     }
 
     private List<File> getFiles(final String path) {
@@ -93,13 +123,22 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
     }
 
     private List<File> getFiles(final File file) {
+        if (file == baseFolder) {
+            //because we call clear on this list
+            return getBaseFolders();
+        }
         File[] filesArray = file.listFiles(new FileFilter() {
+
             @Override
-            public boolean accept(final File file) {
+            public boolean accept(final java.io.File file) {
                 return file.isDirectory();
             }
+
         });
         List<File> files = new ArrayList<>(filesArray.length);
+        if (!file.equals(baseFolder)) {
+            files.add(threeDotsFile);
+        }
         for (File f : filesArray) {
             files.add(f);
         }
@@ -150,6 +189,42 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
                 this.title = findViewById(R.id.folderName);
             }
 
+        }
+
+    }
+
+    private class SDFile extends java.io.File {
+
+        private String displayName;
+
+        public SDFile(final java.io.File dir, final String name) {
+            super(dir, name);
+        }
+
+        public SDFile(final String path) {
+            super(path);
+        }
+
+        public SDFile(final String dirPath, final String name) {
+            super(dirPath, name);
+        }
+
+        public SDFile(final URI uri) {
+            super(uri);
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(final String displayName) {
+            this.displayName = displayName;
+        }
+
+        @NonNull
+        @Override
+        public String getName() {
+            return displayName == null ? super.getName() : displayName;
         }
 
     }

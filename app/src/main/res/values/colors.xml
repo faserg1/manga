@@ -12,5 +12,6 @@
     <color name="accent">#CCDC5F2F</color>
 
     <color name="dialog_text">#000</color>
+    <color name="text_view_normal">#000</color>
 
 </resources>
