@@ -194,7 +194,7 @@ public class MainActivity extends BaseToolbarActivity {
             public void onClick(final DialogInterface dialog, final int which) {
                 firstLaunch = false;
                 CheckBox checkBox = (CheckBox) contentView.findViewById(R.id.disable_ads);
-                boolean showAds = checkBox.isChecked();
+                boolean showAds = !checkBox.isChecked();
 
                 ApplicationSettings applicationSettings = ApplicationSettings.get(getApplicationContext());
                 applicationSettings.setShowAdvertisement(showAds);
