@@ -304,4 +304,9 @@ public class OnlineManga implements MangaShowStrategy {
         this.destroyed = true;
     }
 
+    @Override
+    public boolean isOnline() {
+        return true;
+    }
+
 }

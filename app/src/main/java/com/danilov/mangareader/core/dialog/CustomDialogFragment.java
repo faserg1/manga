@@ -36,10 +36,14 @@ public class CustomDialogFragment extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(final Bundle outState) {
-        if (dismissOnDestroy) {
-            dismiss();
-        }
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onPause() {
+        if (dismissOnDestroy) {
+            dismiss();
+        }
+        super.onPause();
+    }
 }

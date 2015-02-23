@@ -64,6 +64,7 @@ public class OfflineManga implements MangaShowStrategy {
                 @Override
                 public void run() {
                     promise.finish(Result.SUCCESS, true);
+                    updateObserver();
                 }
             });
         } catch (Exception e) {
@@ -213,6 +214,11 @@ public class OfflineManga implements MangaShowStrategy {
     @Override
     public void destroy() {
         this.destroyed = true;
+    }
+
+    @Override
+    public boolean isOnline() {
+        return false;
     }
 
     @Override

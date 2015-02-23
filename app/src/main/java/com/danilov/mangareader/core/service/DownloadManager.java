@@ -203,7 +203,6 @@ public class DownloadManager {
             }
             RandomAccessFile file = null;
             InputStream stream = null;
-            Log.d(TAG, "I AM HERE1");
             try {
                 // Open connection to URL.
                 URL url = new URL(uri);

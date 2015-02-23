@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.danilov.mangareader.core.model.UpdatesElement;
 import com.danilov.mangareader.core.service.MangaUpdateService;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.util.ServiceContainer;
+import com.danilov.mangareader.test.Mock;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,8 @@ import java.util.List;
  */
 public class MainFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
+    private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
+
     private Button update;
     private GridView updatesView;
     private List<UpdatesElement> updates = new ArrayList<UpdatesElement>();
@@ -47,20 +51,31 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     private UpdatesAdapter adapter;
 
     private MainActivity activity;
+    private boolean firstLaunch;
 
     private UpdateBroadcastReceiver receiver;
 
     private MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
     private UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static MainFragment newInstance(final boolean firstLaunch) {
+        MainFragment mainFragment = new MainFragment();
+        mainFragment.setFirstLaunch(firstLaunch);
+        return mainFragment;
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.manga_main_fragment, container, false);
         return view;
+    }
+
+    public boolean isFirstLaunch() {
+        return firstLaunch;
+    }
+
+    public void setFirstLaunch(final boolean firstLaunch) {
+        this.firstLaunch = firstLaunch;
     }
 
     @Override
@@ -76,9 +91,23 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         if (_updates != null) {
             updates = _updates;
         }
-        adapter = new UpdatesAdapter(getActivity(), 0, updates);
+        if (savedInstanceState != null) {
+            firstLaunch = savedInstanceState.getBoolean(FIRST_LAUNCH, firstLaunch);
+        }
+        if (firstLaunch) {
+            List<UpdatesElement> mock = new ArrayList<>(1);
+            mock.add(Mock.getMockUpdate(getActivity()));
+            updates = mock;
+            adapter = new UpdatesAdapter(getActivity(), 0, mock);
+        } else {
+            TextView usefulInfo = findViewById(R.id.useful_info);
+            usefulInfo.setVisibility(View.GONE);
+            adapter = new UpdatesAdapter(getActivity(), 0, updates);
+        }
         updatesView.setAdapter(adapter);
-        updatesView.setOnItemClickListener(this);
+        if (!firstLaunch) {
+            updatesView.setOnItemClickListener(this);
+        }
         activity = (MainActivity) getActivity();
         receiver = new UpdateBroadcastReceiver();
         activity.registerReceiver(receiver, new IntentFilter(MangaUpdateService.UPDATE));
@@ -106,6 +135,12 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onDetach() {
         activity.unregisterReceiver(receiver);
         super.onDetach();
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        outState.putBoolean(FIRST_LAUNCH, firstLaunch);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -220,6 +255,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void deleteUpdate(final UpdatesElement element) {
+        firstLaunch = false; //supa hack
         try {
             updatesDAO.delete(element);
         } catch (DatabaseAccessException e) {

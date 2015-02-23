@@ -1,8 +1,12 @@
 package com.danilov.mangareader.test;
 
+import android.content.Context;
 import android.os.Environment;
+
+import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.model.MangaChapter;
+import com.danilov.mangareader.core.model.UpdatesElement;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 
 import java.io.File;
@@ -29,6 +33,16 @@ public class Mock {
         chapters.add(c2);
         manga.setChapters(chapters);
         return manga;
+    }
+
+
+
+    public static UpdatesElement getMockUpdate(final Context context) {
+        UpdatesElement updatesElement = new UpdatesElement();
+        Manga manga = new Manga(context.getString(R.string.p_manga_new_chapters), "", RepositoryEngine.Repository.OFFLINE);
+        updatesElement.setManga(manga);
+        updatesElement.setDifference(25);
+        return updatesElement;
     }
 
 }

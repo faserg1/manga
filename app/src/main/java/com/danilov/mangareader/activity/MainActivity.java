@@ -1,8 +1,10 @@
 package com.danilov.mangareader.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,9 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.danilov.mangareader.R;
+import com.danilov.mangareader.core.application.ApplicationSettings;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.UpdatesDAO;
-import com.danilov.mangareader.core.notification.headsup.HeadsUpNotification;
+import com.danilov.mangareader.core.dialog.CustomDialog;
+import com.danilov.mangareader.core.dialog.CustomDialogFragment;
 import com.danilov.mangareader.core.util.DrawerStub;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
@@ -33,6 +37,8 @@ import com.danilov.mangareader.fragment.SettingsFragment;
  * Created by Semyon Danilov on 07.10.2014.
  */
 public class MainActivity extends BaseToolbarActivity {
+
+    private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
 
     private UpdatesDAO updatesDAO = null;
 
@@ -51,6 +57,8 @@ public class MainActivity extends BaseToolbarActivity {
     private int updatesQuantity = 0;
 
     private DrawerListAdapter adapter;
+
+    private boolean firstLaunch = true;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -90,12 +98,72 @@ public class MainActivity extends BaseToolbarActivity {
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
+
+        ApplicationSettings applicationSettings = ApplicationSettings.get(this.getApplicationContext());
+        firstLaunch = applicationSettings.isFirstLaunch();
+
         //TODO: check if we need to display main fragment or we need to show restored
-        if (savedInstanceState == null) {
-            showMainFragment();
+        if (firstLaunch) {
+            if (savedInstanceState == null) {
+                showMainFragment();
+            }
+        } else {
+            if (savedInstanceState == null) {
+                showRepositoryPickerFragment();
+            }
         }
         syncToggle();
         updateQuantity();
+        if (firstLaunch) {
+            showFirstLaunchDialog();
+        }
+    }
+
+
+    private CustomDialogFragment dialogFragment = null;
+
+    private void showFirstLaunchDialog() {
+        dialogFragment = new CustomDialogFragment();
+        CustomDialog dialog = null;
+        final View contentView = getLayoutInflater().inflate(R.layout.dialog_show_ads_question, null);
+        CustomDialog.Builder builder = new CustomDialog.Builder(this);
+        builder.setPositiveButton(R.string.sv_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                firstLaunch = false;
+                CheckBox checkBox = (CheckBox) contentView.findViewById(R.id.disable_ads);
+                boolean showAds = checkBox.isChecked();
+
+                ApplicationSettings applicationSettings = ApplicationSettings.get(getApplicationContext());
+                applicationSettings.setShowAdvertisement(showAds);
+                applicationSettings.setFirstLaunch(false);
+                applicationSettings.update(getApplicationContext());
+
+                dialogFragment.dismiss();
+            }
+        });
+        builder.setView(contentView);
+        builder.setTitle(R.string.sv_disable_ads);
+        dialog = builder.build();
+        dialogFragment.setDialog(dialog);
+        dialogFragment.setDismissOnDestroy(true);
+        dialogFragment.show(getSupportFragmentManager(), "show-ads-question");
+    }
+
+    private void showAds() {
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        outState.putBoolean(FIRST_LAUNCH, firstLaunch);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        firstLaunch = savedInstanceState.getBoolean(FIRST_LAUNCH);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @UiThreadTest
@@ -159,7 +227,7 @@ public class MainActivity extends BaseToolbarActivity {
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
         HISTORY(R.drawable.ic_action_time, R.string.menu_history),
         FAVORITE(R.drawable.ic_action_important, R.string.menu_favorite),
-        LOCAL(R.drawable.ic_action_download, R.string.menu_local),
+        LOCAL(R.drawable.ic_action_downloads, R.string.menu_local),
         DOWNLOAD_MANAGER(R.drawable.ic_download_manager, R.string.menu_download),
         SETTINGS(R.drawable.ic_action_settings, R.string.menu_settings);
 
@@ -328,7 +396,7 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void showMainFragment() {
-        Fragment fragment = MainFragment.newInstance();
+        Fragment fragment = MainFragment.newInstance(firstLaunch);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)

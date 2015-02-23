@@ -185,7 +185,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 Log.d(TAG, e.getMessage());
             }
             try {
-                Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+                Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
                 if (_manga != null) {
                     manga.setId(_manga.getId());
                     manga.setFavorite(_manga.isFavorite());
@@ -291,7 +291,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         flipper.flip();
         try {
             manga.setFavorite(true);
-            mangaDAO.setFavorite(manga, manga.isDownloaded(), true);
+            mangaDAO.setFavorite(manga, true);
         } catch (DatabaseAccessException e) {
             Context context = getActivity();
             String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
@@ -303,7 +303,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         flipper.flip();
         try {
             manga.setFavorite(false);
-            mangaDAO.setFavorite(manga, manga.isDownloaded(), false);
+            mangaDAO.setFavorite(manga, false);
         } catch (DatabaseAccessException e) {
             Context context = getActivity();
             String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);

@@ -99,6 +99,10 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     @Override
     public void onPopupButtonClick(final View popupButton, final int listPosition) {
+        //TODO: consider rewriting
+        if (true) {
+            return;
+        }
         final CustomPopup popup = new CustomPopup(this, popupButton, listPosition);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.queried_manga_item_menu, popup.getMenu());

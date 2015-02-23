@@ -19,6 +19,8 @@ public class ApplicationSettings {
     private static final String MANGA_DOWNLOAD_BASE_PATH_FIELD = "MDBPF";
     private static final String TUTORIAL_VIEWER_PASSED_FIELD = "TVPF";
     private static final String VIEWER_FULLSCREEN_FIELD = "VFF";
+    private static final String FIRST_LAUNCH = "FL";
+    private static final String SHOW_ADVERTISEMENT = "SA";
 
     private static ApplicationSettings instance;
 
@@ -27,6 +29,10 @@ public class ApplicationSettings {
     private String mangaDownloadBasePath;
 
     private boolean tutorialViewerPassed;
+
+    private boolean firstLaunch;
+
+    private boolean showAdvertisement;
 
     private boolean viewerFullscreen;
 
@@ -54,6 +60,22 @@ public class ApplicationSettings {
         this.tutorialViewerPassed = tutorialViewerPassed;
     }
 
+    public boolean isShowAdvertisement() {
+        return showAdvertisement;
+    }
+
+    public void setShowAdvertisement(final boolean showAdvertisement) {
+        this.showAdvertisement = showAdvertisement;
+    }
+
+    public boolean isFirstLaunch() {
+        return firstLaunch;
+    }
+
+    public void setFirstLaunch(final boolean firstLaunch) {
+        this.firstLaunch = firstLaunch;
+    }
+
     public boolean isViewerFullscreen() {
         return viewerFullscreen;
     }
@@ -78,6 +100,8 @@ public class ApplicationSettings {
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
         this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
         this.tutorialViewerPassed = sharedPreferences.getBoolean(TUTORIAL_VIEWER_PASSED_FIELD, false);
+        this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
+        this.showAdvertisement = sharedPreferences.getBoolean(SHOW_ADVERTISEMENT, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
@@ -104,6 +128,8 @@ public class ApplicationSettings {
         editor.putString(MANGA_DOWNLOAD_BASE_PATH_FIELD, mangaDownloadBasePath);
         editor.putBoolean(TUTORIAL_VIEWER_PASSED_FIELD, tutorialViewerPassed);
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
+        editor.putBoolean(FIRST_LAUNCH, firstLaunch);
+        editor.putBoolean(SHOW_ADVERTISEMENT, showAdvertisement);
         editor.commit();
     }
 

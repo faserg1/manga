@@ -79,6 +79,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private boolean isFullscreen = false;
     private boolean isTutorialPassed = false;
 
+    private boolean showOnline;
+
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_viewer_activity);
@@ -124,6 +126,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         mangaTitleTextView.setText(manga.getTitle());
         fromChapter = intent.getIntExtra(Constants.FROM_CHAPTER_KEY, -1);
         fromPage = intent.getIntExtra(Constants.FROM_PAGE_KEY, -1);
+        showOnline = intent.getBooleanExtra(Constants.SHOW_ONLINE, true);
 
         //loading anims
         Animation nextInAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
@@ -136,7 +139,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         InAndOutAnim prev = new InAndOutAnim(prevInAnim, prevOutAnim);
         prev.setDuration(150);
 
-        if (manga.isDownloaded()) {
+        if (!showOnline) {
             currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
         } else {
             prepareOnlineManga();
@@ -155,7 +158,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
         Manga _manga = null;
         try {
-            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
         } catch (DatabaseAccessException e) {
             e.printStackTrace();
             //TODO: show dialog "HISTORY WILL NOT BE SAVED" etc
@@ -401,7 +404,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
         HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
         try {
-            historyDAO.updateHistory(manga, currentChapterNumber, currentImageNumber);
+            historyDAO.updateHistory(manga, currentStrategy.isOnline(), currentChapterNumber, currentImageNumber);
         } catch (DatabaseAccessException e) {
             Log.e(TAG, "Failed to update history: " + e.getMessage());
         }

@@ -131,6 +131,7 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         intent.putExtra(Constants.MANGA_PARCEL_KEY, historyElement.getManga());
         intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
         intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
+        intent.putExtra(Constants.SHOW_ONLINE, historyElement.isOnline());
         startActivity(intent);
     }
 
@@ -172,9 +173,10 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
                 holder.mangaTitle = (TextView) view.findViewById(R.id.manga_title);
                 holder.isOnline = view.findViewById(R.id.is_online);
             }
-            Manga manga = history.get(position).getManga();
+            HistoryElement historyElement = history.get(position);
+            Manga manga = historyElement.getManga();
             holder.mangaTitle.setText(manga.getTitle());
-            if (manga.isDownloaded()) {
+            if (!historyElement.isOnline()) {
                 holder.isOnline.setVisibility(View.INVISIBLE);
                 LocalManga localManga = (LocalManga) manga;
                 String mangaUri = localManga.getLocalUri();

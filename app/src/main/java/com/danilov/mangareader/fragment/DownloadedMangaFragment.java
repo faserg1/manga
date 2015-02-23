@@ -127,6 +127,7 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
         LocalManga manga = adapter.getMangas().get(position);
         Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        intent.putExtra(Constants.SHOW_ONLINE, false);
         startActivity(intent);
     }
 
@@ -221,8 +222,8 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
                 for (LocalManga localManga : mangas) {
                     IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
                     try {
-                        historyDAO.deleteManga(localManga);
-                        mangaDAO.deleteManga(localManga);
+                        historyDAO.deleteManga(localManga, false);
+                        mangaDAO.setDownloaded(localManga, false);
                     } catch (DatabaseAccessException e) {
                         _success = false;
                         _error = e.getMessage();

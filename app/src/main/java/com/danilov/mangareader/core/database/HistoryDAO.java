@@ -31,6 +31,7 @@ public class HistoryDAO {
     private static final String CHAPTER = "chapter";
     private static final String PAGE = "page";
     private static final String DATE = "date";
+    private static final String IS_ONLINE = "is_online";
 
     public DatabaseHelper databaseHelper = null;
 
@@ -54,10 +55,10 @@ public class HistoryDAO {
      * @return
      * @throws DatabaseAccessException
      */
-    public HistoryElement getHistoryByManga(final Manga manga) throws DatabaseAccessException {
+    public HistoryElement getHistoryByManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
-        String selection = MANGA_ID + " = ?";
-        String[] selectionArgs = new String[] {"" + manga.getId()};
+        String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
+        String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
         HistoryElement historyElement = null;
         try {
             Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
@@ -73,7 +74,7 @@ public class HistoryDAO {
             int page = cursor.getInt(pageIndex);
             int dateMillis = cursor.getInt(dateIndex);
             Date date = new Date(dateMillis);
-            historyElement = new HistoryElement(manga, chapter, page);
+            historyElement = new HistoryElement(manga, isOnline, chapter, page);
             historyElement.setId(id);
             historyElement.setDate(date);
         } catch (Exception e) {
@@ -97,6 +98,7 @@ public class HistoryDAO {
             int chapterIndex = cursor.getColumnIndex(CHAPTER);
             int pageIndex = cursor.getColumnIndex(PAGE);
             int dateIndex = cursor.getColumnIndex(DATE);
+            int isOnlineIndex = cursor.getColumnIndex(IS_ONLINE);
             do {
                 int localId = cursor.getInt(localIdIndex);
                 int id = cursor.getInt(idIndex);
@@ -104,7 +106,8 @@ public class HistoryDAO {
                 int page = cursor.getInt(pageIndex);
                 int dateMillis = cursor.getInt(dateIndex);
                 Manga manga = mangaDAO.getById(localId);
-                HistoryElement historyElement = new HistoryElement(manga, chapter, page);
+                boolean isOnline = cursor.getInt(isOnlineIndex) == 1;
+                HistoryElement historyElement = new HistoryElement(manga, isOnline, chapter, page);
                 Date date = new Date(dateMillis);
                 historyElement.setId(id);
                 historyElement.setDate(date);
@@ -116,10 +119,10 @@ public class HistoryDAO {
         return mangaList;
     }
 
-    public void deleteManga(final Manga localManga) throws DatabaseAccessException {
+    public void deleteManga(final Manga localManga, final boolean isOnline) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
-        String selection = MANGA_ID + " = ?";
-        String[] selectionArgs = new String[] {"" + localManga.getId()};
+        String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
+        String[] selectionArgs = new String[] {"" + localManga.getId(), isOnline ? "1" : "0"};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
@@ -127,19 +130,20 @@ public class HistoryDAO {
         }
     }
 
-    public void addHistory(final Manga manga, final int chapter, final int page) throws DatabaseAccessException {
+    public void addHistory(final Manga manga, final boolean isOnline, final int chapter, final int page) throws DatabaseAccessException {
 
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-        Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+        Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (_manga == null) {
             mangaDAO.addManga(manga);
-            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository(), manga.isDownloaded());
+            _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
         }
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(CHAPTER, chapter);
         cv.put(MANGA_ID, _manga.getId());
         cv.put(PAGE, page);
+        cv.put(IS_ONLINE, isOnline ? 1 : 0);
         cv.put(DATE, new Date().getTime());
         try {
             db.insertOrThrow(TABLE_NAME, null, cv);
@@ -149,14 +153,15 @@ public class HistoryDAO {
         }
     }
 
-    public HistoryElement updateHistory(final Manga manga, final int chapter, final int page) throws DatabaseAccessException{
-        HistoryElement historyElement = getHistoryByManga(manga);
+    public HistoryElement updateHistory(final Manga manga, final boolean isOnline, final int chapter, final int page) throws DatabaseAccessException{
+        HistoryElement historyElement = getHistoryByManga(manga, isOnline);
         if (historyElement != null) {
             SQLiteDatabase db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(PAGE, page);
                 cv.put(CHAPTER, chapter);
+                cv.put(IS_ONLINE, isOnline ? 1 : 0);
                 cv.put(DATE, new Date().getTime());
                 String selection = ID + " = ?";
                 String id = String.valueOf(historyElement.getId());
@@ -168,7 +173,7 @@ public class HistoryDAO {
             }
             return historyElement;
         } else {
-            addHistory(manga, chapter, page);
+            addHistory(manga, isOnline, chapter, page);
         }
         return null;
     }
@@ -184,6 +189,7 @@ public class HistoryDAO {
             builder.addColumn(PAGE, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(CHAPTER, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(DATE, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(IS_ONLINE, DatabaseOptions.Type.INT, false, false);
             DatabaseOptions options = builder.build();
             String sqlStatement = options.toSQLStatement();
             try {

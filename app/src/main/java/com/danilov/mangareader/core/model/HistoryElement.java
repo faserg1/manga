@@ -17,12 +17,15 @@ public class HistoryElement {
 
     private Date date;
 
+    private boolean isOnline;
+
     //TODO: add isOnline
 
-    public HistoryElement(final Manga manga, final int chapter, final int page) {
+    public HistoryElement(final Manga manga, final boolean isOnline, final int chapter, final int page) {
         this.manga = manga;
         this.chapter = chapter;
         this.page = page;
+        this.isOnline = isOnline;
     }
 
     public Date getDate() {
@@ -63,6 +66,14 @@ public class HistoryElement {
 
     public void setId(final int id) {
         this.id = id;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(final boolean isOnline) {
+        this.isOnline = isOnline;
     }
 
 }

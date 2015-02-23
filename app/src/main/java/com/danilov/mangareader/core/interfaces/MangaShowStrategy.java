@@ -39,6 +39,8 @@ public interface MangaShowStrategy {
 
     void destroy();
 
+    boolean isOnline();
+
     //TODO: return them actually!
     public enum Result {
         ERROR,

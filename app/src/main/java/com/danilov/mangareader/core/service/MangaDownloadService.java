@@ -329,7 +329,7 @@ public class MangaDownloadService extends Service {
                 _local.setAuthor(manga.getAuthor());
                 _local.setChaptersQuantity(manga.getChaptersQuantity());
                 _local.setDescription(manga.getDescription());
-                _local.setCoverUri(coverUri);
+                _local.setCoverUri(manga.getCoverUri());
                 _local.setFavorite(manga.isFavorite());
 
                 Manga localManga = mangaDAO.updateFromDownloadService(_local, manga.getChaptersQuantity());
