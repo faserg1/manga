@@ -20,6 +20,7 @@
             android:textColor="@color/text_view_normal"/>
 
         <LinearLayout
+            android:layout_marginTop="15dp"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -41,6 +42,25 @@
                 android:text="@string/sv_select"
                 android:id="@+id/select_folder"/>
 
+        </LinearLayout>
+
+        <CheckBox
+            android:layout_marginTop="10dp"
+            android:id="@+id/disable_ads"
+            android:text="@string/sv_disable_ads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:paddingLeft="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dialog_text"
+                android:text="@string/p_want_ads_question"/>
 
         </LinearLayout>
 
