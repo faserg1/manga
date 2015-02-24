@@ -99,7 +99,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         removeFromFavorites.setOnClickListener(this);
 
         flipper = new OverXFlipper(addToFavorites, removeFromFavorites, 300);
-
+        disableButtons();
         if (savedInstanceState == null) {
             Intent i = activity.getIntent();
             manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
@@ -129,6 +129,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         if (mangaDescription != null) {
             mangaDescriptionTextView.setText(mangaDescription);
             chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
+            enableButtons();
         } else {
             isLoading = true;
             refreshable.startRefresh();
@@ -143,6 +144,28 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     public void onDetach() {
         isDetached = true;
         super.onDetach();
+    }
+
+    private void enableButtons() {
+        downloadButton.setEnabled(true);
+        downloadButton.setClickable(true);
+        readOnlineButton.setEnabled(true);
+        readOnlineButton.setClickable(true);
+        addToFavorites.setEnabled(true);
+        addToFavorites.setClickable(true);
+        removeFromFavorites.setEnabled(true);
+        removeFromFavorites.setClickable(true);
+    }
+
+    private void disableButtons() {
+        downloadButton.setEnabled(false);
+        downloadButton.setClickable(false);
+        readOnlineButton.setEnabled(false);
+        readOnlineButton.setClickable(false);
+        addToFavorites.setEnabled(false);
+        addToFavorites.setClickable(false);
+        removeFromFavorites.setEnabled(false);
+        removeFromFavorites.setClickable(false);
     }
 
     @Override
@@ -202,6 +225,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                         return;
                     }
                     if (loaded) {
+                        if (manga.isFavorite()) {
+                            flipper.flipNoAnim();
+                        }
+                        enableButtons();
                         String mangaDescription = manga.getDescription();
                         mangaDescriptionTextView.setText(mangaDescription);
                         chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));

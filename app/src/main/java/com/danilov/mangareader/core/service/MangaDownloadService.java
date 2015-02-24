@@ -349,8 +349,10 @@ public class MangaDownloadService extends Service {
             currentImage = 0;
             currentImageQuantity = urls.size();
             if (!new File(coverUri).exists()) {
-                downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
-                currentImageQuantity++;
+                if (manga.getCoverUri() != null) {
+                    downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
+                    currentImageQuantity++;
+                }
             }
             sendStatus();
             for (String url : urls) {

@@ -38,4 +38,12 @@ public class OverXFlipper {
         });
     }
 
+    public void flipNoAnim() {
+        View tmp = v1;
+        v1 = v2;
+        v2 = tmp;
+        v1.setVisibility(View.GONE);
+        v2.setVisibility(View.VISIBLE);
+    }
+
 }
