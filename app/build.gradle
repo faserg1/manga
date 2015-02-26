@@ -26,4 +26,5 @@ dependencies {
     compile 'rapid.decoder:jpeg-decoder:0.2.8'
     compile 'rapid.decoder:png-decoder:0.2.8'
     compile 'com.google.android.gms:play-services:6.+'
+    compile 'de.hdodenhof:circleimageview:1.2.2'
 }

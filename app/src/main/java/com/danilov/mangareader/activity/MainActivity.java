@@ -47,6 +47,8 @@ public class MainActivity extends BaseToolbarActivity {
 
     private View drawerLayout;
 
+    private View drawerMenu;
+
     private DrawerLayout castedDrawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
@@ -76,7 +78,7 @@ public class MainActivity extends BaseToolbarActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         isLargeLandscape = findViewById(R.id.is_large) != null; //dealing with landscape pads
         drawerList = (ListView) findViewById(R.id.left_drawer);
-
+        drawerMenu = findViewWithId(R.id.drawer_menu);
         // Set the adapter for the list view
         adapter = new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values());
         drawerList.setAdapter(adapter);
@@ -258,10 +260,10 @@ public class MainActivity extends BaseToolbarActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                if (castedDrawerLayout.isDrawerOpen(drawerList)) {
-                    castedDrawerLayout.closeDrawer(drawerList);
+                if (castedDrawerLayout.isDrawerOpen(drawerMenu)) {
+                    castedDrawerLayout.closeDrawer(drawerMenu);
                 } else {
-                    castedDrawerLayout.openDrawer(drawerList);
+                    castedDrawerLayout.openDrawer(drawerMenu);
                 }
                 if (drawerToggle != null) {
                     drawerToggle.syncState();
@@ -375,7 +377,7 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void closeDrawer() {
-        castedDrawerLayout.closeDrawer(drawerList);
+        castedDrawerLayout.closeDrawer(drawerMenu);
         if (drawerToggle != null) {
             drawerToggle.syncState();
         }

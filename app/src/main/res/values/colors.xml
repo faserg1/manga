@@ -13,5 +13,6 @@
 
     <color name="dialog_text">#000</color>
     <color name="text_view_normal">#000</color>
+    <color name="profile_background_not_pressed">#a0000000</color>
 
 </resources>

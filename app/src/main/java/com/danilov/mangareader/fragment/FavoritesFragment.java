@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.mangareader.R;
+import com.danilov.mangareader.activity.MangaInfoActivity;
 import com.danilov.mangareader.activity.MangaViewerActivity;
 import com.danilov.mangareader.core.adapter.BaseAdapter;
 import com.danilov.mangareader.core.adapter.DownloadedMangaAdapter;
@@ -58,7 +59,6 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     private FavoritesAdapter adapter = null;
     private GridView gridView = null;
-    private ActionMode actionMode;
 
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
@@ -124,7 +124,10 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-
+        Manga manga = adapter.getItem(i);
+        Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        startActivity(intent);
     }
 
     @Override

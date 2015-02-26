@@ -31,7 +31,7 @@
                     android:id="@+id/manga_cover"
                     android:layout_height="@dimen/manga_list_image_height"
                     android:layout_width="wrap_content"
-                    android:adjustViewBounds="true"/>
+                    android:scaleType="centerCrop"/>
 
         </LinearLayout> <!--cover end-->
 
@@ -68,7 +68,7 @@
                     android:src="@drawable/ic_action_overflow"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:background="?attr/selectableItemBackground"/>
+                    android:background="@drawable/selectable_item_background"/>
 
         </LinearLayout>
 
@@ -82,7 +82,7 @@
 
     <View android:layout_width="fill_parent"
                   android:layout_height="@dimen/manga_list_item_height"
-                  android:background="?attr/selectableItemBackground"/>
+                  android:background="@drawable/selectable_item_background"/>
 
 
 </RelativeLayout>
