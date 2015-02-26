@@ -24,6 +24,7 @@ import com.danilov.mangareader.core.adapter.PopupButtonClickListener;
 import com.danilov.mangareader.core.database.DatabaseAccessException;
 import com.danilov.mangareader.core.database.HistoryDAO;
 import com.danilov.mangareader.core.database.MangaDAO;
+import com.danilov.mangareader.core.model.HistoryElement;
 import com.danilov.mangareader.core.model.LocalManga;
 import com.danilov.mangareader.core.service.LocalImageManager;
 import com.danilov.mangareader.core.util.Constants;
@@ -125,9 +126,24 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
             return;
         }
         LocalManga manga = adapter.getMangas().get(position);
+
+        HistoryElement historyElement = null;
+        try {
+            historyElement = historyDAO.getHistoryByManga(manga, false);
+        } catch (DatabaseAccessException e) {
+            //TODO: auto stub
+            e.printStackTrace();
+        }
+
         Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
+
+
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         intent.putExtra(Constants.SHOW_ONLINE, false);
+        if (historyElement != null) {
+            intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
+            intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
+        }
         startActivity(intent);
     }
 
