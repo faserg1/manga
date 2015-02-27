@@ -27,6 +27,7 @@ public class MangaImageSwitcher extends ImageSwitcher {
             if (state != null) {
                 state.setCenter(10000, 0);
             }
+            prevImage.reset();
         }
         image.getSWidth();
         image.setImageFile(filePath, state);
@@ -42,6 +43,7 @@ public class MangaImageSwitcher extends ImageSwitcher {
             if (state != null) {
                 state.setCenter(0, 10000);
             }
+            prevImage.reset();
         }
         image.setImageFile(filePath, state);
         showPrevious();
