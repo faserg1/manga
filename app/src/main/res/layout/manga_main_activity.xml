@@ -58,7 +58,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Здесь будет ваш профиль. Когда я это реализую..."/>
+                    android:text="@string/profile_promise"/>
 
             </RelativeLayout>
 

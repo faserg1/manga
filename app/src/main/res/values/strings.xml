@@ -48,4 +48,5 @@
     <string name="sv_update">Update</string>
     <string name="p_useful_main_fragment">There will be displayed information about new chapters. In the next version it will be done automatically, and now you will need to press \'Refresh\'</string>
     <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
+    <string name="profile_promise">Here will be your profile, as I implement this</string>
 </resources>
