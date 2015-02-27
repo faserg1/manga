@@ -48,7 +48,7 @@
                     android:id="@+id/profile_image"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
-                    android:src="@drawable/lelouche"
+                    android:src="@drawable/profile_stub"
                     app:border_width="2dp"
                     app:border_color="#e6717171"/>
 
