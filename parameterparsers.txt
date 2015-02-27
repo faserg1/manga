@@ -28,4 +28,5 @@ function asd() {
     console.log(str);
 }
 
-Peopledie95
+passes Peopledie95
+alias mangareader
