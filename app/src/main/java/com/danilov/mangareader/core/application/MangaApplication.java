@@ -46,5 +46,12 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(historyDAO);
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
+
+
+        //Google Play Service ты офигел!
+        try {
+            Class.forName("android.os.AsyncTask");
+        } catch(Throwable ignore) {
+        }
     }
 }
