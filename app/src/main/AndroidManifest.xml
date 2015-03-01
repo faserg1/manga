@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.danilov.mangareader"
-    android:versionCode="34"
-    android:versionName="0.954" >
+    android:versionCode="35"
+    android:versionName="0.955" >
 
     <uses-sdk
         android:minSdkVersion="10"
