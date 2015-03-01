@@ -96,13 +96,14 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
         setupToolbar();
         super.onActivityCreated(savedInstanceState);
     }
+
     private void setupToolbar() {
         toolbar.inflateMenu(R.menu.manga_search_menu);
         final Menu menu = toolbar.getMenu();
         toolbar.setOnMenuItemClickListener(this);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setSubmitButtonEnabled(true);
-        searchView.setIconifiedByDefault(true);
+        searchView.setIconifiedByDefault(false);
         searchView.setFocusable(false);
         searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -114,7 +115,6 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
             @Override
             public boolean onQueryTextSubmit(final String query) {
-                filters.setVisibility(View.INVISIBLE);
                 QueryTask task = new QueryTask();
                 task.execute(query);
                 queryActivity.closeKeyboard();
@@ -166,6 +166,16 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onMenuItemClick(final MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.cancel:
+                queryActivity.hideViewPager();
+                return true;
+        }
+        return false;
     }
 
     private class QueryTask extends AsyncTask<String, Void, List<Manga>> {
@@ -235,20 +245,6 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
             searchView.setQueryRefinementEnabled(true);
         }
 
-    }
-
-    @Override
-    public boolean onMenuItemClick(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.filter:
-                if (filters.getVisibility() != View.VISIBLE) {
-                    filters.setVisibility(View.VISIBLE);
-                } else {
-                    filters.setVisibility(View.INVISIBLE);
-                }
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private class MangaSuggestionsAdapter extends CursorAdapter {

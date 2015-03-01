@@ -98,18 +98,32 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     }
 
     private void setupTabs(final ActionBar actionBar) {
-
         viewPager = findViewWithId(R.id.viewPager);
         viewPager.setAdapter(new SamplePagerAdapter(getSupportFragmentManager()));
         slidingTabLayout = findViewWithId(R.id.sliding_tabs);
         slidingTabLayout.setViewPager(viewPager);
     }
 
+    private boolean shouldHideSearch = true;
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.query_activity_menu, menu);
         searchBtn = menu.findItem(R.id.search);
+        searchBtn.setVisible(!shouldHideSearch);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                item.setVisible(false);
+                slidingTabLayout.setVisibility(View.VISIBLE);
+                viewPager.setVisibility(View.VISIBLE);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -177,17 +191,19 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         if (this.foundManga == null) {
             return;
         }
-
-        viewPager.setVisibility(View.INVISIBLE);
-        slidingTabLayout.setVisibility(View.GONE);
-        searchBtn.setVisible(true);
-
+        hideViewPager();
         adapter = new MangaListAdapter(this, R.layout.manga_list_item, foundManga, this);
         searchResultsView.setAdapter(adapter);
         searchResultsView.setOnItemClickListener(this);
+    }
 
-
-
+    public void hideViewPager() {
+        viewPager.setVisibility(View.INVISIBLE);
+        slidingTabLayout.setVisibility(View.GONE);
+        shouldHideSearch = false;
+        if (searchBtn != null) {
+            searchBtn.setVisible(true);
+        }
     }
 
     @Override
@@ -230,6 +246,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private class SamplePagerAdapter extends FragmentPagerAdapter {
 
+        private String[] titles = {getString(R.string.sv_filters), getString(R.string.sv_genres)};
+
         public SamplePagerAdapter(final FragmentManager fm) {
             super(fm);
         }
@@ -240,6 +258,11 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         @Override
         public int getCount() {
             return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(final int position) {
+            return titles[position];
         }
 
         @Override

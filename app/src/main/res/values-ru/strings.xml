@@ -54,4 +54,6 @@
     <string name="profile_promise">Здесь будет ваш профиль. Когда я это реализую...</string>
     <string name="tutorial_menu_title">Открой меню</string>
     <string name="tutorial_menu_text">нажав на три полоски или потянув экран слева</string>
+    <string name="sv_genres">Жанры</string>
+    <string name="sv_filters">Фильтры</string>
 </resources>
