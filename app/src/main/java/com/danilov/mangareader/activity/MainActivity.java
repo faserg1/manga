@@ -26,6 +26,7 @@ import com.danilov.mangareader.core.dialog.CustomDialogFragment;
 import com.danilov.mangareader.core.util.DrawerStub;
 import com.danilov.mangareader.core.util.Promise;
 import com.danilov.mangareader.core.util.ServiceContainer;
+import com.danilov.mangareader.core.util.Utils;
 import com.danilov.mangareader.fragment.DownloadManagerFragment;
 import com.danilov.mangareader.fragment.DownloadedMangaFragment;
 import com.danilov.mangareader.fragment.FavoritesFragment;
@@ -33,6 +34,9 @@ import com.danilov.mangareader.fragment.HistoryMangaFragment;
 import com.danilov.mangareader.fragment.MainFragment;
 import com.danilov.mangareader.fragment.RepositoryPickerFragment;
 import com.danilov.mangareader.fragment.SettingsFragment;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
@@ -107,10 +111,12 @@ public class MainActivity extends BaseToolbarActivity {
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
-        ApplicationSettings applicationSettings = ApplicationSettings.get(this.getApplicationContext());
+        final ApplicationSettings applicationSettings = ApplicationSettings.get(this.getApplicationContext());
         firstLaunch = applicationSettings.isFirstLaunch();
         boolean showAdvertisement = applicationSettings.isShowAdvertisement();
+        boolean tutorialMenuPassed = applicationSettings.isTutorialMenuPassed();
         //TODO: check if we need to display main fragment or we need to show restored
         if (firstLaunch) {
             if (savedInstanceState == null) {
@@ -126,12 +132,46 @@ public class MainActivity extends BaseToolbarActivity {
         if (firstLaunch) {
             showFirstLaunchDialog();
         }
-        if (!firstLaunch && savedInstanceState == null) {
+        if (!firstLaunch && tutorialMenuPassed && savedInstanceState == null) {
             if (showAdvertisement) {
                 showAds();
             }
         }
+
+        if (!tutorialMenuPassed) {
+            View fakeMenuOpenBtn = findViewById(R.id.fake_home);
+            if (fakeMenuOpenBtn != null) {
+                ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+                        .setTarget(new ViewTarget(findViewById(R.id.fake_home)))
+                        .setContentTitle(getString(R.string.tutorial_menu_title))
+                        .setStyle(R.style.ShowcaseView_Dark)
+                        .setContentText(getString(R.string.tutorial_menu_text))
+                        .hideOnTouchOutside()
+                        .build();
+                showcaseView.setButtonPosition(Utils.getRightParam(this, getResources()));
+                showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewHide(final ShowcaseView showcaseView) {
+                        View v = (View) showcaseView.getParent();
+                        applicationSettings.setTutorialMenuPassed(true);
+                        applicationSettings.update(getApplicationContext());
+                    }
+
+                    @Override
+                    public void onShowcaseViewDidHide(final ShowcaseView showcaseView) {
+
+                    }
+
+                    @Override
+                    public void onShowcaseViewShow(final ShowcaseView showcaseView) {
+
+                    }
+                });
+            }
+        }
     }
+
+
 
     private CountDownTimer mCountDownTimer;
 

@@ -127,6 +127,9 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         mangaTitle.setText(manga.getTitle());
         String mangaDescription = manga.getDescription();
         if (mangaDescription != null) {
+            if (manga.isFavorite()) {
+                flipper.flip(2);
+            }
             mangaDescriptionTextView.setText(mangaDescription);
             chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
             enableButtons();
@@ -226,7 +229,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                     }
                     if (loaded) {
                         if (manga.isFavorite()) {
-                            flipper.flipNoAnim();
+                            flipper.flip(2);
                         }
                         enableButtons();
                         String mangaDescription = manga.getDescription();

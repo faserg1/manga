@@ -13,13 +13,15 @@ import com.danilov.mangareader.R;
  */
 public class BaseToolbarActivity extends ActionBarActivity {
 
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     protected void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.ic_launcher);
         setSupportActionBar(toolbar);
     }
@@ -38,6 +40,10 @@ public class BaseToolbarActivity extends ActionBarActivity {
     public void setContentView(final View view) {
         super.setContentView(view);
         setupToolbar();
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
     }
 
     @Override

@@ -21,6 +21,7 @@ public class ApplicationSettings {
     private static final String VIEWER_FULLSCREEN_FIELD = "VFF";
     private static final String FIRST_LAUNCH = "FL";
     private static final String SHOW_ADVERTISEMENT = "SA";
+    private static final String TUTORIAL_MENU_PASSED_FIELD = "TMP";
 
     private static ApplicationSettings instance;
 
@@ -29,6 +30,8 @@ public class ApplicationSettings {
     private String mangaDownloadBasePath;
 
     private boolean tutorialViewerPassed;
+
+    private boolean tutorialMenuPassed;
 
     private boolean firstLaunch;
 
@@ -68,6 +71,14 @@ public class ApplicationSettings {
         this.showAdvertisement = showAdvertisement;
     }
 
+    public boolean isTutorialMenuPassed() {
+        return tutorialMenuPassed;
+    }
+
+    public void setTutorialMenuPassed(final boolean tutorialMenuPassed) {
+        this.tutorialMenuPassed = tutorialMenuPassed;
+    }
+
     public boolean isFirstLaunch() {
         return firstLaunch;
     }
@@ -100,6 +111,7 @@ public class ApplicationSettings {
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
         this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
         this.tutorialViewerPassed = sharedPreferences.getBoolean(TUTORIAL_VIEWER_PASSED_FIELD, false);
+        this.tutorialMenuPassed = sharedPreferences.getBoolean(TUTORIAL_MENU_PASSED_FIELD, false);
         this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
         this.showAdvertisement = sharedPreferences.getBoolean(SHOW_ADVERTISEMENT, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
@@ -127,6 +139,7 @@ public class ApplicationSettings {
         editor.putString(DOWNLOAD_PATH_FIELD, downloadPath);
         editor.putString(MANGA_DOWNLOAD_BASE_PATH_FIELD, mangaDownloadBasePath);
         editor.putBoolean(TUTORIAL_VIEWER_PASSED_FIELD, tutorialViewerPassed);
+        editor.putBoolean(TUTORIAL_MENU_PASSED_FIELD, tutorialMenuPassed);
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
         editor.putBoolean(SHOW_ADVERTISEMENT, showAdvertisement);

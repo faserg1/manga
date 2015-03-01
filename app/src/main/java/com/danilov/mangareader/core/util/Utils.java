@@ -1,8 +1,12 @@
 package com.danilov.mangareader.core.util;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.danilov.mangareader.core.dialog.EasyDialog;
 import org.json.JSONException;
@@ -75,6 +79,30 @@ public class Utils {
         } else {
             return new ArrayList<T>(oldList);
         }
+    }
+
+    public static int getNavigationBarHeight(final Context context, final int orientation) {
+        try {
+            Resources resources = context.getResources();
+            int id = resources.getIdentifier(
+                    orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape",
+                    "dimen", "android");
+            if (id > 0) {
+                return resources.getDimensionPixelSize(id);
+            }
+        } catch (NullPointerException | IllegalArgumentException | Resources.NotFoundException e) {
+            return 0;
+        }
+        return 0;
+    }
+
+    public static RelativeLayout.LayoutParams getRightParam(final Context context, final Resources resources) {
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        int margin = ((Number) (resources.getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin + getNavigationBarHeight(context, resources.getConfiguration().orientation));
+        return lps;
     }
 
 }

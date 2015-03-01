@@ -11,11 +11,17 @@ public class OverXFlipper {
 
     private View v1;
     private View v2;
+
+    private View initialV1;
+    private View initialV2;
+
     private int halfFlip;
 
     public OverXFlipper(final View v1, final View v2, final int timeToFlip) {
         this.v2 = v1;
         this.v1 = v2;
+        this.initialV1 = v2;
+        this.initialV2 = v1;
         this.halfFlip = timeToFlip / 2;
     }
 
@@ -36,6 +42,25 @@ public class OverXFlipper {
                 return null;
             }
         });
+    }
+
+    public void flip(final int v) {
+        boolean shouldFlip = false;
+        switch (v) {
+            case 1:
+                if (v1 == initialV2) {
+                    shouldFlip = true;
+                }
+                break;
+            case 2:
+                if (v1 == initialV1) {
+                    shouldFlip = true;
+                }
+                break;
+        }
+        if (shouldFlip) {
+            flip();
+        }
     }
 
     public void flipNoAnim() {
