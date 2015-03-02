@@ -119,6 +119,8 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
                 QueryTask task = new QueryTask();
                 task.execute(query);
                 queryActivity.closeKeyboard();
+                queryActivity.hideViewPager();
+                queryActivity.showProgressBar();
                 MangaSuggestionsAdapter adapter = (MangaSuggestionsAdapter) searchView.getSuggestionsAdapter();
                 if (adapter == null) {
                     adapter = new MangaSuggestionsAdapter(context, new MatrixCursor(COLUMNS));
@@ -195,6 +197,7 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
         @Override
         protected void onPostExecute(final List<Manga> foundManga) {
+            queryActivity.hideProgressBar();
             if (foundManga == null) {
                 return;
             }

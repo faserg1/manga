@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
 import com.danilov.mangareader.R;
@@ -72,6 +73,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private MenuItem searchBtn;
 
+    private ProgressBar progressBar;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
@@ -91,6 +94,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         setContentView(R.layout.manga_query_activity_new);
 
         searchResultsView = (GridView) findViewById(R.id.search_results);
+        progressBar = findViewWithId(R.id.progress_bar);
+        hideProgressBar();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(repository.getName());
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -132,6 +137,14 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     @Override
     public void onClick(final View v) {
 
+    }
+
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
