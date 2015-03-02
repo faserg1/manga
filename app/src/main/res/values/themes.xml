@@ -26,6 +26,12 @@
         <item name="popupMenuStyle">@style/Manga.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Manga.PopupMenu</item>
 
+        <item name="searchViewStyle">@style/Manga.SearchView</item>
+
+    </style>
+
+    <style name="Manga.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@drawable/textfield_search</item>
     </style>
 
     <style name="Theme.CustomPanel" parent="@android:style/Theme.Dialog">

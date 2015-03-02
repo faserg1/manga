@@ -122,6 +122,9 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
                 slidingTabLayout.setVisibility(View.VISIBLE);
                 viewPager.setVisibility(View.VISIBLE);
                 return true;
+            case android.R.id.home:
+                finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
