@@ -1,43 +1,25 @@
 package com.danilov.mangareader.activity;
 
-import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TabHost;
-import android.widget.TextView;
+
 import com.danilov.mangareader.R;
-import com.danilov.mangareader.core.adapter.FilterQueryAdapter;
 import com.danilov.mangareader.core.adapter.MangaListAdapter;
 import com.danilov.mangareader.core.adapter.PopupButtonClickListener;
 import com.danilov.mangareader.core.model.Manga;
-import com.danilov.mangareader.core.model.MangaSuggestion;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
-import com.danilov.mangareader.core.repository.RepositoryException;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.widget.SlidingTabLayout;
 import com.danilov.mangareader.fragment.FiltersFragment;
@@ -91,7 +73,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             }
             engine = repository.getEngine();
         }
-        setContentView(R.layout.manga_query_activity_new);
+        setContentView(R.layout.manga_query_activity);
 
         searchResultsView = (GridView) findViewById(R.id.search_results);
         progressBar = findViewWithId(R.id.progress_bar);
