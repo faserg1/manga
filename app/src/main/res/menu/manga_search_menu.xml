@@ -3,12 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:yourapp="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:title="@string/sv_cancel"
-        android:id="@+id/cancel"
-        android:icon="@drawable/ic_action_cancel"
-        yourapp:showAsAction="always"
-        android:visible="true"/>
 
     <item android:id="@+id/search"
           android:title="@string/sv_search"

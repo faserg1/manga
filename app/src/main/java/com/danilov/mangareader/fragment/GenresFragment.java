@@ -19,6 +19,7 @@ import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.repository.RepositoryEngine;
 import com.danilov.mangareader.core.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.danilov.mangareader.fragment.GenresFragment.GenresAdapter.*;
@@ -38,6 +39,7 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
 
     private Context context = null;
 
+    private List<RepositoryEngine.Genre> genres;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
@@ -65,14 +67,19 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
         genresView = findViewById(R.id.genres);
         queryActivity = (MangaQueryActivity) getActivity();
         context = queryActivity.getApplicationContext();
-        genresView.setAdapter(new GenresAdapter(context, -1, engine.getGenres()));
+        genres = engine.getGenres();
+        if (genres.isEmpty()) {
+            genres = new ArrayList<>();
+            genres.add(new RepositoryEngine.Genre(getString(R.string.sv_genre_search_not_supported)));
+        }
+        genresView.setAdapter(new GenresAdapter(context, -1, genres));
         genresView.setOnItemClickListener(this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        RepositoryEngine.Genre genre = engine.getGenres().get(i);
+        RepositoryEngine.Genre genre = genres.get(i);
         QueryTask task = new QueryTask();
         task.execute(genre);
     }
@@ -81,6 +88,7 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
 
         @Override
         protected void onPreExecute() {
+            queryActivity.hideViewPager();
             queryActivity.showProgressBar();
         }
 

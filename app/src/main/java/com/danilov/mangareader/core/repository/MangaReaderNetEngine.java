@@ -1,7 +1,9 @@
 package com.danilov.mangareader.core.repository;
 
+import android.app.Application;
 import android.util.Log;
 
+import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.http.HttpBytesReader;
 import com.danilov.mangareader.core.http.HttpRequestException;
 import com.danilov.mangareader.core.model.Manga;
@@ -23,6 +25,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -110,7 +113,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final Genre genre) {
-        throw new RuntimeException("Not implemented");
+        return null;
     }
 
     @Override
@@ -427,7 +430,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<Genre> getGenres() {
-        throw new RuntimeException("Not implemented");
+        return Collections.emptyList();
     }
 
 }

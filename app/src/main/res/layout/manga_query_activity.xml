@@ -16,12 +16,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!--<TextView-->
-                <!--android:text="@string/app_name"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="16dp"-->
-                <!--style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />-->
+            <TextView
+                android:id="@+id/repository_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
 
             <com.danilov.mangareader.core.widget.SlidingTabLayout
                 android:id="@+id/sliding_tabs"

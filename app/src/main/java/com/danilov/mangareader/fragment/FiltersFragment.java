@@ -172,11 +172,6 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     @Override
     public boolean onMenuItemClick(final MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.cancel:
-                queryActivity.hideViewPager();
-                return true;
-        }
         return false;
     }
 

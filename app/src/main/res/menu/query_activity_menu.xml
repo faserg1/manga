@@ -9,4 +9,11 @@
           yourapp:showAsAction="always"
           android:visible="true"/>
 
+    <item
+        android:title="@string/sv_cancel"
+        android:id="@+id/cancel"
+        android:icon="@drawable/ic_action_cancel"
+        yourapp:showAsAction="always"
+        android:visible="false"/>
+
 </menu>

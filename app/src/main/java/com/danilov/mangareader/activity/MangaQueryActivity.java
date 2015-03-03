@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.adapter.MangaListAdapter;
@@ -54,6 +55,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     private SlidingTabLayout slidingTabLayout;
 
     private MenuItem searchBtn;
+    private MenuItem cancelBtn;
+    private TextView repositoryTitleTextView;
 
     private ProgressBar progressBar;
 
@@ -76,10 +79,12 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         setContentView(R.layout.manga_query_activity);
 
         searchResultsView = (GridView) findViewById(R.id.search_results);
+        repositoryTitleTextView = findViewWithId(R.id.repository_title);
         progressBar = findViewWithId(R.id.progress_bar);
         hideProgressBar();
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(repository.getName());
+        repositoryTitleTextView.setText(repository.getName());
+        repositoryTitleTextView.setVisibility(View.GONE);
         actionBar.setDisplayHomeAsUpEnabled(true);
         setupTabs(actionBar);
     }
@@ -97,7 +102,9 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.query_activity_menu, menu);
         searchBtn = menu.findItem(R.id.search);
+        cancelBtn = menu.findItem(R.id.cancel);
         searchBtn.setVisible(!shouldHideSearch);
+        cancelBtn.setVisible(shouldHideSearch);
         return true;
     }
 
@@ -105,9 +112,14 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.search:
-                item.setVisible(false);
+                searchBtn.setVisible(false);
+                cancelBtn.setVisible(true);
+                repositoryTitleTextView.setVisibility(View.GONE);
                 slidingTabLayout.setVisibility(View.VISIBLE);
                 viewPager.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.cancel:
+                hideViewPager();
                 return true;
             case android.R.id.home:
                 finish();
@@ -202,6 +214,10 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         if (searchBtn != null) {
             searchBtn.setVisible(true);
         }
+        if (cancelBtn != null) {
+            cancelBtn.setVisible(false);
+        }
+        repositoryTitleTextView.setVisibility(View.VISIBLE);
     }
 
     @Override
