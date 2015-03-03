@@ -5,6 +5,7 @@ import android.content.Context;
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
+import com.danilov.mangareader.R;
 import com.danilov.mangareader.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.mangareader.core.database.DownloadedMangaDAO;
 import com.danilov.mangareader.core.database.HistoryDAO;
@@ -17,11 +18,19 @@ import com.danilov.mangareader.core.http.HttpStreamReader;
 import com.danilov.mangareader.core.service.LocalImageManager;
 import com.danilov.mangareader.core.util.ServiceContainer;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import java.io.File;
 
 /**
  * Created by Semyon Danilov on 02.08.2014.
  */
+@ReportsCrashes(formKey = "", // will not be used
+        mailTo = "senya.danilov@gmail.com",
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash_toast_text)
 public class MangaApplication extends Application {
 
     @Override
@@ -53,5 +62,8 @@ public class MangaApplication extends Application {
             Class.forName("android.os.AsyncTask");
         } catch(Throwable ignore) {
         }
+
+        // The following line triggers the initialization of ACRA
+        ACRA.init(this);
     }
 }

@@ -56,4 +56,5 @@
     <string name="tutorial_menu_text">нажав на три полоски или потянув экран слева</string>
     <string name="sv_genres">Жанры</string>
     <string name="sv_filters">Фильтры</string>
+    <string name="crash_toast_text">Произошла ошибка. Отправьте этот отчёт об ошибке</string>
 </resources>

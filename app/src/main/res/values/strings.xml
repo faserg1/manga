@@ -53,4 +53,5 @@
     <string name="tutorial_menu_text">by clicking on three lines or dragging the screen from left</string>
     <string name="sv_genres">Genres</string>
     <string name="sv_filters">Filters</string>
+    <string name="crash_toast_text">App crashed. Please send this error as an email.</string>
 </resources>
