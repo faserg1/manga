@@ -1,6 +1,7 @@
 package com.danilov.mangareader.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -14,8 +15,11 @@ import com.danilov.mangareader.core.interfaces.RefreshableActivity;
 import com.danilov.mangareader.core.model.Manga;
 import com.danilov.mangareader.core.util.Constants;
 import com.danilov.mangareader.core.view.AnimatedActionView;
+import com.danilov.mangareader.fragment.BaseFragment;
 import com.danilov.mangareader.fragment.ChaptersFragment;
 import com.danilov.mangareader.fragment.InfoFragment;
+
+import java.util.List;
 
 /**
  * Created by Semyon Danilov on 21.05.2014.
@@ -30,6 +34,8 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     private InfoFragment infoFragment;
     private ChaptersFragment chaptersFragment;
 
+    private BaseFragment currentFragment;
+
     private boolean isRefreshing = false;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,18 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         frame = (RelativeLayout) findViewById(R.id.frame);
         if (savedInstanceState == null) {
             showInfoFragment();
+        } else {
+            currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.frame);
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            if (fragments != null) {
+                for (Fragment fragment : fragments) {
+                    if (fragment instanceof InfoFragment) {
+                        infoFragment = (InfoFragment) fragment;
+                    } else if (fragment instanceof ChaptersFragment) {
+                        chaptersFragment = (ChaptersFragment) fragment;
+                    }
+                }
+            }
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -49,7 +67,10 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
     public void showInfoFragment() {
         Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        infoFragment = InfoFragment.newInstance(manga);
+        if (infoFragment == null) {
+            infoFragment = InfoFragment.newInstance(manga);
+        }
+        currentFragment = infoFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -58,7 +79,10 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
     public void showChaptersFragment() {
         Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        chaptersFragment = ChaptersFragment.newInstance(manga);
+        if (chaptersFragment == null) {
+            chaptersFragment = ChaptersFragment.newInstance(manga);
+        }
+        currentFragment = chaptersFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -75,7 +99,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -112,4 +136,11 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (currentFragment.onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
+    }
 }

@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class ChaptersFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ChaptersFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private final String TAG = "ChaptersFragment";
     private static final String CHAPTERS_KEY = "CK";
@@ -45,8 +45,6 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
 
     private MangaInfoActivity activity;
     private RefreshableActivity refreshable;
-
-    private View view;
 
     private ListView chaptersListView;
 
@@ -144,6 +142,12 @@ public class ChaptersFragment extends Fragment implements AdapterView.OnItemClic
         } else {
             restoreInstanceState(savedInstanceState);
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        activity.showInfoFragment();
+        return true;
     }
 
     private void loadChaptersInfo(final Manga manga) {

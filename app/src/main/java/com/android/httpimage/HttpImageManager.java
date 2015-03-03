@@ -195,7 +195,7 @@ public class HttpImageManager {
 
             @Override
             public void onLoadResponse(final LoadRequest r, final Bitmap data) {
-                if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
+                if (!(imageView.getDrawable() instanceof AsyncDrawable)) {
                     return;
                 }
                 AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();

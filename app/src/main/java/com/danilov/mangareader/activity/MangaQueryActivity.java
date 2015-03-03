@@ -60,6 +60,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private ProgressBar progressBar;
 
+    private boolean pagerShown = true;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
@@ -112,17 +114,17 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.search:
-                searchBtn.setVisible(false);
-                cancelBtn.setVisible(true);
-                repositoryTitleTextView.setVisibility(View.GONE);
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                viewPager.setVisibility(View.VISIBLE);
+                showViewPager();
                 return true;
             case R.id.cancel:
                 hideViewPager();
                 return true;
             case android.R.id.home:
-                finish();
+                if (!pagerShown) {
+                    showViewPager();
+                } else {
+                    finish();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -208,6 +210,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     }
 
     public void hideViewPager() {
+        pagerShown = false;
         viewPager.setVisibility(View.INVISIBLE);
         slidingTabLayout.setVisibility(View.GONE);
         shouldHideSearch = false;
@@ -218,6 +221,24 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             cancelBtn.setVisible(false);
         }
         repositoryTitleTextView.setVisibility(View.VISIBLE);
+    }
+
+
+    public void showViewPager() {
+        pagerShown = true;
+
+        repositoryTitleTextView.setVisibility(View.GONE);
+        slidingTabLayout.setVisibility(View.VISIBLE);
+        viewPager.setVisibility(View.VISIBLE);
+
+        shouldHideSearch = true;
+        if (searchBtn != null) {
+            searchBtn.setVisible(false);
+        }
+        if (cancelBtn != null) {
+            cancelBtn.setVisible(true);
+        }
+        repositoryTitleTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -301,4 +322,12 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!pagerShown) {
+            showViewPager();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
