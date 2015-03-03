@@ -14,7 +14,15 @@ function asd() {
     console.log(str);
 }
 
+genres
 var a = ($($(".rightBlock h5")[6]).parent()).find("a")
+var str = "";
+a.each(function(p, el) {
+    var name = $(el).text();
+    name = name.charAt(0).toUpperCase() + name.substring(1, name.length);
+    str += 'genres.add(new AdultGenre("' + name + '", "' + $(el).attr('href') + '"));' + '\n';
+});
+console.log(str);
 
 
 mangareader

@@ -95,8 +95,21 @@ public class AdultmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final Genre genre) {
-        throw new RuntimeException("Not implemented");
+    public List<Manga> queryRepository(final Genre _genre) {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<Manga> mangaList = null;
+        AdultGenre genre = (AdultGenre) _genre;
+        if (httpBytesReader != null) {
+            try {
+                String uri = baseUri + genre.getLink();
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                mangaList = parseGenreSearchResponse(Utils.toDocument(responseString));
+            } catch (HttpRequestException e) {
+                e.printStackTrace();
+            }
+        }
+        return mangaList;
     }
 
     @Override
@@ -283,6 +296,51 @@ public class AdultmangaEngine implements RepositoryEngine {
     }
 
     //html values
+    private String genresClass = "tiles";
+
+    //!html values
+
+    private List<Manga> parseGenreSearchResponse(final Document document) {
+        List<Manga> mangaList = null;
+        Elements els = document.getElementsByClass(genresClass);
+        if (els.isEmpty()) {
+            return null;
+        }
+        Element searchResults = els.first();
+        List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
+        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        for (Element mangaLink : mangaLinks) {
+            String uri = null;
+            String mangaName = null;
+            Elements tmp = mangaLink.getElementsByClass(mangaDescClass);
+            if (!tmp.isEmpty()) {
+                tmp = tmp.get(0).getElementsByTag("h3");
+                if (!tmp.isEmpty()) {
+                    tmp = tmp.get(0).getElementsByTag("a");
+                    if (!tmp.isEmpty()) {
+                        Element realLink = tmp.get(0);
+                        uri = realLink.attr("href");
+                        mangaName = realLink.attr("title");
+                    }
+                }
+            }
+
+            Element screenElement = mangaLink.getElementsByClass(mangaCoverClass).get(0);
+
+            tmp = screenElement.getElementsByTag("img");
+            String coverUri = null;
+            if (!tmp.isEmpty()) {
+                Element img = tmp.get(0);
+                coverUri = img != null ? img.attr("src") : "";
+            }
+            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            manga.setCoverUri(coverUri);
+            mangaList.add(manga);
+        }
+        return mangaList;
+    }
+
+    //html values
     private String descriptionElementClass = "manga-description";
     private String chaptersElementClass = "chapters-link";
     private String coverClassName = "subject-cower";
@@ -377,7 +435,23 @@ public class AdultmangaEngine implements RepositoryEngine {
         return baseUri;
     }
 
+    private class AdultGenre extends Genre {
 
+        private String link;
+
+        private AdultGenre(final String name, final String link) {
+            super(name);
+            this.link = link;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(final String link) {
+            this.link = link;
+        }
+    }
 
     private List<FilterGroup> filterGroups = new ArrayList<>(2);
 
@@ -462,10 +536,57 @@ public class AdultmangaEngine implements RepositoryEngine {
         return filterGroups;
     }
 
-    @Override
-    public List<Genre> getGenres() {
-        throw new RuntimeException("Not implemented");
+
+    private List<Genre> genres = new ArrayList<>();
+
+    {
+        genres.add(new AdultGenre("Все", "/list?sortType="));
+        genres.add(new AdultGenre("Арт", "/list/genre/art"));
+        genres.add(new AdultGenre("Бара", "/list/genre/bara"));
+        genres.add(new AdultGenre("Боевик", "/list/genre/action"));
+        genres.add(new AdultGenre("Боевые искусства", "/list/genre/martial_arts"));
+        genres.add(new AdultGenre("Вампиры", "/list/genre/vampires"));
+        genres.add(new AdultGenre("Гарем", "/list/genre/harem"));
+        genres.add(new AdultGenre("Гендерная интрига", "/list/genre/gender_intriga"));
+        genres.add(new AdultGenre("Героическое фэнтези", "/list/genre/heroic_fantasy"));
+        genres.add(new AdultGenre("Детектив", "/list/genre/detective"));
+        genres.add(new AdultGenre("Дзёсэй", "/list/genre/josei"));
+        genres.add(new AdultGenre("Додзинси", "/list/genre/doujinshi"));
+        genres.add(new AdultGenre("Драма", "/list/genre/drama"));
+        genres.add(new AdultGenre("История", "/list/genre/historical"));
+        genres.add(new AdultGenre("Киберпанк", "/list/genre/cyberpunk"));
+        genres.add(new AdultGenre("Комедия", "/list/genre/comedy"));
+        genres.add(new AdultGenre("Меха", "/list/genre/mecha"));
+        genres.add(new AdultGenre("Мистика", "/list/genre/mystery"));
+        genres.add(new AdultGenre("Научная фантастика", "/list/genre/sci_fi"));
+        genres.add(new AdultGenre("Повседневность", "/list/genre/natural"));
+        genres.add(new AdultGenre("Постапокалиптика", "/list/genre/postapocalypse"));
+        genres.add(new AdultGenre("Приключения", "/list/genre/adventure"));
+        genres.add(new AdultGenre("Психология", "/list/genre/psychological"));
+        genres.add(new AdultGenre("Романтика", "/list/genre/romance"));
+        genres.add(new AdultGenre("Самурайский боевик", "/list/genre/samurai"));
+        genres.add(new AdultGenre("Сверхъестественное", "/list/genre/supernatural"));
+        genres.add(new AdultGenre("Сёдзё", "/list/genre/shoujo"));
+        genres.add(new AdultGenre("Сёдзё-ай", "/list/genre/shoujo_ai"));
+        genres.add(new AdultGenre("Сёнэн", "/list/genre/shounen"));
+        genres.add(new AdultGenre("Сёнэн-ай", "/list/genre/shounen_ai"));
+        genres.add(new AdultGenre("Спорт", "/list/genre/sports"));
+        genres.add(new AdultGenre("Сэйнэн", "/list/genre/seinen"));
+        genres.add(new AdultGenre("Трагедия", "/list/genre/tragedy"));
+        genres.add(new AdultGenre("Триллер", "/list/genre/thriller"));
+        genres.add(new AdultGenre("Ужасы", "/list/genre/horror"));
+        genres.add(new AdultGenre("Фантастика", "/list/genre/fantastic"));
+        genres.add(new AdultGenre("Фэнтези", "/list/genre/fantasy"));
+        genres.add(new AdultGenre("Школа", "/list/genre/school"));
+        genres.add(new AdultGenre("Эротика", "/list/genre/erotica"));
+        genres.add(new AdultGenre("Этти", "/list/genre/ecchi"));
+        genres.add(new AdultGenre("Юри", "/list/genre/yuri"));
+        genres.add(new AdultGenre("Яой", "/list/genre/yaoi"));
     }
 
+    @Override
+    public List<Genre> getGenres() {
+        return genres;
+    }
 
 }
