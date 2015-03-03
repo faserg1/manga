@@ -94,6 +94,24 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
+    public List<Manga> queryRepository(final Genre _genre) {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<Manga> mangaList = null;
+        ReadmangaGenre genre = (ReadmangaGenre) _genre;
+        if (httpBytesReader != null) {
+            try {
+                String uri = baseUri + genre.getLink();
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                mangaList = parseGenreSearchResponse(Utils.toDocument(responseString));
+            } catch (HttpRequestException e) {
+                e.printStackTrace();
+            }
+        }
+        return mangaList;
+    }
+
+    @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
@@ -191,8 +209,8 @@ public class ReadmangaEngine implements RepositoryEngine {
     //json names
 
     private String suggestionsElementName = "suggestions";
-    private String exclusionValue = "Автор ";
-    private String exclusionValue2 = "Переводчик ";
+    private String exclusionValue = "Автор";
+    private String exclusionValue2 = "Переводчик";
     private String valueElementName = "value";
     private String dataElementName = "data";
     private String linkElementName = "link";
@@ -242,6 +260,51 @@ public class ReadmangaEngine implements RepositoryEngine {
     private List<Manga> parseSearchResponse(final Document document) {
         List<Manga> mangaList = null;
         Element searchResults = document.getElementById(searchElementId);
+        List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
+        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        for (Element mangaLink : mangaLinks) {
+            String uri = null;
+            String mangaName = null;
+            Elements tmp = mangaLink.getElementsByClass(mangaDescClass);
+            if (!tmp.isEmpty()) {
+                tmp = tmp.get(0).getElementsByTag("h3");
+                if (!tmp.isEmpty()) {
+                    tmp = tmp.get(0).getElementsByTag("a");
+                    if (!tmp.isEmpty()) {
+                        Element realLink = tmp.get(0);
+                        uri = realLink.attr("href");
+                        mangaName = realLink.attr("title");
+                    }
+                }
+            }
+
+            Element screenElement = mangaLink.getElementsByClass(mangaCoverClass).get(0);
+
+            tmp = screenElement.getElementsByTag("img");
+            String coverUri = null;
+            if (!tmp.isEmpty()) {
+                Element img = tmp.get(0);
+                coverUri = img != null ? img.attr("src") : "";
+            }
+            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            manga.setCoverUri(coverUri);
+            mangaList.add(manga);
+        }
+        return mangaList;
+    }
+
+    //html values
+    private String genresClass = "tiles";
+
+    //!html values
+
+    private List<Manga> parseGenreSearchResponse(final Document document) {
+        List<Manga> mangaList = null;
+        Elements els = document.getElementsByClass(genresClass);
+        if (els.isEmpty()) {
+            return null;
+        }
+        Element searchResults = els.first();
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
         mangaList = new ArrayList<Manga>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
@@ -438,6 +501,75 @@ public class ReadmangaEngine implements RepositoryEngine {
     @Override
     public List<FilterGroup> getFilters() {
         return filterGroups;
+    }
+
+    private class ReadmangaGenre extends Genre {
+
+        private String link;
+
+        private ReadmangaGenre(final String name, final String link) {
+            super(name);
+            this.link = link;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(final String link) {
+            this.link = link;
+        }
+    }
+
+    private List<Genre> genres = new ArrayList<>();
+
+    {
+        genres.add(new ReadmangaGenre("Все", "/list?sortType="));
+        genres.add(new ReadmangaGenre("Арт", "/list/genre/art"));
+        genres.add(new ReadmangaGenre("Боевик", "/list/genre/action"));
+        genres.add(new ReadmangaGenre("Боевые искусства", "/list/genre/martial_arts"));
+        genres.add(new ReadmangaGenre("Вампиры", "/list/genre/vampires"));
+        genres.add(new ReadmangaGenre("Гарем", "/list/genre/harem"));
+        genres.add(new ReadmangaGenre("Гендерная интрига", "/list/genre/gender_intriga"));
+        genres.add(new ReadmangaGenre("Героическое фэнтези", "/list/genre/heroic_fantasy"));
+        genres.add(new ReadmangaGenre("Детектив", "/list/genre/detective"));
+        genres.add(new ReadmangaGenre("Дзёсэй", "/list/genre/josei"));
+        genres.add(new ReadmangaGenre("Додзинси", "/list/genre/doujinshi"));
+        genres.add(new ReadmangaGenre("Драма", "/list/genre/drama"));
+        genres.add(new ReadmangaGenre("Игра", "/list/genre/game"));
+        genres.add(new ReadmangaGenre("История", "/list/genre/historical"));
+        genres.add(new ReadmangaGenre("Кодомо", "/list/genre/codomo"));
+        genres.add(new ReadmangaGenre("Комедия", "/list/genre/comedy"));
+        genres.add(new ReadmangaGenre("Махо-сёдзё", "/list/genre/maho_shoujo"));
+        genres.add(new ReadmangaGenre("Меха", "/list/genre/mecha"));
+        genres.add(new ReadmangaGenre("Мистика", "/list/genre/mystery"));
+        genres.add(new ReadmangaGenre("Научная фантастика", "/list/genre/sci_fi"));
+        genres.add(new ReadmangaGenre("Повседневность", "/list/genre/natural"));
+        genres.add(new ReadmangaGenre("Постапокалиптика", "/list/genre/postapocalypse"));
+        genres.add(new ReadmangaGenre("Приключения", "/list/genre/adventure"));
+        genres.add(new ReadmangaGenre("Психология", "/list/genre/psychological"));
+        genres.add(new ReadmangaGenre("Романтика", "/list/genre/romance"));
+        genres.add(new ReadmangaGenre("Самурайский боевик", "/list/genre/samurai"));
+        genres.add(new ReadmangaGenre("Сверхъестественное", "/list/genre/supernatural"));
+        genres.add(new ReadmangaGenre("Сёдзё", "/list/genre/shoujo"));
+        genres.add(new ReadmangaGenre("Сёдзё-ай", "/list/genre/shoujo_ai"));
+        genres.add(new ReadmangaGenre("Сёнэн", "/list/genre/shounen"));
+        genres.add(new ReadmangaGenre("Сёнэн-ай", "/list/genre/shounen_ai"));
+        genres.add(new ReadmangaGenre("Спорт", "/list/genre/sports"));
+        genres.add(new ReadmangaGenre("Сэйнэн", "/list/genre/seinen"));
+        genres.add(new ReadmangaGenre("Трагедия", "/list/genre/tragedy"));
+        genres.add(new ReadmangaGenre("Триллер", "/list/genre/thriller"));
+        genres.add(new ReadmangaGenre("Ужасы", "/list/genre/horror"));
+        genres.add(new ReadmangaGenre("Фантастика", "/list/genre/fantastic"));
+        genres.add(new ReadmangaGenre("Фэнтези", "/list/genre/fantasy"));
+        genres.add(new ReadmangaGenre("Школа", "/list/genre/school"));
+        genres.add(new ReadmangaGenre("Этти", "/list/genre/ecchi"));
+        genres.add(new ReadmangaGenre("Юри", "/list/genre/yuri"));
+    }
+
+    @Override
+    public List<Genre> getGenres() {
+        return genres;
     }
 
 }

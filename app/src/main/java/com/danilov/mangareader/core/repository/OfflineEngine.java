@@ -30,6 +30,11 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     @Override
+    public List<Manga> queryRepository(final Genre genre) {
+        return null;
+    }
+
+    @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
         return false;
     }
@@ -179,6 +184,11 @@ public class OfflineEngine implements RepositoryEngine {
 
     @Override
     public List<FilterGroup> getFilters() {
+        return null;
+    }
+
+    @Override
+    public List<Genre> getGenres() {
         return null;
     }
 

@@ -268,15 +268,19 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             Bundle bundle = new Bundle();
             String repositoryString = repository.toString();
             bundle.putString(Constants.REPOSITORY_KEY, repositoryString);
+            Fragment fragment = null;
             switch (position) {
                 case 0:
-                    FiltersFragment fragment = new FiltersFragment();
-                    fragment.setArguments(bundle);
-                    return fragment;
+                    fragment = new FiltersFragment();
+                    break;
                 case 1:
-                    return new GenresFragment();
+                    fragment = new GenresFragment();
+                    break;
             }
-            return null;
+            if (fragment != null) {
+                fragment.setArguments(bundle);
+            }
+            return fragment;
         }
 
     }

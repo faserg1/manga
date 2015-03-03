@@ -35,6 +35,13 @@ public interface RepositoryEngine {
     List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues);
 
     /**
+     *
+     * @param genre user selected genre
+     * @return list of mangas matching query
+     */
+    List<Manga> queryRepository(final Genre genre);
+
+    /**
      * Getting info about manga (description and chapters)
      * @param manga
      * @return must return true if query was successful
@@ -50,6 +57,8 @@ public interface RepositoryEngine {
     String getBaseUri();
 
     public List<FilterGroup> getFilters();
+
+    public List<Genre> getGenres();
 
     //enum of names containing matched engines
     public enum Repository {
@@ -91,6 +100,24 @@ public interface RepositoryEngine {
 
         public RepositoryEngine getEngine() {
             return engine;
+        }
+
+    }
+
+    public class Genre {
+
+        private String name;
+
+        public Genre(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
         }
 
     }

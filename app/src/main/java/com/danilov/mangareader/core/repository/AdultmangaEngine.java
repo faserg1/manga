@@ -95,6 +95,11 @@ public class AdultmangaEngine implements RepositoryEngine {
     }
 
     @Override
+    public List<Manga> queryRepository(final Genre genre) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
@@ -455,6 +460,11 @@ public class AdultmangaEngine implements RepositoryEngine {
     @Override
     public List<FilterGroup> getFilters() {
         return filterGroups;
+    }
+
+    @Override
+    public List<Genre> getGenres() {
+        throw new RuntimeException("Not implemented");
     }
 
 

@@ -14,6 +14,8 @@ function asd() {
     console.log(str);
 }
 
+var a = ($($(".rightBlock h5")[6]).parent()).find("a")
+
 
 mangareader
 function asd() {
@@ -30,3 +32,5 @@ function asd() {
 
 passes Peopledie95
 alias mangareader
+
+
