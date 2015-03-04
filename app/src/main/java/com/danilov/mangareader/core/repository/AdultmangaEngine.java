@@ -333,7 +333,7 @@ public class AdultmangaEngine implements RepositoryEngine {
                 Element img = tmp.get(0);
                 coverUri = img != null ? img.attr("src") : "";
             }
-            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            Manga manga = new Manga(mangaName, uri, Repository.ADULTMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
