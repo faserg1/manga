@@ -10,8 +10,7 @@
         android:id="@+id/very_big"
         android:scaleType="centerCrop"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        android:alpha="0.7"/>
+        android:layout_height="350dp"/>
 
     <com.danilov.mangareader.core.view.OverScrollViewParallax
         android:layout_width="fill_parent"

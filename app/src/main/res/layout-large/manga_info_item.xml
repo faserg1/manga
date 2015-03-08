@@ -10,8 +10,7 @@
         android:id="@+id/very_big"
         android:scaleType="centerCrop"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        android:alpha="0.7"/>
+        android:layout_height="350dp"/>
 
     <com.danilov.mangareader.core.view.ScrollViewParallax
         android:layout_width="fill_parent"
@@ -70,7 +69,7 @@
                         android:orientation="horizontal">
 
                         <LinearLayout android:layout_width="0dp"
-                                      android:layout_weight="0.4"
+                                      android:layout_weight="0.5"
                                       android:layout_height="fill_parent">
 
                             <ImageView
@@ -83,7 +82,7 @@
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="0dp"
-                                      android:layout_weight="0.6"
+                                      android:layout_weight="0.5"
                                       android:layout_marginTop="-3dp"
                                       android:orientation="vertical"
                                       android:layout_height="fill_parent">
