@@ -3,6 +3,9 @@ package com.danilov.mangareader.core.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Created by Semyon Danilov on 04.07.2014.
  */
@@ -43,6 +46,7 @@ public class DatabaseHelper {
         if (database != null) {
             throw new DatabaseAccessException("Can't open writable");
         }
+        tryCreateDatabase();
         database = SQLiteDatabase.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
@@ -75,6 +79,7 @@ public class DatabaseHelper {
         if (database != null) {
             throw new DatabaseAccessException("Can't open writable");
         }
+        tryCreateDatabase();
         database = SQLiteDatabase.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
@@ -108,6 +113,7 @@ public class DatabaseHelper {
                 return database;
             }
         }
+        tryCreateDatabase();
         database = SQLiteDatabase.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
@@ -137,6 +143,7 @@ public class DatabaseHelper {
                 return database;
             }
         }
+        tryCreateDatabase();
         database = SQLiteDatabase.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
@@ -156,6 +163,27 @@ public class DatabaseHelper {
             }
         }
         return database;
+    }
+
+    public void tryCreateDatabase() {
+        File f = new File(path);
+        if (!f.exists()) {
+            File parent = new File(f.getParent() + File.separator);
+            if (!parent.exists()) {
+                boolean result = parent.mkdirs();
+                if (!result) {
+                    throw new RuntimeException("Can't create database folder");
+                }
+            }
+            try {
+                boolean result = f.createNewFile();
+                if (!result) {
+                    throw new RuntimeException("Can't create database file");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Can't create database: " + e.getMessage());
+            }
+        }
     }
 
     public static interface DatabaseUpgradeHandler {

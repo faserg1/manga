@@ -1047,12 +1047,17 @@ public class SubsamplingScaleImageView extends View {
                             boolean shouldRegion = view.sWidth != rect.right || view.sHeight != rect.bottom || rect.top != 0 || rect.left != 0;
                             float scaleBy = (float) (1.0f / tile.sampleSize);
                             Bitmap bitmap = null;
-                            if (shouldRegion) {
-                                BitmapLoader myBitmapLoader = BitmapDecoder.from(view._source, false).useBuiltInDecoder(true).config(Config.RGB_565);
-                                myBitmapLoader.region(rect);
-                                bitmap = myBitmapLoader.scaleBy(scaleBy).decode();
-                            } else {
-                                bitmap = BitmapFactory.decodeFile(view._source, options);
+                            try {
+                                if (shouldRegion) {
+                                    BitmapLoader myBitmapLoader = BitmapDecoder.from(view._source, false).useBuiltInDecoder(true).config(Config.RGB_565);
+                                    myBitmapLoader.region(rect);
+                                    bitmap = myBitmapLoader.scaleBy(scaleBy).decode();
+                                } else {
+                                    bitmap = BitmapFactory.decodeFile(view._source, options);
+                                }
+                            } catch (OutOfMemoryError e) {
+                                Log.e(TAG, "Crappy OOM: ", e);
+                                return null;
                             }
                             int rotation = view.getRequiredRotation();
                             if (rotation != 0) {
