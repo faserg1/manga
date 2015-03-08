@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import com.danilov.mangareader.core.http.AsyncDrawable;
 import com.danilov.mangareader.core.http.HttpBitmapReader;

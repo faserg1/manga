@@ -18,4 +18,8 @@ public class BaseFragment extends Fragment {
         return (T) view.findViewById(id);
     }
 
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }
