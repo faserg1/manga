@@ -58,4 +58,7 @@
     <string name="sv_filters">Фильтры</string>
     <string name="crash_toast_text">Произошла ошибка. Отправьте этот отчёт об ошибке</string>
     <string name="sv_genre_search_not_supported">На этом сайте поиск по жанрам не поддерживается</string>
+    <string name="btn_back">Назад</string>
+    <string name="btn_forward">Вперёд</string>
+    <string name="sv_always_show_viewer_controls">Всегда показывать кнопки листания</string>
 </resources>

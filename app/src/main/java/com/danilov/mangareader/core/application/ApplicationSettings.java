@@ -22,6 +22,7 @@ public class ApplicationSettings {
     private static final String FIRST_LAUNCH = "FL";
     private static final String SHOW_ADVERTISEMENT = "SA";
     private static final String TUTORIAL_MENU_PASSED_FIELD = "TMP";
+    private static final String SHOW_VIEWER_BTNS_ALWAYS_FIELD = "SVBA";
 
     private static ApplicationSettings instance;
 
@@ -38,6 +39,8 @@ public class ApplicationSettings {
     private boolean showAdvertisement;
 
     private boolean viewerFullscreen;
+
+    private boolean showViewerButtonsAlways;
 
     public String getDownloadPath() {
         return downloadPath;
@@ -95,6 +98,14 @@ public class ApplicationSettings {
         this.viewerFullscreen = viewerFullscreen;
     }
 
+    public boolean isShowViewerButtonsAlways() {
+        return showViewerButtonsAlways;
+    }
+
+    public void setShowViewerButtonsAlways(final boolean showViewerButtonsAlways) {
+        this.showViewerButtonsAlways = showViewerButtonsAlways;
+    }
+
     public static ApplicationSettings get(final Context context) {
         if (instance == null) {
             instance = new ApplicationSettings(context);
@@ -115,6 +126,7 @@ public class ApplicationSettings {
         this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
         this.showAdvertisement = sharedPreferences.getBoolean(SHOW_ADVERTISEMENT, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
+        this.showViewerButtonsAlways = sharedPreferences.getBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, false);
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
         }
@@ -143,6 +155,7 @@ public class ApplicationSettings {
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
         editor.putBoolean(SHOW_ADVERTISEMENT, showAdvertisement);
+        editor.putBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, showViewerButtonsAlways);
         editor.commit();
     }
 

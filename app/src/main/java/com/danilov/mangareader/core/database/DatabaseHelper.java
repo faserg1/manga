@@ -3,6 +3,8 @@ package com.danilov.mangareader.core.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.acra.ACRA;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -165,25 +167,26 @@ public class DatabaseHelper {
         return database;
     }
 
-    public void tryCreateDatabase() {
-        File f = new File(path);
-        if (!f.exists()) {
-            File parent = new File(f.getParent() + File.separator);
-            if (!parent.exists()) {
-                boolean result = parent.mkdirs();
-                if (!result) {
-                    throw new RuntimeException("Can't create database folder");
-                }
-            }
-            try {
-                boolean result = f.createNewFile();
-                if (!result) {
-                    throw new RuntimeException("Can't create database file");
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Can't create database: " + e.getMessage());
-            }
-        }
+    public void tryCreateDatabase() throws DatabaseAccessException {
+        //TODO: implementation
+//        File f = new File(path);
+//        if (!f.exists()) {
+//            File parent = new File(f.getParent() + File.separator);
+//            if (!parent.exists()) {
+//                boolean result = parent.mkdirs();
+//                if (!result) {
+//                    throw new DatabaseAccessException("Can't create database folder");
+//                }
+//            }
+//            try {
+//                boolean result = f.createNewFile();
+//                if (!result) {
+//                    throw new DatabaseAccessException("Can't create database file");
+//                }
+//            } catch (IOException e) {
+//                throw new DatabaseAccessException("Can't create database: " + e.getMessage());
+//            }
+//        }
     }
 
     public static interface DatabaseUpgradeHandler {

@@ -28,14 +28,22 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.1">
 
-                <View   android:layout_height="fill_parent"
+                <TextView   android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
                         android:layout_weight="0.5"
+                        android:text="@string/btn_back"
+                        android:gravity="center"
+                        android:textColor="#fff"
+                        android:background="@drawable/rect_blue"
                         android:id="@+id/prevBtn"/>
 
-                <View   android:layout_height="fill_parent"
+                <TextView   android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
                         android:layout_weight="0.5"
+                        android:text="@string/btn_forward"
+                        android:textColor="#fff"
+                        android:gravity="center"
+                        android:background="@drawable/rect_blue"
                         android:id="@+id/nextBtn"/>
 
             </LinearLayout>
@@ -49,14 +57,22 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.1">
 
-                <View   android:layout_height="fill_parent"
+                <TextView   android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
                         android:layout_weight="0.5"
+                        android:text="@string/btn_back"
+                        android:gravity="center"
+                        android:textColor="#fff"
+                        android:background="@drawable/rect_blue"
                         android:id="@+id/prevBtnBottom"/>
 
-                <View   android:layout_height="fill_parent"
+                <TextView   android:layout_height="fill_parent"
                         android:layout_width="fill_parent"
                         android:layout_weight="0.5"
+                        android:text="@string/btn_forward"
+                        android:textColor="#fff"
+                        android:gravity="center"
+                        android:background="@drawable/rect_blue"
                         android:id="@+id/nextBtnBottom"/>
 
             </LinearLayout>
@@ -190,6 +206,14 @@
                                           android:id="@+id/chapterQuantity"/>
 
                             </LinearLayout>
+
+                            <CheckBox
+                                android:layout_marginTop="5dp"
+                                android:textColor="#ffffffff"
+                                android:id="@+id/show_btns_checkbox"
+                                android:text="@string/sv_always_show_viewer_controls"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
 
                         </LinearLayout>
 

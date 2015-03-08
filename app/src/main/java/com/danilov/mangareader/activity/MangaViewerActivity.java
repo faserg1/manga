@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener {
+public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -59,6 +60,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private EditText currentChapterEditText;
     private TextView totalChaptersTextView;
     private ProgressBar imageProgressBar;
+    private CheckBox showButtonsCheckbox;
 
     private Button imageOk;
     private Button chapterOk;
@@ -100,6 +102,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
+        this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
         settings = ApplicationSettings.get(this);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
@@ -112,7 +115,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         toggleFullscreen(true);
         isTutorialPassed = settings.isTutorialViewerPassed();
         showTutorial(isTutorialPassed ? -1 : 1);
-
+        this.showButtonsCheckbox.setChecked(settings.isShowViewerButtonsAlways());
+        this.showButtonsCheckbox.setOnCheckedChangeListener(this);
         Intent intent = getIntent();
         if (savedInstanceState != null) {
             manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
@@ -149,6 +153,54 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         currentStrategy.setObserver(this);
         init(savedInstanceState);
         closeKeyboard();
+        if (!settings.isShowViewerButtonsAlways()) {
+            hideBtns(HIDE_TIME_OFFSET);
+        }
+    }
+
+    private static final int HIDE_TIME_OFFSET = 2000;
+    private static final int HIDE_TIME = 1000;
+
+    private void hideBtns(final int offset) {
+        Animation animation = new AlphaAnimation(1.f, 0.f);
+        Animation animation1 = new AlphaAnimation(1.f, 0.f);
+        Animation animation2 = new AlphaAnimation(1.f, 0.f);
+        Animation animation3 = new AlphaAnimation(1.f, 0.f);
+        animation.setDuration(HIDE_TIME);
+        animation1.setDuration(HIDE_TIME);
+        animation2.setDuration(HIDE_TIME);
+        animation3.setDuration(HIDE_TIME);
+        animation.setStartOffset(offset);
+        animation1.setStartOffset(offset);
+        animation2.setStartOffset(offset);
+        animation3.setStartOffset(offset);
+        animation.setFillAfter(true);
+        animation1.setFillAfter(true);
+        animation2.setFillAfter(true);
+        animation3.setFillAfter(true);
+        prevBtn.startAnimation(animation);
+        prevBtnBottom.startAnimation(animation1);
+        nextBtn.startAnimation(animation2);
+        nextBtnBottom.startAnimation(animation3);
+    }
+
+    private void showBtns() {
+        Animation animation = new AlphaAnimation(0.f, 1.f);
+        Animation animation1 = new AlphaAnimation(0.f, 1.f);
+        Animation animation2 = new AlphaAnimation(0.f, 1.f);
+        Animation animation3 = new AlphaAnimation(0.f, 1.f);
+        animation.setDuration(HIDE_TIME);
+        animation1.setDuration(HIDE_TIME);
+        animation2.setDuration(HIDE_TIME);
+        animation3.setDuration(HIDE_TIME);
+        animation.setFillAfter(true);
+        animation1.setFillAfter(true);
+        animation2.setFillAfter(true);
+        animation3.setFillAfter(true);
+        prevBtn.startAnimation(animation);
+        prevBtnBottom.startAnimation(animation1);
+        nextBtn.startAnimation(animation2);
+        nextBtnBottom.startAnimation(animation3);
     }
 
     private void prepareOnlineManga() {
@@ -409,8 +461,25 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         super.onSaveInstanceState(outState);
     }
 
+    private boolean saved = false;
+
     @Override
     public void onBackPressed() {
+        save();
+        saved = true;
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!saved) {
+            save();
+            saved = true;
+        }
+        super.onDestroy();
+    }
+
+    private void save() {
         int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
         int currentImageNumber = currentStrategy.getCurrentImageNumber();
 
@@ -420,7 +489,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         } catch (DatabaseAccessException e) {
             Log.e(TAG, "Failed to update history: " + e.getMessage());
         }
-        finish();
+        saved = true;
     }
 
     // the part with MangaStrategyListener
@@ -456,6 +525,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         }
         if (progressDialog != null) {
             progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
+        settings.setShowViewerButtonsAlways(b);
+        settings.update(getApplicationContext());
+        if (b) {
+            showBtns();
+        } else {
+            hideBtns(0);
         }
     }
 
@@ -552,6 +632,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
                            showTutorial(-1);
                            settings.setTutorialViewerPassed(true);
                            settings.update(getApplicationContext());
+                           hideBtns(HIDE_TIME_OFFSET);
                            break;
                    }
                 }
