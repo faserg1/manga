@@ -32,8 +32,8 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:orientation="vertical"
-                  android:paddingLeft="45dp"
-                  android:paddingRight="45dp"
+                  android:paddingLeft="5dp"
+                  android:paddingRight="5dp"
                   android:paddingTop="15dp">
 
 
@@ -42,14 +42,14 @@
                       android:layout_height="match_parent"
                       android:orientation="vertical"
                       android:padding="15dp"
-                      android:layout_marginTop="210dp"
+                      android:layout_marginTop="@dimen/manga_info_height_half"
                       android:minHeight="@dimen/manga_info_height"
                       android:background="@drawable/list_item_background">
 
 
                       <View
                           android:id="@+id/manga_fake_cover"
-                          android:layout_width="200dp"
+                          android:layout_width="130dp"
                           android:layout_marginLeft="15dp"
                           android:layout_height="10dp"/>
 
@@ -62,9 +62,9 @@
 
                           <TextView android:layout_width="0dp"
                                     android:layout_height="fill_parent"
-                                    android:layout_weight="0.7"
+                                    android:layout_weight="0.6"
                                     android:id="@+id/manga_title"
-                                    android:textSize="45sp"
+                                    android:textSize="25sp"
                                     android:textStyle="bold"
                                     android:singleLine="true"
                                     android:ellipsize="marquee"
@@ -74,7 +74,7 @@
                                     android:scrollHorizontally="true"/>
 
                           <Button android:layout_width="0dp"
-                                  android:layout_weight="0.3"
+                                  android:layout_weight="0.4"
                                   android:layout_height="fill_parent"
                                   style="@style/Manga.ButtonCommon"
                                   android:id="@+id/download"
@@ -93,10 +93,9 @@
 
                           <LinearLayout
                               android:layout_width="0dp"
-                              android:textSize="25sp"
                               android:layout_height="wrap_content"
                               android:orientation="vertical"
-                              android:layout_weight="0.68">
+                              android:layout_weight="0.6">
 
 
                               <LinearLayout android:layout_width="fill_parent"
@@ -106,13 +105,13 @@
 
                                   <TextView android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:textSize="20sp"
+                                            android:textSize="15sp"
                                             android:textStyle="bold"
                                             android:text="@string/sv_chapters"/>
 
                                   <TextView android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:textSize="20sp"
+                                            android:textSize="15sp"
                                             android:textStyle="bold"
                                             android:layout_marginLeft="5dp"
                                             android:id="@+id/chapters_quantity"/>
@@ -120,7 +119,7 @@
                               </LinearLayout>
 
                               <TextView android:layout_width="fill_parent"
-                                        android:textSize="25sp"
+                                        android:textSize="15sp"
                                         android:layout_height="fill_parent"
                                         android:id="@+id/manga_description"/>
 
@@ -128,7 +127,7 @@
 
                           <LinearLayout android:layout_width="0dp"
                                         android:layout_marginTop="-3dp"
-                                        android:layout_weight="0.3"
+                                        android:layout_weight="0.41"
                                         android:orientation="vertical"
                                         android:layout_height="wrap_content">
 
@@ -159,7 +158,7 @@
 
                   <ImageView
                       android:id="@+id/manga_cover"
-                      android:layout_width="200dp"
+                      android:layout_width="130dp"
                       android:layout_marginLeft="15dp"
                       android:layout_height="@dimen/manga_info_height"/>
 
