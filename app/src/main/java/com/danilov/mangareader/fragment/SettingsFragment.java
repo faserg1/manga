@@ -25,6 +25,7 @@ public class SettingsFragment extends BaseFragment {
     private EditText downloadPath;
     private Button selectPath;
     private CheckBox disableAds;
+    private CheckBox showControls;
 
     private ApplicationSettings settings;
 
@@ -43,6 +44,7 @@ public class SettingsFragment extends BaseFragment {
         downloadPath = findViewById(R.id.download_path);
         settings = ApplicationSettings.get(getActivity());
         disableAds = findViewById(R.id.disable_ads);
+        showControls = findViewById(R.id.show_viewer_controls);
         final String path = settings.getMangaDownloadBasePath();
 
         downloadPath.setText(path);
@@ -61,6 +63,14 @@ public class SettingsFragment extends BaseFragment {
             public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
                 settings.setShowAdvertisement(!b);
                 settings.setFirstLaunch(false);
+                settings.update(getActivity());
+            }
+        });
+        showControls.setChecked(settings.isShowViewerButtonsAlways());
+        showControls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
+                settings.setShowViewerButtonsAlways(b);
                 settings.update(getActivity());
             }
         });
