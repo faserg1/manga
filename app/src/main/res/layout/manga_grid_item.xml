@@ -9,26 +9,27 @@
               android:paddingTop="2dp"
               android:paddingBottom="2dp">
 
-    <LinearLayout android:layout_width="fill_parent"
+    <RelativeLayout android:layout_width="fill_parent"
                   android:layout_height="@dimen/grid_item_height"
                   android:background="@drawable/grid_item_background"
-                  android:orientation="vertical"
-                  android:padding="10dp"
                   android:id="@+id/card_wrapper">
 
-
         <ImageView android:layout_width="fill_parent"
-                   android:layout_height="@dimen/grid_item_image_height"
+                   android:layout_height="fill_parent"
                    android:scaleType="centerCrop"
+                   android:layout_above="@+id/bottom_holder"
                    android:id="@+id/manga_cover"/>
 
         <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/bottom_holder"
+            android:padding="10dp"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants">
 
             <TextView android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/manga_title"
                 android:singleLine="true"
                 android:layout_toLeftOf="@+id/popup_button"
@@ -54,7 +55,8 @@
 
             </RelativeLayout>
 
-    </LinearLayout>
+
+    </RelativeLayout>
 
     <ImageView
             android:src="@drawable/card_shadow"

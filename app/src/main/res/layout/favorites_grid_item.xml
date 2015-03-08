@@ -12,22 +12,23 @@
     <RelativeLayout android:layout_width="fill_parent"
                   android:layout_height="@dimen/grid_item_height"
                   android:background="@drawable/grid_item_background"
-                  android:orientation="vertical"
-                  android:id="@+id/card_wrapper"
-                  android:padding="10dp">
+                  android:id="@+id/card_wrapper">
 
 
         <ImageView android:layout_width="fill_parent"
-                   android:layout_height="@dimen/grid_item_image_height"
+                   android:layout_height="fill_parent"
                    android:id="@+id/manga_cover"
+                   android:layout_above="@+id/manga_title"
                    android:scaleType="centerCrop"/>
 
-        <TextView android:layout_width="fill_parent"
-                  android:layout_height="fill_parent"
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
                   android:id="@+id/manga_title"
+                  android:padding="10dp"
+                  android:layout_alignParentBottom="true"
                   android:textSize="@dimen/grid_item_text_size"
-                  android:layout_below="@+id/manga_cover"
                   android:text="Bakuman"
+                  android:singleLine="true"
                   android:textColor="@android:color/black"/>
 
     </RelativeLayout>

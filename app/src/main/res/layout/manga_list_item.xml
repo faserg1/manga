@@ -16,10 +16,7 @@
             android:layout_height="@dimen/manga_list_item_height"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:background="@drawable/list_item_background"
-            android:paddingLeft="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp">
+            android:background="@drawable/list_item_background">
 
         <!--cover-->
         <LinearLayout
@@ -29,8 +26,8 @@
                 android:orientation="vertical">
             <ImageView
                     android:id="@+id/manga_cover"
-                    android:layout_height="@dimen/manga_list_image_height"
-                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/manga_list_item_height"
+                    android:layout_width="fill_parent"
                     android:scaleType="centerCrop"/>
 
         </LinearLayout> <!--cover end-->
@@ -41,6 +38,8 @@
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
                 android:layout_weight="0.6">
 
             <TextView
@@ -57,6 +56,7 @@
         </LinearLayout> <!--description & info end-->
 
         <LinearLayout
+                android:paddingTop="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:descendantFocusability="blocksDescendants">

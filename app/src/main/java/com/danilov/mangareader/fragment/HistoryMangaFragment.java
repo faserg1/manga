@@ -73,7 +73,7 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
         gridView.setOnItemClickListener(this);
-        sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+        sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
     }
 
     @Override

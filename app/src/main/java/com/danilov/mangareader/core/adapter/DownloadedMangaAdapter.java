@@ -48,7 +48,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
             isPosSelected[i] = false;
         }
         this.popupButtonClickListener = listener;
-        sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+        sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.grid_item_height);
     }
 
     public List<LocalManga> getMangas() {

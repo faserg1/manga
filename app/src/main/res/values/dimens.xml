@@ -11,7 +11,6 @@
     <dimen name="viewer_slider_outer_width">350dp</dimen>
     <dimen name="grid_item_height">210dp</dimen>
     <dimen name="grid_item_text_size">16sp</dimen>
-    <dimen name="grid_item_image_height">170dp</dimen>
     <dimen name="grid_item_width">130dp</dimen>
     <dimen name="alert_dialog_button_bar_height">48dip</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>

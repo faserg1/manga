@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 import com.danilov.mangareader.core.http.AsyncDrawable;
 import com.danilov.mangareader.core.http.HttpBitmapReader;
@@ -92,6 +91,15 @@ public class HttpImageManager {
         private ImageView imageView = null;
         private boolean isCancelled = false;
         private int newSize;
+        public boolean isHandled = false;
+
+        @Override
+        public String toString() {
+            return "LoadRequest{" +
+                    "mUri=" + mUri +
+                    ", mHashedUri='" + mHashedUri + '\'' +
+                    '}' + super.toString();
+        }
 
         private static Queue<LoadRequest> pool = new ArrayDeque<LoadRequest>();
 
@@ -183,8 +191,6 @@ public class HttpImageManager {
             this.imageView = imageView;
         }
 
-
-
         class LoadListener implements OnLoadResponseListener {
 
             @Override
@@ -196,17 +202,19 @@ public class HttpImageManager {
             @Override
             public void onLoadResponse(final LoadRequest r, final Bitmap data) {
                 if (!(imageView.getDrawable() instanceof AsyncDrawable) || r.isCancelled) {
+                    isHandled = true;
                     return;
                 }
                 AsyncDrawable ad = (AsyncDrawable) imageView.getDrawable();
                 if (ad.getRequest().equals(r)) {
                     imageView.setImageBitmap(data);
                 }
+                isHandled = true;
             }
 
             @Override
             public void onLoadError(final LoadRequest r, final Throwable e) {
-
+                isHandled = true;
             }
 
         }
@@ -247,6 +255,7 @@ public class HttpImageManager {
             imageView = null;
             newSize = 0;
             isCancelled = false;
+            isHandled = false;
             pool.add(this);
         }
 
@@ -397,7 +406,6 @@ public class HttpImageManager {
                             @Override
                             public void run() {
                                 request.mListener.onLoadResponse(request, theData);
-                                request.retrieve();
                             }
                         });
                     }
@@ -409,7 +417,6 @@ public class HttpImageManager {
                             @Override
                             public void run() {
                                 request.mListener.onLoadError(request, e);
-                                request.retrieve();
                             }
                         });
                     }
@@ -417,8 +424,13 @@ public class HttpImageManager {
                 } finally {
                     Log.d(TAG, log.toString());
                     synchronized (HttpImageManager.this.mActiveRequests) {
+                        //супер баг тут был: не удалялся объект из очереди, потому что я его retrieve'ил в mHandler.post().
+                        //он лежал и в пуле и в очереди сразу и потом доставался из пула но не мог положиться в очередь, так как он как бы там уже был
                         HttpImageManager.this.mActiveRequests.remove(request);
                         HttpImageManager.this.mActiveRequests.notifyAll(); // wake up pending requests
+                        if (request.isHandled) {
+                            request.retrieve();
+                        }
                         // who's querying the same
                         // URL.
                     }
@@ -428,4 +440,36 @@ public class HttpImageManager {
             }
         };
     }
+
+    static class Log {
+
+        static boolean isDebug = false;
+
+        public static void d(final String tag, final String message) {
+            if (isDebug) {
+                android.util.Log.d(tag, message);
+            }
+        }
+
+        public static void d(final String tag, final String message, final Throwable tr) {
+            if (isDebug) {
+                android.util.Log.d(tag, message, tr);
+            }
+        }
+
+        public static void e(final String tag, final String message) {
+            if (isDebug) {
+                android.util.Log.e(tag, message);
+            }
+        }
+
+        public static void e(final String tag, final String message, final Throwable tr) {
+            if (isDebug) {
+                android.util.Log.e(tag, message, tr);
+            }
+        }
+
+
+    }
+
 }

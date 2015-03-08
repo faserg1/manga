@@ -72,7 +72,7 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
-        sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
+        sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);

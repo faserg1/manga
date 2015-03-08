@@ -487,6 +487,7 @@ public class MangaDownloadService extends Service {
 
                     //old bug: currentRequest  становился нулём после хэндла этого сообшения и ДО отправки следующего, и возника NPE (там было currentRequest.manga - NPE!)
                     //а уже в DownloadManager это просто ловилось и передавалось в OnError
+                    // Manga manga = currentRequest.getManga(); не было а просто доставался объект
                     //ппц
                     Manga manga = currentRequest.getManga();
                     Message message = Message.obtain();
