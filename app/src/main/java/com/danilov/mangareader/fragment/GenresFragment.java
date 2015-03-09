@@ -78,6 +78,13 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
     }
 
     @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        String repositoryString = repository.toString();
+        outState.putString(Constants.REPOSITORY_KEY, repositoryString);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         RepositoryEngine.Genre genre = genres.get(i);
         QueryTask task = new QueryTask();
