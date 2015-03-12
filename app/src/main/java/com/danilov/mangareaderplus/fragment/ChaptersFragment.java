@@ -141,6 +141,8 @@ public class ChaptersFragment extends BaseFragment implements AdapterView.OnItem
         } else {
             restoreInstanceState(savedInstanceState);
         }
+        final int baseColor = getResources().getColor(R.color.color_primary);
+        activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
     }
 
     @Override

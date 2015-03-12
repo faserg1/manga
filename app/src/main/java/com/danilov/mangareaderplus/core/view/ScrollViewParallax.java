@@ -20,6 +20,7 @@ public class ScrollViewParallax extends ScrollView {
     private int offsetTop;
     private int startOffset;
     private int viewToParallaxId;
+    private ScrollListener scrollListener;
 
     public ScrollViewParallax(final Context context) {
         super(context);
@@ -92,6 +93,9 @@ public class ScrollViewParallax extends ScrollView {
             int translateY = vertical / 2;
             viewToParallax.setTranslationY(isChild ? translateY : -translateY);
         }
+        if (scrollListener != null) {
+            scrollListener.onScroll(horizontal, vertical, oldl, oldt);
+        }
     }
 
     private class PreICSParallaxView extends ParallaxView {
@@ -133,6 +137,16 @@ public class ScrollViewParallax extends ScrollView {
         }
 
         public abstract void setTranslationY(final float translate);
+
+    }
+
+    public void setScrollListener(final ScrollListener scrollListener) {
+        this.scrollListener = scrollListener;
+    }
+
+    public interface ScrollListener {
+
+        public void onScroll(final int horizontal, final int vertical, final int oldl, final int oldt);
 
     }
 

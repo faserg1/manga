@@ -121,6 +121,8 @@ public class MainActivity extends BaseToolbarActivity {
                 showRepositoryPickerFragment();
             }
         }
+        applicationSettings.setFirstLaunch(false);
+        applicationSettings.update(getApplicationContext());
         syncToggle();
         updateQuantity();
 

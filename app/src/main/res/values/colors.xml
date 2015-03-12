@@ -4,6 +4,7 @@
     <color name="holo_orange_dark">#ffe57650</color>
 
     <color name="manga_orange">#DC5F2F</color>
+    <color name="color_primary">#ffe97823</color>
     <color name="manga_main_orange">#ffe97823</color>
     <color name="action_mode_background">#fff79b5c</color>
     <color name="selected_color">#afff7d25</color>

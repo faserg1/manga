@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.danilov.mangareaderplus.core.view.ScrollViewParallax
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,6 +6,7 @@
     android:layout_height="match_parent"
     app:isChild="true"
     android:orientation="vertical"
+    android:id="@+id/scrollView"
     app:viewToParallax="@+id/manga_cover"
     android:fillViewport="true">
 
@@ -133,9 +133,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            app:image="@drawable/ic_action_important"
+            app:button_color="@color/fab_material_lime_500"
+            app:button_colorPressed="@color/fab_material_lime_900"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
-            android:layout_marginRight="20dp"
             android:id="@+id/action_button"/>
 
     </RelativeLayout>

@@ -28,6 +28,7 @@ import com.danilov.mangareaderplus.core.util.BitmapUtils;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
+import com.danilov.mangareaderplus.core.view.ScrollViewParallax;
 
 /**
  * Created by Semyon on 09.11.2014.
@@ -40,6 +41,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private RefreshableActivity refreshable;
 
     private HttpImageManager httpImageManager = null;
+
+    private ScrollViewParallax scrollViewParallax;
 
     private TextView mangaDescriptionTextView = null;
     private TextView chaptersQuantityTextView = null;
@@ -84,11 +87,11 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
         downloadButton = (Button) view.findViewById(R.id.download);
         readOnlineButton = (Button) view.findViewById(R.id.read_online);
+        scrollViewParallax = findViewById(R.id.scrollView);
         downloadButton.setOnClickListener(this);
         readOnlineButton.setOnClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
-
         addToFavorites = (Button) view.findViewById(R.id.add_to_favorites);
         removeFromFavorites = (Button) view.findViewById(R.id.remove_from_favorites);
 
@@ -106,6 +109,16 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         } else {
             restoreInstanceState(savedInstanceState);
         }
+        final int baseColor = getResources().getColor(R.color.color_primary);
+        final float size = getResources().getDimension(R.dimen.info_parallax_image_height);
+        activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(.0f, baseColor));
+        scrollViewParallax.setScrollListener(new ScrollViewParallax.ScrollListener() {
+            @Override
+            public void onScroll(final int horizontal, final int vertical, final int oldl, final int oldt) {
+                float alpha = 1 - (float) Math.max(0, size - vertical) / size;
+                activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(alpha, baseColor));
+            }
+        });
     }
 
     private void loadMangaInfo(final Manga manga) {

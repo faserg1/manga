@@ -7,13 +7,20 @@
               android:layout_height="match_parent"
               android:padding="5dip">
 
+    <View
+        android:id="@+id/fake_toolbar"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"/>
+
     <CheckBox
+        android:layout_below="@+id/fake_toolbar"
         android:id="@+id/select_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sv_select_all"/>
 
     <RelativeLayout
+        android:layout_below="@+id/fake_toolbar"
         android:id="@+id/select_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
