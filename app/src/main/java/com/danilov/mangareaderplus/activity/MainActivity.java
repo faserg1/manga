@@ -140,6 +140,7 @@ public class MainActivity extends BaseToolbarActivity {
                     public void onShowcaseViewHide(final ShowcaseView showcaseView) {
                         View v = (View) showcaseView.getParent();
                         applicationSettings.setTutorialMenuPassed(true);
+                        applicationSettings.setFirstLaunch(false);
                         applicationSettings.update(getApplicationContext());
                     }
 
