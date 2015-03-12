@@ -22,7 +22,7 @@
         android:layout_alignBottom="@+id/select_all"
         android:layout_alignTop="@+id/select_all">
 
-        <com.danilov.mangareader.core.view.RippleView
+        <com.danilov.mangareaderplus.core.view.RippleView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:rippleColorOne="#33b5e5"
@@ -37,7 +37,7 @@
                 android:layout_centerInParent="true"
                 android:text="@string/sv_select_last"/>
 
-        </com.danilov.mangareader.core.view.RippleView>
+        </com.danilov.mangareaderplus.core.view.RippleView>
 
     </RelativeLayout>
 

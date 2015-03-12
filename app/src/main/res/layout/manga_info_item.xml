@@ -12,7 +12,7 @@
         android:layout_width="fill_parent"
         android:layout_height="350dp"/>
 
-    <com.danilov.mangareader.core.view.OverScrollViewParallax
+    <com.danilov.mangareaderplus.core.view.OverScrollViewParallax
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:viewToParallax="@+id/very_big"
@@ -29,7 +29,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp">
 
-            <com.danilov.mangareader.core.view.ParentSizeLinearLayout
+            <com.danilov.mangareaderplus.core.view.ParentSizeLinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
@@ -145,11 +145,11 @@
 
                 </LinearLayout>
 
-            </com.danilov.mangareader.core.view.ParentSizeLinearLayout>
+            </com.danilov.mangareaderplus.core.view.ParentSizeLinearLayout>
 
         </LinearLayout>
         <!--end of main layout-->
 
-    </com.danilov.mangareader.core.view.OverScrollViewParallax>
+    </com.danilov.mangareaderplus.core.view.OverScrollViewParallax>
 
 </RelativeLayout>

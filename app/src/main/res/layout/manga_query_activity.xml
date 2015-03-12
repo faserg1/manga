@@ -23,7 +23,7 @@
                 android:layout_marginBottom="5dp"
                 style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
 
-            <com.danilov.mangareader.core.widget.SlidingTabLayout
+            <com.danilov.mangareaderplus.core.widget.SlidingTabLayout
                 android:id="@+id/sliding_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

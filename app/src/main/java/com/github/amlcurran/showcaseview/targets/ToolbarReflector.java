@@ -5,7 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewParent;
 
-import com.danilov.mangareader.activity.BaseToolbarActivity;
+import com.danilov.mangareaderplus.activity.BaseToolbarActivity;
 
 /**
  * Created by Semyon on 01.03.2015.

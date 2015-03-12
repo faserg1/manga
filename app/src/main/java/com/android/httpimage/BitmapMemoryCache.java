@@ -1,8 +1,8 @@
 package com.android.httpimage;
 
 import android.graphics.Bitmap;
-import com.danilov.mangareader.core.cache.LruCache;
-import com.danilov.mangareader.core.util.BitmapUtils;
+import com.danilov.mangareaderplus.core.cache.LruCache;
+import com.danilov.mangareaderplus.core.util.BitmapUtils;
 
 public class BitmapMemoryCache implements BitmapCache {
 
