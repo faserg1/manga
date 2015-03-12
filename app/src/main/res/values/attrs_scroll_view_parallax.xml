@@ -3,5 +3,6 @@
         <attr name="viewToParallax" format="reference" />
         <attr name="topOffset" format="dimension" />
         <attr name="startOffset" format="dimension" />
+        <attr name="isChild" format="boolean" />
     </declare-styleable>
 </resources>

@@ -5,6 +5,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-    <include layout="@layout/manga_info_item"/>
+    <include layout="@layout/manga_info_item_old"/>
 
 </LinearLayout>

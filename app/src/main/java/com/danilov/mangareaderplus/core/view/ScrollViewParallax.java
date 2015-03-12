@@ -16,6 +16,7 @@ import com.danilov.mangareaderplus.R;
 public class ScrollViewParallax extends ScrollView {
 
     private ParallaxView viewToParallax;
+    private boolean isChild = false;
     private int offsetTop;
     private int startOffset;
     private int viewToParallaxId;
@@ -49,6 +50,9 @@ public class ScrollViewParallax extends ScrollView {
         startOffset = (int) a.getDimension(
                 R.styleable.ScrollViewParallax_startOffset,
                 0);
+        isChild = a.getBoolean(
+                R.styleable.ScrollViewParallax_isChild,
+                false);
         offsetTop = (int) oTop;
 
 
@@ -85,7 +89,8 @@ public class ScrollViewParallax extends ScrollView {
     protected void onScrollChanged(final int horizontal, final int vertical, final int oldl, final int oldt) {
         super.onScrollChanged(horizontal, vertical, oldl, oldt);
         if (viewToParallax != null) {
-            viewToParallax.setTranslationY(-(vertical / 2));
+            int translateY = vertical / 2;
+            viewToParallax.setTranslationY(isChild ? translateY : -translateY);
         }
     }
 
