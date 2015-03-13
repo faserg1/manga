@@ -52,8 +52,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private View downloadButton;
     private View readOnlineButton;
 
-    private Button addToFavorites;
-    private Button removeFromFavorites;
+    private View addToFavorites;
+    private View removeFromFavorites;
 
     private MangaDAO mangaDAO = null;
 
@@ -92,8 +92,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         readOnlineButton.setOnClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
-        addToFavorites = (Button) view.findViewById(R.id.add_to_favorites);
-        removeFromFavorites = (Button) view.findViewById(R.id.remove_from_favorites);
+        addToFavorites = view.findViewById(R.id.add_to_favorites);
+        removeFromFavorites = view.findViewById(R.id.remove_from_favorites);
 
         addToFavorites.setOnClickListener(this);
         removeFromFavorites.setOnClickListener(this);
@@ -126,7 +126,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         if (coverUrl != null) {
             hasCoverLoaded = true;
             Uri coverUri = Uri.parse(coverUrl);
-            final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
+            final int sizeOfImage = 2 * getResources().getDimensionPixelSize(R.dimen.info_parallax_image_height);
 
             Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), sizeOfImage));
 

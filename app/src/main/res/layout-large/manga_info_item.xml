@@ -148,27 +148,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="fill_parent"
-                              android:layout_marginTop="-3dp"
-                              android:orientation="vertical"
-                              android:layout_height="wrap_content">
-
-                    <Button
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/add_to_favorites"
-                        android:text="@string/sv_add_to_favorites"
-                        style="@style/Manga.ButtonCommon"/>
-
-                    <Button android:visibility="gone"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/remove_from_favorites"
-                            android:text="@string/sv_remove_from_favorites"
-                            style="@style/Manga.ButtonCommon"/>
-
-                </LinearLayout>
-
             </LinearLayout> <!--cover and buttons end-->
 
             <LinearLayout
@@ -190,11 +169,24 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             app:image="@drawable/ic_action_important"
+            app:button_color="#ffd1d5dd"
+            app:button_colorPressed="#ffacb0b8"
+            android:layout_alignBottom="@id/header"
+            android:layout_marginBottom="-32dp"
+            android:id="@+id/add_to_favorites"/>
+
+        <com.software.shell.fab.ActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            app:image="@drawable/ic_action_important"
             app:button_color="#FFD600"
+            android:visibility="gone"
             app:button_colorPressed="#ffe6bd00"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
-            android:id="@+id/action_button"/>
+            android:id="@+id/remove_from_favorites"/>
 
     </RelativeLayout>
 

@@ -24,6 +24,6 @@
     <dimen name="showcase_radius">94dp</dimen>
     <dimen name="showcase_radius_inner">96dp</dimen>
     <dimen name="showcase_radius_outer">128dp</dimen>
-    <dimen name="info_parallax_image_height">220dp</dimen>
+    <dimen name="info_parallax_image_height">260dp</dimen>
 
 </resources>
