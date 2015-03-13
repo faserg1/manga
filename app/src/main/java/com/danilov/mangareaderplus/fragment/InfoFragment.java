@@ -49,8 +49,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private TextView mangaTitle = null;
     private ImageView mangaCover = null;
 
-    private Button downloadButton;
-    private Button readOnlineButton;
+    private View downloadButton;
+    private View readOnlineButton;
 
     private Button addToFavorites;
     private Button removeFromFavorites;
@@ -85,8 +85,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         chaptersQuantityTextView = (TextView) view.findViewById(R.id.chapters_quantity);
         mangaTitle = (TextView) view.findViewById(R.id.manga_title);
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
-        downloadButton = (Button) view.findViewById(R.id.download);
-        readOnlineButton = (Button) view.findViewById(R.id.read_online);
+        downloadButton = view.findViewById(R.id.download);
+        readOnlineButton = view.findViewById(R.id.read_online);
         scrollViewParallax = findViewById(R.id.scrollView);
         downloadButton.setOnClickListener(this);
         readOnlineButton.setOnClickListener(this);
