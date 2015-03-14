@@ -64,11 +64,12 @@ public interface RepositoryEngine {
     public enum Repository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga", R.drawable.ic_readmanga, R.drawable.ic_russia),
+        ALLHENTAI(new AllHentaiEngine(), "AllHentai", R.drawable.ic_allhentai, R.drawable.ic_russia),
         ADULTMANGA(new AdultmangaEngine(), "AdultManga", R.drawable.ic_adultmanga, R.drawable.ic_russia),
         MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", R.drawable.ic_mangareadernet, R.drawable.ic_english),
         OFFLINE(new OfflineEngine(), "", 0, -1);
 
-        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, MANGAREADERNET};
+        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, ALLHENTAI, MANGAREADERNET};
 
         private RepositoryEngine engine;
         private String name;

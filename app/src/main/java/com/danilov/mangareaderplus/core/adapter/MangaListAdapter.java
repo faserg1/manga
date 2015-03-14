@@ -75,11 +75,14 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
 
             });
         }
-        Uri coverUri = Uri.parse(manga.getCoverUri());
-        HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
-        Bitmap bitmap = httpImageManager.loadImage(request);
-        if (bitmap != null) {
-            viewBag.coverView.setImageBitmap(bitmap);
+        if (manga.getCoverUri() != null) {
+            //TODO: временный хак! Потом заблочить добавление в избранное если нет картинки (или придумать что-то ещё)
+            Uri coverUri = Uri.parse(manga.getCoverUri());
+            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
+            Bitmap bitmap = httpImageManager.loadImage(request);
+            if (bitmap != null) {
+                viewBag.coverView.setImageBitmap(bitmap);
+            }
         }
         return view;
     }

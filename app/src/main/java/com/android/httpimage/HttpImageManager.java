@@ -379,7 +379,9 @@ public class HttpImageManager {
                         if (data != null) {
                             log.append("; Loaded from persistent cache");
                             // load it into memory
-                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
+                            if (request.getNewSize() != 0) {
+                                data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
+                            }
                             HttpImageManager.this.mCache.storeData(key, data);
                         } else {
                             log.append("; going to network");
@@ -388,7 +390,9 @@ public class HttpImageManager {
                             data = HttpImageManager.this.mNetworkResourceLoader.fromUri(request.getUri().toString());
 
                             // load it into memory
-                            data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
+                            if (request.getNewSize() != 0) {
+                                data = BitmapUtils.reduceBitmapSize(HttpImageManager.this.mResources, data, request.getNewSize());
+                            }
                             HttpImageManager.this.mCache.storeData(key, data);
 
                             // persist it

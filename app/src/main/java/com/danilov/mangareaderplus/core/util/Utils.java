@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.danilov.mangareaderplus.core.dialog.EasyDialog;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -30,6 +32,10 @@ public class Utils {
 
     public static JSONObject toJSON(final String content) throws JSONException {
         return new JSONObject(content);
+    }
+
+    public static JSONArray toJSONArray(final String content) throws JSONException {
+        return new JSONArray(content);
     }
 
     public static void showToast(final Context context, final String message) {

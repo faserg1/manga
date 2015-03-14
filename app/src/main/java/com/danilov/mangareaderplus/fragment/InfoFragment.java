@@ -128,7 +128,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             Uri coverUri = Uri.parse(coverUrl);
             final int sizeOfImage = 2 * getResources().getDimensionPixelSize(R.dimen.info_parallax_image_height);
 
-            Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), sizeOfImage));
+            Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener()));
 
             if (bitmap != null) {
                 setCover(bitmap);
