@@ -1,10 +1,8 @@
 package com.danilov.mangareaderplus.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,7 +19,6 @@ import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
 import com.danilov.mangareaderplus.core.database.UpdatesDAO;
-import com.danilov.mangareaderplus.core.dialog.CustomDialog;
 import com.danilov.mangareaderplus.core.dialog.CustomDialogFragment;
 import com.danilov.mangareaderplus.core.util.DrawerStub;
 import com.danilov.mangareaderplus.core.util.Promise;
@@ -79,7 +76,7 @@ public class MainActivity extends BaseToolbarActivity {
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerMenu = findViewWithId(R.id.drawer_menu);
         // Set the adapter for the list view
-        adapter = new DrawerListAdapter(this, R.layout.drawer_menu_item, DrawerMenuItem.values());
+        adapter = new DrawerListAdapter(this, R.layout.drawer_menu_item, MainMenuItem.values());
         drawerList.setAdapter(adapter);
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -118,7 +115,8 @@ public class MainActivity extends BaseToolbarActivity {
             }
         } else {
             if (savedInstanceState == null) {
-                showRepositoryPickerFragment();
+                MainMenuItem item = MainMenuItem.valueOf(applicationSettings.getMainMenuItem());
+                showPage(item);
             }
         }
         applicationSettings.setFirstLaunch(false);
@@ -239,7 +237,7 @@ public class MainActivity extends BaseToolbarActivity {
         }
     }
 
-    private enum DrawerMenuItem {
+    public static enum MainMenuItem {
 
         UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
         SEARCH(R.drawable.ic_action_search, R.string.menu_search),
@@ -255,7 +253,7 @@ public class MainActivity extends BaseToolbarActivity {
 
         private boolean isSelected = false;
 
-        private DrawerMenuItem(final int iconId, final int stringId) {
+        private MainMenuItem(final int iconId, final int stringId) {
             this.iconId = iconId;
             this.stringId = stringId;
         }
@@ -280,45 +278,48 @@ public class MainActivity extends BaseToolbarActivity {
 
     private class DrawerItemClickListener implements AdapterView.OnItemClickListener {
 
-        private DrawerMenuItem prevSelected = null;
+        private MainMenuItem prevSelected = null;
 
         @Override
         public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
             if (prevSelected != null) {
                 prevSelected.setSelected(false);
             }
-            DrawerMenuItem item = DrawerMenuItem.values()[position];
+            MainMenuItem item = MainMenuItem.values()[position];
             view.setSelected(true);
             item.setSelected(true);
             prevSelected = item;
-            Intent intent = null;
-            switch (item) {
-                case UPDATES:
-                    showMainFragment();
-                    break;
-                case SEARCH:
-                    showRepositoryPickerFragment();
-                    break;
-                case HISTORY:
-                    showHistoryFragment();
-                    break;
-                case FAVORITE:
-                    showFavoriteMangaFragment();
-                    break;
-                case LOCAL:
-                    showDownloadedMangaFragment();
-                    break;
-                case DOWNLOAD_MANAGER:
-                    showDownloadManagerFragment();
-                    break;
-                case SETTINGS:
-                    showSettingsFragment();
-                    break;
-            }
+            showPage(item);
             syncToggle();
             closeDrawer();
         }
 
+    }
+
+    private void showPage(final MainMenuItem item) {
+        switch (item) {
+            case UPDATES:
+                showMainFragment();
+                break;
+            case SEARCH:
+                showRepositoryPickerFragment();
+                break;
+            case HISTORY:
+                showHistoryFragment();
+                break;
+            case FAVORITE:
+                showFavoriteMangaFragment();
+                break;
+            case LOCAL:
+                showDownloadedMangaFragment();
+                break;
+            case DOWNLOAD_MANAGER:
+                showDownloadManagerFragment();
+                break;
+            case SETTINGS:
+                showSettingsFragment();
+                break;
+        }
     }
 
     private void syncToggle() {
@@ -430,9 +431,9 @@ public class MainActivity extends BaseToolbarActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private class DrawerListAdapter extends ArrayAdapter<DrawerMenuItem> {
+    private class DrawerListAdapter extends ArrayAdapter<MainMenuItem> {
 
-        private DrawerMenuItem[] objects;
+        private MainMenuItem[] objects;
         private int resourceId;
         private Context context;
 
@@ -441,7 +442,7 @@ public class MainActivity extends BaseToolbarActivity {
             return objects.length;
         }
 
-        public DrawerListAdapter(final Context context, final int resource, final DrawerMenuItem[] objects) {
+        public DrawerListAdapter(final Context context, final int resource, final MainMenuItem[] objects) {
             super(context, resource, objects);
             this.context = context;
             this.objects = objects;
@@ -470,13 +471,13 @@ public class MainActivity extends BaseToolbarActivity {
                 holder.text = text;
                 holder.icon = icon;
             }
-            DrawerMenuItem item = objects[position];
+            MainMenuItem item = objects[position];
             if (item.isSelected()) {
                 view.setSelected(true);
             } else {
                 view.setSelected(false);
             }
-            if (item == DrawerMenuItem.UPDATES) {
+            if (item == MainMenuItem.UPDATES) {
                 TextView quantityNew = (TextView) view.findViewById(R.id.quantity_new);
                 quantityNew.setVisibility(View.VISIBLE);
                 quantityNew.setText(updatesQuantity + "");

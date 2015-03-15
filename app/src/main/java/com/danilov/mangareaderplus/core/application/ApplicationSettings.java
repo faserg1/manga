@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 
+import com.danilov.mangareaderplus.activity.MainActivity;
+
 import java.io.File;
 
 /**
@@ -20,9 +22,9 @@ public class ApplicationSettings {
     private static final String TUTORIAL_VIEWER_PASSED_FIELD = "TVPF";
     private static final String VIEWER_FULLSCREEN_FIELD = "VFF";
     private static final String FIRST_LAUNCH = "FL";
-    private static final String SHOW_ADVERTISEMENT = "SA";
     private static final String TUTORIAL_MENU_PASSED_FIELD = "TMP";
     private static final String SHOW_VIEWER_BTNS_ALWAYS_FIELD = "SVBA";
+    private static final String MAIN_MENU_ITEM_FIELD = "MMI";
 
     private static ApplicationSettings instance;
 
@@ -39,6 +41,16 @@ public class ApplicationSettings {
     private boolean viewerFullscreen;
 
     private boolean showViewerButtonsAlways;
+
+    private String mainMenuItem;
+
+    public String getMainMenuItem() {
+        return mainMenuItem;
+    }
+
+    public void setMainMenuItem(final String mainMenuItem) {
+        this.mainMenuItem = mainMenuItem;
+    }
 
     public String getDownloadPath() {
         return downloadPath;
@@ -116,6 +128,7 @@ public class ApplicationSettings {
         this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
         this.showViewerButtonsAlways = sharedPreferences.getBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, false);
+        this.mainMenuItem = sharedPreferences.getString(MAIN_MENU_ITEM_FIELD, MainActivity.MainMenuItem.SEARCH.toString());
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
         }
@@ -144,6 +157,7 @@ public class ApplicationSettings {
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
         editor.putBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, showViewerButtonsAlways);
+        editor.putString(MAIN_MENU_ITEM_FIELD, mainMenuItem);
         editor.commit();
     }
 
