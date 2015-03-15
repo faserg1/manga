@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -81,6 +82,9 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
     }
 
     private void loadHistory() {
+        if (adapter != null) {
+            adapter.clearList();
+        }
         historyProgressBar.setVisibility(View.VISIBLE);
         final Context context = getActivity();
         Thread thread = new Thread() {
@@ -91,8 +95,6 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
                 try {
                     List<HistoryElement> history = getHistorySorted();
                     if (history != null && !history.isEmpty()) {
-                        Log.d(TAG, "Context is " + context);
-                        Log.d(TAG, "HistoryDAO is " + history);
                         adapter = new HistoryMangaAdapter(context, history);
                     }
                 } catch (DatabaseAccessException e) {
@@ -134,7 +136,6 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
     }
 
 
-
     private class HistoryMangaAdapter extends ArrayAdapter<HistoryElement> {
 
         private List<HistoryElement> history = null;
@@ -169,9 +170,16 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
                 holder = new GridItemHolder();
                 holder.mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
                 holder.mangaTitle = (TextView) view.findViewById(R.id.manga_title);
+                holder.discardButton = (ImageButton) view.findViewById(R.id.discard_button);
                 holder.isOnline = view.findViewById(R.id.is_online);
             }
-            HistoryElement historyElement = history.get(position);
+            final HistoryElement historyElement = history.get(position);
+            holder.discardButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    removeHistory(historyElement);
+                }
+            });
             Manga manga = historyElement.getManga();
             holder.mangaTitle.setText(manga.getTitle());
             if (!historyElement.isOnline()) {
@@ -194,14 +202,32 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
             return view;
         }
 
+        public void clearList() {
+            if (history != null) {
+                history.clear();
+                notifyDataSetChanged();
+            }
+        }
+
         private class GridItemHolder {
 
             public ImageView mangaCover;
             public TextView mangaTitle;
+            public ImageButton discardButton;
             private View isOnline;
 
         }
 
+    }
+
+    private void removeHistory(final HistoryElement historyElement) {
+        try {
+            historyDAO.deleteManga(historyElement.getManga(), historyElement.isOnline());
+            loadHistory();
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+            Utils.showToast(getActivity(), getActivity().getString(R.string.e_failed_remove_history) + e.getMessage());
+        }
     }
 
     private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {

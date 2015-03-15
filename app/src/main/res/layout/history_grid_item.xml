@@ -18,18 +18,43 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="fill_parent"
                    android:id="@+id/manga_cover"
-                   android:layout_above="@+id/manga_title"
+                   android:layout_above="@+id/bottom_holder"
                    android:scaleType="centerCrop"/>
 
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentBottom="true"
-                  android:padding="10dp"
-                  android:id="@+id/manga_title"
-                  android:textSize="@dimen/grid_item_text_size"
-                  android:singleLine="true"
-                  android:text="Bakuman"
-                  android:textColor="@android:color/black"/>
+        <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/bottom_holder"
+            android:padding="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants">
+
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/manga_title"
+                      android:singleLine="true"
+                      android:layout_toLeftOf="@+id/discard_button"
+                      android:layout_toStartOf="@+id/discard_button"
+                      android:ellipsize="marquee"
+                      android:focusable="true"
+                      android:textSize="@dimen/grid_item_text_size"
+                      android:focusableInTouchMode="true"
+                      android:marqueeRepeatLimit="marquee_forever"
+                      android:scrollHorizontally="true"
+                      android:textColor="@android:color/black"/>
+
+            <ImageButton
+                android:id="@+id/discard_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_action_discard"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:background="?attr/selectableItemBackground"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -121,10 +121,10 @@ public class HistoryDAO {
         return mangaList;
     }
 
-    public void deleteManga(final Manga localManga, final boolean isOnline) throws DatabaseAccessException {
+    public void deleteManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
-        String[] selectionArgs = new String[] {"" + localManga.getId(), isOnline ? "1" : "0"};
+        String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
