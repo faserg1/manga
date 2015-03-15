@@ -44,6 +44,18 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/sv_main_page"
+            android:textColor="@color/text_view_normal"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_page_selector"/>
+
 
         <CheckBox
             android:layout_marginTop="10dp"
@@ -51,11 +63,6 @@
             android:text="@string/sv_always_show_viewer_controls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/main_page_selector"/>
 
     </LinearLayout>
 

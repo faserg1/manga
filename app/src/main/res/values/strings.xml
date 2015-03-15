@@ -57,5 +57,6 @@
     <string name="btn_back">Back</string>
     <string name="btn_forward">Forward</string>
     <string name="sv_always_show_viewer_controls">Always show control buttons in viewer</string>
-    <string name="e_failed_remove_history">"Не удалось удалить историю: "</string>
+    <string name="e_failed_remove_history">Failed to remove history: </string>
+    <string name="sv_main_page">Main page</string>
 </resources>
