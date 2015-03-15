@@ -248,7 +248,9 @@ public class DownloadManagerFragment extends BaseFragment {
     @Override
     public void onPause() {
         actionBarActivity.unbindService(serviceConnection);
-        service.removeObserver(handler);
+        if (service != null) {
+            service.removeObserver(handler);
+        }
         super.onPause();
     }
 
