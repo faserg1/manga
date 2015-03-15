@@ -58,7 +58,6 @@
                           android:singleLine="true"
                           android:ellipsize="marquee"
                           android:focusable="true"
-                          android:text="Attack On Titan"
                           android:focusableInTouchMode="true"
                           android:marqueeRepeatLimit="marquee_forever"
                           android:scrollHorizontally="true"/>
