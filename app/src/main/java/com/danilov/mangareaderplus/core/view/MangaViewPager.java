@@ -165,9 +165,6 @@ public class MangaViewPager extends ViewPager implements Switchable {
             imageView.setImageFile(donePath);
             return;
         }
-        if (download != null) {
-            downloadManager.cancelDownload(download);
-        }
         download = downloadManager.startDownload(url, path);
         downloadManager.setListener(new DownloadManager.DownloadProgressListener() {
             @Override
@@ -190,10 +187,7 @@ public class MangaViewPager extends ViewPager implements Switchable {
                 File file = new File(path);
                 File newPath = new File(donePath);
                 file.renameTo(newPath);
-
-                if (compareUrlAndTag(url, imageView.getTag())) {
-                    imageView.setImageFile(donePath);
-                }
+                imageView.setImageFile(donePath);
             }
 
             @Override
