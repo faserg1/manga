@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,13 +36,14 @@ import com.danilov.mangareaderplus.core.util.Utils;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaImageSwitcher;
 import com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView;
+import com.danilov.mangareaderplus.core.view.Switchable;
 
 import java.util.ArrayList;
 
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class MangaViewerActivity extends BaseToolbarActivity implements ViewPager.OnPageChangeListener, MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -50,7 +52,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     private static final String CHAPTERS_KEY = "CK";
     private static final String URIS_KEY = "UK";
 
-    private MangaImageSwitcher imageSwitcher;
+    private Switchable imageSwitcher;
     private View nextBtn;
     private View prevBtn;
     private View nextBtnBottom;
@@ -85,8 +87,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manga_viewer_activity);
-        this.imageSwitcher = (MangaImageSwitcher) findViewById(R.id.imageSwitcher);
+        setContentView(R.layout.manga_viewer_activity_new);
+        this.imageSwitcher = (Switchable) findViewById(R.id.imageSwitcher);
+        imageSwitcher.setFragmentManager(getSupportFragmentManager());
         imageSwitcher.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewById(R.id.nextBtn);
         this.prevBtn = findViewById(R.id.prevBtn);
@@ -537,6 +540,30 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         } else {
             hideBtns(0);
         }
+    }
+
+    int pos = 0;
+
+    @Override
+    public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+        if (pos != position) {
+            try {
+                currentStrategy.next();
+            } catch (ShowMangaException e) {
+                e.printStackTrace();
+            }
+            pos = position;
+        }
+    }
+
+    @Override
+    public void onPageSelected(final int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(final int state) {
+
     }
 
     // MangaStrategyListener realization end

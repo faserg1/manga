@@ -42,19 +42,32 @@ public class DownloadManager {
 
     //executing only one download at a time
     //on complete start another download
-    public void startDownload(final String uri, final String filePath) {
-        startDownload(uri, filePath, 0);
+    public Download startDownload(final String uri, final String filePath) {
+        return startDownload(uri, filePath, 0);
     }
 
-    public void startDownload(final String uri, final String filePath, final int tag) {
+    public Download startDownload(final String uri, final String filePath, final int tag) {
         lock.lock();
+        Download download = null;
         try {
-            Download download = pool.obtain();
+            download = pool.obtain();
             download.setUri(uri);
             download.setTag(tag);
             download.setFilePath(filePath);
             downloads.add(download);
             isWake.signalAll();
+        } finally {
+            lock.unlock();
+        }
+        return download;
+    }
+
+    public void cancelDownload(final Download download) {
+        lock.lock();
+        try {
+            download.setStatus(DownloadStatus.CANCELLED);
+        } catch (Exception e) {
+            Log.d(TAG, "Exception occurred in cancelDownload(), error: " + e.getMessage());
         } finally {
             lock.unlock();
         }

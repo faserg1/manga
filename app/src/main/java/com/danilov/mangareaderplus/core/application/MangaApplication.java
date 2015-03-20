@@ -36,7 +36,8 @@ public class MangaApplication extends Application {
     @Override
     public void onCreate() {
         File mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
-        FileSystemPersistence fsp = new FileSystemPersistence(new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), ApplicationSettings.PACKAGE_NAME));
+        CacheDirectoryManagerImpl cacheDirectoryManager = new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), ApplicationSettings.PACKAGE_NAME);
+        FileSystemPersistence fsp = new FileSystemPersistence(cacheDirectoryManager);
         HttpStreamReader httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
         HttpBytesReader httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
         HttpBitmapReader httpBitmapReader = new HttpBitmapReader(httpBytesReader);
@@ -47,6 +48,7 @@ public class MangaApplication extends Application {
         UpdatesDAO updatesDAO = new UpdatesDAO();
         DownloadedMangaDAO downloadedMangaDAO = new DownloadedMangaDAO();
         MangaDAO mangaDAO = new MangaDAO();
+        ServiceContainer.addService(cacheDirectoryManager);
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
         ServiceContainer.addService(httpImageManager);

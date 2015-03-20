@@ -384,6 +384,15 @@ public class IoUtils {
         return downloadPath + File.separator + title + File.separator;
     }
 
+    public static String createPathForURL(final String url) {
+        Matcher matcher = normalNamePattern.matcher(url);
+        String title = "";
+        while (matcher.find()) {
+            title += matcher.group();
+        }
+        return title;
+    }
+
     public static String createPathForMangaChapter(final String mangaPath, final int chapterNum) {
         File chapterFolder = new File(mangaPath + "/" + chapterNum + "/");
         if (!chapterFolder.mkdirs() && !chapterFolder.exists()) {

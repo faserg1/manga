@@ -13,6 +13,7 @@ import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaImageSwitcher;
+import com.danilov.mangareaderplus.core.view.Switchable;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +26,7 @@ public class OfflineManga implements MangaShowStrategy {
     private static final String TAG = "OfflineManga";
 
     private LocalManga manga;
-    private MangaImageSwitcher mangaImageSwitcher;
+    private Switchable mangaImageSwitcher;
     private InAndOutAnim nextImageAnim;
     private InAndOutAnim prevImageAnim;
 
@@ -43,7 +44,7 @@ public class OfflineManga implements MangaShowStrategy {
 
     private Handler handler;
 
-    public OfflineManga(final LocalManga manga, final MangaImageSwitcher mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
+    public OfflineManga(final LocalManga manga, final Switchable mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
         this.mangaImageSwitcher = mangaImageSwitcher;
         this.nextImageAnim = nextImageAnim;
@@ -123,6 +124,7 @@ public class OfflineManga implements MangaShowStrategy {
         } catch (RepositoryException e) {
             throw new ShowMangaException(e.getMessage());
         }
+        mangaImageSwitcher.setSize(uris.size());
         updateObserver();
         promise.finish(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, true);
         return promise;
