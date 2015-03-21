@@ -1,6 +1,7 @@
 package com.danilov.mangareaderplus.core.service;
 
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.interfaces.Pool;
 
 import java.io.InputStream;

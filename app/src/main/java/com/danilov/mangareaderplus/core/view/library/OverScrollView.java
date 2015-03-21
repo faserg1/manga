@@ -17,7 +17,6 @@ package com.danilov.mangareaderplus.core.view.library;
  */
 
 
-
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -28,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -35,7 +35,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
-import android.view.View.OnTouchListener;
 
 import java.lang.reflect.Field;
 import java.util.List;

@@ -1,7 +1,12 @@
 package com.danilov.mangareaderplus.core.repository;
 
 import android.util.Log;
-import com.danilov.mangareaderplus.core.http.*;
+
+import com.danilov.mangareaderplus.core.http.HttpBytesReader;
+import com.danilov.mangareaderplus.core.http.HttpRequestException;
+import com.danilov.mangareaderplus.core.http.HttpStreamModel;
+import com.danilov.mangareaderplus.core.http.HttpStreamReader;
+import com.danilov.mangareaderplus.core.http.LinesSearchInputStream;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.model.MangaSuggestion;
@@ -9,6 +14,7 @@ import com.danilov.mangareaderplus.core.repository.filter.BasicFilters;
 import com.danilov.mangareaderplus.core.util.IoUtils;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
+
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;

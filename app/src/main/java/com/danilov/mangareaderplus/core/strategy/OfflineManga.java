@@ -12,8 +12,7 @@ import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
-import com.danilov.mangareaderplus.core.view.MangaImageSwitcher;
-import com.danilov.mangareaderplus.core.view.Switchable;
+import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.io.File;
 import java.util.List;
@@ -26,7 +25,7 @@ public class OfflineManga implements MangaShowStrategy {
     private static final String TAG = "OfflineManga";
 
     private LocalManga manga;
-    private Switchable mangaImageSwitcher;
+    private MangaViewPager mangaViewPager;
     private InAndOutAnim nextImageAnim;
     private InAndOutAnim prevImageAnim;
 
@@ -44,11 +43,12 @@ public class OfflineManga implements MangaShowStrategy {
 
     private Handler handler;
 
-    public OfflineManga(final LocalManga manga, final Switchable mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
+    public OfflineManga(final LocalManga manga, final MangaViewPager mangaViewPager, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
-        this.mangaImageSwitcher = mangaImageSwitcher;
+        this.mangaViewPager = mangaViewPager;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
+        mangaViewPager.setOnline(false);
         handler = new Handler();
     }
 
@@ -87,13 +87,6 @@ public class OfflineManga implements MangaShowStrategy {
             return;
         }
         File imageFile = new File(uris.get(i));
-        if (i < currentImageNumber) {
-            mangaImageSwitcher.setInAndOutAnim(prevImageAnim);
-            mangaImageSwitcher.setPreviousImageDrawable(imageFile.getPath());
-        } else if (i > currentImageNumber) {
-            mangaImageSwitcher.setInAndOutAnim(nextImageAnim);
-            mangaImageSwitcher.setNextImageDrawable(imageFile.getPath());
-        }
         currentImageNumber = i;
         updateObserver();
     }
@@ -124,7 +117,8 @@ public class OfflineManga implements MangaShowStrategy {
         } catch (RepositoryException e) {
             throw new ShowMangaException(e.getMessage());
         }
-        mangaImageSwitcher.setSize(uris.size());
+        mangaViewPager.setUris(uris);
+        mangaViewPager.setSize(uris.size());
         updateObserver();
         promise.finish(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, true);
         return promise;

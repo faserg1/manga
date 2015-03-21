@@ -1,17 +1,11 @@
 package com.danilov.mangareaderplus.core.view;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ViewSwitcher;
 
 import com.danilov.mangareaderplus.core.adapter.ExtendedPagerAdapter;
@@ -20,16 +14,15 @@ import com.danilov.mangareaderplus.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.util.IoUtils;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
-import com.danilov.mangareaderplus.core.util.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Semyon on 17.03.2015.
  */
-public class MangaViewPager extends ViewPager implements Switchable {
+public class MangaViewPager extends ViewPager {
 
 
     private DownloadManager downloadManager = new DownloadManager();
@@ -39,6 +32,13 @@ public class MangaViewPager extends ViewPager implements Switchable {
     private Adapter adapter = null;
     private CacheDirectoryManager cacheDirectoryManager = null;
     private String cachePath = null;
+    private FragmentManager fragmentManager;
+    private List<String> uris = null;
+    private boolean isOnline = false;
+    private Handler handler = new Handler();
+
+
+    private List<ViewPager.OnPageChangeListener> listeners = new LinkedList<>();
 
     public MangaViewPager(final Context context) {
         super(context);
@@ -50,72 +50,30 @@ public class MangaViewPager extends ViewPager implements Switchable {
         init();
     }
 
-    @Override
-    public void setNextImageDrawable(final String filePath) {
-//        int curItem = getCurrentItem();
-//        int prevItem = curItem - 1;
-//
-//        SubsamplingScaleImageView prevImage = adapter.getImageView(prevItem);
-//        SubsamplingScaleImageView image = adapter.getImageView(curItem);
-//        ImageViewState state = null;
-//        if (prevImage != null) {
-//            state = prevImage.getState();
-//            if (state != null) {
-//                state.setCenter(10000, 0);
-//            }
-//        }
-//        image.setImageFile(filePath, state);
-    }
-
-    @Override
-    public void setPreviousImageDrawable(final String filePath) {
-//        int curItem = getCurrentItem();
-//        int prevItem = curItem + 1;
-//
-//        SubsamplingScaleImageView prevImage = adapter.getImageView(prevItem);
-//        SubsamplingScaleImageView image = adapter.getImageView(curItem);
-//        ImageViewState state = null;
-//        if (prevImage != null) {
-//            state = prevImage.getState();
-//            if (state != null) {
-//                state.setCenter(0, 10000);
-//            }
-//        }
-//        image.setImageFile(filePath, state);
-    }
-
-    @Override
-    public void setInAndOutAnim(final InAndOutAnim inAndOutAnim) {
-
-    }
-
-    @Override
     public void setFactory(final ViewSwitcher.ViewFactory factory) {
         this.viewFactory = factory;
     }
 
-    private FragmentManager fragmentManager;
+    public void setOnline(final boolean isOnline) {
+        this.isOnline = isOnline;
+    }
 
-    @Override
     public void setFragmentManager(final FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
     }
 
 
     private void init() {
+        setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
     }
 
-    @Override
     public void setSize(final int size) {
         this.size = size;
         adapter.notifyDataSetChanged();
     }
 
-    private List<String> uris = null;
-
-    @Override
     public void setUris(final List<String> uris) {
         this.uris = uris;
         adapter = new Adapter(getContext(), uris);
@@ -125,8 +83,33 @@ public class MangaViewPager extends ViewPager implements Switchable {
 
     @Override
     public void setOnPageChangeListener(final OnPageChangeListener listener) {
-        super.setOnPageChangeListener(listener);
+        listeners.add(listener);
     }
+
+    private OnPageChangeListener internalListener = new OnPageChangeListener() {
+
+        @Override
+        public void onPageSelected(final int position) {
+            for (OnPageChangeListener listener : listeners) {
+                listener.onPageSelected(position);
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(final int state) {
+            for (OnPageChangeListener listener : listeners) {
+                listener.onPageScrollStateChanged(state);
+            }
+        }
+
+        @Override
+        public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+            for (OnPageChangeListener listener : listeners) {
+                listener.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+        }
+
+    };
 
     private class Adapter extends ExtendedPagerAdapter<String> {
 
@@ -140,7 +123,6 @@ public class MangaViewPager extends ViewPager implements Switchable {
             String url = getItem(position);
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) viewFactory.makeView();
             imageView.setVisibility(View.VISIBLE);
-            imageView.setDebug(true);
             loadImage(url, imageView);
             return imageView;
         }
@@ -158,6 +140,10 @@ public class MangaViewPager extends ViewPager implements Switchable {
     }
 
     public void loadImage(final String url, final SubsamplingScaleImageView imageView) {
+        if (!isOnline) {
+            imageView.setImageFile(url);
+            return;
+        }
         final String path = cachePath + IoUtils.createPathForURL(url);
         final String donePath = path + "_done";
         File file = new File(donePath);
@@ -187,7 +173,12 @@ public class MangaViewPager extends ViewPager implements Switchable {
                 File file = new File(path);
                 File newPath = new File(donePath);
                 file.renameTo(newPath);
-                imageView.setImageFile(donePath);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageFile(donePath);
+                    }
+                });
             }
 
             @Override

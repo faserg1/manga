@@ -1,7 +1,6 @@
 package com.danilov.mangareaderplus.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;

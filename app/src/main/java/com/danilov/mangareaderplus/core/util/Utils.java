@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.danilov.mangareaderplus.core.dialog.EasyDialog;
 
 import org.json.JSONArray;

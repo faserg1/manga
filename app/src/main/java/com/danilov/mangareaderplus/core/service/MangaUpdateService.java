@@ -1,8 +1,8 @@
 package com.danilov.mangareaderplus.core.service;
 
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.util.Constants;

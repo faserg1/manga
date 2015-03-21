@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.core.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.util.Pair;
 

@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import com.danilov.mangareaderplus.activity.DownloadsActivity;
 import com.danilov.mangareaderplus.activity.HistoryActivity;
 import com.danilov.mangareaderplus.activity.MangaInfoActivity;

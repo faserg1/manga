@@ -3,10 +3,15 @@ package com.android.httpimage;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.cache.CacheDirectoryManager;
 import com.danilov.mangareaderplus.core.util.IoUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * File system implementation of persistent storage for downloaded images.

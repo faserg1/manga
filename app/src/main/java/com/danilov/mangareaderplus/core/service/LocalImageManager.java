@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.android.httpimage.BitmapMemoryCache;
 import com.danilov.mangareaderplus.core.util.BitmapUtils;
 

@@ -2,7 +2,9 @@ package com.danilov.mangareaderplus.core.http;
 
 import android.content.res.Resources;
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.util.IoUtils;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

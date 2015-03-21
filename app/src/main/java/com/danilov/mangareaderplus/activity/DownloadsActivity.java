@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;

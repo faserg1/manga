@@ -1,6 +1,7 @@
 package com.danilov.mangareaderplus.core.http;
 
 import android.graphics.drawable.BitmapDrawable;
+
 import com.android.httpimage.HttpImageManager;
 
 /**

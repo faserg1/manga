@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.service.LocalImageManager;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;

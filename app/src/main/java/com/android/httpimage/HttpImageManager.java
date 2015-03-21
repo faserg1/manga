@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.ImageView;
+
 import com.danilov.mangareaderplus.core.http.AsyncDrawable;
 import com.danilov.mangareaderplus.core.http.HttpBitmapReader;
 import com.danilov.mangareaderplus.core.util.BitmapUtils;

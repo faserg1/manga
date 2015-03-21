@@ -1,6 +1,7 @@
 package com.android.httpimage;
 
 import android.graphics.Bitmap;
+
 import com.danilov.mangareaderplus.core.cache.LruCache;
 import com.danilov.mangareaderplus.core.util.BitmapUtils;
 

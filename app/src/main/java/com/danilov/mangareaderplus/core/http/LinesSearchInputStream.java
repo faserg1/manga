@@ -1,6 +1,7 @@
 package com.danilov.mangareaderplus.core.http;
 
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.util.IoUtils;
 
 import java.io.FilterInputStream;

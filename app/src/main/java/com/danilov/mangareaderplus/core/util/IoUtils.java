@@ -11,15 +11,23 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.http.CancellableInputStream;
 import com.danilov.mangareaderplus.core.http.ICancelled;
 import com.danilov.mangareaderplus.core.http.IProgressChangeListener;
 import com.danilov.mangareaderplus.core.http.ProgressInputStream;
 import com.danilov.mangareaderplus.core.model.Manga;
+
 import org.apache.http.protocol.HTTP;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;

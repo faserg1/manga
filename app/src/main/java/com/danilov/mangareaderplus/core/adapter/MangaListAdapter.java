@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.httpimage.HttpImageManager;
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.model.Manga;

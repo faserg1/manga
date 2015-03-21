@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.test;
 
 import android.app.Activity;
 import android.os.Bundle;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView;
 

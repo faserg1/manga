@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.activity.MangaInfoActivity;
 import com.danilov.mangareaderplus.core.adapter.MangaListAdapter;

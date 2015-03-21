@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.core.application;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;

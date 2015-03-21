@@ -13,8 +13,7 @@ import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
-import com.danilov.mangareaderplus.core.view.MangaImageSwitcher;
-import com.danilov.mangareaderplus.core.view.Switchable;
+import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.io.File;
 import java.util.List;
@@ -29,7 +28,7 @@ public class OnlineManga implements MangaShowStrategy {
 
     private static final String TAG = "OnlineManga";
 
-    private Switchable mangaImageSwitcher;
+    private MangaViewPager mangaViewPager;
     private InAndOutAnim nextImageAnim;
     private InAndOutAnim prevImageAnim;
 
@@ -48,13 +47,14 @@ public class OnlineManga implements MangaShowStrategy {
 
     private boolean destroyed = false;
 
-    public OnlineManga(final Manga manga, final Switchable mangaImageSwitcher, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
+    public OnlineManga(final Manga manga, final MangaViewPager mangaViewPager, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
         this.manga = manga;
         this.engine = manga.getRepository().getEngine();
-        this.mangaImageSwitcher = mangaImageSwitcher;
+        this.mangaViewPager = mangaViewPager;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
         this.handler = new Handler();
+        mangaViewPager.setOnline(true);
         this.downloadManager = new DownloadManager();
     }
 
@@ -123,13 +123,6 @@ public class OnlineManga implements MangaShowStrategy {
                     }
                     listener.onImageLoadEnd(OnlineManga.this, true, "");
                     File imageFile = new File(path);
-                    if (imgNum < currentImageNumber) {
-                        mangaImageSwitcher.setInAndOutAnim(prevImageAnim);
-                        mangaImageSwitcher.setPreviousImageDrawable(imageFile.getPath());
-                    } else if (imgNum > currentImageNumber) {
-                        mangaImageSwitcher.setInAndOutAnim(nextImageAnim);
-                        mangaImageSwitcher.setNextImageDrawable(imageFile.getPath());
-                    }
                     currentImageNumber = imgNum;
                     updateObserver();
                 }
@@ -203,7 +196,7 @@ public class OnlineManga implements MangaShowStrategy {
                         }
                         listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
                         updateObserver();
-                        mangaImageSwitcher.setUris(uris);
+                        mangaViewPager.setUris(uris);
                         promise.finish(success ? Result.SUCCESS : Result.ERROR, true);
                     }
                 });

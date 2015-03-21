@@ -1,6 +1,7 @@
 package com.danilov.mangareaderplus.core.model;
 
 import android.os.Parcel;
+
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 
 /**

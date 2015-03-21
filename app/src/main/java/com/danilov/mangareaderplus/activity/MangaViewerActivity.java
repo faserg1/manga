@@ -15,7 +15,16 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageSwitcher;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
@@ -34,9 +43,8 @@ import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
-import com.danilov.mangareaderplus.core.view.MangaImageSwitcher;
+import com.danilov.mangareaderplus.core.view.MangaViewPager;
 import com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView;
-import com.danilov.mangareaderplus.core.view.Switchable;
 
 import java.util.ArrayList;
 
@@ -52,7 +60,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private static final String CHAPTERS_KEY = "CK";
     private static final String URIS_KEY = "UK";
 
-    private Switchable imageSwitcher;
+    private MangaViewPager mangaViewPager;
     private View nextBtn;
     private View prevBtn;
     private View nextBtnBottom;
@@ -87,10 +95,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manga_viewer_activity_new);
-        this.imageSwitcher = (Switchable) findViewById(R.id.imageSwitcher);
-        imageSwitcher.setFragmentManager(getSupportFragmentManager());
-        imageSwitcher.setFactory(new SubsamplingImageViewFactory());
+        setContentView(R.layout.manga_viewer_activity);
+        this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
+        mangaViewPager.setFragmentManager(getSupportFragmentManager());
+        mangaViewPager.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewById(R.id.nextBtn);
         this.prevBtn = findViewById(R.id.prevBtn);
         this.nextBtnBottom = findViewById(R.id.nextBtnBottom);
@@ -147,10 +155,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         prev.setDuration(150);
 
         if (!showOnline) {
-            currentStrategy = new OfflineManga((LocalManga) manga, imageSwitcher, next, prev);
+            currentStrategy = new OfflineManga((LocalManga) manga, mangaViewPager, next, prev);
         } else {
             prepareOnlineManga();
-            currentStrategy = new OnlineManga(manga, imageSwitcher, next, prev);
+            currentStrategy = new OnlineManga(manga, mangaViewPager, next, prev);
         }
         currentStrategy.setOnStrategyListener(this);
         currentStrategy.setObserver(this);

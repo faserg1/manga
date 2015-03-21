@@ -1,8 +1,16 @@
 package com.danilov.mangareaderplus.core.http;
 
 import android.util.Log;
+
 import com.danilov.mangareaderplus.core.util.Constants;
-import org.apache.http.*;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;

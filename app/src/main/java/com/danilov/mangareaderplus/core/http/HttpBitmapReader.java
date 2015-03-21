@@ -2,7 +2,9 @@ package com.danilov.mangareaderplus.core.http;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import com.danilov.mangareaderplus.core.util.IoUtils;
+
 import org.apache.http.Header;
 
 import java.io.ByteArrayInputStream;
