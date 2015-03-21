@@ -5,7 +5,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -51,6 +53,16 @@ public class Utils {
         return stringResource(context, errorMessageId) + ": " + error;
     }
 
+    public static <T> T getViewParentOfType(final View view, final Class<T> clazz) {
+        ViewParent v = view.getParent();
+        for (;v != null;) {
+            if (clazz.isAssignableFrom(v.getClass())) {
+                return (T) v;
+            }
+            v = v.getParent();
+        }
+        return null;
+    }
 
     /**
      * Create a color integer value with specified alpha.

@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
@@ -28,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.danilov.mangareaderplus.R;
+import com.danilov.mangareaderplus.core.util.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -408,7 +410,6 @@ public class SubsamplingScaleImageView extends View {
         // During non-interruptible anims, ignore all touch events
         if (anim != null && !anim.interruptible) {
             getParent().requestDisallowInterceptTouchEvent(true);
-            System.out.println("anim true");
             return true;
         } else {
             anim = null;
@@ -416,12 +417,10 @@ public class SubsamplingScaleImageView extends View {
 
         // Abort if not ready
         if (vTranslate == null) {
-            System.out.println("Abort if not ready");
             return true;
         }
         // Detect flings, taps and double taps
         if (detector == null || detector.onTouchEvent(event)) {
-            System.out.println("Detect flings, taps and double taps");
             return true;
         }
 
@@ -525,10 +524,14 @@ public class SubsamplingScaleImageView extends View {
                                 isPanning = true;
                             } else if (dx > 5) {
                                 // Haven't panned the image, and we're at the left or right edge. Switch to page swipe.
-                                System.out.println("Haven't panned the image");
                                 maxTouchCount = 0;
                                 handler.removeMessages(MESSAGE_LONG_CLICK);
                                 getParent().requestDisallowInterceptTouchEvent(false);
+
+                                ViewPager viewPager = Utils.getViewParentOfType(this, ViewPager.class);
+                                //TODO: fix DX for ViewPager
+                                if (viewPager != null) {
+                                }
                             }
 
                             if (!panEnabled) {
@@ -582,7 +585,8 @@ public class SubsamplingScaleImageView extends View {
                 }
                 return true;
         }
-        return super.onTouchEvent(event);
+        boolean val = super.onTouchEvent(event);
+        return val;
     }
 
     @Override
