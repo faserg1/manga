@@ -128,6 +128,7 @@ public class MangaViewPager extends ViewPager {
         protected View createView(final int position) {
             String url = getItem(position);
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) viewFactory.makeView();
+            imageView.setDebug(true);
             imageView.setVisibility(View.VISIBLE);
             loadImage(url, imageView);
             return imageView;

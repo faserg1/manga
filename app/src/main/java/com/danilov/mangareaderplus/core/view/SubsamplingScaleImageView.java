@@ -408,6 +408,7 @@ public class SubsamplingScaleImageView extends View {
         // During non-interruptible anims, ignore all touch events
         if (anim != null && !anim.interruptible) {
             getParent().requestDisallowInterceptTouchEvent(true);
+            System.out.println("anim true");
             return true;
         } else {
             anim = null;
@@ -415,10 +416,12 @@ public class SubsamplingScaleImageView extends View {
 
         // Abort if not ready
         if (vTranslate == null) {
+            System.out.println("Abort if not ready");
             return true;
         }
         // Detect flings, taps and double taps
         if (detector == null || detector.onTouchEvent(event)) {
+            System.out.println("Detect flings, taps and double taps");
             return true;
         }
 
@@ -509,10 +512,17 @@ public class SubsamplingScaleImageView extends View {
                             float lastX = vTranslate.x;
                             float lastY = vTranslate.y;
                             fitToBounds(true);
-                            if (lastX == vTranslate.x || (lastY == vTranslate.y && dy > 10) || isPanning) {
+                            System.out.println("lastX = " + lastX + " lastY = " + lastY + " vTranslate.x = " + vTranslate.x + " vTranslate.y = " + vTranslate.y + " dy = " + dy + " isPanning = " + isPanning);
+
+
+
+                            boolean canPanHorizontal = (getSWidth() - (vTranslate.x + getWidth() + dx)) > 0;
+
+                            if ((lastX == vTranslate.x || (lastY == vTranslate.y && dy > 10) || isPanning) && canPanHorizontal) {
                                 isPanning = true;
                             } else if (dx > 5) {
                                 // Haven't panned the image, and we're at the left or right edge. Switch to page swipe.
+                                System.out.println("Haven't panned the image");
                                 maxTouchCount = 0;
                                 handler.removeMessages(MESSAGE_LONG_CLICK);
                                 getParent().requestDisallowInterceptTouchEvent(false);
