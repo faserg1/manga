@@ -41,13 +41,16 @@ public abstract class ExtendedPagerAdapter<T> extends PagerAdapter {
         return this.mViews[position];
     }
 
+    protected ViewPager.OnPageChangeListener listener = null;
+
     public void subscribeToPageChangeEvent(final ViewPager viewPager) {
-        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        listener = new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 ExtendedPagerAdapter.this.notifyPositionChange(position);
             }
-        });
+        };
+        viewPager.setOnPageChangeListener(listener);
 
         this.mSubscribedToPager = true;
     }

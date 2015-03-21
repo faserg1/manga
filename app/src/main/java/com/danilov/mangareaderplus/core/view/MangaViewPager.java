@@ -62,9 +62,8 @@ public class MangaViewPager extends ViewPager {
         this.fragmentManager = fragmentManager;
     }
 
-
     private void init() {
-        setOnPageChangeListener(internalListener);
+        super.setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
     }
@@ -76,6 +75,9 @@ public class MangaViewPager extends ViewPager {
 
     public void setUris(final List<String> uris) {
         this.uris = uris;
+        if (adapter != null) {
+            adapter.unsubscribe();
+        }
         adapter = new Adapter(getContext(), uris);
         adapter.subscribeToPageChangeEvent(this);
         setAdapter(adapter);
@@ -116,6 +118,10 @@ public class MangaViewPager extends ViewPager {
 
         public Adapter(final Context context, final List<String> models) {
             super(context, models);
+        }
+
+        public void unsubscribe() {
+            listeners.remove(this.listener);
         }
 
         @Override

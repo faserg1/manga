@@ -1,6 +1,7 @@
 package com.danilov.mangareaderplus.core.strategy;
 
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 21.06.2014.
  */
-public class OfflineManga implements MangaShowStrategy {
+public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "OfflineManga";
 
@@ -49,6 +50,7 @@ public class OfflineManga implements MangaShowStrategy {
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
         mangaViewPager.setOnline(false);
+        mangaViewPager.setOnPageChangeListener(this);
         handler = new Handler();
     }
 
@@ -228,6 +230,22 @@ public class OfflineManga implements MangaShowStrategy {
             return 0;
         }
         return uris.size();
+    }
+
+    @Override
+    public void onPageSelected(final int position) {
+        this.currentImageNumber = position;
+        updateObserver();
+    }
+
+    @Override
+    public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(final int state) {
+
     }
 
 }
