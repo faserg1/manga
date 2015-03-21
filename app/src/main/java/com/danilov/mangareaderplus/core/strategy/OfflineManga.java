@@ -88,9 +88,7 @@ public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeLi
         if (i == currentImageNumber || i >= uris.size() || i < 0) {
             return;
         }
-        File imageFile = new File(uris.get(i));
-        currentImageNumber = i;
-        updateObserver();
+        mangaViewPager.setCurrentItem(i);
     }
 
     @Override
