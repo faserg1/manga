@@ -504,6 +504,7 @@ public class SubsamplingScaleImageView extends View {
                         // and long click behaviour is preserved.
                         float dx = Math.abs(event.getX() - vCenterStart.x);
                         float dy = Math.abs(event.getY() - vCenterStart.y);
+                        float realDx = event.getX() - vCenterStart.x;
                         if (dx > 5 || dy > 5 || isPanning) {
                             consumed = true;
                             vTranslate.x = vTranslateStart.x + (event.getX() - vCenterStart.x);
@@ -512,11 +513,13 @@ public class SubsamplingScaleImageView extends View {
                             float lastX = vTranslate.x;
                             float lastY = vTranslate.y;
                             fitToBounds(true);
-                            System.out.println("lastX = " + lastX + " lastY = " + lastY + " vTranslate.x = " + vTranslate.x + " vTranslate.y = " + vTranslate.y + " dy = " + dy + " isPanning = " + isPanning);
 
-
-
-                            boolean canPanHorizontal = (getSWidth() - (vTranslate.x + getWidth() + dx)) > 0;
+                            boolean canPanHorizontal = ((getSWidth() * scale) - (Math.abs(vTranslate.x) + getWidth() + 0.1)) > 0;
+                            if (canPanHorizontal) {
+                                if (realDx > 0 && vTranslate.x >= -0.1) {
+                                    canPanHorizontal = false;
+                                }
+                            }
 
                             if ((lastX == vTranslate.x || (lastY == vTranslate.y && dy > 10) || isPanning) && canPanHorizontal) {
                                 isPanning = true;
