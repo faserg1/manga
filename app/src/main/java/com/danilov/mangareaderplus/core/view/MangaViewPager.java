@@ -53,6 +53,9 @@ public class MangaViewPager extends ViewPager {
         init();
     }
 
+
+    private boolean justChanged = false;
+
     @Override
     public boolean onInterceptTouchEvent(final MotionEvent ev) {
         if (justChanged && ev.getAction() == MotionEvent.ACTION_MOVE) {
@@ -74,8 +77,6 @@ public class MangaViewPager extends ViewPager {
     public void setFragmentManager(final FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
     }
-
-    boolean justChanged = false;
 
     @Override
     public void requestDisallowInterceptTouchEvent(final boolean disallowIntercept) {

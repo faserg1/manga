@@ -527,12 +527,6 @@ public class SubsamplingScaleImageView extends View {
                                 maxTouchCount = 0;
                                 handler.removeMessages(MESSAGE_LONG_CLICK);
                                 getParent().requestDisallowInterceptTouchEvent(false);
-
-                                MangaViewPager viewPager = Utils.getViewParentOfType(this, MangaViewPager.class);
-                                //TODO: fix DX for ViewPager
-                                if (viewPager != null) {
-                                    viewPager.setMLastMotion(event.getX(), event.getY());
-                                }
                             }
 
                             if (!panEnabled) {
@@ -1115,6 +1109,7 @@ public class SubsamplingScaleImageView extends View {
                 final SubsamplingScaleImageView subsamplingScaleImageView = viewRef.get();
                 final Tile tile = tileRef.get();
                 if (subsamplingScaleImageView != null && tile != null) {
+                    subsamplingScaleImageView.postInvalidateDelayed(10);
                     tile.bitmap = bitmap;
                     tile.loading = false;
                     subsamplingScaleImageView.onTileLoaded();
