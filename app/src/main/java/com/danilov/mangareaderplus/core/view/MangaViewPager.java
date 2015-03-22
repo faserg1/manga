@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.ViewSwitcher;
 
@@ -16,6 +18,7 @@ import com.danilov.mangareaderplus.core.util.IoUtils;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,6 +53,16 @@ public class MangaViewPager extends ViewPager {
         init();
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(final MotionEvent ev) {
+        if (justChanged && ev.getAction() == MotionEvent.ACTION_MOVE) {
+            setMLastMotion(ev.getX() + 1, ev.getY());
+            setMInitialMotionX(ev.getX());
+            justChanged = false;
+        }
+        return super.onInterceptTouchEvent(ev);
+    }
+
     public void setFactory(final ViewSwitcher.ViewFactory factory) {
         this.viewFactory = factory;
     }
@@ -62,7 +75,16 @@ public class MangaViewPager extends ViewPager {
         this.fragmentManager = fragmentManager;
     }
 
+    boolean justChanged = false;
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(final boolean disallowIntercept) {
+        justChanged = true;
+        super.requestDisallowInterceptTouchEvent(disallowIntercept);
+    }
+
     private void init() {
+        requestDisallowInterceptTouchEvent(true);
         super.setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
@@ -142,6 +164,49 @@ public class MangaViewPager extends ViewPager {
         @Override
         protected void onViewSelected(final int position, final View view) {
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
+        }
+    }
+
+    public void setMLastMotion(final float x, final float y) {
+
+        Class<?> klass = ViewPager.class;
+
+        Field field = null;
+        try {
+            field = klass.getDeclaredField("mLastMotionX");
+            field.setAccessible(true);
+            field.set(this, x);
+
+            field = klass.getDeclaredField("mLastMotionY");
+            field.setAccessible(true);
+            field.set(this, y);
+
+            field = klass.getDeclaredField("mVelocityTracker");
+            field.setAccessible(true);
+            VelocityTracker velocityTracker = (VelocityTracker) field.get(this);
+            if (velocityTracker != null) {
+                velocityTracker.clear();
+                velocityTracker.recycle();
+                field.set(this, null);
+            }
+
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setMInitialMotionX(final float x) {
+
+        Class<?> klass = ViewPager.class;
+
+        Field field = null;
+        try {
+            field = klass.getDeclaredField("mInitialMotionX");
+            field.setAccessible(true);
+            field.set(this, x);
+
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
         }
     }
 

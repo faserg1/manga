@@ -528,9 +528,10 @@ public class SubsamplingScaleImageView extends View {
                                 handler.removeMessages(MESSAGE_LONG_CLICK);
                                 getParent().requestDisallowInterceptTouchEvent(false);
 
-                                ViewPager viewPager = Utils.getViewParentOfType(this, ViewPager.class);
+                                MangaViewPager viewPager = Utils.getViewParentOfType(this, MangaViewPager.class);
                                 //TODO: fix DX for ViewPager
                                 if (viewPager != null) {
+                                    viewPager.setMLastMotion(event.getX(), event.getY());
                                 }
                             }
 
