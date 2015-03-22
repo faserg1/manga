@@ -19,7 +19,6 @@ import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
@@ -29,7 +28,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.danilov.mangareaderplus.R;
-import com.danilov.mangareaderplus.core.util.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

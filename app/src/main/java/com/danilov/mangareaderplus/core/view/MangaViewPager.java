@@ -150,6 +150,7 @@ public class MangaViewPager extends ViewPager {
         @Override
         protected View createView(final int position) {
             String url = getItem(position);
+//            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) viewFactory.makeView();
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) viewFactory.makeView();
             imageView.setVisibility(View.VISIBLE);
             loadImage(url, imageView);
@@ -158,13 +159,13 @@ public class MangaViewPager extends ViewPager {
 
         @Override
         protected void onViewUnselected(final int position, final View view) {
-            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
+//            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
 //            imageView.reset();
         }
 
         @Override
         protected void onViewSelected(final int position, final View view) {
-            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
+//            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
         }
     }
 

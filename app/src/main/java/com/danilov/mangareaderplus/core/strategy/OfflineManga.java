@@ -169,6 +169,8 @@ public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeLi
         } catch (RepositoryException e) {
             throw new ShowMangaException(e.getMessage());
         }
+        mangaViewPager.setUris(uris);
+        mangaViewPager.setSize(uris.size());
         updateObserver();
         promise.finish(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, true);
         return promise;
