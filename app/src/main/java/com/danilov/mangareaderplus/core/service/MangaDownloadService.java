@@ -476,10 +476,10 @@ public class MangaDownloadService extends Service {
 
         @Override
         public void onComplete(final DownloadManager.Download download) {
-            if (download.getTag() == -1) {
-                //TODO: tag = -1 will be applied for manga covers
-                return;
-            }
+//            if (download.getTag() == -1) {
+//                //TODO: tag = -1 will be applied for manga covers
+//                return;
+//            }
             currentImage++;
             if (currentImage == currentImageQuantity) {
                 if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {

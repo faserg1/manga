@@ -16,4 +16,6 @@
     <color name="text_view_normal">#000</color>
     <color name="profile_background_not_pressed">#a0000000</color>
 
+    <color name="viewer_page_progress_text">#fff</color>
+
 </resources>

@@ -44,10 +44,10 @@ public class DownloadManager {
     //executing only one download at a time
     //on complete start another download
     public Download startDownload(final String uri, final String filePath) {
-        return startDownload(uri, filePath, 0);
+        return startDownload(uri, filePath, null);
     }
 
-    public Download startDownload(final String uri, final String filePath, final int tag) {
+    public Download startDownload(final String uri, final String filePath, final Object tag) {
         lock.lock();
         Download download = null;
         try {
@@ -149,7 +149,7 @@ public class DownloadManager {
 
     public class Download implements Runnable {
 
-        private int tag = 0;
+        private Object tag = 0;
 
         private String uri;
         private String filePath;
@@ -186,7 +186,7 @@ public class DownloadManager {
             this.uri = null;
             this.filePath = null;
             this.size = -1;
-            this.tag = 0;
+            this.tag = null;
             this.downloaded = 0;
             this.status = DownloadStatus.DOWNLOADING;
         }
@@ -292,6 +292,13 @@ public class DownloadManager {
                     } finally {
                         lock.unlock();
                     }
+                    // Close file.
+                    try {
+                        Log.e(TAG, "Closing file");
+                        file.close();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error while closing file: " + e.getMessage());
+                    }
                     stateChanged();
                 }
                 if (getStatus() == DownloadStatus.SKIPPED) {
@@ -313,6 +320,7 @@ public class DownloadManager {
                 // Close file.
                 if (file != null) {
                     try {
+                        Log.e(TAG, "Closing file");
                         file.close();
                     } catch (Exception e) {
                         Log.e(TAG, "Error while closing file: " + e.getMessage());
@@ -398,11 +406,11 @@ public class DownloadManager {
             return size;
         }
 
-        public int getTag() {
+        public Object getTag() {
             return tag;
         }
 
-        public void setTag(final int tag) {
+        public void setTag(final Object tag) {
             this.tag = tag;
         }
     }
