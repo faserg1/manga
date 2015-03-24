@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.danilov.mangareaderplus"
-    android:versionCode="42"
-    android:versionName="0.99" >
+    android:versionCode="43"
+    android:versionName="0.991" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -26,6 +26,7 @@
         android:name="com.danilov.mangareaderplus.core.application.MangaApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/Manga" >
         <activity
             android:name="com.danilov.mangareaderplus.activity.MainActivity"

@@ -140,6 +140,7 @@ public class MangaViewPager extends ViewPager {
 
     private class Adapter extends ExtendedPagerAdapter<String> {
 
+        private Map<Integer, SubsamplingScaleImageView> views = new HashMap<>();
 
         public Adapter(final Context context, final List<String> models) {
             super(context, models);
@@ -159,6 +160,7 @@ public class MangaViewPager extends ViewPager {
             TextView progressView = (TextView) v.findViewById(R.id.progress);
             imageView.setVisibility(View.VISIBLE);
             loadImage(url, imageView, progressView);
+            views.put(position, imageView);
             return v;
         }
 
@@ -166,6 +168,17 @@ public class MangaViewPager extends ViewPager {
         protected void onViewUnselected(final int position, final View view) {
 //            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
 //            imageView.reset();
+            List<Integer> viewsToRemove = new LinkedList<>();
+            for (Map.Entry<Integer, SubsamplingScaleImageView> entry : views.entrySet()) {
+                int pos = entry.getKey();
+                if (Math.abs(position - pos) > 1) {
+                    viewsToRemove.add(pos);
+                    entry.getValue().reset();
+                }
+            }
+            for (Integer v : viewsToRemove) {
+                views.remove(v);
+            }
         }
 
         @Override

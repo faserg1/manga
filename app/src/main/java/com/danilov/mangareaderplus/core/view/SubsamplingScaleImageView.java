@@ -1077,7 +1077,13 @@ public class SubsamplingScaleImageView extends View {
                                     myBitmapLoader.region(rect);
                                     bitmap = myBitmapLoader.scaleBy(scaleBy).decode();
                                 } else {
-                                    bitmap = BitmapFactory.decodeFile(view._source, options);
+                                    try {
+                                        bitmap = BitmapFactory.decodeFile(view._source, options);
+                                    } catch (OutOfMemoryError e) {
+                                        Log.e(TAG, "Crappy OOM, trying to scale down: ", e);
+                                        options.inSampleSize *= 2;
+                                        bitmap = BitmapFactory.decodeFile(view._source, options);
+                                    }
                                 }
                             } catch (OutOfMemoryError e) {
                                 Log.e(TAG, "Crappy OOM: ", e);
