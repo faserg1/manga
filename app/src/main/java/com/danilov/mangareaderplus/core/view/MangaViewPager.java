@@ -39,7 +39,6 @@ public class MangaViewPager extends ViewPager {
 
     private DownloadManager downloadManager = new DownloadManager();
     private ViewSwitcher.ViewFactory viewFactory = null;
-    private int size = 0;
     private Adapter adapter = null;
     private CacheDirectoryManager cacheDirectoryManager = null;
     private String cachePath = null;
@@ -97,11 +96,6 @@ public class MangaViewPager extends ViewPager {
         super.setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
-    }
-
-    public void setSize(final int size) {
-        this.size = size;
-        adapter.notifyDataSetChanged();
     }
 
     public void setUris(final List<String> uris) {

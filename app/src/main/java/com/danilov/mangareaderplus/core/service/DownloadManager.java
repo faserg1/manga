@@ -294,7 +294,6 @@ public class DownloadManager {
                     }
                     // Close file.
                     try {
-                        Log.e(TAG, "Closing file");
                         file.close();
                     } catch (Exception e) {
                         Log.e(TAG, "Error while closing file: " + e.getMessage());
@@ -320,7 +319,6 @@ public class DownloadManager {
                 // Close file.
                 if (file != null) {
                     try {
-                        Log.e(TAG, "Closing file");
                         file.close();
                     } catch (Exception e) {
                         Log.e(TAG, "Error while closing file: " + e.getMessage());

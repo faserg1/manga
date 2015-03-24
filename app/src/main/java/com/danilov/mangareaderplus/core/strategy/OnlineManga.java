@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.core.strategy;
 
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
@@ -24,7 +25,7 @@ import java.util.List;
  * This class handles showing pictures from web
  *
  */
-public class OnlineManga implements MangaShowStrategy {
+public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "OnlineManga";
 
@@ -55,6 +56,7 @@ public class OnlineManga implements MangaShowStrategy {
         this.prevImageAnim = prevImageAnim;
         this.handler = new Handler();
         mangaViewPager.setOnline(true);
+        mangaViewPager.setOnPageChangeListener(this);
         this.downloadManager = new DownloadManager();
     }
 
@@ -70,83 +72,10 @@ public class OnlineManga implements MangaShowStrategy {
 
     @Override
     public void showImage(final int i) {
-        if (true) {
-            return;
-        }
         if (i == currentImageNumber || i >= uris.size() || i < 0) {
             return;
         }
-        listener.onImageLoadStart(this);
-        String uri = uris.get(i);
-        String path = Environment.getExternalStorageDirectory() + "/cache/";
-        File f = new File(path);
-        f.mkdirs();
-        path += "1.png";
-        downloadManager.cancelAllDownloads();
-        downloadManager.setListener(new DownloadListener(path, i));
-        downloadManager.startDownload(uri, path);
-    }
-
-    private class DownloadListener implements DownloadManager.DownloadProgressListener {
-
-        private String path;
-        private int imgNum;
-
-        public DownloadListener(final String path, final int imgNum) {
-            this.path = path;
-            this.imgNum = imgNum;
-        }
-
-        @Override
-        public void onProgress(final DownloadManager.Download download, final int progress) {
-            int total = download.getSize();
-            listener.onImageLoadProgress(OnlineManga.this, progress, total);
-        }
-
-        @Override
-        public void onPause(final DownloadManager.Download download) {
-
-        }
-
-        @Override
-        public void onResume(final DownloadManager.Download download) {
-
-        }
-
-        @Override
-        public void onComplete(final DownloadManager.Download download) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (destroyed) {
-                        return;
-                    }
-                    listener.onImageLoadEnd(OnlineManga.this, true, "");
-                    File imageFile = new File(path);
-                    currentImageNumber = imgNum;
-                    updateObserver();
-                }
-            });
-        }
-
-        @Override
-        public void onCancel(final DownloadManager.Download download) {
-
-        }
-
-        @Override
-        public void onError(final DownloadManager.Download download, final String errorMsg) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (destroyed) {
-                        return;
-                    }
-                    listener.onImageLoadEnd(OnlineManga.this, false, errorMsg);
-                }
-            });
-        }
-
+        mangaViewPager.setCurrentItem(i);
     }
 
     private void updateObserver() {
@@ -304,6 +233,22 @@ public class OnlineManga implements MangaShowStrategy {
     @Override
     public boolean isOnline() {
         return true;
+    }
+
+    @Override
+    public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(final int position) {
+        this.currentImageNumber = position;
+        updateObserver();
+    }
+
+    @Override
+    public void onPageScrollStateChanged(final int state) {
+
     }
 
 }
