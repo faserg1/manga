@@ -114,9 +114,14 @@ public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeLis
                 try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     _success = false;
-                    listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
+                        }
+                    });
                 }
                 final boolean success = _success;
                 handler.post(new Runnable() {

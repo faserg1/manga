@@ -17,8 +17,11 @@ import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.adapter.BaseAdapter;
 import com.danilov.mangareaderplus.core.util.StorageUtils;
 
+import org.acra.ACRA;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,6 +136,16 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
             }
 
         });
+        if (filesArray == null) {
+            ACRA.getErrorReporter().putCustomData("Crashed_file_path", file.getPath());
+            ACRA.getErrorReporter().putCustomData("Crashed_file_abs_path", file.getAbsolutePath());
+            try {
+                ACRA.getErrorReporter().putCustomData("Crashed_file_can_path", file.getCanonicalPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ACRA.getErrorReporter().putCustomData("Crashed_file_name", file.getName());
+        }
         List<File> files = new ArrayList<>(filesArray.length);
         if (!file.equals(baseFolder)) {
             files.add(threeDotsFile);
