@@ -168,16 +168,11 @@ public class MangaViewPager extends ViewPager {
         protected void onViewUnselected(final int position, final View view) {
 //            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
 //            imageView.reset();
-            List<Integer> viewsToRemove = new LinkedList<>();
             for (Map.Entry<Integer, SubsamplingScaleImageView> entry : views.entrySet()) {
                 int pos = entry.getKey();
                 if (Math.abs(position - pos) > 1) {
-                    viewsToRemove.add(pos);
                     entry.getValue().reset();
                 }
-            }
-            for (Integer v : viewsToRemove) {
-                views.remove(v);
             }
         }
 
