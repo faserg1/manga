@@ -75,6 +75,8 @@ public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeLis
         if (i == currentImageNumber || i >= uris.size() || i < 0) {
             return;
         }
+        this.currentImageNumber = i;
+        updateObserver();
         mangaViewPager.setCurrentItem(i);
     }
 
