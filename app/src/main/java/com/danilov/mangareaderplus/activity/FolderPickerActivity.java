@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.adapter.BaseAdapter;
-import com.danilov.mangareaderplus.core.util.StorageHelper;
 import com.danilov.mangareaderplus.core.util.StorageUtils;
 
 import org.acra.ACRA;

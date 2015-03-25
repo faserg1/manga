@@ -1,6 +1,5 @@
 package com.danilov.mangareaderplus.core.strategy;
 
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -16,7 +15,6 @@ import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
-import java.io.File;
 import java.util.List;
 
 /**

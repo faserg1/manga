@@ -15,7 +15,6 @@ import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
-import java.io.File;
 import java.util.List;
 
 /**

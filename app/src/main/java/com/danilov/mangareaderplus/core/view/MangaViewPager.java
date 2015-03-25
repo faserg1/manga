@@ -1,9 +1,7 @@
 package com.danilov.mangareaderplus.core.view;
 
 import android.content.Context;
-import android.graphics.Path;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -22,7 +20,6 @@ import com.danilov.mangareaderplus.core.cache.CacheDirectoryManager;
 import com.danilov.mangareaderplus.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.util.IoUtils;
-import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 
 import java.io.File;
