@@ -81,6 +81,7 @@ public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeLi
     public void restoreState(final List<String> uris, final int chapter, final int image) {
         this.currentChapter = chapter;
         this.uris = uris;
+        mangaViewPager.setUris(uris);
     }
 
     @Override

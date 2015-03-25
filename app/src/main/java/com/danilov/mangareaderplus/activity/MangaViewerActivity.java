@@ -620,9 +620,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     private void toggleFullscreen(final boolean fullscreen) {
-        if (true) {
-            return;
-        }
         this.isFullscreen = fullscreen;
         boolean oldFullscreen = settings.isViewerFullscreen();
         if (oldFullscreen != fullscreen) {

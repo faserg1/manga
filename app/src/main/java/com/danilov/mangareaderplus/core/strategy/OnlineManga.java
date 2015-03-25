@@ -68,6 +68,7 @@ public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeLis
         if (uris != null) {
             this.totalImages = uris.size();
         }
+        mangaViewPager.setUris(uris);
     }
 
     @Override
