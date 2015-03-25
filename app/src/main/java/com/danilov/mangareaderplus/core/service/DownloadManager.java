@@ -68,6 +68,7 @@ public class DownloadManager {
         try {
             download.setStatus(DownloadStatus.CANCELLED);
             wakeUp();
+            Log.e(TAG, "Cancelling download");
         } catch (Exception e) {
             Log.d(TAG, "Exception occurred in cancelDownload(), error: " + e.getMessage());
         } finally {
@@ -496,6 +497,7 @@ public class DownloadManager {
                         }
                     }
                     if (download.getStatus() == DownloadStatus.CANCELLED) {
+                        Log.e(TAG, "Download cancelled");
                         download = downloads.remove();
                         download.recycle();
                         continue;
@@ -505,7 +507,7 @@ public class DownloadManager {
                 }
                 download.run();
                 if (download.getStatus() == DownloadStatus.CANCELLED) {
-
+                    Log.e(TAG, "Download cancelled");
                 }
             }
         }

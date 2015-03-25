@@ -332,7 +332,10 @@ public class MangaViewPager extends ViewPager {
         @Override
         public void onError(final DownloadManager.Download download, final String errorMsg) {
 
-            final String path = imageBundle.path;
+            ImageBundle imageBundle = imageBundleMap.get(download.getTag());
+
+
+            final String url = download.getUri();
             final SubsamplingScaleImageView iv = imageBundle.iv;
             final TextView tv = imageBundle.tv;
             final Button button = imageBundle.restart;
@@ -346,7 +349,7 @@ public class MangaViewPager extends ViewPager {
                         public void onClick(final View view) {
                             tv.setVisibility(View.VISIBLE);
                             button.setVisibility(View.INVISIBLE);
-                            loadImage(path, iv, tv, button);
+                            loadImage(url, iv, tv, button);
                         }
                     });
                     button.setVisibility(View.VISIBLE);
