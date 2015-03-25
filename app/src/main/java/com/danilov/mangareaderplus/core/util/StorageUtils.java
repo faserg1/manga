@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class StorageUtils {
 
     public static class StorageInfo {
 
-        public final String path;
+        public String path;
         public final boolean readonly;
         public final boolean removable;
         public final int number;
@@ -99,8 +100,6 @@ public class StorageUtils {
                 }
             }
 
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -108,6 +107,28 @@ public class StorageUtils {
                 try {
                     buf_reader.close();
                 } catch (IOException ex) {}
+            }
+        }
+//        buf_reader = null;
+//        try {
+//            buf_reader = new BufferedReader(new FileReader("/etc/vold.fstab"));
+//            String line;
+//            while ((line = buf_reader.readLine()) != null) {
+//                int a = 0;
+//                a++;
+//            }
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        } finally {
+//            if (buf_reader != null) {
+//                try {
+//                    buf_reader.close();
+//                } catch (IOException ex) {}
+//            }
+//        }
+        for (StorageInfo storageVolume : list) {
+            if ("/mnt/media_rw/MicroSD".equals(storageVolume.path)) {
+                storageVolume.path = "/storage/MicroSD";
             }
         }
         return list;

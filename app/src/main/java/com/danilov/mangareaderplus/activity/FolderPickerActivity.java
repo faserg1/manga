@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.adapter.BaseAdapter;
+import com.danilov.mangareaderplus.core.util.StorageHelper;
 import com.danilov.mangareaderplus.core.util.StorageUtils;
 
 import org.acra.ACRA;
@@ -56,6 +57,8 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         }
 
         List<StorageUtils.StorageInfo> storages = StorageUtils.getStorageList();
+//        List<StorageHelper.StorageVolume> storages = StorageHelper.getStorages(true);
+
         parents = new ArrayList<>(storages.size());
         baseFolders = new ArrayList<>(storages.size());
         for (StorageUtils.StorageInfo storageInfo : storages) {
@@ -66,6 +69,13 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
                 parents.add(file.getParentFile());
             }
         }
+
+//        for (StorageHelper.StorageVolume storageVolume: storages) {
+//            SDFile file = new SDFile(storageVolume.file.toURI());
+//            file.setDisplayName("sdcard_" + file.getName());
+//            baseFolders.add(file);
+//            parents.add(file.getParentFile());
+//        }
 
         adapter = new FolderAdapter(getApplicationContext(), R.layout.folder_layout, getFiles(curFolder));
         foldersView.setOnItemClickListener(this);
