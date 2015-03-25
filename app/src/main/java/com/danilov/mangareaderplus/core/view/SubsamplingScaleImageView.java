@@ -517,6 +517,11 @@ public class SubsamplingScaleImageView extends View {
                                     canPanHorizontal = false;
                                 }
                             }
+                            if (!canPanHorizontal) {
+                                if (dy > dx) {
+                                    canPanHorizontal = true;
+                                }
+                            }
 
                             if ((lastX == vTranslate.x || (lastY == vTranslate.y && dy > 10) || isPanning) && canPanHorizontal) {
                                 isPanning = true;

@@ -67,6 +67,7 @@ public class DownloadManager {
         lock.lock();
         try {
             download.setStatus(DownloadStatus.CANCELLED);
+            wakeUp();
         } catch (Exception e) {
             Log.d(TAG, "Exception occurred in cancelDownload(), error: " + e.getMessage());
         } finally {

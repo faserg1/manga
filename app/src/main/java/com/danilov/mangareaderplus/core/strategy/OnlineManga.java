@@ -120,6 +120,7 @@ public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeLis
                         @Override
                         public void run() {
                             listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
+                            promise.finish(Result.ERROR, true);
                         }
                     });
                 }

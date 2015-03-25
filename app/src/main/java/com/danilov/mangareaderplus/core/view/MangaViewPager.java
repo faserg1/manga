@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -65,12 +66,25 @@ public class MangaViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(final MotionEvent ev) {
-        if (justChanged && ev.getAction() == MotionEvent.ACTION_MOVE) {
-            setMLastMotion(ev.getX() + 1, ev.getY());
-            setMInitialMotionX(ev.getX());
-            justChanged = false;
+        try {
+            if (justChanged && ev.getAction() == MotionEvent.ACTION_MOVE) {
+                setMLastMotion(ev.getX() + 1, ev.getY());
+                setMInitialMotionX(ev.getX());
+                justChanged = false;
+            }
+            return super.onInterceptTouchEvent(ev);
+        } catch (Exception e) {
         }
-        return super.onInterceptTouchEvent(ev);
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(final MotionEvent ev) {
+        try {
+            return super.onTouchEvent(ev);
+        } catch (Exception e) {
+        }
+        return false;
     }
 
     public void setFactory(final ViewSwitcher.ViewFactory factory) {
@@ -158,8 +172,9 @@ public class MangaViewPager extends ViewPager {
 
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) v.findViewById(R.id.imageView);
             TextView progressView = (TextView) v.findViewById(R.id.progress);
+            Button restart = (Button) v.findViewById(R.id.restart);
             imageView.setVisibility(View.VISIBLE);
-            loadImage(url, imageView, progressView);
+            loadImage(url, imageView, progressView, restart);
             views.put(position, imageView);
             return v;
         }
@@ -225,7 +240,7 @@ public class MangaViewPager extends ViewPager {
         }
     }
 
-    public void loadImage(final String url, final SubsamplingScaleImageView imageView, final TextView textView) {
+    public void loadImage(final String url, final SubsamplingScaleImageView imageView, final TextView textView, final Button button) {
         if (!isOnline) {
             imageView.setImageFile(url);
             textView.setVisibility(View.GONE);
@@ -244,6 +259,7 @@ public class MangaViewPager extends ViewPager {
         bundle.tv = textView;
         bundle.path = path;
         bundle.donePath = donePath;
+        bundle.restart = button;
         imageBundleMap.put(path, bundle);
         downloadManager.startDownload(url, path, path);
 
@@ -254,6 +270,7 @@ public class MangaViewPager extends ViewPager {
 
         TextView tv;
         SubsamplingScaleImageView iv;
+        Button restart;
         String path;
         String donePath;
 
@@ -315,6 +332,27 @@ public class MangaViewPager extends ViewPager {
         @Override
         public void onError(final DownloadManager.Download download, final String errorMsg) {
 
+            final String path = imageBundle.path;
+            final SubsamplingScaleImageView iv = imageBundle.iv;
+            final TextView tv = imageBundle.tv;
+            final Button button = imageBundle.restart;
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tv.setVisibility(View.INVISIBLE);
+                    button.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(final View view) {
+                            tv.setVisibility(View.VISIBLE);
+                            button.setVisibility(View.INVISIBLE);
+                            loadImage(path, iv, tv, button);
+                        }
+                    });
+                    button.setVisibility(View.VISIBLE);
+                    downloadManager.cancelDownload(download);
+                }
+            });
         }
 
     };
