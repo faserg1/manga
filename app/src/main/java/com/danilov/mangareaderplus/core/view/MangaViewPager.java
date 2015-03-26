@@ -168,6 +168,7 @@ public class MangaViewPager extends ViewPager {
             View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
 
             SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) v.findViewById(R.id.imageView);
+            imageView.setMaxScale(4);
             TextView progressView = (TextView) v.findViewById(R.id.progress);
             Button restart = (Button) v.findViewById(R.id.restart);
             imageView.setVisibility(View.VISIBLE);
