@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by Semyon Danilov on 12.06.2014.
@@ -86,6 +87,18 @@ public class MangaDownloadService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        downloadManager.pauseDownload();
+        final Lock lock = downloadManager.getLock();
+        lock.lock();
+        List<MangaDownloadRequest> requestsToSave = null;
+        List<DownloadManager.Download> downloadsToSave = null;
+        try {
+            requestsToSave = new ArrayList<>(requests);
+            downloadsToSave = downloadManager.getDownloads();
+        } finally {
+            lock.unlock();
+        }
+        new DownloadsDumpService().dumpDownloads(requestsToSave, downloadsToSave);
     }
 
     @Override
@@ -411,6 +424,14 @@ public class MangaDownloadService extends Service {
 
         public MangaChapter getCurrentChapter() {
             return manga.getChapters().get(whichChapters.get(currentChapterInList));
+        }
+
+        public List<Integer> getWhichChapters() {
+            return whichChapters;
+        }
+
+        public int getQuantity() {
+            return quantity;
         }
 
         public int getCurrentChapterNumber() {

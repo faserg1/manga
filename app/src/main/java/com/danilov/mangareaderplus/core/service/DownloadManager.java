@@ -9,6 +9,8 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -39,6 +41,24 @@ public class DownloadManager {
 
     public DownloadManager() {
         thread.start();
+    }
+
+    /**
+     * Should only use to dump current downloads
+     * @return
+     */
+    public List<Download> getDownloads() {
+        lock.lock();
+        try {
+            return new ArrayList<>(downloads);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    //holy shiiiet
+    public Lock getLock() {
+        return lock;
     }
 
     //executing only one download at a time
@@ -380,6 +400,14 @@ public class DownloadManager {
                     }
                     break;
             }
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public int getDownloaded() {
+            return downloaded;
         }
 
         public float getProgress() {
