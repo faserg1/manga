@@ -1,9 +1,18 @@
 package com.danilov.mangareaderplus.core.repository;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.danilov.mangareaderplus.core.application.ApplicationSettings;
+import com.danilov.mangareaderplus.core.application.MangaApplication;
+import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
+import com.danilov.mangareaderplus.core.database.MangaDAO;
 import com.danilov.mangareaderplus.core.model.LocalManga;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.model.MangaSuggestion;
+import com.danilov.mangareaderplus.core.util.IoUtils;
+import com.danilov.mangareaderplus.core.util.ServiceContainer;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -17,6 +26,8 @@ import java.util.List;
  * Created by Semyon Danilov on 21.06.2014.
  */
 public class OfflineEngine implements RepositoryEngine {
+
+    private static final String TAG = "OfflineEngine";
 
     @Override
     public String getLanguage() {
@@ -79,15 +90,10 @@ public class OfflineEngine implements RepositoryEngine {
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
         LocalManga localManga = (LocalManga) manga;
+
+        String[] dirs = getMangaChaptersUris(localManga);
         String mangaUri = localManga.getLocalUri();
-        File folder = new File(mangaUri);
-        String[] dirs = folder.list(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String filename) {
-                File maybeDir = new File(dir.getPath() + "/" + filename);
-                return maybeDir.isDirectory();
-            }
-        });
+
         for (int i = 0; i < dirs.length; i++) {
             String uri = dirs[i];
             dirs[i] = mangaUri + "/" + uri;
@@ -115,6 +121,42 @@ public class OfflineEngine implements RepositoryEngine {
         }
         manga.setChapters(chapters);
         return true;
+    }
+
+    private String[] getMangaChaptersUris(final LocalManga localManga) {
+        FilenameFilter filenameFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String filename) {
+                File maybeDir = new File(dir.getPath() + "/" + filename);
+                return maybeDir.isDirectory();
+            }
+        };
+        String mangaUri = localManga.getLocalUri();
+        String[] chapters = null;
+        File folder = new File(mangaUri);
+        boolean exists = folder.exists();
+        chapters = folder.list(filenameFilter);
+        if (!exists || chapters.length == 0) {
+            MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+            Context context = MangaApplication.getContext();
+            mangaUri = IoUtils.createPathForManga(localManga, context);
+            localManga.setLocalUri(mangaUri);
+            try {
+                mangaDAO.update(localManga);
+            } catch (DatabaseAccessException e) {
+                Log.e(TAG, "Too bad, path was not updated");
+                e.printStackTrace();
+                //failed to update path to local manga,
+                //but it certainly will try to update next time
+            }
+            folder = new File(mangaUri);
+            if (folder.exists()) {
+                return folder.list(filenameFilter);
+            }
+        } else {
+            return chapters;
+        }
+        return new String[0];
     }
 
     private Comparator<String> imageNumericStringComparator = new Comparator<String>() {
