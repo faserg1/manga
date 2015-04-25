@@ -187,23 +187,12 @@
                                         style="@style/Manga.ButtonBlue"
                                         android:id="@+id/chapterOk"/>
 
-                                <EditText android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:inputType="numberDecimal"
-                                          android:id="@+id/chapterPicker"/>
+                                <Spinner
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/chapterPicker">
 
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:textSize="18sp"
-                                          android:text=" / "/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:textSize="18sp"
-                                          android:id="@+id/chapterQuantity"/>
+                                </Spinner>
 
                             </LinearLayout>
 

@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -67,8 +68,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private View prevBtnBottom;
     private EditText currentImageEditText;
     private TextView totalImagesTextView;
-    private EditText currentChapterEditText;
-    private TextView totalChaptersTextView;
+    private Spinner chapterSpinner;
     private ProgressBar imageProgressBar;
     private CheckBox showButtonsCheckbox;
 
@@ -105,8 +105,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.prevBtnBottom = findViewById(R.id.prevBtnBottom);
         this.currentImageEditText = findViewWithId(R.id.imagePicker);
         this.totalImagesTextView = findViewWithId(R.id.imageQuantity);
-        this.currentChapterEditText = findViewWithId(R.id.chapterPicker);
-        this.totalChaptersTextView = findViewWithId(R.id.chapterQuantity);
+        this.chapterSpinner = findViewWithId(R.id.chapterPicker);
         this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
         this.imageOk = findViewWithId(R.id.imageOk);
         this.chapterOk = findViewWithId(R.id.chapterOk);
@@ -342,7 +341,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     private void goToChapterFromChapterPicker() {
-        String chapterString = currentChapterEditText.getText().toString();
+        String chapterString = chapterSpinner.getText().toString();
         Integer tmp;
         try {
             tmp = Integer.valueOf(chapterString);
@@ -406,7 +405,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         String totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
-        currentChapterEditText.setText(String.valueOf(currentChapter + 1));
+
+        chapterSpinner.setText(String.valueOf(currentChapter + 1));
         currentImageEditText.setText(String.valueOf(currentImage + 1));
         totalImagesTextView.setText(String.valueOf(totalImages));
         totalChaptersTextView.setText(totalChapters);

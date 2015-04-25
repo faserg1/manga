@@ -1,5 +1,6 @@
 package com.danilov.mangareaderplus.core.service;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -87,6 +89,23 @@ public class MangaDownloadService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        saveState();
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public void onTrimMemory(final int level) {
+        super.onTrimMemory(level);
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public void onTaskRemoved(final Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        saveState();
+    }
+
+    private void saveState() {
         downloadManager.pauseDownload();
         final Lock lock = downloadManager.getLock();
         lock.lock();
