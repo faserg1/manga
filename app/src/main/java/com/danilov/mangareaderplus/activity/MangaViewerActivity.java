@@ -73,6 +73,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private Spinner chapterSpinner;
     private ProgressBar imageProgressBar;
     private CheckBox showButtonsCheckbox;
+    private Button nextChapter;
 
     private View drawerRightOffsetTop;
     private View drawerRightOffsetBottom;
@@ -105,6 +106,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.pageSpinner = findViewWithId(R.id.imagePicker);
         this.chapterSpinner = findViewWithId(R.id.chapterPicker);
         this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
+        this.nextChapter = findViewWithId(R.id.next_chapter);
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
@@ -116,6 +118,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         prevBtn.setOnClickListener(this);
         nextBtnBottom.setOnClickListener(this);
         prevBtnBottom.setOnClickListener(this);
+        nextChapter.setOnClickListener(this);
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(true);
@@ -316,16 +319,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.prevBtn:
-                onPrevious();
-                break;
-            case R.id.nextBtn:
-                onNext();
-                break;
             case R.id.prevBtnBottom:
                 onPrevious();
                 break;
+            case R.id.nextBtn:
             case R.id.nextBtnBottom:
                 onNext();
+                break;
+            case R.id.next_chapter:
+                int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
+                showChapter(curChapter + 1);
                 break;
         }
     }
@@ -345,34 +348,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             if (chapterNum < 0) {
                 chapterNum = 0;
             }
-            try {
-                currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-                    @Override
-                    public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                        switch (data) {
-                            case ERROR:
-                                break;
-                            case LAST_DOWNLOADED:
-                                Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
-                            case SUCCESS:
-                                currentStrategy.showImage(0);
-                                break;
-                            case NOT_DOWNLOADED:
-                                Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
-                                break;
-                            case NO_SUCH_CHAPTER:
-                                Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
-                                return null;
-                            case ALREADY_FINAL_CHAPTER:
-                                Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
-                                return null;
-                        }
-                        return null;
-                    }
-                });
-            } catch (ShowMangaException e) {
-                Log.e(TAG, e.getMessage(), e);
-            }
+            showChapter(chapterNum);
         }
 
         @Override
@@ -405,6 +381,37 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         }
     }
 
+    private void showChapter(final int chapterNum) {
+        try {
+            currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
+                @Override
+                public Object action(final MangaShowStrategy.Result data, final boolean success) {
+                    switch (data) {
+                        case ERROR:
+                            break;
+                        case LAST_DOWNLOADED:
+                            Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                        case SUCCESS:
+                            currentStrategy.showImage(0);
+                            break;
+                        case NOT_DOWNLOADED:
+                            Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                            break;
+                        case NO_SUCH_CHAPTER:
+                            Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                            return null;
+                        case ALREADY_FINAL_CHAPTER:
+                            Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                            return null;
+                    }
+                    return null;
+                }
+            });
+        } catch (ShowMangaException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+    }
+
     @Override
     public void onUpdate(final MangaShowStrategy strategy) {
         int currentChapter = strategy.getCurrentChapterNumber();
@@ -433,6 +440,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         }
         pageSpinner.setSelection(currentImage);
         pageSpinner.setTag(currentImage);
+
+        toggleNextChapterButton(currentImage == totalImages - 1);
+
+    }
+
+    private void toggleNextChapterButton(final boolean enable) {
+        nextChapter.setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 
     private class MangaControlSpinnerAdapter implements SpinnerAdapter {
