@@ -28,7 +28,7 @@ public interface MangaShowStrategy {
 
     int getCurrentChapterNumber();
 
-    String getTotalChaptersNumber();
+    int getTotalChaptersNumber();
 
     List<String> getChapterUris();
 

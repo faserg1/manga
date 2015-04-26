@@ -187,11 +187,11 @@ public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeLi
     }
 
     @Override
-    public String getTotalChaptersNumber() {
+    public int getTotalChaptersNumber() {
         if (manga == null) {
-            return "0";
+            return 0;
         }
-        return "? (" + manga.getChaptersQuantity() + ")";
+        return manga.getChaptersQuantity();
     }
 
     @Override

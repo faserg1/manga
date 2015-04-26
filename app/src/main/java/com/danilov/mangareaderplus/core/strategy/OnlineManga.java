@@ -210,11 +210,11 @@ public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeLis
     }
 
     @Override
-    public String getTotalChaptersNumber() {
+    public int getTotalChaptersNumber() {
         if (manga == null) {
-            return "0";
+            return 0;
         }
-        return String.valueOf(manga.getChaptersQuantity());
+        return manga.getChaptersQuantity();
     }
 
     @Override

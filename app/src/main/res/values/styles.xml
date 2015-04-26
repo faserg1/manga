@@ -76,5 +76,14 @@
     <style name="Manga.PopupMenu.TextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
         <item name="android:textColor">#000000</item>
     </style>
+    
+    <style name="Manga.Viewer">
+
+    </style>
+
+    <style name="Manga.Viewer.Spinner"  parent="@style/Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/spinner_viewer_selector</item>
+        <item name="android:dropDownSelector">@drawable/mangaholotheme_list_selector_holo_light</item>
+    </style>
 
 </resources>

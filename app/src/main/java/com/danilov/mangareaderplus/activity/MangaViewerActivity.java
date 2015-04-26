@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -341,7 +344,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     private void goToChapterFromChapterPicker() {
-        String chapterString = chapterSpinner.getText().toString();
+//        String chapterString = chapterSpinner.getText().toString();
+        String chapterString = "0";
         Integer tmp;
         try {
             tmp = Integer.valueOf(chapterString);
@@ -402,14 +406,113 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     @Override
     public void onUpdate(final MangaShowStrategy strategy) {
         int currentChapter = strategy.getCurrentChapterNumber();
-        String totalChapters = strategy.getTotalChaptersNumber();
+        int totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
 
-        chapterSpinner.setText(String.valueOf(currentChapter + 1));
+        ChapterSpinnerAdapter adapter = (ChapterSpinnerAdapter) chapterSpinner.getAdapter();
+        if (adapter == null) {
+            adapter = new ChapterSpinnerAdapter(0, totalChapters);
+            chapterSpinner.setAdapter(adapter);
+        } else {
+            adapter.change(0, totalChapters);
+        }
+        chapterSpinner.setSelection(currentChapter, false);
+
         currentImageEditText.setText(String.valueOf(currentImage + 1));
         totalImagesTextView.setText(String.valueOf(totalImages));
-        totalChaptersTextView.setText(totalChapters);
+    }
+
+    private class ChapterSpinnerAdapter implements SpinnerAdapter {
+
+        private int first;
+        private int last;
+
+        private DataSetObserver dataSetObserver;
+
+        public ChapterSpinnerAdapter(final int first, final int last) {
+            this.first = first;
+            this.last = last;
+        }
+
+        @Override
+        public int getCount() {
+            return last - first;
+        }
+
+        @Override
+        public View getDropDownView(final int i, final View view, final ViewGroup viewGroup) {
+            final Context context = getApplicationContext();
+            TextView textView = null;
+            if (view != null) {
+                textView = (TextView) view;
+            } else {
+                textView = (TextView) View.inflate(context, R.layout.chapter_spinner_dropdown, null);
+            }
+            textView.setText("" + (i + 1 + first));
+            return textView;
+        }
+
+        public void change(final int first, final int last) {
+            if (this.first != first || this.last != last) {
+                this.first = first;
+                this.last = last;
+                dataSetObserver.onChanged();
+            }
+        }
+
+        @Override
+        public void registerDataSetObserver(final DataSetObserver dataSetObserver) {
+            this.dataSetObserver = dataSetObserver;
+        }
+
+        @Override
+        public void unregisterDataSetObserver(final DataSetObserver dataSetObserver) {
+
+        }
+
+        @Override
+        public Object getItem(final int i) {
+            return i + first;
+        }
+
+        @Override
+        public long getItemId(final int i) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getView(final int i, final View view, final ViewGroup viewGroup) {
+            final Context context = getApplicationContext();
+            TextView textView = null;
+            if (view != null) {
+                textView = (TextView) view;
+            } else {
+                textView = (TextView) View.inflate(context, R.layout.chapter_spinner_item, null);
+            }
+            textView.setText("" + (i + 1 + first));
+            return textView;
+        }
+
+        @Override
+        public int getItemViewType(final int i) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 0;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return first == -1;
+        }
     }
 
     private void onPrevious() {
