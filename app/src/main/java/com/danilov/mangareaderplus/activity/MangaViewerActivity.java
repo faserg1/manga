@@ -77,6 +77,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     private View drawerRightOffsetTop;
     private View drawerRightOffsetBottom;
+    private View bottomBar;
 
     private MangaShowStrategy currentStrategy;
     private Manga manga;
@@ -111,6 +112,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
         this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
+        this.bottomBar = findViewWithId(R.id.bottom_bar);
         chapterSpinner.setOnItemSelectedListener(new ChapterSpinnerListener());
         pageSpinner.setOnItemSelectedListener(new ImageSpinnerListener());
         settings = ApplicationSettings.get(this);
@@ -447,6 +449,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     private void toggleNextChapterButton(final boolean enable) {
         nextChapter.setVisibility(enable ? View.VISIBLE : View.GONE);
+        bottomBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
     }
 
     private class MangaControlSpinnerAdapter implements SpinnerAdapter {
