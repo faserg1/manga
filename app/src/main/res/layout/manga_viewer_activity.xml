@@ -146,29 +146,11 @@
                                           android:layout_height="wrap_content"
                                           android:orientation="horizontal">
 
-                                <Button android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@android:string/ok"
-                                        style="@style/Manga.ButtonBlue"
-                                        android:id="@+id/imageOk"/>
-
-                                <EditText android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:inputType="numberDecimal"
-                                          android:id="@+id/imagePicker"/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:textSize="18sp"
-                                          android:text=" / "/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:textColor="#ffffffff"
-                                          android:textSize="18sp"
-                                          android:id="@+id/imageQuantity"/>
+                                <Spinner
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/Manga.Viewer.Spinner"
+                                    android:id="@+id/imagePicker"/>
 
                             </LinearLayout>
 
@@ -182,19 +164,11 @@
                                           android:layout_height="wrap_content"
                                           android:orientation="horizontal">
 
-                                <Button android:layout_width="0dp"
-                                        android:layout_height="0dp"
-                                        android:text="@android:string/ok"
-                                        style="@style/Manga.ButtonBlue"
-                                        android:id="@+id/chapterOk"/>
-
                                 <Spinner
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
                                     style="@style/Manga.Viewer.Spinner"
-                                    android:id="@+id/chapterPicker">
-
-                                </Spinner>
+                                    android:id="@+id/chapterPicker"/>
 
                             </LinearLayout>
 

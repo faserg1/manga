@@ -17,10 +17,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageSwitcher;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -69,14 +69,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private View prevBtn;
     private View nextBtnBottom;
     private View prevBtnBottom;
-    private EditText currentImageEditText;
-    private TextView totalImagesTextView;
+    private Spinner pageSpinner;
     private Spinner chapterSpinner;
     private ProgressBar imageProgressBar;
     private CheckBox showButtonsCheckbox;
-
-    private Button imageOk;
-    private Button chapterOk;
 
     private View drawerRightOffsetTop;
     private View drawerRightOffsetBottom;
@@ -106,23 +102,20 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.prevBtn = findViewById(R.id.prevBtn);
         this.nextBtnBottom = findViewById(R.id.nextBtnBottom);
         this.prevBtnBottom = findViewById(R.id.prevBtnBottom);
-        this.currentImageEditText = findViewWithId(R.id.imagePicker);
-        this.totalImagesTextView = findViewWithId(R.id.imageQuantity);
+        this.pageSpinner = findViewWithId(R.id.imagePicker);
         this.chapterSpinner = findViewWithId(R.id.chapterPicker);
         this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
-        this.imageOk = findViewWithId(R.id.imageOk);
-        this.chapterOk = findViewWithId(R.id.chapterOk);
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
         this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
+        chapterSpinner.setOnItemSelectedListener(new ChapterSpinnerListener());
+        pageSpinner.setOnItemSelectedListener(new ImageSpinnerListener());
         settings = ApplicationSettings.get(this);
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
         nextBtnBottom.setOnClickListener(this);
         prevBtnBottom.setOnClickListener(this);
-        imageOk.setOnClickListener(this);
-        chapterOk.setOnClickListener(this);
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(true);
@@ -334,73 +327,82 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             case R.id.nextBtnBottom:
                 onNext();
                 break;
-            case R.id.imageOk:
-                goToImageFromImagePicker();
-                break;
-            case R.id.chapterOk:
-                goToChapterFromChapterPicker();
-                break;
         }
     }
 
-    private void goToChapterFromChapterPicker() {
-//        String chapterString = chapterSpinner.getText().toString();
-        String chapterString = "0";
-        Integer tmp;
-        try {
-            tmp = Integer.valueOf(chapterString);
-        } catch (NumberFormatException e) {
-            return;
-        }
-        Integer chapterNum = tmp - 1;
-        if (chapterNum < 0) {
-            chapterNum = 0;
-        }
-        try {
-            currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-                @Override
-                public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                    switch (data) {
-                        case ERROR:
-                            break;
-                        case LAST_DOWNLOADED:
-                            Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
-                        case SUCCESS:
-                            currentStrategy.showImage(0);
-                            break;
-                        case NOT_DOWNLOADED:
-                            Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
-                            break;
-                        case NO_SUCH_CHAPTER:
-                            Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
-                            return null;
-                        case ALREADY_FINAL_CHAPTER:
-                            Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
-                            return null;
-                    }
-                    return null;
+    private class ChapterSpinnerListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+            if (adapterView.getTag() != null) {
+                int tag = (int) adapterView.getTag();
+                if (tag == i) {
+                    return;
                 }
-            });
-        } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage(), e);
+            }
+            int tmp = (int) chapterSpinner.getSelectedItem();
+            Integer chapterNum = tmp - 1;
+            if (chapterNum < 0) {
+                chapterNum = 0;
+            }
+            try {
+                currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
+                    @Override
+                    public Object action(final MangaShowStrategy.Result data, final boolean success) {
+                        switch (data) {
+                            case ERROR:
+                                break;
+                            case LAST_DOWNLOADED:
+                                Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                            case SUCCESS:
+                                currentStrategy.showImage(0);
+                                break;
+                            case NOT_DOWNLOADED:
+                                Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                                break;
+                            case NO_SUCH_CHAPTER:
+                                Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                                return null;
+                            case ALREADY_FINAL_CHAPTER:
+                                Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                                return null;
+                        }
+                        return null;
+                    }
+                });
+            } catch (ShowMangaException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
         }
-        closeKeyboard();
+
+        @Override
+        public void onNothingSelected(final AdapterView<?> adapterView) {
+
+        }
     }
 
-    private void goToImageFromImagePicker() {
-        String imageString = currentImageEditText.getText().toString();
-        Integer tmp;
-        try {
-            tmp = Integer.valueOf(imageString);
-        } catch (NumberFormatException e) {
-            return;
+    private class ImageSpinnerListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onItemSelected(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+            if (adapterView.getTag() != null) {
+                int tag = (int) adapterView.getTag();
+                if (tag == i) {
+                    return;
+                }
+            }
+            int tmp = (int) pageSpinner.getSelectedItem();
+            Integer imageNum = tmp - 1;
+            if (imageNum < 0) {
+                imageNum = 0;
+            }
+            currentStrategy.showImage(imageNum);
         }
-        Integer imageNum = tmp - 1;
-        if (imageNum < 0) {
-            imageNum = 0;
+
+        @Override
+        public void onNothingSelected(final AdapterView<?> adapterView) {
+
         }
-        currentStrategy.showImage(imageNum);
-        closeKeyboard();
     }
 
     @Override
@@ -410,27 +412,37 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
 
-        ChapterSpinnerAdapter adapter = (ChapterSpinnerAdapter) chapterSpinner.getAdapter();
-        if (adapter == null) {
-            adapter = new ChapterSpinnerAdapter(0, totalChapters);
-            chapterSpinner.setAdapter(adapter);
+        MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
+        if (chapterAdapter == null) {
+            chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
+            chapterSpinner.setAdapter(chapterAdapter);
         } else {
-            adapter.change(0, totalChapters);
+            chapterAdapter.change(0, totalChapters);
         }
-        chapterSpinner.setSelection(currentChapter, false);
 
-        currentImageEditText.setText(String.valueOf(currentImage + 1));
-        totalImagesTextView.setText(String.valueOf(totalImages));
+        chapterSpinner.setSelection(currentChapter, false);
+        chapterSpinner.setTag(currentChapter);
+
+
+        MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
+        if (pageAdapter == null) {
+            pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);
+            pageSpinner.setAdapter(pageAdapter);
+        } else {
+            pageAdapter.change(0, totalImages);
+        }
+        pageSpinner.setSelection(currentImage);
+        pageSpinner.setTag(currentImage);
     }
 
-    private class ChapterSpinnerAdapter implements SpinnerAdapter {
+    private class MangaControlSpinnerAdapter implements SpinnerAdapter {
 
         private int first;
         private int last;
 
         private DataSetObserver dataSetObserver;
 
-        public ChapterSpinnerAdapter(final int first, final int last) {
+        public MangaControlSpinnerAdapter(final int first, final int last) {
             this.first = first;
             this.last = last;
         }
@@ -447,7 +459,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             if (view != null) {
                 textView = (TextView) view;
             } else {
-                textView = (TextView) View.inflate(context, R.layout.chapter_spinner_dropdown, null);
+                textView = (TextView) View.inflate(context, R.layout.chapter_or_page_spinner_dropdown, null);
             }
             textView.setText("" + (i + 1 + first));
             return textView;
@@ -473,7 +485,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
         @Override
         public Object getItem(final int i) {
-            return i + first;
+            return i + 1 + first;
         }
 
         @Override
@@ -493,7 +505,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             if (view != null) {
                 textView = (TextView) view;
             } else {
-                textView = (TextView) View.inflate(context, R.layout.chapter_spinner_item, null);
+                textView = (TextView) View.inflate(context, R.layout.chapter_or_page_spinner_item, null);
             }
             textView.setText("" + (i + 1 + first));
             return textView;
