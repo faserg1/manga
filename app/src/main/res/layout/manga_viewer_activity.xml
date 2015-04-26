@@ -80,6 +80,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:alpha="0.6"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
@@ -94,7 +95,12 @@
                 style="@style/Manga.ButtonBlue"
                 android:layout_height="0dp"
                 android:text="@string/sv_next_chapter"
-                android:layout_weight="0.1"/>
+                android:textSize="20sp"
+                android:layout_weight="0.1"
+                android:shadowColor="#000000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="2.0"/>
 
         </LinearLayout>
 
