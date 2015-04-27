@@ -428,9 +428,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         } else {
             chapterAdapter.change(0, totalChapters);
         }
-
-        chapterSpinner.setSelection(currentChapter, false);
         chapterSpinner.setTag(currentChapter);
+        chapterSpinner.setSelection(currentChapter, false);
 
 
         MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
@@ -440,8 +439,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         } else {
             pageAdapter.change(0, totalImages);
         }
-        pageSpinner.setSelection(currentImage);
         pageSpinner.setTag(currentImage);
+        pageSpinner.setSelection(currentImage);
 
         toggleNextChapterButton(currentImage == totalImages - 1);
 
@@ -535,7 +534,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
         @Override
         public int getViewTypeCount() {
-            return 0;
+            return 1;
         }
 
         @Override
