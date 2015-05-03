@@ -135,6 +135,16 @@ public class DownloadManager {
         }
     }
 
+
+    public void restore() {
+        lock.lock();
+        try {
+            isWake.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private void wakeUp() {
         lock.lock();
         try {

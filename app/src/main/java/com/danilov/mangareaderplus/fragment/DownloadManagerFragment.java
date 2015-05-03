@@ -121,10 +121,6 @@ public class DownloadManagerFragment extends BaseFragment {
         });
 
         showPauseBtn();
-
-        //TODO: show breadcrumb
-        DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
-        downloadsDumpService.unDump();
     }
 
     @Override
@@ -272,6 +268,10 @@ public class DownloadManagerFragment extends BaseFragment {
             if (selectedChapters != null) {
                 startDownload(manga, selectedChapters);
                 i.removeExtra(Constants.SELECTED_CHAPTERS_KEY);
+            } else {
+                //TODO: show breadcrumb
+                DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
+                downloadsDumpService.unDump(service);
             }
 
         }

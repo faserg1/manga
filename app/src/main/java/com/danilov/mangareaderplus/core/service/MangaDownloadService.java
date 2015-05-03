@@ -104,12 +104,15 @@ public class MangaDownloadService extends Service {
 
     public void restore(final List<MangaDownloadRequest> requestList, final List<DownloadManager.Download> downloads) {
         final Lock lock = downloadManager.getLock();
+        lock.lock();
         try {
             downloadManager.setDownloads(downloads);
             requests.addAll(requestList);
             currentRequest = requests.peek();
             currentRequest.setHasError(false);
-            downloadManager.restartError();
+            sendStatus();
+            showNotification(currentRequest.getManga());
+            downloadManager.resumeDownload();
         } finally {
             lock.unlock();
         }

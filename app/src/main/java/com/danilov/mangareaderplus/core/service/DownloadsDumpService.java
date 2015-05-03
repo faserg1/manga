@@ -99,12 +99,14 @@ public class DownloadsDumpService {
                 MangaDownloadService.MangaDownloadRequest request = downloadService.obtainRequest();
                 jsonToRequest(jsonObject, request);
                 requests.add(request);
-                JSONArray jsonArray = jsonObject.getJSONArray(DOWNLOADS);
-                if (jsonArray != null) {
-                    for (int j = 0; j < jsonArray.length(); j++) {
-                        DownloadManager.Download download = downloadService.obtainDownload();
-                        jsonToDownload(jsonArray.getJSONObject(j), download);
-                        downloads.add(download);
+                if (!jsonObject.isNull(DOWNLOADS)) {
+                    JSONArray jsonArray = jsonObject.getJSONArray(DOWNLOADS);
+                    if (jsonArray != null) {
+                        for (int j = 0; j < jsonArray.length(); j++) {
+                            DownloadManager.Download download = downloadService.obtainDownload();
+                            jsonToDownload(jsonArray.getJSONObject(j), download);
+                            downloads.add(download);
+                        }
                     }
                 }
 
@@ -133,7 +135,12 @@ public class DownloadsDumpService {
         jsonObject.put(QUANTITY, quantity);
 
         List<Integer> whichChapters = request.getWhichChapters();
-        jsonObject.put(WHICH_CHAPTERS, whichChapters);
+
+        JSONArray jsonArray = new JSONArray();
+        for (Integer i : whichChapters) {
+            jsonArray.put(i.intValue());
+        }
+        jsonObject.put(WHICH_CHAPTERS, jsonArray);
 
         return jsonObject;
     }
@@ -150,9 +157,13 @@ public class DownloadsDumpService {
         }
 
         int currentImage = 0;
-        currentImage = jsonObject.getInt(CURRENT_IMAGE);
+        if (!jsonObject.isNull(CURRENT_IMAGE)) {
+            currentImage = jsonObject.getInt(CURRENT_IMAGE);
+        }
         int currentImageQuantity = 0;
-        currentImageQuantity = jsonObject.getInt(CURRENT_IMAGE_QUANTITY);
+        if (!jsonObject.isNull(CURRENT_IMAGE_QUANTITY)) {
+            currentImageQuantity = jsonObject.getInt(CURRENT_IMAGE_QUANTITY);
+        }
         request.setCurrentImage(currentImage);
         request.setCurrentImageQuantity(currentImageQuantity);
         request.setCurrentChapterInList(currentChapterInList);
@@ -198,13 +209,17 @@ public class DownloadsDumpService {
         DownloadManager.DownloadStatus status = DownloadManager.DownloadStatus.valueOf(jsonObject.getString(STATUS));
         String filePath = jsonObject.getString(FILE_PATH);
         int downloaded = jsonObject.getInt(DOWNLOADED);
-        String errorMessage = jsonObject.getString(ERROR_MESSAGE);
+
+        if (!jsonObject.isNull(ERROR_MESSAGE)) {
+            String errorMessage = jsonObject.getString(ERROR_MESSAGE);
+            download.setErrorMessage(errorMessage);
+        }
+
         download.setUri(uri);
         download.setSize(size);
         download.setStatus(status);
         download.setFilePath(filePath);
         download.setDownloaded(downloaded);
-        download.setErrorMessage(errorMessage);
     }
 
     private static final String COVER_URI = "COVER_URI";
