@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,6 +29,8 @@ import java.util.List;
 public class DownloadsDumpService {
 
     private static final String DOWNLOADS = "downloads";
+    private static final String CURRENT_IMAGE = "CURRENT_IMAGE";
+    private static final String CURRENT_IMAGE_QUANTITY = "CURRENT_IMAGE_QUANTITY";
 
     public void dumpDownloads(final List<MangaDownloadService.MangaDownloadRequest> requests, final List<DownloadManager.Download> downloads) {
         JSONArray jsonArray = new JSONArray();
@@ -40,6 +44,8 @@ public class DownloadsDumpService {
                         downloadsArray.put(downloadToJSON(download));
                     }
                     requestJSON.put(DOWNLOADS, downloadsArray);
+                    requestJSON.put(CURRENT_IMAGE, request.getCurrentImage());
+                    requestJSON.put(CURRENT_IMAGE_QUANTITY, request.getCurrentImageQuantity());
                 }
                 jsonArray.put(requestJSON);
             }
@@ -65,7 +71,7 @@ public class DownloadsDumpService {
 
     }
 
-    public void unDump() {
+    public void unDump(final MangaDownloadService downloadService) {
         StringBuilder fileData = new StringBuilder();
         try {
             String path = Environment.getExternalStorageDirectory() + "/dump-temp.txt";
@@ -83,17 +89,33 @@ public class DownloadsDumpService {
 
         }
         String data = fileData.toString();
+        List<DownloadManager.Download> downloads = new ArrayList<>();
+        List<MangaDownloadService.MangaDownloadRequest> requests = new ArrayList<>();
+
         try {
             JSONArray array = new JSONArray(data);
-            array.isNull(0);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                MangaDownloadService.MangaDownloadRequest request = downloadService.obtainRequest();
+                jsonToRequest(jsonObject, request);
+                requests.add(request);
+                JSONArray jsonArray = jsonObject.getJSONArray(DOWNLOADS);
+                if (jsonArray != null) {
+                    for (int j = 0; j < jsonArray.length(); j++) {
+                        DownloadManager.Download download = downloadService.obtainDownload();
+                        jsonToDownload(jsonArray.getJSONObject(j), download);
+                        downloads.add(download);
+                    }
+                }
+
+            }
+            downloadService.restore(requests, downloads);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private static final String CURRENT_CHAPTER_IN_LIST = "CURRENT_CHAPTER_IN_LIST";
-    private static final String CURRENT_CHAPTER_NUMBER = "CURRENT_CHAPTER_NUMBER";
-    private static final String CURRENT_CHAPTER = "CURRENT_CHAPTER";
     private static final String MANGA = "MANGA";
     private static final String QUANTITY = "QUANTITY";
     private static final String WHICH_CHAPTERS = "WHICH_CHAPTERS";
@@ -103,12 +125,6 @@ public class DownloadsDumpService {
 
         int currentChapterInList = request.getCurrentChapterInList();
         jsonObject.put(CURRENT_CHAPTER_IN_LIST, currentChapterInList);
-
-        int currentChapterNumber = request.getCurrentChapterNumber();
-        jsonObject.put(CURRENT_CHAPTER_NUMBER, currentChapterNumber);
-
-        MangaChapter currentChapter = request.getCurrentChapter();
-        jsonObject.put(CURRENT_CHAPTER, mangaChapterToJSON(currentChapter));
 
         Manga manga = request.getManga();
         jsonObject.put(MANGA, mangaToJSON(manga));
@@ -120,6 +136,29 @@ public class DownloadsDumpService {
         jsonObject.put(WHICH_CHAPTERS, whichChapters);
 
         return jsonObject;
+    }
+
+    private void jsonToRequest(final JSONObject jsonObject, final MangaDownloadService.MangaDownloadRequest request) throws JSONException {
+        int currentChapterInList = jsonObject.getInt(CURRENT_CHAPTER_IN_LIST);
+        Manga manga = jsonToManga(jsonObject.getJSONObject(MANGA));
+        int quantity = jsonObject.getInt(QUANTITY);
+        JSONArray array = jsonObject.getJSONArray(WHICH_CHAPTERS);
+
+        List<Integer> whichChapters = new ArrayList<>(array.length());
+        for (int i = 0; i < array.length(); i++) {
+            whichChapters.add(array.getInt(i));
+        }
+
+        int currentImage = 0;
+        currentImage = jsonObject.getInt(CURRENT_IMAGE);
+        int currentImageQuantity = 0;
+        currentImageQuantity = jsonObject.getInt(CURRENT_IMAGE_QUANTITY);
+        request.setCurrentImage(currentImage);
+        request.setCurrentImageQuantity(currentImageQuantity);
+        request.setCurrentChapterInList(currentChapterInList);
+        request.setWhichChapters(whichChapters);
+        request.setQuantity(quantity);
+        request.setManga(manga);
     }
 
     private static final String URI = "URI";
@@ -151,6 +190,21 @@ public class DownloadsDumpService {
         jsonObject.put(ERROR_MESSAGE, errorMessage);
 
         return jsonObject;
+    }
+
+    private void jsonToDownload(final JSONObject jsonObject, final DownloadManager.Download download) throws JSONException {
+        String uri = jsonObject.getString(URI);
+        int size = jsonObject.getInt(SIZE);
+        DownloadManager.DownloadStatus status = DownloadManager.DownloadStatus.valueOf(jsonObject.getString(STATUS));
+        String filePath = jsonObject.getString(FILE_PATH);
+        int downloaded = jsonObject.getInt(DOWNLOADED);
+        String errorMessage = jsonObject.getString(ERROR_MESSAGE);
+        download.setUri(uri);
+        download.setSize(size);
+        download.setStatus(status);
+        download.setFilePath(filePath);
+        download.setDownloaded(downloaded);
+        download.setErrorMessage(errorMessage);
     }
 
     private static final String COVER_URI = "COVER_URI";
@@ -213,6 +267,48 @@ public class DownloadsDumpService {
         jsonObject.put(TITLE, title);
 
         return jsonObject;
+    }
+
+    private Manga jsonToManga(final JSONObject jsonObject) throws JSONException {
+
+        String uri =  jsonObject.getString(URI);
+        String coverUri = jsonObject.getString(COVER_URI);
+        String author = jsonObject.getString(AUTHOR);
+
+        int chaptersQuantity = jsonObject.getInt(CHAPTERS_QUANTITY);
+
+        String description = jsonObject.getString(DESCRIPTION);
+
+        JSONArray chapters = jsonObject.getJSONArray(CHAPTERS);
+        List<MangaChapter> mangaChapters = new ArrayList<>(chapters.length());
+        for (int i = 0; i < chapters.length(); i++) {
+            JSONObject chapter = chapters.getJSONObject(i);
+            mangaChapters.add(jsonToMangaChapter(chapter));
+        }
+
+        int id = jsonObject.getInt(ID);
+
+        RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(jsonObject.getString(REPOSITORY));
+
+        String title = jsonObject.getString(TITLE);
+
+        Manga manga = new Manga(title, uri, repository);
+        manga.setCoverUri(coverUri);
+        manga.setAuthor(author);
+        manga.setChaptersQuantity(chaptersQuantity);
+        manga.setDescription(description);
+        manga.setId(id);
+        manga.setChapters(mangaChapters);
+
+        return manga;
+    }
+
+    private MangaChapter jsonToMangaChapter(final JSONObject jsonObject) throws JSONException {
+        String uri = jsonObject.getString(URI);
+        int number = jsonObject.getInt(NUMBER);
+        String title = jsonObject.getString(TITLE);
+        MangaChapter mangaChapter = new MangaChapter(title, number, uri);
+        return mangaChapter;
     }
 
 }

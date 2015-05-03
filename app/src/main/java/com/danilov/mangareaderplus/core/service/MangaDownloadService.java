@@ -63,9 +63,6 @@ public class MangaDownloadService extends Service {
 
     private MangaDownloadRequest currentRequest;
 
-    private int currentImageQuantity;
-    private int currentImage;
-
     private HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
 
     private NotificationHelper helper = null;
@@ -105,6 +102,19 @@ public class MangaDownloadService extends Service {
         saveState();
     }
 
+    public void restore(final List<MangaDownloadRequest> requestList, final List<DownloadManager.Download> downloads) {
+        final Lock lock = downloadManager.getLock();
+        try {
+            downloadManager.setDownloads(downloads);
+            requests.addAll(requestList);
+            currentRequest = requests.peek();
+            currentRequest.setHasError(false);
+            downloadManager.restartError();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     private void saveState() {
         downloadManager.pauseDownload();
         final Lock lock = downloadManager.getLock();
@@ -123,6 +133,10 @@ public class MangaDownloadService extends Service {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         return Service.START_STICKY;
+    }
+
+    public DownloadManager.Download obtainDownload() {
+        return downloadManager.obtain();
     }
 
     private class MDownloadServiceBinder extends Binder {
@@ -259,6 +273,9 @@ public class MangaDownloadService extends Service {
 
         Pair pair = Pair.obtain(currentRequest, rqs);
 
+        int currentImage = currentRequest.getCurrentImage();
+        int currentImageQuantity = currentRequest.getCurrentImageQuantity();
+
         Message message = Message.obtain();
         message.arg1 = currentImage;
         message.arg2 = currentImageQuantity;
@@ -289,6 +306,12 @@ public class MangaDownloadService extends Service {
         message.what = DownloadServiceHandler.ADD_DOWNLOAD;
         message.obj = new MangaDownloadRequest(manga, chapters);
         serviceHandler.sendMessage(message);
+    }
+
+
+
+    public MangaDownloadRequest obtainRequest() {
+        return new MangaDownloadRequest();
     }
 
     public void restartDownload() {
@@ -378,14 +401,16 @@ public class MangaDownloadService extends Service {
             }
             String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
             int i = 0;
-            currentImage = 0;
-            currentImageQuantity = urls.size();
+            int currentImage = 0;
+            int currentImageQuantity = urls.size();
             if (!new File(coverUri).exists()) {
                 if (manga.getCoverUri() != null) {
                     downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
                     currentImageQuantity++;
                 }
             }
+            currentRequest.setCurrentImage(currentImage);
+            currentRequest.setCurrentImageQuantity(currentImageQuantity);
             sendStatus();
             for (String url : urls) {
                 downloadManager.startDownload(url, chapterPath + i + ".png", curChapterNumber);
@@ -399,8 +424,6 @@ public class MangaDownloadService extends Service {
 
         private int currentChapterInList;
 
-        private int currentChapter;
-
         public int quantity;
 
         public Manga manga;
@@ -410,12 +433,21 @@ public class MangaDownloadService extends Service {
         private boolean hasError;
         private boolean isPaused = false;
 
+        private int currentImageQuantity;
+
+        private int currentImage;
+
+
         public synchronized void incCurChapter() {
             currentChapterInList++;
         }
 
         public synchronized int getCurrentChapterInList() {
             return currentChapterInList;
+        }
+
+        public MangaDownloadRequest() {
+
         }
 
         public MangaDownloadRequest(final Manga manga, final int from, final int to) {
@@ -430,7 +462,6 @@ public class MangaDownloadService extends Service {
             this.whichChapters = which;
             this.currentChapterInList = 0;
             this.quantity = which.size();
-            this.currentChapter = which.get(0);
         }
 
         public MangaDownloadRequest(final Manga manga, final List<Integer> whichChapters) {
@@ -438,7 +469,6 @@ public class MangaDownloadService extends Service {
             this.whichChapters = whichChapters;
             this.currentChapterInList = 0;
             this.quantity = whichChapters.size();
-            this.currentChapter = whichChapters.get(0);
         }
 
         public MangaChapter getCurrentChapter() {
@@ -477,6 +507,37 @@ public class MangaDownloadService extends Service {
             this.isPaused = isPaused;
         }
 
+        public int getCurrentImage() {
+            return currentImage;
+        }
+
+        public void setCurrentImage(final int currentImage) {
+            this.currentImage = currentImage;
+        }
+
+        public int getCurrentImageQuantity() {
+            return currentImageQuantity;
+        }
+
+        public void setCurrentImageQuantity(final int currentImageQuantity) {
+            this.currentImageQuantity = currentImageQuantity;
+        }
+
+        public void setManga(final Manga manga) {
+            this.manga = manga;
+        }
+
+        public void setWhichChapters(final List<Integer> whichChapters) {
+            this.whichChapters = whichChapters;
+        }
+
+        public void setQuantity(final int quantity) {
+            this.quantity = quantity;
+        }
+
+        public void setCurrentChapterInList(final int currentChapterInList) {
+            this.currentChapterInList = currentChapterInList;
+        }
     }
 
     private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {
@@ -508,6 +569,8 @@ public class MangaDownloadService extends Service {
             currentSize = download.getSize();
             message.arg1 = currentSize;
             Pair pair = Pair.obtain();
+            int currentImage = currentRequest.getCurrentImage();
+            int currentImageQuantity = currentRequest.getCurrentImageQuantity();
             pair.first = currentImage;
             pair.second = currentImageQuantity;
             message.obj = pair;
@@ -520,7 +583,10 @@ public class MangaDownloadService extends Service {
 //                //TODO: tag = -1 will be applied for manga covers
 //                return;
 //            }
+            int currentImage = currentRequest.getCurrentImage();
+            int currentImageQuantity = currentRequest.getCurrentImageQuantity();
             currentImage++;
+            currentRequest.setCurrentImage(currentImage);
             if (currentImage == currentImageQuantity) {
                 if (currentRequest.currentChapterInList == currentRequest.quantity - 1) {
                     //go to next request

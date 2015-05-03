@@ -56,6 +56,15 @@ public class DownloadManager {
         }
     }
 
+    public void setDownloads(final List<Download> downloads) {
+        lock.lock();
+        try {
+            this.downloads.addAll(downloads);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     //holy shiiiet
     public Lock getLock() {
         return lock;
@@ -81,6 +90,10 @@ public class DownloadManager {
             lock.unlock();
         }
         return download;
+    }
+
+    public Download obtain() {
+        return pool.obtain();
     }
 
     public void cancelDownload(final Download download) {
@@ -440,6 +453,18 @@ public class DownloadManager {
 
         public void setTag(final Object tag) {
             this.tag = tag;
+        }
+
+        public void setSize(final int size) {
+            this.size = size;
+        }
+
+        public void setDownloaded(final int downloaded) {
+            this.downloaded = downloaded;
+        }
+
+        public void setErrorMessage(final String errorMessage) {
+            this.errorMessage = errorMessage;
         }
     }
 
