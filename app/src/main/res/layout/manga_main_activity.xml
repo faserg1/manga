@@ -50,19 +50,27 @@
                 android:layout_weight="1"
                 android:layout_height="fill_parent"
                 android:orientation="vertical">
+
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="150dp"
                     android:clickable="true"
-                    android:padding="15dp"
-                    android:background="@drawable/material_background"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:background="@drawable/selectable_item_background_black_origin">
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/material_background"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/profile_image"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="15dp"
                         android:src="@drawable/profile_stub"
                         app:border_width="2dp"
                         app:border_color="#ffffff"/>
@@ -70,6 +78,7 @@
                     <TextView
                         android:layout_toRightOf="@+id/profile_image"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginTop="15dp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
