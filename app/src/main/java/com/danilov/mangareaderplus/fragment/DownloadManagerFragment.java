@@ -19,6 +19,7 @@ import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.adapter.BaseAdapter;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
+import com.danilov.mangareaderplus.core.service.DownloadsDumpService;
 import com.danilov.mangareaderplus.core.service.MangaDownloadService;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.Pair;
@@ -121,6 +122,9 @@ public class DownloadManagerFragment extends BaseFragment {
 
         showPauseBtn();
 
+        //TODO: show breadcrumb
+        DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
+        downloadsDumpService.unDump();
     }
 
     @Override
