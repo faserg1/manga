@@ -18,7 +18,7 @@
             android:layout_width="260dp"
             android:layout_height="fill_parent"
             android:orientation="vertical"
-            android:background="#bb1b1b1b"
+            android:background="#ffffff"
             android:layout_gravity="start"
             android:gravity="start">
 
@@ -27,7 +27,7 @@
                 android:layout_height="100dp"
                 android:padding="15dp"
                 android:clickable="true"
-                android:background="@drawable/selectable_item_background_black_origin">
+                android:background="@drawable/material_background">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -36,7 +36,7 @@
                     android:layout_height="70dp"
                     android:src="@drawable/profile_stub"
                     app:border_width="2dp"
-                    app:border_color="#e6717171"/>
+                    app:border_color="#ffffff"/>
 
                 <TextView
                     android:layout_toRightOf="@+id/profile_image"
@@ -52,12 +52,16 @@
                       android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:choiceMode="singleChoice"
-                      android:divider="#ff454546"
+                      android:divider="@null"
+                      android:dividerHeight="0dp"
                       android:cacheColorHint="#00000000"
-                      android:listSelector="@drawable/red_selector"
-                      android:dividerHeight="1dp"/>
+                      android:listSelector="@drawable/red_selector"/>
 
         </LinearLayout>
+
+        <View android:layout_height="fill_parent"
+              android:layout_width="1dp"
+              android:background="#ff828282"/>
 
         <!-- The main content view -->
         <FrameLayout

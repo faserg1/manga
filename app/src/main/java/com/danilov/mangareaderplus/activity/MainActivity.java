@@ -244,11 +244,11 @@ public class MainActivity extends BaseToolbarActivity {
     public static enum MainMenuItem {
 
         UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
-        SEARCH(R.drawable.ic_action_search, R.string.menu_search),
+        SEARCH(R.drawable.ic_action_search_black, R.string.menu_search),
         HISTORY(R.drawable.ic_action_time, R.string.menu_history),
-        FAVORITE(R.drawable.ic_action_important, R.string.menu_favorite),
+        FAVORITE(R.drawable.ic_action_important_black, R.string.menu_favorite),
         LOCAL(R.drawable.ic_action_downloads, R.string.menu_local),
-        DOWNLOAD_MANAGER(R.drawable.ic_download_manager, R.string.menu_download),
+        DOWNLOAD_MANAGER(R.drawable.ic_action_cloud, R.string.menu_download),
         SETTINGS(R.drawable.ic_action_settings, R.string.menu_settings);
 
         private int iconId;

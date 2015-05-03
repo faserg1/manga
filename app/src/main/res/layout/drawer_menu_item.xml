@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/icon"
             android:layout_centerVertical="true"
-            android:textColor="#ffffff"
+            android:textColor="#000000"
             android:textSize="16sp"/>
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
         android:background="@drawable/quantity_drawable"
         android:layout_toRightOf="@id/text"/>
 
