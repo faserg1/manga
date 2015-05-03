@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -53,6 +54,8 @@ public class DownloadManagerFragment extends BaseFragment {
     private ImageButton restartButton;
     private ImageButton pauseButton;
     private ImageButton skipButton;
+
+    private Button restoreButton;
 
     private ListView listView;
 
@@ -119,7 +122,17 @@ public class DownloadManagerFragment extends BaseFragment {
             }
 
         });
-
+        restoreButton = findViewById(R.id.restore);
+        restoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (service != null) {
+                    //TODO: show breadcrumb
+                    DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
+                    downloadsDumpService.unDump(service);
+                }
+            }
+        });
         showPauseBtn();
     }
 
@@ -268,10 +281,6 @@ public class DownloadManagerFragment extends BaseFragment {
             if (selectedChapters != null) {
                 startDownload(manga, selectedChapters);
                 i.removeExtra(Constants.SELECTED_CHAPTERS_KEY);
-            } else {
-                //TODO: show breadcrumb
-                DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
-                downloadsDumpService.unDump(service);
             }
 
         }

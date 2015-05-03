@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -112,6 +113,10 @@ public class DownloadsDumpService {
 
             }
             downloadService.restore(requests, downloads);
+            File file = new File(Environment.getExternalStorageDirectory() + "/dump-temp.txt");
+            if (file.exists()) {
+                file.delete();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

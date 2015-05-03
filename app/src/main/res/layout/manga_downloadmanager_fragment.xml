@@ -178,6 +178,14 @@
     <ListView
         android:id="@+id/download_queue"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="RESTORE STATE"
+        android:id="@+id/restore"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
