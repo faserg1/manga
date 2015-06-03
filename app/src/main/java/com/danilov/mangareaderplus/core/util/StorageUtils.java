@@ -125,8 +125,9 @@ public class StorageUtils {
 //            }
 //        }
         for (StorageInfo storageVolume : list) {
-            if ("/mnt/media_rw/MicroSD".equals(storageVolume.path)) {
-                storageVolume.path = "/storage/MicroSD";
+            String path = storageVolume.path;
+            if (path.startsWith("/mnt/media_rw/")) {
+                storageVolume.path = path.replace("/mnt/media_rw/", "/storage/");
             }
         }
         return list;
