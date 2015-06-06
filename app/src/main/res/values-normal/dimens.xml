@@ -2,4 +2,5 @@
 <resources>
     <dimen name="viewer_slider_inner_width">250dp</dimen>
     <dimen name="viewer_slider_outer_width">300dp</dimen>
+    <dimen name="info_parallax_land_image_height">220dp</dimen>
 </resources>

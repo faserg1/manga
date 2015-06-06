@@ -181,14 +181,24 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         mangaCover.setTranslationX(leftDelta);
         mangaCover.setTranslationY(topDelta);
 
+        addToFavorites.setScaleX(0);
+        addToFavorites.setScaleY(0);
+        removeFromFavorites.setScaleX(0);
+        removeFromFavorites.setScaleY(0);
+
         final View body = findViewById(R.id.body);
         body.setAlpha(0);
         body.setTranslationY(200);
-        body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0);
+        body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(1).scaleX(1);
+                removeFromFavorites.animate().scaleY(1).scaleX(1);
+            }
+        });
 
         final ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
         if (bigView != null) {
-//            bigView.setAlpha(0);
             bigView.animate().setDuration(0).alpha(0).withEndAction(new Runnable() {
                 @Override
                 public void run() {

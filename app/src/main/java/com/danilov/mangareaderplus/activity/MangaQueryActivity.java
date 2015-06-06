@@ -249,12 +249,13 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Manga manga = adapter.getItem(i);
 
-        ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
-        int[] onScreenLocation = new int[2];
-        iv.getLocationOnScreen(onScreenLocation);
 
 
         Intent intent = new Intent(this, MangaInfoActivity.class);
+
+        ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
+        int[] onScreenLocation = new int[2];
+        iv.getLocationOnScreen(onScreenLocation);
 
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);

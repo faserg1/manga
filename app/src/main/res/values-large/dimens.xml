@@ -19,5 +19,6 @@
 
     <dimen name="alert_dialog_button_bar_height">48dip</dimen>
     <dimen name="info_parallax_image_height">320dp</dimen>
+    <dimen name="info_parallax_land_image_height">300dp</dimen>
 
 </resources>

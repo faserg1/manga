@@ -118,9 +118,24 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Manga manga = adapter.getItem(i);
+
         Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
+
+
+        ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
+        int[] onScreenLocation = new int[2];
+        iv.getLocationOnScreen(onScreenLocation);
+
+        intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
+        intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
+        intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, iv.getWidth());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
         startActivity(intent);
+
+        getActivity().overridePendingTransition(0, 0);
     }
 
     @Override

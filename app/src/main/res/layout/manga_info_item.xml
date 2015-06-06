@@ -14,6 +14,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -29,137 +30,144 @@
 
         </RelativeLayout>
 
-        <ImageView
-            android:src="@drawable/material_shadow"
-            android:layout_above="@+id/body"
-            android:layout_height="5dp"
-            android:layout_width="fill_parent"/>
-
         <LinearLayout
             android:id="@+id/body"
-            android:padding="10dp"
-            android:background="@android:color/white"
             android:orientation="vertical"
+            android:background="@android:color/white"
             android:layout_below="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--title-->
-            <LinearLayout android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="vertical"
-                          android:layout_marginBottom="10dp">
+            <ImageView
+                android:src="@drawable/material_shadow"
+                android:layout_height="5dp"
+                android:layout_marginTop="-5dp"
+                android:layout_width="fill_parent"/>
 
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:id="@+id/manga_title"
-                          android:textSize="25sp"
-                          android:fontFamily="sans-serif-light"
-                          android:singleLine="true"
-                          android:ellipsize="marquee"
-                          android:focusable="true"
-                          android:text="Attack On Titan"
-                          android:focusableInTouchMode="true"
-                          android:marqueeRepeatLimit="marquee_forever"
-                          android:scrollHorizontally="true"/>
-
-            </LinearLayout>
-
-            <!--cover and buttons-->
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="vertical">
+                android:padding="10dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <LinearLayout android:layout_width="fill_parent"
-                              android:layout_height="wrap_content"
-                              android:paddingLeft="5dp"
-                              android:orientation="horizontal"
-                              android:padding="10dp"
-                              android:clickable="true"
-                              android:background="@drawable/selectable_item_background">
-
-                    <TextView android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:textSize="15sp"
-                              android:text="@string/sv_chapters"/>
-
-                    <TextView android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:layout_marginLeft="5dp"
-                              android:textStyle="bold"
-                              android:textSize="15sp"
-                              android:id="@+id/chapters_quantity"/>
-
-                </LinearLayout>
-
-
-                <LinearLayout android:layout_width="fill_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/download"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:layout_weight="0.5"
-                        android:clickable="true"
-                        android:background="@drawable/selectable_item_background">
+                    <!--title-->
+                    <LinearLayout android:layout_width="fill_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="vertical"
+                                  android:layout_marginBottom="10dp">
 
                         <TextView android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:textSize="15sp"
-                                  android:text="@string/sv_download"/>
+                                  android:id="@+id/manga_title"
+                                  android:textSize="25sp"
+                                  android:fontFamily="sans-serif-light"
+                                  android:singleLine="true"
+                                  android:ellipsize="marquee"
+                                  android:focusable="true"
+                                  android:text="Attack On Titan"
+                                  android:focusableInTouchMode="true"
+                                  android:marqueeRepeatLimit="marquee_forever"
+                                  android:scrollHorizontally="true"/>
 
                     </LinearLayout>
 
+                    <!--cover and buttons-->
                     <LinearLayout
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:layout_width="2dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="vertical">
+
+                        <LinearLayout android:layout_width="fill_parent"
+                                      android:layout_height="wrap_content"
+                                      android:paddingLeft="5dp"
+                                      android:orientation="horizontal"
+                                      android:padding="10dp"
+                                      android:clickable="true"
+                                      android:background="@drawable/selectable_item_background">
+
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:textSize="15sp"
+                                      android:text="@string/sv_chapters"/>
+
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="15sp"
+                                      android:id="@+id/chapters_quantity"/>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout android:layout_width="fill_parent"
+                                      android:layout_height="wrap_content"
+                                      android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/download"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:layout_weight="0.5"
+                                android:clickable="true"
+                                android:background="@drawable/selectable_item_background">
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textSize="15sp"
+                                          android:text="@string/sv_download"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:paddingTop="5dp"
+                                android:paddingBottom="5dp"
+                                android:layout_width="2dp"
+                                android:layout_height="fill_parent">
+
+                                <View
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:background="#35000000"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10dp"
+                                android:layout_weight="0.5"
+                                android:clickable="true"
+                                android:id="@+id/read_online"
+                                android:background="@drawable/selectable_item_background">
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:textSize="15sp"
+                                          android:text="@string/sv_read_online"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout> <!--cover and buttons end-->
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
 
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            android:background="#35000000"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:layout_weight="0.5"
-                        android:clickable="true"
-                        android:id="@+id/read_online"
-                        android:background="@drawable/selectable_item_background">
-
-                        <TextView android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
+                        <TextView android:layout_width="fill_parent"
+                                  android:layout_height="fill_parent"
                                   android:textSize="15sp"
-                                  android:text="@string/sv_read_online"/>
+                                  android:id="@+id/manga_description"/>
 
                     </LinearLayout>
 
                 </LinearLayout>
-
-            </LinearLayout> <!--cover and buttons end-->
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-
-                <TextView android:layout_width="fill_parent"
-                          android:layout_height="fill_parent"
-                          android:textSize="15sp"
-                          android:id="@+id/manga_description"/>
-
-            </LinearLayout>
 
         </LinearLayout>
 
