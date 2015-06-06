@@ -204,6 +204,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         ViewV16.ViewPropertyAnimator pa = mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
                 .setInterpolator(new DecelerateInterpolator());
 
+        //TODO: android 2.3 fix
         final int version = Integer.valueOf(Build.VERSION.SDK);
         if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             pa.withEndAction(new Runnable() {
@@ -225,9 +226,13 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromFavorites);
         final ViewV16 body = ViewV16.wrap(findViewById(R.id.body));
 
+        mangaCover.animate().cancel();
+        addToFavorites.animate().cancel();
+        removeFromFavorites.animate().cancel();
+        body.animate().cancel();
+
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
-
 
         addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(new Runnable() {
             @Override
@@ -238,6 +243,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                     bigView.animate().setDuration(ANIM_DURATION).alpha(0);
                 }
 
+                //TODO: android 2.3 fix
                 final int version = Integer.valueOf(Build.VERSION.SDK);
                 if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                     ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(false);
