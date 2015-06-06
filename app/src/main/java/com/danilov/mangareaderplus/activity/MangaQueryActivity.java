@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -247,9 +248,24 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Manga manga = adapter.getItem(i);
+
+        ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
+        int[] onScreenLocation = new int[2];
+        iv.getLocationOnScreen(onScreenLocation);
+
+
         Intent intent = new Intent(this, MangaInfoActivity.class);
+
         intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
+        intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
+        intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, iv.getWidth());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+
         startActivity(intent);
+
+        overridePendingTransition(0, 0);
     }
 
     @Override

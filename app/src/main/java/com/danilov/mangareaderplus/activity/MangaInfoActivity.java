@@ -26,6 +26,11 @@ import java.util.List;
  */
 public class MangaInfoActivity extends BaseToolbarActivity implements RefreshableActivity {
 
+    public static final String EXTRA_LEFT = ".left";
+    public static final String EXTRA_TOP = ".top";
+    public static final String EXTRA_WIDTH = ".width";
+    public static final String EXTRA_HEIGHT = ".height";
+
     private final String TAG = "MangaInfoActivity";
     private AnimatedActionView refreshSign;
 
@@ -47,7 +52,11 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
         frame = (RelativeLayout) findViewById(R.id.frame);
         if (savedInstanceState == null) {
-            showInfoFragment();
+            top = getIntent().getIntExtra(EXTRA_TOP, 0);
+            left = getIntent().getIntExtra(EXTRA_LEFT, 0);
+            width = getIntent().getIntExtra(EXTRA_WIDTH, 0);
+            height = getIntent().getIntExtra(EXTRA_HEIGHT, 0);
+            showInfoFragment(true);
         } else {
             currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.frame);
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
@@ -65,15 +74,22 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    public void showInfoFragment() {
+    private int top;
+    private int left;
+    private int width;
+    private int height;
+
+    public void showInfoFragment(final boolean init) {
         Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (infoFragment == null) {
-            infoFragment = InfoFragment.newInstance(manga);
+            infoFragment = InfoFragment.newInstance(manga, left, top, width, height);
         }
         currentFragment = infoFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        if (!init) {
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
         fragmentTransaction.replace(R.id.frame, infoFragment).commit();
     }
 

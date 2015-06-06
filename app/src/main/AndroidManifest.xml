@@ -47,7 +47,8 @@
         <activity
             android:name="com.danilov.mangareaderplus.test.QueryTestActivity"
             android:label="Query Engine Test" />
-        <activity android:name="com.danilov.mangareaderplus.activity.MangaInfoActivity" />
+        <activity android:name="com.danilov.mangareaderplus.activity.MangaInfoActivity"
+            android:theme="@style/MangaTransparent"/>
         <activity android:name="com.danilov.mangareaderplus.activity.SingleFragmentActivity" />
         <activity
             android:name="com.danilov.mangareaderplus.test.LocalMangaActivity"

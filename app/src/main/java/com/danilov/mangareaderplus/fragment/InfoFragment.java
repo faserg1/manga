@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,6 +37,8 @@ import com.danilov.mangareaderplus.core.view.ScrollViewParallax;
 public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
     private final String TAG = "InfoFragment";
+
+    private long ANIM_DURATION = 500l;
 
     private MangaInfoActivity activity;
     private RefreshableActivity refreshable;
@@ -63,9 +67,18 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
     private OverXFlipper flipper;
 
-    public static InfoFragment newInstance(final Manga manga) {
+    private int left;
+    private int top;
+    private int width;
+    private int height;
+
+    public static InfoFragment newInstance(final Manga manga, final int left, final int top, final int width, final int height) {
         InfoFragment infoFragment = new InfoFragment();
         infoFragment.manga = manga;
+        infoFragment.top = top;
+        infoFragment.left = left;
+        infoFragment.width = width;
+        infoFragment.height = height;
         return infoFragment;
     }
 
@@ -74,6 +87,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.manga_info_item, container, false);
         return view;
     }
+
+    private boolean shown = false;
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
@@ -118,6 +133,72 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(alpha, baseColor));
             }
         });
+        if (savedInstanceState == null && !shown) {
+            mangaCover.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mangaCover.getViewTreeObserver().removeOnPreDrawListener(this);
+                    int[] onScreenLocation = new int[2];
+                    mangaCover.getLocationOnScreen(onScreenLocation);
+                    leftDelta = left - onScreenLocation[0];
+                    topDelta = top - onScreenLocation[1];
+                    widthScale = (float) width / mangaCover.getWidth();
+                    heightScale = (float) height / mangaCover.getHeight();
+                    runAnim();
+                    return true;
+                }
+            });
+        }
+        shown = true;
+    }
+
+    private float widthScale;
+    private float heightScale;
+    private int leftDelta;
+    private int topDelta;
+
+    private void runAnim() {
+
+        final long duration = (long) (ANIM_DURATION);
+
+        final ViewGroup header = findViewById(R.id.header);
+        ViewGroup p = header;
+
+//        while (p != null) {
+//            p.setClipChildren(false);
+//            Object parent = p.getParent();
+//            if (parent instanceof ViewGroup) {
+//                p = (ViewGroup) p.getParent();
+//            } else {
+//                p = null;
+//            }
+//        }
+
+        mangaCover.setPivotX(0);
+        mangaCover.setPivotY(0);
+        mangaCover.setScaleX(widthScale);
+        mangaCover.setScaleY(heightScale);
+        mangaCover.setTranslationX(leftDelta);
+        mangaCover.setTranslationY(topDelta);
+
+        final View body = findViewById(R.id.body);
+        body.setAlpha(0);
+        body.setTranslationY(200);
+        body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0);
+
+        final ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+        if (bigView != null) {
+//            bigView.setAlpha(0);
+            bigView.animate().setDuration(0).alpha(0).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    bigView.animate().setDuration(ANIM_DURATION).alpha(1);
+                }
+            });
+        }
+
+        mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
+                .setInterpolator(new DecelerateInterpolator());
     }
 
     private void loadMangaInfo(final Manga manga) {

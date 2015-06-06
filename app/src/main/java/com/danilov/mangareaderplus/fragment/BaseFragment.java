@@ -14,7 +14,7 @@ public class BaseFragment extends Fragment {
 
     protected SafeHandler handler = new SafeHandler();
 
-    protected <T> T findViewById(final int id) {
+    protected <T extends View> T findViewById(final int id) {
         return (T) view.findViewById(id);
     }
 

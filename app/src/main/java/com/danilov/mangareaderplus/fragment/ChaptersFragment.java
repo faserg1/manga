@@ -96,7 +96,7 @@ public class ChaptersFragment extends BaseFragment implements AdapterView.OnItem
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                activity.showInfoFragment();
+                activity.showInfoFragment(false);
             }
         });
         download.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +107,7 @@ public class ChaptersFragment extends BaseFragment implements AdapterView.OnItem
                 intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
                 intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
                 startActivity(intent);
-                activity.showInfoFragment();
+                activity.showInfoFragment(false);
             }
         });
         selectLast.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +147,7 @@ public class ChaptersFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public boolean onBackPressed() {
-        activity.showInfoFragment();
+        activity.showInfoFragment(false);
         return true;
     }
 

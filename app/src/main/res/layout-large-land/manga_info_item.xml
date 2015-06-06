@@ -29,7 +29,9 @@
                   android:paddingBottom="5dp"
                   android:paddingLeft="55dp"
                   android:paddingRight="55dp"
+                  android:clipChildren="false"
                   android:paddingTop="?attr/actionBarSize">
+
 
                   <RelativeLayout
                       android:id="@+id/header"
