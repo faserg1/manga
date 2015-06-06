@@ -153,6 +153,12 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     }
 
     @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
     public void onBackPressed() {
         if (currentFragment.onBackPressed()) {
             return;

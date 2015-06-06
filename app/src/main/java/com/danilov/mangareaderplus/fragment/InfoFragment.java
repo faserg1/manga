@@ -161,19 +161,6 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
         final long duration = (long) (ANIM_DURATION);
 
-        final ViewGroup header = findViewById(R.id.header);
-        ViewGroup p = header;
-
-//        while (p != null) {
-//            p.setClipChildren(false);
-//            Object parent = p.getParent();
-//            if (parent instanceof ViewGroup) {
-//                p = (ViewGroup) p.getParent();
-//            } else {
-//                p = null;
-//            }
-//        }
-
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
         mangaCover.setScaleX(widthScale);
@@ -209,6 +196,39 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
         mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
                 .setInterpolator(new DecelerateInterpolator());
+    }
+
+    @Override
+    public boolean onBackPressed() {
+
+        final long duration = (long) (ANIM_DURATION);
+
+        mangaCover.setPivotX(0);
+        mangaCover.setPivotY(0);
+
+        final View body = findViewById(R.id.body);
+
+        addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                body.animate().setDuration(ANIM_DURATION).alpha(0).translationY(200);
+                final ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+                if (bigView != null) {
+                    bigView.animate().setDuration(ANIM_DURATION).alpha(0);
+                }
+
+                mangaCover.animate().setDuration(duration).scaleX(widthScale).scaleY(heightScale).translationX(leftDelta).translationY(topDelta)
+                        .setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        getActivity().finish();
+                    }
+                });
+
+            }
+        });
+        removeFromFavorites.animate().scaleY(0).scaleX(0);
+        return true;
     }
 
     private void loadMangaInfo(final Manga manga) {
