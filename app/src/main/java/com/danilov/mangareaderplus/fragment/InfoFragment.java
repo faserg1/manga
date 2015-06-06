@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,8 @@ import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
 import com.danilov.mangareaderplus.core.view.ScrollViewParallax;
+import com.danilov.mangareaderplus.core.view.ViewV16;
+import com.nineoldandroids.view.ViewHelper;
 
 /**
  * Created by Semyon on 09.11.2014.
@@ -161,6 +164,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
         final long duration = (long) (ANIM_DURATION);
 
+        final ViewV16 mangaCover = ViewV16.wrap(this.mangaCover);
+        final ViewV16 addToFavorites = ViewV16.wrap(this.addToFavorites);
+        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromFavorites);
+
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
         mangaCover.setScaleX(widthScale);
@@ -173,7 +180,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         removeFromFavorites.setScaleX(0);
         removeFromFavorites.setScaleY(0);
 
-        final View body = findViewById(R.id.body);
+        final ViewV16 body = ViewV16.wrap(findViewById(R.id.body));
         body.setAlpha(0);
         body.setTranslationY(200);
         body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0).withEndAction(new Runnable() {
@@ -184,7 +191,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             }
         });
 
-        final ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+        final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
         if (bigView != null) {
             bigView.animate().setDuration(0).alpha(0).withEndAction(new Runnable() {
                 @Override
@@ -194,8 +201,18 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             });
         }
 
-        mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
+        ViewV16.ViewPropertyAnimator pa = mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
                 .setInterpolator(new DecelerateInterpolator());
+
+        final int version = Integer.valueOf(Build.VERSION.SDK);
+        if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            pa.withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(true);
+                }
+            });
+        }
     }
 
     @Override
@@ -203,18 +220,27 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
         final long duration = (long) (ANIM_DURATION);
 
+        final ViewV16 mangaCover = ViewV16.wrap(this.mangaCover);
+        final ViewV16 addToFavorites = ViewV16.wrap(this.addToFavorites);
+        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromFavorites);
+        final ViewV16 body = ViewV16.wrap(findViewById(R.id.body));
+
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
 
-        final View body = findViewById(R.id.body);
 
         addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(new Runnable() {
             @Override
             public void run() {
                 body.animate().setDuration(ANIM_DURATION).alpha(0).translationY(200);
-                final ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+                final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
                 if (bigView != null) {
                     bigView.animate().setDuration(ANIM_DURATION).alpha(0);
+                }
+
+                final int version = Integer.valueOf(Build.VERSION.SDK);
+                if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(false);
                 }
 
                 mangaCover.animate().setDuration(duration).scaleX(widthScale).scaleY(heightScale).translationX(leftDelta).translationY(topDelta)
