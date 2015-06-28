@@ -75,6 +75,7 @@
             android:theme="@style/Theme.CustomPanel" />
 
         <service android:name="com.danilov.mangareaderplus.core.service.MangaDownloadService" />
+        <service android:name="com.danilov.mangareaderplus.core.service.MangaUpdateServiceNew" />
         <service
             android:name="com.danilov.mangareaderplus.core.service.MangaUpdateService"
             android:exported="false" >

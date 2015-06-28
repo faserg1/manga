@@ -7,6 +7,22 @@ import java.util.Date;
  */
 public class UpdatesElement {
 
+    public UpdatesElement() {
+    }
+
+    public UpdatesElement(final int id, final Manga manga, final int difference) {
+        this.id = id;
+        this.manga = manga;
+        this.difference = difference;
+    }
+
+    public UpdatesElement(final int id, final Manga manga, final Date timestamp, final int difference) {
+        this.manga = manga;
+        this.id = id;
+        this.timestamp = timestamp;
+        this.difference = difference;
+    }
+
     private Manga manga;
 
     private int id;

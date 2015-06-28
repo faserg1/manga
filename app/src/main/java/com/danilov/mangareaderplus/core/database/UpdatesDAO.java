@@ -149,14 +149,14 @@ public class UpdatesDAO {
         }
     }
 
-    public void addUpdatesElement(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
+    public long addUpdatesElement(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(TIMESTAMP, timestamp.getTime());
         cv.put(MANGA_ID, manga.getId());
         cv.put(DIFFERENCE, difference);
         try {
-            db.insertOrThrow(TABLE_NAME, null, cv);
+            return db.insertOrThrow(TABLE_NAME, null, cv);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
@@ -181,9 +181,9 @@ public class UpdatesDAO {
             }
             return updatesElement;
         } else {
-            addUpdatesElement(manga, difference, timestamp);
+            long id = addUpdatesElement(manga, difference, timestamp);
+            return new UpdatesElement((int) id, manga, timestamp, difference);
         }
-        return null;
     }
 
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {

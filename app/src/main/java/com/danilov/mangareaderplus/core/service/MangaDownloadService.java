@@ -152,11 +152,11 @@ public class MangaDownloadService extends Service {
 
     public static class MDownloadServiceConnection implements ServiceConnection {
 
-        private ServiceConnectionListener listener;
+        private ServiceConnectionListener<MangaDownloadService> listener;
         private MangaDownloadService service;
 
 
-        public MDownloadServiceConnection(final ServiceConnectionListener listener) {
+        public MDownloadServiceConnection(final ServiceConnectionListener<MangaDownloadService> listener) {
             this.listener = listener;
         }
 
@@ -339,14 +339,6 @@ public class MangaDownloadService extends Service {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.RESUME;
         serviceHandler.sendMessage(message);
-    }
-
-    public interface ServiceConnectionListener {
-
-        void onServiceConnected(final MangaDownloadService service);
-
-        void onServiceDisconnected(final MangaDownloadService service);
-
     }
 
     private class MangaDownloadThread extends Thread {

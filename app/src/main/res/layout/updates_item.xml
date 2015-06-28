@@ -10,21 +10,17 @@
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
 
-    <com.danilov.mangareaderplus.core.view.RippleView
+    <RelativeLayout
         android:id="@+id/ripple"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        app:rippleColorOne="@color/manga_main_orange"
-        app:rippleColorTwo="#ffe5000d"
-        app:backgroundColor="#fff"
-        app:fillOnEnd="false">
+        android:layout_height="95dp"
+        android:background="#fff">
 
         <!--card-->
         <RelativeLayout
             android:id="@+id/card_wrapper"
             android:layout_width="fill_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
+            android:layout_height="92dp"
             android:baselineAligned="false"
             android:background="@drawable/updates_item_background"
             android:paddingLeft="15dp"
@@ -61,6 +57,17 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
 
+            <ProgressBar
+                android:layout_marginRight="5dp"
+                android:indeterminate="true"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:id="@+id/progress_bar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/btn_separator"
+                android:layout_toStartOf="@+id/btn_separator"
+                android:layout_below="@+id/quantity_new"/>
+
             <View android:layout_width="0dp"
                   android:layout_height="fill_parent"
                   android:id="@+id/btn_separator"
@@ -87,7 +94,7 @@
             android:layout_height="@dimen/card_shadow"
             android:layout_width="fill_parent"/>
 
-    </com.danilov.mangareaderplus.core.view.RippleView>
+    </RelativeLayout>
 
 
 </RelativeLayout>

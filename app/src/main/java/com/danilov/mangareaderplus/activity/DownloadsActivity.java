@@ -20,6 +20,7 @@ import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.service.MangaDownloadService;
 import com.danilov.mangareaderplus.core.service.MangaDownloadService.MangaDownloadRequest;
+import com.danilov.mangareaderplus.core.service.ServiceConnectionListener;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.util.SafeHandler;
@@ -98,7 +99,7 @@ public class DownloadsActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new ServiceConnectionListener());
+        serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new DownloadServiceConnectionListener());
         serviceIntent = new Intent(this, MangaDownloadService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         Log.d(TAG, "Connecting to service");
@@ -216,7 +217,7 @@ public class DownloadsActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
-    private class ServiceConnectionListener implements MangaDownloadService.ServiceConnectionListener {
+    private class DownloadServiceConnectionListener implements ServiceConnectionListener<MangaDownloadService> {
 
         @Override
         public void onServiceConnected(final MangaDownloadService service) {

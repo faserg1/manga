@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.test;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Pair;
 
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.core.model.Manga;
@@ -37,12 +38,12 @@ public class Mock {
 
 
 
-    public static UpdatesElement getMockUpdate(final Context context) {
+    public static Pair<Manga, UpdatesElement> getMockUpdate(final Context context) {
         UpdatesElement updatesElement = new UpdatesElement();
         Manga manga = new Manga(context.getString(R.string.p_manga_new_chapters), "", RepositoryEngine.Repository.OFFLINE);
         updatesElement.setManga(manga);
         updatesElement.setDifference(25);
-        return updatesElement;
+        return new Pair<>(manga, updatesElement);
     }
 
 }
