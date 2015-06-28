@@ -60,14 +60,18 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
 
         parents = new ArrayList<>(storages.size());
         baseFolders = new ArrayList<>(storages.size());
-        for (StorageUtils.StorageInfo storageInfo : storages) {
-            if (!storageInfo.readonly) {
-                SDFile file = new SDFile(storageInfo.path);
-                file.setDisplayName("sdcard" + file.getName());
-                baseFolders.add(file);
-                parents.add(file.getParentFile());
-            }
-        }
+//        for (StorageUtils.StorageInfo storageInfo : storages) {
+//            if (!storageInfo.readonly) {
+//                SDFile file = new SDFile(storageInfo.path);
+//                file.setDisplayName("sdcard" + file.getName());
+//                baseFolders.add(file);
+//                parents.add(file.getParentFile());
+//            }
+//        }
+
+        File file = new File("/mnt/");
+        baseFolders.add(file);
+        parents.add(file.getParentFile());
 
 //        for (StorageHelper.StorageVolume storageVolume: storages) {
 //            SDFile file = new SDFile(storageVolume.file.toURI());
