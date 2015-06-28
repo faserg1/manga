@@ -122,6 +122,9 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 try {
                     activity.changeUpdatesQuantity(updates.size());
                     List<Manga> mangaList = mangaDAO.getFavorite();
+                    if (mangaList.isEmpty()) {
+                        return;
+                    }
                     MangaUpdateServiceNew.startUpdateList(getActivity(), mangaList);
                 } catch (DatabaseAccessException e) {
                     e.printStackTrace();
@@ -232,7 +235,10 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 holder.okBtn.setVisibility(View.VISIBLE);
                 holder.quantityNew.setVisibility(View.VISIBLE);
                 holder.progressBar.setVisibility(View.INVISIBLE);
-                holder.quantityNew.setText("" + element.getDifference());
+                Resources res = getResources();
+                int difference = element.getDifference();
+                String diff = res.getQuantityString(R.plurals.updates_plural, difference, difference);
+                holder.quantityNew.setText(diff);
             }
         }
 

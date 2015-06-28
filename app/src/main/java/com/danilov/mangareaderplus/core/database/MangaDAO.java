@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
@@ -144,6 +145,7 @@ public class MangaDAO {
         return mangaList;
     }
 
+    @NonNull
     public synchronized List<Manga> getFavorite() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         String selection = IS_FAVORITE + " = 1";
