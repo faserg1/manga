@@ -225,7 +225,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         public void onBindViewHolder(final Holder holder, final int position) {
             Pair<Manga, UpdatesElement> item = getItem(position);
             Manga manga = item.first;
-            UpdatesElement element = item.second;
+            final UpdatesElement element = item.second;
             holder.title.setText(manga.getTitle());
             if (element == null) {
                 holder.quantityNew.setVisibility(View.INVISIBLE);
@@ -233,6 +233,12 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 holder.progressBar.setVisibility(View.VISIBLE);
             } else {
                 holder.okBtn.setVisibility(View.VISIBLE);
+                holder.okBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        deleteUpdate(element);
+                    }
+                });
                 holder.quantityNew.setVisibility(View.VISIBLE);
                 holder.progressBar.setVisibility(View.INVISIBLE);
                 Resources res = getResources();
@@ -275,7 +281,13 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             e.printStackTrace();
         }
         if (updates != null) {
-            updates.remove(element);
+            for (int i = 0; i < updates.size(); i++) {
+                Pair<Manga, UpdatesElement> pair = updates.get(i);
+                if (element ==  pair.second) {
+                    updates.remove(i);
+                    break;
+                }
+            }
             adapter.notifyDataSetChanged();
             activity.changeUpdatesQuantity(updates.size());
         }

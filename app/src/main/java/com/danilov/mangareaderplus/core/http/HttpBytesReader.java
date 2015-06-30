@@ -66,7 +66,7 @@ public class HttpBytesReader {
             byte[] result = IoUtils.convertStreamToBytes(stream);
             return result;
         } catch (Exception e) {
-            throw new HttpRequestException(e.getMessage());
+            throw new HttpRequestException(e.getMessage() != null ? e.getMessage() : "Failed to read stream");
         }
     }
 }

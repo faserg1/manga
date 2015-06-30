@@ -83,7 +83,7 @@ public class HttpStreamReader {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             ExtendedHttpClient.releaseResponse(response);
-            throw new HttpRequestException(e.getMessage());
+            throw new HttpRequestException(e.getMessage() != null ? e.getMessage() : "Failed to read response");
         }
     }
 
@@ -108,7 +108,7 @@ public class HttpStreamReader {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             ExtendedHttpClient.releaseRequest(request);
-            throw new HttpRequestException(e.getMessage());
+            throw new HttpRequestException(e.getMessage() != null ? e.getMessage() : "Failed to create request");
         }
     }
 

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
+import com.danilov.mangareaderplus.core.database.MangaDAO;
 import com.danilov.mangareaderplus.core.database.UpdatesDAO;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.model.MangaChapter;
@@ -95,6 +96,7 @@ public class MangaUpdateServiceNew extends Service {
         @Override
         public void run() {
             UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
+            MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
             for (int i = 0; i < mangas.size(); i++) {
                 Pair<Manga, UpdatesElement> pair = mangas.get(i);
                 Manga manga = pair.first;
@@ -103,6 +105,11 @@ public class MangaUpdateServiceNew extends Service {
                 try {
                     updatedManga = updateInfo(manga);
                 } catch (UpdateException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    mangaDAO.update(updatedManga);
+                } catch (DatabaseAccessException e) {
                     e.printStackTrace();
                 }
                 int diff = (updatedManga != null ? (updatedManga.getChaptersQuantity() - startValue) : -1);
