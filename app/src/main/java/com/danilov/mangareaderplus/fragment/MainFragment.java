@@ -191,8 +191,33 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void updateUpdatingList(final List<Pair<Manga, UpdatesElement>> pairs) {
         updates.clear();
+
+        List<UpdatesElement> _updates = null;
+        try {
+            _updates = updatesDAO.getAllUpdates();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (_updates != null) {
+            for (UpdatesElement updatesElement : _updates) {
+                updates.add(new Pair<Manga, UpdatesElement>(updatesElement.getManga(), updatesElement));
+            }
+        }
         for (Pair<Manga, UpdatesElement> pair : pairs) {
-            updates.add(pair);
+            Manga manga = pair.first;
+            boolean hasInUpdated = false;
+            if (_updates != null) {
+                for (UpdatesElement updatesElement : _updates) {
+                    Manga m = updatesElement.getManga();
+                    if (m.getId() == manga.getId()) {
+                        hasInUpdated = true;
+                        break;
+                    }
+                }
+            }
+            if (!hasInUpdated) {
+                updates.add(pair);
+            }
         }
         adapter.notifyDataSetChanged();
     }

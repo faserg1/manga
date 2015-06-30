@@ -97,8 +97,8 @@ public class MangaUpdateServiceNew extends Service {
         public void run() {
             UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
             MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-            for (int i = 0; i < mangas.size(); i++) {
-                Pair<Manga, UpdatesElement> pair = mangas.get(i);
+            while (!mangas.isEmpty()) {
+                Pair<Manga, UpdatesElement> pair = mangas.remove(0);
                 Manga manga = pair.first;
                 int startValue = manga.getChaptersQuantity();
                 Manga updatedManga = null;
@@ -126,13 +126,6 @@ public class MangaUpdateServiceNew extends Service {
                     } catch (DatabaseAccessException e) {
                         e.printStackTrace();
                     }
-                }
-                if (el == null || el.getDifference() < 1) {
-                    mangas.remove(i);
-                    i--;
-                } else {
-                    Pair<Manga, UpdatesElement> pair1 = new Pair<>(manga, el);
-                    mangas.set(i, pair1);
                 }
                 notifyHandlers(MANGA_UPDATE_FINISHED, updatedManga, el != null ? el.getId() : -1, el != null ? el.getDifference() : -1);
             }
