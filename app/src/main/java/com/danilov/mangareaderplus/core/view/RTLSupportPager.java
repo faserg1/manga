@@ -2925,7 +2925,13 @@ public class RTLSupportPager extends ViewGroup {
     }
 
     public void setRTL(final boolean isRTL) {
+        int index = getIndex(mCurItem);
         this.isRTL = isRTL;
+        if (mAdapter != null) {
+            //если переходим в режим слева направо - нужно вычислить позицию в манге, а не в пейджере, т.е. сделать инверсию
+            setCurrentItem(index);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     public void setInitialMotionX(final float x) {

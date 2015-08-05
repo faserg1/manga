@@ -24,6 +24,7 @@ public class ApplicationSettings {
     private static final String FIRST_LAUNCH = "FL";
     private static final String TUTORIAL_MENU_PASSED_FIELD = "TMP";
     private static final String SHOW_VIEWER_BTNS_ALWAYS_FIELD = "SVBA";
+    private static final String IN_RTL_MODE_FIELD = "IRMF";
     private static final String MAIN_MENU_ITEM_FIELD = "MMI";
 
     private static ApplicationSettings instance;
@@ -42,7 +43,17 @@ public class ApplicationSettings {
 
     private boolean showViewerButtonsAlways;
 
+    private boolean isRTLMode;
+
     private String mainMenuItem;
+
+    public boolean isRTLMode() {
+        return isRTLMode;
+    }
+
+    public void setRTLMode(final boolean isRTLMode) {
+        this.isRTLMode = isRTLMode;
+    }
 
     public String getMainMenuItem() {
         return mainMenuItem;
@@ -128,6 +139,7 @@ public class ApplicationSettings {
         this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
         this.showViewerButtonsAlways = sharedPreferences.getBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, false);
+        this.isRTLMode = sharedPreferences.getBoolean(IN_RTL_MODE_FIELD, false);
         this.mainMenuItem = sharedPreferences.getString(MAIN_MENU_ITEM_FIELD, MainActivity.MainMenuItem.SEARCH.toString());
         if ("".equals(mangaDownloadBasePath)) {
             loadMangaBasePath();
@@ -157,8 +169,9 @@ public class ApplicationSettings {
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
         editor.putBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, showViewerButtonsAlways);
+        editor.putBoolean(IN_RTL_MODE_FIELD, isRTLMode);
         editor.putString(MAIN_MENU_ITEM_FIELD, mainMenuItem);
-        editor.commit();
+        editor.apply();
     }
 
 }

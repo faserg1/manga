@@ -65,14 +65,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private static final String URIS_KEY = "UK";
 
     private MangaViewPager mangaViewPager;
-    private View nextBtn;
-    private View prevBtn;
-    private View nextBtnBottom;
-    private View prevBtnBottom;
+    private TextView nextBtn;
+    private TextView prevBtn;
+    private TextView nextBtnBottom;
+    private TextView prevBtnBottom;
     private Spinner pageSpinner;
     private Spinner chapterSpinner;
     private ProgressBar imageProgressBar;
     private CheckBox showButtonsCheckbox;
+    private CheckBox rtlCheckbox;
     private Button nextChapter;
 
     private View drawerRightOffsetTop;
@@ -100,10 +101,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
         mangaViewPager.setFragmentManager(getSupportFragmentManager());
         mangaViewPager.setFactory(new SubsamplingImageViewFactory());
-        this.nextBtn = findViewById(R.id.nextBtn);
-        this.prevBtn = findViewById(R.id.prevBtn);
-        this.nextBtnBottom = findViewById(R.id.nextBtnBottom);
-        this.prevBtnBottom = findViewById(R.id.prevBtnBottom);
+        this.nextBtn = findViewWithId(R.id.nextBtn);
+        this.prevBtn = findViewWithId(R.id.prevBtn);
+        this.nextBtnBottom = findViewWithId(R.id.nextBtnBottom);
+        this.prevBtnBottom = findViewWithId(R.id.prevBtnBottom);
         this.pageSpinner = findViewWithId(R.id.imagePicker);
         this.chapterSpinner = findViewWithId(R.id.chapterPicker);
         this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
@@ -112,6 +113,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
         this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
+        this.rtlCheckbox = findViewWithId(R.id.rtl_checkbox);
         this.bottomBar = findViewWithId(R.id.bottom_bar);
         chapterSpinner.setOnItemSelectedListener(new ChapterSpinnerListener());
         pageSpinner.setOnItemSelectedListener(new ImageSpinnerListener());
@@ -127,7 +129,11 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         isTutorialPassed = settings.isTutorialViewerPassed();
         showTutorial(isTutorialPassed ? -1 : 1);
         this.showButtonsCheckbox.setChecked(settings.isShowViewerButtonsAlways());
+        isRTL = settings.isRTLMode();
+        this.rtlCheckbox.setChecked(isRTL);
+        setReadingMode(isRTL);
         this.showButtonsCheckbox.setOnCheckedChangeListener(this);
+        this.rtlCheckbox.setOnCheckedChangeListener(this);
         Intent intent = getIntent();
         if (savedInstanceState != null) {
             manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
@@ -172,7 +178,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private static final int HIDE_TIME_OFFSET = 2000;
     private static final int HIDE_TIME = 1000;
 
+    private boolean isHidden = false;
+
     private void hideBtns(final int offset) {
+        isHidden = true;
         Animation animation = new AlphaAnimation(1.f, 0.f);
         Animation animation1 = new AlphaAnimation(1.f, 0.f);
         Animation animation2 = new AlphaAnimation(1.f, 0.f);
@@ -196,6 +205,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     private void showBtns() {
+        isHidden = false;
         Animation animation = new AlphaAnimation(0.f, 1.f);
         Animation animation1 = new AlphaAnimation(0.f, 1.f);
         Animation animation2 = new AlphaAnimation(0.f, 1.f);
@@ -212,6 +222,23 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         prevBtnBottom.startAnimation(animation1);
         nextBtn.startAnimation(animation2);
         nextBtnBottom.startAnimation(animation3);
+    }
+
+    private boolean isRTL = false;
+    private void setReadingMode(final boolean isRTL) {
+        this.isRTL = isRTL;
+
+        final String btnForwardText = getString(R.string.btn_forward);
+        final String btnBackText = getString(R.string.btn_back);
+
+        this.nextBtnBottom.setText(isRTL ? btnBackText : btnForwardText);
+        this.nextBtn.setText(isRTL ? btnBackText : btnForwardText);
+        this.prevBtnBottom.setText(isRTL ? btnForwardText : btnBackText);
+        this.prevBtn.setText(isRTL ? btnForwardText : btnBackText);
+        if (isHidden) {
+            hideBtns(0);
+        }
+        mangaViewPager.setRTL(isRTL);
     }
 
     private void prepareOnlineManga() {
@@ -322,11 +349,19 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         switch (v.getId()) {
             case R.id.prevBtn:
             case R.id.prevBtnBottom:
-                onPrevious();
+                if (isRTL) {
+                    onNext();
+                } else {
+                    onPrevious();
+                }
                 break;
             case R.id.nextBtn:
             case R.id.nextBtnBottom:
-                onNext();
+                if (isRTL) {
+                    onPrevious();
+                } else {
+                    onNext();
+                }
                 break;
             case R.id.next_chapter:
                 int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
@@ -671,13 +706,22 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     @Override
-    public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-        settings.setShowViewerButtonsAlways(b);
-        settings.update(getApplicationContext());
-        if (b) {
-            showBtns();
-        } else {
-            hideBtns(0);
+    public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
+        switch (compoundButton.getId()) {
+            case R.id.rtl_checkbox:
+                settings.setRTLMode(isChecked);
+                settings.update(this);
+                setReadingMode(isChecked);
+                break;
+            case R.id.show_btns_checkbox:
+                settings.setShowViewerButtonsAlways(isChecked);
+                settings.update(getApplicationContext());
+                if (isChecked) {
+                    showBtns();
+                } else {
+                    hideBtns(0);
+                }
+                break;
         }
     }
 

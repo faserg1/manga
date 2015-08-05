@@ -209,6 +209,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
 
+                            <CheckBox
+                                android:layout_marginTop="5dp"
+                                android:textColor="#ffffffff"
+                                android:id="@+id/rtl_checkbox"
+                                android:text="@string/sv_toggle_rtl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
                         </LinearLayout>
 
                     </ScrollView>

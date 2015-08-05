@@ -103,7 +103,6 @@ public class MangaViewPager extends CompatPager {
     }
 
     private void init() {
-        setRTL(true);
         requestDisallowInterceptTouchEvent(true);
         super.setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
