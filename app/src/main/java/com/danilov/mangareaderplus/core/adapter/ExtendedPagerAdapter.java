@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.danilov.mangareaderplus.core.view.CompatPager;
+
 import java.util.List;
 
 /**
@@ -40,10 +42,10 @@ public abstract class ExtendedPagerAdapter<T> extends PagerAdapter {
         return this.mViews[position];
     }
 
-    protected ViewPager.OnPageChangeListener listener = null;
+    protected CompatPager.OnPageChangeListener listener = null;
 
-    public void subscribeToPageChangeEvent(final ViewPager viewPager) {
-        listener = new ViewPager.SimpleOnPageChangeListener() {
+    public void subscribeToPageChangeEvent(final CompatPager viewPager) {
+        listener = new CompatPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 ExtendedPagerAdapter.this.notifyPositionChange(position);

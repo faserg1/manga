@@ -12,6 +12,7 @@ import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.util.Promise;
+import com.danilov.mangareaderplus.core.view.CompatPager;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
@@ -23,7 +24,7 @@ import java.util.List;
  * This class handles showing pictures from web
  *
  */
-public class OnlineManga implements MangaShowStrategy, ViewPager.OnPageChangeListener {
+public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeListener {
 
     private static final String TAG = "OnlineManga";
 

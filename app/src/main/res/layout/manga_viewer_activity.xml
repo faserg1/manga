@@ -16,6 +16,7 @@
         <com.danilov.mangareaderplus.core.view.MangaViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layoutDirection="rtl"
             android:id="@+id/imageSwitcher"/>
 
         <LinearLayout

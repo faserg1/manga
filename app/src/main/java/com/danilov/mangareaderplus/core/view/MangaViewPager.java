@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Created by Semyon on 17.03.2015.
  */
-public class MangaViewPager extends ViewPager {
+public class MangaViewPager extends CompatPager {
 
 
     private DownloadManager downloadManager = new DownloadManager();
@@ -46,7 +46,7 @@ public class MangaViewPager extends ViewPager {
     private Handler handler = new Handler();
 
 
-    private List<ViewPager.OnPageChangeListener> listeners = new LinkedList<>();
+    private List<CompatPager.OnPageChangeListener> listeners = new LinkedList<>();
 
     public MangaViewPager(final Context context) {
         super(context);
@@ -65,8 +65,8 @@ public class MangaViewPager extends ViewPager {
     public boolean onInterceptTouchEvent(final MotionEvent ev) {
         try {
             if (justChanged && ev.getAction() == MotionEvent.ACTION_MOVE) {
-                setMLastMotion(ev.getX() + 1, ev.getY());
-                setMInitialMotionX(ev.getX());
+                setLastMotion(ev.getX() + 1, ev.getY());
+                setInitialMotionX(ev.getX());
                 justChanged = false;
             }
             return super.onInterceptTouchEvent(ev);
@@ -103,6 +103,7 @@ public class MangaViewPager extends ViewPager {
     }
 
     private void init() {
+        setRTL(true);
         requestDisallowInterceptTouchEvent(true);
         super.setOnPageChangeListener(internalListener);
         cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
@@ -120,7 +121,7 @@ public class MangaViewPager extends ViewPager {
     }
 
     @Override
-    public void setOnPageChangeListener(final OnPageChangeListener listener) {
+    public void setOnPageChangeListener(final CompatPager.OnPageChangeListener listener) {
         listeners.add(listener);
     }
 
@@ -195,48 +196,6 @@ public class MangaViewPager extends ViewPager {
         }
     }
 
-    public void setMLastMotion(final float x, final float y) {
-
-        Class<?> klass = ViewPager.class;
-
-        Field field = null;
-        try {
-            field = klass.getDeclaredField("mLastMotionX");
-            field.setAccessible(true);
-            field.set(this, x);
-
-            field = klass.getDeclaredField("mLastMotionY");
-            field.setAccessible(true);
-            field.set(this, y);
-
-            field = klass.getDeclaredField("mVelocityTracker");
-            field.setAccessible(true);
-            VelocityTracker velocityTracker = (VelocityTracker) field.get(this);
-            if (velocityTracker != null) {
-                velocityTracker.clear();
-                velocityTracker.recycle();
-                field.set(this, null);
-            }
-
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setMInitialMotionX(final float x) {
-
-        Class<?> klass = ViewPager.class;
-
-        Field field = null;
-        try {
-            field = klass.getDeclaredField("mInitialMotionX");
-            field.setAccessible(true);
-            field.set(this, x);
-
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void loadImage(final String url, final SubsamplingScaleImageView imageView, final TextView textView, final Button button) {
         if (!isOnline) {

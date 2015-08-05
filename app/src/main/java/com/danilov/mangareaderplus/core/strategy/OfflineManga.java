@@ -12,6 +12,7 @@ import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.util.Promise;
+import com.danilov.mangareaderplus.core.view.CompatPager;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 21.06.2014.
  */
-public class OfflineManga implements MangaShowStrategy, ViewPager.OnPageChangeListener {
+public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChangeListener {
 
     private static final String TAG = "OfflineManga";
 
