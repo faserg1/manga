@@ -39,7 +39,9 @@ import com.danilov.mangareaderplus.test.Mock;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
@@ -58,6 +60,8 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     private boolean firstLaunch;
 
     private MangaUpdateServiceNew service;
+
+    private ServiceConnection serviceConnection;
 
     private MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
     private UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
@@ -132,8 +136,18 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
 
-        Intent intent = new Intent(getActivity(), MangaUpdateServiceNew.class);
-        ServiceConnection serviceConnection = new MangaUpdateServiceNew.MUpdateServiceNewConnection(new ServiceConnectionListener<MangaUpdateServiceNew>() {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        getActivity().unbindService(serviceConnection);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        serviceConnection = new MangaUpdateServiceNew.MUpdateServiceNewConnection(new ServiceConnectionListener<MangaUpdateServiceNew>() {
             @Override
             public void onServiceConnected(final MangaUpdateServiceNew service) {
                 MainFragment.this.service = service;
@@ -145,8 +159,9 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 service.removeHandler(handler);
             }
         });
+        Intent intent = new Intent(getActivity(), MangaUpdateServiceNew.class);
         getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        super.onActivityCreated(savedInstanceState);
+        super.onResume();
     }
 
     @Override
@@ -180,6 +195,9 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 case MangaUpdateServiceNew.UPDATE_STARTED:
                     updateUpdatingList((List<Pair<Manga, UpdatesElement>>) msg.obj);
                     break;
+                case MangaUpdateServiceNew.MANGA_UPDATE_FAILED:
+                    mangaUpdateError((Manga) msg.obj);
+                    break;
                 case MangaUpdateServiceNew.MANGA_UPDATE_FINISHED:
                     updateManga((Manga) msg.obj, msg.arg1, msg.arg2);
                     break;
@@ -191,32 +209,34 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void updateUpdatingList(final List<Pair<Manga, UpdatesElement>> pairs) {
         updates.clear();
-
+        failedMangas.clear();
         List<UpdatesElement> _updates = null;
         try {
             _updates = updatesDAO.getAllUpdates();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        for (Pair<Manga, UpdatesElement> pair : pairs) {
+            updates.add(pair);
+        }
         if (_updates != null) {
             for (UpdatesElement updatesElement : _updates) {
-                updates.add(new Pair<Manga, UpdatesElement>(updatesElement.getManga(), updatesElement));
-            }
-        }
-        for (Pair<Manga, UpdatesElement> pair : pairs) {
-            Manga manga = pair.first;
-            boolean hasInUpdated = false;
-            if (_updates != null) {
-                for (UpdatesElement updatesElement : _updates) {
-                    Manga m = updatesElement.getManga();
-                    if (m.getId() == manga.getId()) {
-                        hasInUpdated = true;
-                        break;
+
+                boolean isUpdating = false;
+
+                for (Pair<Manga, UpdatesElement> pair : updates) {
+                    if (pair.first != null) {
+                        Manga manga1 = pair.first;
+                        Manga manga2 = updatesElement.getManga();
+                        if (manga1.getId() == manga2.getId()) {
+                            isUpdating = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!hasInUpdated) {
-                updates.add(pair);
+                if (!isUpdating) {
+                    updates.add(new Pair<Manga, UpdatesElement>(updatesElement.getManga(), updatesElement));
+                }
             }
         }
         adapter.notifyDataSetChanged();
@@ -231,12 +251,24 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                     Pair<Manga, UpdatesElement> newPair = new Pair<>(manga, new UpdatesElement(id, manga, diff));
                     updates.set(i, newPair);
                 } else {
-                    updates.remove(i);
+                    boolean hasError = failedMangas.contains(manga.getId());
+                    if (!hasError) {
+                        //если получение инфы о манге прошло нормально - удаляем из списка
+                        updates.remove(i);
+                    }
                 }
                 break;
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    private Set<Integer> failedMangas = new HashSet<>();
+
+    private void mangaUpdateError(final Manga manga) {
+        if (manga != null) {
+            failedMangas.add(manga.getId());
+        }
     }
 
     private class UpdatesAdapterNew extends BaseAdapter<Holder, Pair<Manga, UpdatesElement>> {
@@ -252,10 +284,14 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             Manga manga = item.first;
             final UpdatesElement element = item.second;
             holder.title.setText(manga.getTitle());
+
+            boolean hasError = failedMangas.contains(manga.getId());
+
             if (element == null) {
                 holder.quantityNew.setVisibility(View.INVISIBLE);
                 holder.okBtn.setVisibility(View.INVISIBLE);
-                holder.progressBar.setVisibility(View.VISIBLE);
+                //если есть ошибка, значит это уже обновили (с ошибкой), убираем прогрессбар
+                holder.progressBar.setVisibility(hasError ? View.INVISIBLE : View.VISIBLE);
             } else {
                 holder.okBtn.setVisibility(View.VISIBLE);
                 holder.okBtn.setOnClickListener(new View.OnClickListener() {
@@ -271,6 +307,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
                 String diff = res.getQuantityString(R.plurals.updates_plural, difference, difference);
                 holder.quantityNew.setText(diff);
             }
+            holder.failed.setVisibility(hasError ? View.VISIBLE : View.INVISIBLE);
         }
 
         @Override
@@ -287,12 +324,14 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         public ImageButton okBtn;
         public TextView title;
         public TextView quantityNew;
+        public TextView failed;
 
         protected Holder(final View v) {
             super(v);
             okBtn = (ImageButton) v.findViewById(R.id.ok_btn);
             title = (TextView) v.findViewById(R.id.title);
             quantityNew = (TextView) v.findViewById(R.id.quantity_new);
+            failed = (TextView) v.findViewById(R.id.failed);
             progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
         }
     }

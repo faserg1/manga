@@ -20,6 +20,7 @@ import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.model.UpdatesElement;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
+import com.danilov.mangareaderplus.core.util.Logger;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
 
@@ -33,13 +34,16 @@ import java.util.List;
  */
 public class MangaUpdateServiceNew extends Service {
 
-    private static final String TAG = "MangaUpdateServiceNew";
+    private static final Logger LOGGER = new Logger(MangaUpdateServiceNew.class);
+
+//    private static final String TAG = "MangaUpdateServiceNew";
     private static final String EXTRA_MANGA_LIST = "mangas";
 
     public static final int UPDATING_LIST = 0;
     public static final int MANGA_UPDATE_FINISHED = 1;
     public static final int UPDATE_STARTED = 2;
     public static final int UPDATE_FINISHED = 3;
+    public static final int MANGA_UPDATE_FAILED = 4;
 
     private boolean hasError = false;
     private UpdateThread updateThread = null;
@@ -105,12 +109,18 @@ public class MangaUpdateServiceNew extends Service {
                 try {
                     updatedManga = updateInfo(manga);
                 } catch (UpdateException e) {
-                    e.printStackTrace();
+                    LOGGER.i("Failed to update: " + e.getMessage(), e);
+                    notifyHandlers(
+                            MANGA_UPDATE_FAILED,
+                            manga
+                    );
                 }
-                try {
-                    mangaDAO.update(updatedManga);
-                } catch (DatabaseAccessException e) {
-                    e.printStackTrace();
+                if (updatedManga != null) {
+                    try {
+                        mangaDAO.update(updatedManga);
+                    } catch (DatabaseAccessException e) {
+                        LOGGER.e("Failed to update in database: " + e.getMessage(), e);
+                    }
                 }
                 int diff = (updatedManga != null ? (updatedManga.getChaptersQuantity() - startValue) : -1);
                 UpdatesElement el = null;
@@ -118,16 +128,21 @@ public class MangaUpdateServiceNew extends Service {
                     try {
                         el = updatesDAO.updateInfo(manga, diff, new Date());
                     } catch (DatabaseAccessException e) {
-                        e.printStackTrace();
+                        LOGGER.e("Failed to update differences info in database: " + e.getMessage(), e);
                     }
                 } else {
                     try {
                         el = updatesDAO.getUpdatesByManga(manga);
                     } catch (DatabaseAccessException e) {
-                        e.printStackTrace();
+                        LOGGER.e("Failed to get differences info from database: " + e.getMessage(), e);
                     }
                 }
-                notifyHandlers(MANGA_UPDATE_FINISHED, updatedManga, el != null ? el.getId() : -1, el != null ? el.getDifference() : -1);
+                notifyHandlers(
+                        MANGA_UPDATE_FINISHED,
+                        updatedManga != null ? updatedManga : manga,
+                        el != null ? el.getId() : -1,
+                        el != null ? el.getDifference() : -1
+                );
             }
             notifyHandlers(UPDATE_FINISHED, null);
             updateThread = null;
@@ -201,7 +216,7 @@ public class MangaUpdateServiceNew extends Service {
 
         @Override
         public void onServiceConnected(final ComponentName componentName, final IBinder iBinder) {
-            Log.d(TAG, "Service connected");
+            LOGGER.d("Service connected");
             if (listener != null) {
                 ServiceBinder binder = (ServiceBinder) iBinder;
                 service = binder.getService();
@@ -211,7 +226,7 @@ public class MangaUpdateServiceNew extends Service {
 
         @Override
         public void onServiceDisconnected(final ComponentName componentName) {
-            Log.d(TAG, "Service disconnected");
+            LOGGER.d("Service disconnected");
             if (listener != null) {
                 listener.onServiceDisconnected(service);
             }

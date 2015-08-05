@@ -19,6 +19,7 @@
     <color name="viewer_page_progress_text">#fff</color>
     <color name="viewer_spinner_default_color">#ff5287cb</color>
     <color name="viewer_spinner_pressed_color">#ff5ca6f4</color>
+    <color name="red">#ff0000</color>
 
 
 </resources>

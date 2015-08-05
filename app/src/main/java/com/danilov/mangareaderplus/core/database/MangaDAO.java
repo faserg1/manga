@@ -243,7 +243,7 @@ public class MangaDAO {
         return null;
     }
 
-    public void update(final Manga manga) throws DatabaseAccessException {
+    public void update(@NonNull final Manga manga) throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openWritable();
         try {
             ContentValues cv = new ContentValues();
