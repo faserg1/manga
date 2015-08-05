@@ -25,6 +25,7 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:src="@drawable/loading"
                 android:id="@+id/manga_cover"
                 android:scaleType="centerCrop"/>
 

@@ -2925,10 +2925,11 @@ public class RTLSupportPager extends ViewGroup {
     }
 
     public void setRTL(final boolean isRTL) {
+        //вычисляем, какой мы показываем логический элемент (например, картинка номер 0 в списке из 35 картинок в RTL имеет физический номер 34, т.е. mCurItem = 34, значит index = 0)
         int index = getIndex(mCurItem);
         this.isRTL = isRTL;
         if (mAdapter != null) {
-            //если переходим в режим слева направо - нужно вычислить позицию в манге, а не в пейджере, т.е. сделать инверсию
+            //говорим, какой логический элемент хотим показать
             setCurrentItem(index);
             mAdapter.notifyDataSetChanged();
         }

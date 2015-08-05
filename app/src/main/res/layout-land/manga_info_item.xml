@@ -10,6 +10,7 @@
     <ImageView
         android:id="@+id/very_big"
         android:scaleType="centerCrop"
+        android:src="#e5e5e5"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
@@ -42,6 +43,7 @@
                     android:id="@+id/manga_cover"
                     android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
+                    android:src="@drawable/loading"
                     android:scaleType="centerCrop"/>
 
             </RelativeLayout>
