@@ -13,7 +13,7 @@
         <item name="android:textSize">17sp</item>
         <item name="android:minWidth">100dp</item>
         <item name="android:textColor">#fff</item>
-        <item name="android:background">@drawable/background_orange</item>
+        <item name="android:background">@drawable/btn_beautiful</item>
     </style>
 
     <style name="Manga.ButtonBlue" parent="@android:style/Widget.Button">

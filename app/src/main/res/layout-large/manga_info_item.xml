@@ -105,22 +105,18 @@
                                   android:layout_height="wrap_content"
                                   android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:id="@+id/download"
+
+                        <Button
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="15dp"
+                            android:padding="10dp"
                             android:layout_weight="0.5"
                             android:clickable="true"
-                            android:background="@drawable/selectable_item_background">
-
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textSize="25sp"
-                                      android:text="@string/sv_download"/>
-
-                        </LinearLayout>
+                            android:id="@+id/download"
+                            android:text="@string/sv_download"
+                            android:textSize="25sp"
+                            style="@style/Manga.ButtonCommon"/>
 
                         <LinearLayout
                             android:paddingTop="5dp"
@@ -135,22 +131,18 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
+
+                        <Button
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:padding="15dp"
+                            android:padding="10dp"
                             android:layout_weight="0.5"
                             android:clickable="true"
                             android:id="@+id/read_online"
-                            android:background="@drawable/selectable_item_background">
-
-                            <TextView android:layout_width="wrap_content"
-                                      android:layout_height="wrap_content"
-                                      android:textSize="25sp"
-                                      android:text="@string/sv_read_online"/>
-
-                        </LinearLayout>
+                            android:text="@string/sv_read_online"
+                            android:textSize="25sp"
+                            style="@style/Manga.ButtonCommon"/>
 
                     </LinearLayout>
 

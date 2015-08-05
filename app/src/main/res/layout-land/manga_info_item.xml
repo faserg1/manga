@@ -123,7 +123,7 @@
                             android:id="@+id/download"
                             android:text="@string/sv_download"
                             android:textSize="15sp"
-                            android:background="@drawable/btn_o_drawable"/>
+                            style="@style/Manga.ButtonCommon"/>
 
 
                         <LinearLayout
@@ -149,7 +149,7 @@
                             android:id="@+id/read_online"
                             android:text="@string/sv_read_online"
                             android:textSize="15sp"
-                            android:background="@drawable/btn_o_drawable"/>
+                            style="@style/Manga.ButtonCommon"/>
 
                     </LinearLayout>
 
