@@ -118,7 +118,13 @@ public class StartUpdateService extends Service {
                         Context applicationContext = getApplicationContext();
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
                         sharedPreferences.edit().putLong(Constants.LAST_UPDATE_TIME, System.currentTimeMillis()).apply();
-                        new UpdatesNotificationHelper(applicationContext).buildNotification((Integer) msg.obj);
+
+                        Integer quantity = (Integer) msg.obj;
+                        if (quantity < 1) {
+                            return;
+                        }
+
+                        new UpdatesNotificationHelper(applicationContext).buildNotification(quantity);
                     }
                     break;
             }
