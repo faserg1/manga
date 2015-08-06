@@ -21,6 +21,7 @@ import com.danilov.mangareaderplus.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.util.IoUtils;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
+import com.danilov.mangareaderplus.core.util.Utils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -216,8 +217,11 @@ public class MangaViewPager extends CompatPager {
         bundle.path = path;
         bundle.donePath = donePath;
         bundle.restart = button;
-        imageBundleMap.put(path, bundle);
-        downloadManager.startDownload(url, path, path);
+
+        String tag = path + Utils.getRandomString(15);
+
+        imageBundleMap.put(tag, bundle);
+        downloadManager.startDownload(url, path, tag);
 
         downloadManager.setListener(downloadProgressListener);
     }
@@ -290,6 +294,9 @@ public class MangaViewPager extends CompatPager {
 
             ImageBundle imageBundle = imageBundleMap.get(download.getTag());
 
+            if (imageBundle == null) {
+                return;
+            }
 
             final String url = download.getUri();
             final SubsamplingScaleImageView iv = imageBundle.iv;

@@ -118,19 +118,6 @@
                                 android:textSize="15sp"
                                 style="@style/Manga.ButtonCommon"/>
 
-                            <LinearLayout
-                                android:paddingTop="5dp"
-                                android:paddingBottom="5dp"
-                                android:layout_width="2dp"
-                                android:layout_height="fill_parent">
-
-                                <View
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="fill_parent"
-                                    android:background="#35000000"/>
-
-                            </LinearLayout>
-
                             <Button
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

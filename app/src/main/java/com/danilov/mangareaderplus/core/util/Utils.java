@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Semyon Danilov on 18.05.2014.
@@ -128,6 +129,19 @@ public class Utils {
             return 0;
         }
         return 0;
+    }
+
+
+    private static final String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final Random random = new Random();
+    public static final String getRandomString(final int length) {
+
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(random.nextInt(characters.length()));
+        }
+        return new String(text);
     }
 
     public static RelativeLayout.LayoutParams getRightParam(final Context context, final Resources resources) {
