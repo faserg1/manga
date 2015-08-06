@@ -84,7 +84,7 @@ public class HistoryDAO {
             int id = cursor.getInt(idIndex);
             int chapter = cursor.getInt(chapterIndex);
             int page = cursor.getInt(pageIndex);
-            int dateMillis = cursor.getInt(dateIndex);
+            long dateMillis = cursor.getLong(dateIndex);
             Date date = new Date(dateMillis);
             historyElement = new HistoryElement(manga, isOnline, chapter, page);
             historyElement.setId(id);
@@ -121,7 +121,7 @@ public class HistoryDAO {
                 int id = cursor.getInt(idIndex);
                 int chapter = cursor.getInt(chapterIndex);
                 int page = cursor.getInt(pageIndex);
-                int dateMillis = cursor.getInt(dateIndex);
+                long dateMillis = cursor.getLong(dateIndex);
                 Manga manga = mangaDAO.getById(localId);
 
                 if (manga == null) {

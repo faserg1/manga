@@ -109,6 +109,9 @@ public class Utils {
     }
 
     public static <T> ArrayList<T> listToArrayList(final List<? extends T> oldList) {
+        if (oldList == null) {
+            return null;
+        }
         if (oldList instanceof ArrayList) {
             return (ArrayList) oldList;
         } else {

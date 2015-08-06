@@ -320,18 +320,18 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                                 case ERROR:
                                     break;
                                 case LAST_DOWNLOADED:
-                                    Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                                    onShowMessage("Последняя из скачанных");
                                 case SUCCESS:
                                     currentStrategy.showImage(currentImageNumber);
                                     break;
                                 case NOT_DOWNLOADED:
-                                    Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                                    onShowMessage("Эта глава не загружена");
                                     break;
                                 case NO_SUCH_CHAPTER:
-                                    Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                                    onShowMessage("Главы с таким номером нет");
                                     return null;
                                 case ALREADY_FINAL_CHAPTER:
-                                    Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                                    onShowMessage("Это последняя глава");
                                     return null;
                             }
                             return null;
@@ -340,6 +340,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                     });
                 }
                 return null;
+            }
+        });
+    }
+
+    private void onShowMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MangaViewerActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -595,16 +604,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                     public Object action(final MangaShowStrategy.Result result, final boolean success) {
                         switch (result) {
                             case LAST_DOWNLOADED:
-                                Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
+                                onShowMessage("Последняя из скачанных");
                                 break;
                             case NOT_DOWNLOADED:
-                                Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
+                                onShowMessage("Эта глава не загружена");
                                 return null;
                             case NO_SUCH_CHAPTER:
-                                Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
+                                onShowMessage("Главы с таким номером нет");
                                 return null;
                             case ALREADY_FINAL_CHAPTER:
-                                Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
+                                onShowMessage("Это последняя глава");
                                 return null;
                         }
                         currentStrategy.showImage(0);
