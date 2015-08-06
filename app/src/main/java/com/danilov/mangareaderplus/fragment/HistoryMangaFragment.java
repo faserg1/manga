@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +95,7 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
                 String _error = null;
                 try {
                     List<HistoryElement> history = getHistorySorted();
-                    if (history != null && !history.isEmpty()) {
+                    if (!history.isEmpty()) {
                         adapter = new HistoryMangaAdapter(context, history);
                     }
                 } catch (DatabaseAccessException e) {
@@ -230,11 +231,9 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         }
     }
 
+    @NonNull
     private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {
         List<HistoryElement> history = historyDAO.getMangaHistory();
-        if (history == null) {
-            return null;
-        }
         Collections.sort(history, new Comparator<HistoryElement>() {
             @Override
             public int compare(final HistoryElement l, final HistoryElement r) {

@@ -4,22 +4,30 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.model.HistoryElement;
 import com.danilov.mangareaderplus.core.model.Manga;
+import com.danilov.mangareaderplus.core.util.Logger;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Semyon Danilov on 02.10.2014.
  */
 public class HistoryDAO {
+
+    private static final Logger LOGGER = new Logger(HistoryDAO.class);
 
     private final static String TAG = "HistoryDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
@@ -36,6 +44,8 @@ public class HistoryDAO {
     private static final String IS_ONLINE = "is_online";
 
     public DatabaseHelper databaseHelper = null;
+
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     public HistoryDAO() {
         File externalStorageDir = Environment.getExternalStorageDirectory();
@@ -85,14 +95,18 @@ public class HistoryDAO {
         return historyElement;
     }
 
+    @NonNull
     public List<HistoryElement> getMangaHistory() throws DatabaseAccessException {
         SQLiteDatabase db = databaseHelper.openReadable();
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-        List<HistoryElement> mangaList = null;
+        List<HistoryElement> mangaList = Collections.emptyList();
+
+        final List<Integer> scheduledForDeletion = new LinkedList<>();
+
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return null;
+                return mangaList;
             }
             mangaList = new ArrayList<>(cursor.getCount());
             int idIndex = cursor.getColumnIndex(ID);
@@ -101,6 +115,7 @@ public class HistoryDAO {
             int pageIndex = cursor.getColumnIndex(PAGE);
             int dateIndex = cursor.getColumnIndex(DATE);
             int isOnlineIndex = cursor.getColumnIndex(IS_ONLINE);
+
             do {
                 int localId = cursor.getInt(localIdIndex);
                 int id = cursor.getInt(idIndex);
@@ -108,6 +123,13 @@ public class HistoryDAO {
                 int page = cursor.getInt(pageIndex);
                 int dateMillis = cursor.getInt(dateIndex);
                 Manga manga = mangaDAO.getById(localId);
+
+                if (manga == null) {
+                    //нет манги, надо удалить историю
+                    scheduledForDeletion.add(id);
+                    continue;
+                }
+
                 boolean isOnline = cursor.getInt(isOnlineIndex) == 1;
                 HistoryElement historyElement = new HistoryElement(manga, isOnline, chapter, page);
                 Date date = new Date(dateMillis);
@@ -118,7 +140,34 @@ public class HistoryDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (Integer id : scheduledForDeletion) {
+                    try {
+                        deleteHistoryById(id);
+                    } catch (DatabaseAccessException e) {
+                        LOGGER.e("Failed to delete manga history: " + e.getMessage(), e); //shit shit shit
+                    }
+                }
+            }
+        });
         return mangaList;
+    }
+
+    /**
+     * helper метод для удаления истории по ID, если вдруг осталась история без манги
+     * @param id
+     */
+    public void deleteHistoryById(final int id) throws DatabaseAccessException {
+        SQLiteDatabase db = databaseHelper.openWritable();
+        String selection = ID + " = ?";
+        String[] selectionArgs = new String[] {"" + id};
+        try {
+            db.delete(TABLE_NAME, selection, selectionArgs);
+        } catch (Exception e){
+            throw new DatabaseAccessException(e.getMessage());
+        }
     }
 
     public void deleteManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {

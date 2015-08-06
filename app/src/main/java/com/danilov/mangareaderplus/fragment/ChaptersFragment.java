@@ -102,6 +102,9 @@ public class ChaptersFragment extends BaseFragment implements AdapterView.OnItem
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                if (adapter == null) {
+                    return;
+                }
                 Intent intent = new Intent(activity, SingleFragmentActivity.class);
                 intent.putExtra(Constants.FRAGMENTS_KEY, SingleFragmentActivity.DOWNLOAD_MANAGER_FRAGMENT);
                 intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
