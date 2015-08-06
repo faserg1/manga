@@ -63,4 +63,8 @@
     <string name="error_while_update">Error while updating, try again later</string>
     <string name="sv_toggle_rtl">Read right to left</string>
     <string name="got_updates">Got updates: </string>
+
+
+
+    <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
 </resources>

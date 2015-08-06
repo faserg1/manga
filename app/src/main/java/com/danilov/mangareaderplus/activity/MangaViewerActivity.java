@@ -49,6 +49,9 @@ import com.danilov.mangareaderplus.core.util.Utils;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 import com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 
@@ -98,6 +101,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_viewer_activity);
+
+        //advertisment
+        adInit();
+
         this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
         mangaViewPager.setFragmentManager(getSupportFragmentManager());
         mangaViewPager.setFactory(new SubsamplingImageViewFactory());
@@ -284,6 +291,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             Log.d(TAG, "RESTORE CCN: " + _currentChapterNumber + " CIN: " + _currentImageNumber);
             currentStrategy.restoreState(uris, _currentChapterNumber, _currentImageNumber);
         }
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
         final boolean hasUrisLoaded = _hasUriLoaded;
@@ -295,7 +305,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             @Override
             public Promise<MangaShowStrategy.Result> action(final MangaShowStrategy.Result data, final boolean success) {
                 try {
-                    progressDialog.dismiss();
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
                     if (hasUrisLoaded) {
                         currentStrategy.showImage(currentImageNumber);
                     } else {
@@ -373,6 +385,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                 }
                 break;
             case R.id.next_chapter:
+                if (mInterstitialAd.isLoaded()) {
+//                    mInterstitialAd.show();
+                }
                 int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
                 showChapter(curChapter + 1);
                 break;
@@ -599,6 +614,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         try {
             Promise<MangaShowStrategy.Result> promise = currentStrategy.next();
             if (promise != null) {
+
+                //это значит, что мы показываем следующую главу
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                }
+
                 promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
                     @Override
                     public Object action(final MangaShowStrategy.Result result, final boolean success) {
@@ -628,7 +649,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
-        currentStrategy.destroy();
         int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
         int currentImageNumber = currentStrategy.getCurrentImageNumber();
         Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
@@ -662,6 +682,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             save();
             saved = true;
         }
+        currentStrategy.destroy();
         super.onDestroy();
     }
 
@@ -700,6 +721,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     @Override
     public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Loading chapter");
     }
 
@@ -803,6 +827,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    protected void onPause() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+        super.onPause();
+    }
+
     private void toggleFullscreen(final boolean fullscreen) {
         this.isFullscreen = fullscreen;
         boolean oldFullscreen = settings.isViewerFullscreen();
@@ -867,6 +900,31 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             return false;
         }
 
+    }
+
+
+
+    //ad routine
+
+    private InterstitialAd mInterstitialAd;
+
+    private void adInit() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+            }
+        });
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("EB1FD6B44B7963BCCA24AB79D46C7AD1")
+                .build();
+        mInterstitialAd.loadAd(adRequest);
     }
 
 }

@@ -66,8 +66,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         this.uris = uris;
         if (uris != null) {
             this.totalImages = uris.size();
+            mangaViewPager.setUris(uris);
         }
-        mangaViewPager.setUris(uris);
     }
 
     @Override
@@ -90,6 +90,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public Promise<Result> showChapter(final int i) throws ShowMangaException {
+        this.uris = null;
         int chapterNum = i < 0 ? 0 : i;
         int chaptersQuantity = manga.getChaptersQuantity();
         if (chaptersQuantity <= 0) {
@@ -110,12 +111,10 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
             @Override
             public void run() {
-                boolean _success = true;
                 try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
                 } catch (final Exception e) {
-                    _success = false;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -123,8 +122,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                             promise.finish(Result.ERROR, true);
                         }
                     });
+                    return;
                 }
-                final boolean success = _success;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -133,8 +132,10 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                         }
                         listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
                         updateObserver();
-                        mangaViewPager.setUris(uris);
-                        promise.finish(success ? Result.SUCCESS : Result.ERROR, true);
+                        if (uris != null) {
+                            mangaViewPager.setUris(uris);
+                        }
+                        promise.finish(Result.SUCCESS, true);
                     }
                 });
             }
