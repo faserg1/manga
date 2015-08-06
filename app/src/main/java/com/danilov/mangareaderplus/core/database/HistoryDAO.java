@@ -131,6 +131,11 @@ public class HistoryDAO {
                 }
 
                 boolean isOnline = cursor.getInt(isOnlineIndex) == 1;
+                if (!isOnline && !manga.isDownloaded()) {
+                    //это история для оффлайн, а её нет
+                    scheduledForDeletion.add(id);
+                    continue;
+                }
                 HistoryElement historyElement = new HistoryElement(manga, isOnline, chapter, page);
                 Date date = new Date(dateMillis);
                 historyElement.setId(id);

@@ -917,7 +917,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                 requestNewInterstitial();
             }
         });
-        requestNewInterstitial();
+//        requestNewInterstitial();
     }
 
     private void requestNewInterstitial() {
