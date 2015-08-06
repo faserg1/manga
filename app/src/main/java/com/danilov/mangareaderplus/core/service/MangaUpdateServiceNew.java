@@ -101,6 +101,9 @@ public class MangaUpdateServiceNew extends Service {
         public void run() {
             UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
             MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+
+            int updatesCount = 0;
+
             while (!mangas.isEmpty()) {
                 Pair<Manga, UpdatesElement> pair = mangas.remove(0);
                 Manga manga = pair.first;
@@ -143,8 +146,11 @@ public class MangaUpdateServiceNew extends Service {
                         el != null ? el.getId() : -1,
                         el != null ? el.getDifference() : -1
                 );
+                if (el != null && el.getDifference() > 0) {
+                    updatesCount++;
+                }
             }
-            notifyHandlers(UPDATE_FINISHED, null);
+            notifyHandlers(UPDATE_FINISHED, updatesCount);
             updateThread = null;
         }
 

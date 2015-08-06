@@ -17,6 +17,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -80,6 +81,18 @@
             android:name="com.danilov.mangareaderplus.core.service.MangaUpdateService"
             android:exported="false" >
         </service>
+
+        <service android:name=".core.service.StartUpdateService" android:enabled="true"/>
+
+        <receiver android:name=".core.receiver.AlarmReceiver"/>
+
+        <receiver android:name=".core.receiver.WIFIConnectionReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

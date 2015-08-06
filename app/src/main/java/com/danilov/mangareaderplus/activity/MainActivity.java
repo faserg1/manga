@@ -46,6 +46,8 @@ public class MainActivity extends BaseToolbarActivity {
 
     private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
 
+    public static final String PAGE = "PAGE";
+
     private UpdatesDAO updatesDAO = null;
 
     private View drawerLayout;
@@ -119,7 +121,13 @@ public class MainActivity extends BaseToolbarActivity {
             }
         } else {
             if (savedInstanceState == null) {
-                MainMenuItem item = MainMenuItem.valueOf(applicationSettings.getMainMenuItem());
+                String page = getIntent().getStringExtra(PAGE);
+                MainMenuItem item = MainMenuItem.UPDATES;
+                if (page == null || "".equals(page)) {
+                    item = MainMenuItem.valueOf(applicationSettings.getMainMenuItem());
+                } else {
+                    item = MainMenuItem.valueOf(page);
+                }
                 showPage(item);
             }
         }

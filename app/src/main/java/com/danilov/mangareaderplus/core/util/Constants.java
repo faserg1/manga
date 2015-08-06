@@ -1,5 +1,7 @@
 package com.danilov.mangareaderplus.core.util;
 
+import android.app.AlarmManager;
+
 /**
  * Created by Semyon Danilov on 16.05.2014.
  */
@@ -18,5 +20,9 @@ public class Constants {
     public static final String FROM_PAGE_KEY = "FPK";
     public static final String FRAGMENTS_KEY = "FK";
     public static final String SHOW_ONLINE = "SO";
+
+    public static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
+
+    public static final long UPDATES_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
 
 }
