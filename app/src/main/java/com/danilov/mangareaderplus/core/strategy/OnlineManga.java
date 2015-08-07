@@ -32,7 +32,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private InAndOutAnim prevImageAnim;
 
     private DownloadManager downloadManager;
-    private Handler handler;
 
     private Manga manga;
     private RepositoryEngine engine;
@@ -40,6 +39,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private int currentChapter;
     private int totalImages = 0;
     private List<String> uris = null;
+
+    private Handler handler = new Handler();
 
     private MangaShowObserver observer;
     private StrategyDelegate.MangaShowListener listener;
@@ -52,7 +53,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         this.mangaViewPager = mangaViewPager;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
-        this.handler = new Handler();
         mangaViewPager.setOnline(true);
         mangaViewPager.setOnPageChangeListener(this);
         this.downloadManager = new DownloadManager();
@@ -63,6 +63,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         this.currentChapter = chapter;
         this.savedCurrentImageNumber = image;
         this.mangaViewPager = mangaViewPager;
+        this.mangaViewPager.setOnline(true);
+        this.mangaViewPager.setOnPageChangeListener(this);
         this.uris = uris;
         if (uris != null) {
             this.totalImages = uris.size();
@@ -72,7 +74,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public void showImage(final int i) {
-        if (i == currentImageNumber || i >= uris.size() || i < 0) {
+        if (i >= uris.size() || i < 0) {
             return;
         }
         this.currentImageNumber = i;
@@ -82,7 +84,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     private void updateObserver() {
         if (observer != null) {
-            observer.onUpdate(this);
+            observer.onUpdate(OnlineManga.this);
         }
     }
 
@@ -112,20 +114,15 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
                 } catch (final Exception e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onShowChapter(Result.ERROR, e.getMessage());
-                        }
-                    });
+                    listener.onShowChapter(Result.ERROR, e.getMessage());
+                    return;
+                }
+                if (destroyed) {
                     return;
                 }
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (destroyed) {
-                            return;
-                        }
                         updateObserver();
                         if (uris != null) {
                             mangaViewPager.setUris(uris);
@@ -157,17 +154,10 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                 public void run() {
                     try {
                         engine.queryForChapters(manga);
-                        handler.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                if (destroyed) {
-                                    return;
-                                }
-                                listener.onInit(Result.SUCCESS, "");
-                            }
-
-                        });
+                        if (destroyed) {
+                            return;
+                        }
+                        listener.onInit(Result.SUCCESS, "");
                     } catch (RepositoryException e) {
                         Log.e(TAG, "Failed to load chapters: " + e.getMessage());
                         listener.onInit(Result.ERROR,  e.getMessage());

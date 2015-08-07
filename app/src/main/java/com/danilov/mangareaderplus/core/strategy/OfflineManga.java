@@ -1,5 +1,7 @@
 package com.danilov.mangareaderplus.core.strategy;
 
+import android.os.Handler;
+
 import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareaderplus.core.model.LocalManga;
@@ -43,8 +45,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         this.mangaViewPager = mangaViewPager;
         this.nextImageAnim = nextImageAnim;
         this.prevImageAnim = prevImageAnim;
-        mangaViewPager.setOnline(false);
-        mangaViewPager.setOnPageChangeListener(this);
     }
 
     @Override
@@ -73,12 +73,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         }
         mangaViewPager.setUris(uris);
         updateObserver();
-/*        Thread t = new Thread() {
-            @Override
-            public void run() {
-                Thread.sleep(5000);
-            }
-        }*/
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
     }
 
@@ -131,11 +125,13 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         this.uris = uris;
         this.mangaViewPager = mangaViewPager;
         this.mangaViewPager.setUris(uris);
+        this.mangaViewPager.setOnline(false);
+        this.mangaViewPager.setOnPageChangeListener(this);
     }
 
     @Override
     public void showImage(final int i) {
-        if (i == currentImageNumber || i >= uris.size() || i < 0) {
+        if (i >= uris.size() || i < 0) {
             return;
         }
         this.currentImageNumber = i;
@@ -143,10 +139,19 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         mangaViewPager.setCurrentItem(i);
     }
 
+    private Handler handler = new Handler();
+
     private void updateObserver() {
-        if (observer != null) {
-            observer.onUpdate(this);
-        }
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                if (observer != null) {
+                    observer.onUpdate(OfflineManga.this);
+                }
+            }
+
+        });
     }
 
     @Override

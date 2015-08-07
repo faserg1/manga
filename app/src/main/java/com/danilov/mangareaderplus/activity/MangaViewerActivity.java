@@ -660,24 +660,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     }
 
     // the part with MangaStrategyListener
-//    @Override
-//    public void onImageLoadStart(final MangaShowStrategy strategy) {
-//        imageProgressBar.setProgress(0);
-//        imageProgressBar.setMax(100);
-//        imageProgressBar.setVisibility(View.VISIBLE);
-//    }
-//
-//    @Override
-//    public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total) {
-//        imageProgressBar.setMax(total);
-//        imageProgressBar.setProgress(current);
-//    }
-//
-//    @Override
-//    public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
-//        imageProgressBar.setVisibility(View.GONE);
-//    }
-//
 //
 //    @Override
 //    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
