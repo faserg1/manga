@@ -20,7 +20,7 @@ public interface MangaShowStrategy {
 
     void next();
 
-    void initStrategy();
+    void initStrategy(final int chapter, final int image);
 
     void previous() throws ShowMangaException;
 

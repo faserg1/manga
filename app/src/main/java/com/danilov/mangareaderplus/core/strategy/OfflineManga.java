@@ -107,15 +107,22 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
-    public void initStrategy() {
+    public void initStrategy(final int chapter, final int image) {
         if (manga.getChapters() != null) {
             listener.onInit(Result.SUCCESS, "");
+        } else {
+            try {
+                engine.queryForChapters(manga);
+                listener.onInit(Result.SUCCESS, "");
+            } catch (Exception e) {
+                listener.onInit(Result.ERROR, e.getMessage());
+                return;
+            }
         }
-        try {
-            engine.queryForChapters(manga);
-            listener.onInit(Result.SUCCESS, "");
-        } catch (Exception e) {
-            listener.onInit(Result.ERROR, e.getMessage());
+        if (uris != null) {
+            showImage(image);
+        } else {
+            showChapter(chapter);
         }
     }
 

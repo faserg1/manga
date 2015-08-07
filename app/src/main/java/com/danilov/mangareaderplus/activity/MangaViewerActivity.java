@@ -292,35 +292,27 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     }
 
-    private boolean hasUrisLoaded = false;
-    private int currentChapterNumber = -1;
-    private int currentImageNumber = -1;
-
     private void init(final Bundle savedState) {
-        int _currentChapterNumber = fromChapter;
-        int _currentImageNumber = fromPage;
-        boolean _hasUriLoaded = false;
+        int currentChapterNumber = fromChapter;
+        int currentImageNumber = fromPage;
         if (savedState != null) {
-            _currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, -1);
-            _currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+            currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, -1);
+            currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
             ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
             if (chapters != null) {
                 manga.setChapters(chapters);
             }
             ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
-            _hasUriLoaded = uris != null;
-            Log.d(TAG, "RESTORE CCN: " + _currentChapterNumber + " CIN: " + _currentImageNumber);
-            strategy.restoreState(uris, _currentChapterNumber, _currentImageNumber, mangaViewPager);
+            Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
+            strategy.restoreState(uris, currentChapterNumber, currentImageNumber, mangaViewPager);
         }
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
-        hasUrisLoaded = _hasUriLoaded;
-        currentChapterNumber = _currentChapterNumber;
-        currentImageNumber = _currentImageNumber == -1 ? 0 : _currentImageNumber;
-        strategy.initStrategy();
+        currentImageNumber = currentImageNumber == -1 ? 0 : currentImageNumber;
+        strategy.initStrategy(currentChapterNumber, currentImageNumber);
     }
 
     @Override
@@ -341,7 +333,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             case LAST_DOWNLOADED:
                 onShowMessage("Последняя из скачанных");
             case SUCCESS:
-                strategy.showImage(currentImageNumber);
+                strategy.showImage(0);
                 break;
             case NOT_DOWNLOADED:
                 onShowMessage("Эта глава не загружена");
@@ -366,11 +358,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     public void onInit(final MangaShowStrategy.Result result, final String message) {
         if (progressDialog != null) {
             progressDialog.dismiss();
-        }
-        if (hasUrisLoaded) {
-            strategy.showImage(currentImageNumber);
-        } else {
-            strategy.showChapter(currentChapterNumber);
         }
     }
 

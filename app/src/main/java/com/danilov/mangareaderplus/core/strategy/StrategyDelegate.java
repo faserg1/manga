@@ -74,8 +74,8 @@ public class StrategyDelegate {
         return strategy.getChapterUris();
     }
 
-    public void initStrategy() {
-        strategy.initStrategy();
+    public void initStrategy(final int chapter, final int image) {
+        strategy.initStrategy(chapter, image);
     }
 
     public void next() {
