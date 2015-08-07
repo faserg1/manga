@@ -1,9 +1,7 @@
 package com.danilov.mangareaderplus.fragment;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -30,7 +27,6 @@ import com.danilov.mangareaderplus.core.database.MangaDAO;
 import com.danilov.mangareaderplus.core.database.UpdatesDAO;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.model.UpdatesElement;
-import com.danilov.mangareaderplus.core.service.MangaUpdateService;
 import com.danilov.mangareaderplus.core.service.MangaUpdateServiceNew;
 import com.danilov.mangareaderplus.core.service.ServiceConnectionListener;
 import com.danilov.mangareaderplus.core.util.Constants;
@@ -38,7 +34,6 @@ import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.test.Mock;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

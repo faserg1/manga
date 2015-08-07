@@ -2,7 +2,6 @@ package com.danilov.mangareaderplus.core.interfaces;
 
 import com.danilov.mangareaderplus.core.strategy.ShowMangaException;
 import com.danilov.mangareaderplus.core.strategy.StrategyDelegate;
-import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.List;

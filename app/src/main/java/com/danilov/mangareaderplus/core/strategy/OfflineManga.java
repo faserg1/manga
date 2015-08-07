@@ -9,7 +9,6 @@ import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.util.Pair;
-import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.view.CompatPager;
 import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;

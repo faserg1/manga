@@ -3,7 +3,6 @@ package com.danilov.mangareaderplus.core.repository;
 import android.content.Context;
 import android.util.Log;
 
-import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.application.MangaApplication;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
 import com.danilov.mangareaderplus.core.database.MangaDAO;

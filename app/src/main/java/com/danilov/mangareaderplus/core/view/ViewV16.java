@@ -1,15 +1,12 @@
 package com.danilov.mangareaderplus.core.view;
 
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.PropertyValuesHolder;
 import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;

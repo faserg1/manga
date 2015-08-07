@@ -8,20 +8,16 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Pair;
 
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
 import com.danilov.mangareaderplus.core.database.MangaDAO;
 import com.danilov.mangareaderplus.core.model.Manga;
-import com.danilov.mangareaderplus.core.model.UpdatesElement;
 import com.danilov.mangareaderplus.core.notification.UpdatesNotificationHelper;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.Logger;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
-import com.danilov.mangareaderplus.core.util.Utils;
 
 import java.util.List;
-import java.util.prefs.PreferenceChangeEvent;
 
 /**
  * Created by Semyon on 06.08.2015.

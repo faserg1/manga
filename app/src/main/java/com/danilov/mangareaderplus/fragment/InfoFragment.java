@@ -32,7 +32,6 @@ import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
 import com.danilov.mangareaderplus.core.view.ScrollViewParallax;
 import com.danilov.mangareaderplus.core.view.ViewV16;
-import com.nineoldandroids.view.ViewHelper;
 
 /**
  * Created by Semyon on 09.11.2014.
