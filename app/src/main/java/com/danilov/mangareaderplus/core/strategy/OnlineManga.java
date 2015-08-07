@@ -1,13 +1,11 @@
 package com.danilov.mangareaderplus.core.strategy;
 
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareaderplus.core.model.Manga;
-import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.service.DownloadManager;
@@ -43,7 +41,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private List<String> uris = null;
 
     private MangaShowObserver observer;
-    private MangaStrategyListener listener;
+    private StrategyDelegate.MangaShowListener listener;
 
     private boolean destroyed = false;
 
@@ -60,13 +58,14 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
-    public void restoreState(final List<String> uris, final int chapter, final int image) {
+    public void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
         this.currentChapter = chapter;
         this.savedCurrentImageNumber = image;
+        this.mangaViewPager = mangaViewPager;
         this.uris = uris;
         if (uris != null) {
             this.totalImages = uris.size();
-            mangaViewPager.setUris(uris);
+            this.mangaViewPager.setUris(uris);
         }
     }
 
@@ -89,65 +88,66 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private int savedCurrentImageNumber = 0;
 
     @Override
-    public Promise<Result> showChapter(final int i) throws ShowMangaException {
-        this.uris = null;
-        int chapterNum = i < 0 ? 0 : i;
-        int chaptersQuantity = manga.getChaptersQuantity();
-        if (chaptersQuantity <= 0) {
-            throw new ShowMangaException("No chapters to show");
-        }
-        final MangaChapter chapter = manga.getChapterByNumber(chapterNum);
-        final Promise<Result> promise = new Promise<Result>();
-        if (chapter == null) {
-            boolean isOnLastChapterAndTappedNext = currentChapter == (chaptersQuantity - 1) && chapterNum == chaptersQuantity;
-            promise.finish(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, true);
-            return promise;
-        }
-        this.currentChapter = chapterNum;
-        this.savedCurrentImageNumber = this.currentImageNumber;
-        this.currentImageNumber = -1;
-        listener.onChapterInfoLoadStart(this);
-        Thread thread = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    uris = engine.getChapterImages(chapter);
-                    totalImages = uris.size();
-                } catch (final Exception e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
-                            promise.finish(Result.ERROR, true);
-                        }
-                    });
-                    return;
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (destroyed) {
-                            return;
-                        }
-                        listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
-                        updateObserver();
-                        if (uris != null) {
-                            mangaViewPager.setUris(uris);
-                        }
-                        promise.finish(Result.SUCCESS, true);
-                    }
-                });
-            }
-        };
-        thread.start();
-        return promise;
+    public Promise<Result> showChapterOld(final int i) throws ShowMangaException {
+//        this.uris = null;
+//        int chapterNum = i < 0 ? 0 : i;
+//        int chaptersQuantity = manga.getChaptersQuantity();
+//        if (chaptersQuantity <= 0) {
+//            throw new ShowMangaException("No chapters to show");
+//        }
+//        final MangaChapter chapter = manga.getChapterByNumber(chapterNum);
+//        final Promise<Result> promise = new Promise<Result>();
+//        if (chapter == null) {
+//            boolean isOnLastChapterAndTappedNext = currentChapter == (chaptersQuantity - 1) && chapterNum == chaptersQuantity;
+//            promise.finish(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, true);
+//            return promise;
+//        }
+//        this.currentChapter = chapterNum;
+//        this.savedCurrentImageNumber = this.currentImageNumber;
+//        this.currentImageNumber = -1;
+//        listener.onChapterInfoLoadStart(this);
+//        Thread thread = new Thread() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    uris = engine.getChapterImages(chapter);
+//                    totalImages = uris.size();
+//                } catch (final Exception e) {
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            listener.onChapterInfoLoadEnd(OnlineManga.this, false, e.getMessage());
+//                            promise.finish(Result.ERROR, true);
+//                        }
+//                    });
+//                    return;
+//                }
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (destroyed) {
+//                            return;
+//                        }
+//                        listener.onChapterInfoLoadEnd(OnlineManga.this, true, "");
+//                        updateObserver();
+//                        if (uris != null) {
+//                            mangaViewPager.setUris(uris);
+//                        }
+//                        promise.finish(Result.SUCCESS, true);
+//                    }
+//                });
+//            }
+//        };
+//        thread.start();
+//        return promise;
+        return null;
     }
 
     @Override
-    public Promise<Result> next() throws ShowMangaException {
+    public Promise<Result> nextOld() throws ShowMangaException {
         if (currentImageNumber + 1 >= uris.size()) {
-            return showChapter(currentChapter + 1);
+            return showChapterOld(currentChapter + 1);
         }
         showImage(currentImageNumber + 1);
         return null;
@@ -159,7 +159,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
-    public Promise<Result> initStrategy() {
+    public Promise<Result> initStrategyOld() {
         final Promise<Result> promise = new Promise<Result>();
         if (manga.getChapters() != null) {
             promise.finish(Result.SUCCESS, true);
@@ -191,6 +191,21 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             t.start();
         }
         return promise;
+    }
+
+    @Override
+    public void showChapter(final int i) {
+
+    }
+
+    @Override
+    public void next() {
+
+    }
+
+    @Override
+    public void initStrategy() {
+
     }
 
     @Override
@@ -230,8 +245,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
-    public void setOnStrategyListener(final MangaStrategyListener mangaStrategyListener) {
-        this.listener = mangaStrategyListener;
+    public void setOnStrategyListener(final StrategyDelegate.MangaShowListener listener) {
+        this.listener = listener;
     }
 
     @Override

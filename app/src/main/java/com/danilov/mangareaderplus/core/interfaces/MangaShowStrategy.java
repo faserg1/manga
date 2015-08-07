@@ -1,7 +1,9 @@
 package com.danilov.mangareaderplus.core.interfaces;
 
 import com.danilov.mangareaderplus.core.strategy.ShowMangaException;
+import com.danilov.mangareaderplus.core.strategy.StrategyDelegate;
 import com.danilov.mangareaderplus.core.util.Promise;
+import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.List;
 
@@ -10,17 +12,23 @@ import java.util.List;
  */
 public interface MangaShowStrategy {
 
-    void restoreState(final List<String> uris, final int chapter, final int image);
+    void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager);
 
     void showImage(final int i);
 
-    Promise<Result> showChapter(final int i) throws ShowMangaException;
+    Promise<Result> showChapterOld(final int i) throws ShowMangaException;
 
-    Promise<Result> next() throws ShowMangaException;
+    Promise<Result> nextOld() throws ShowMangaException;
+
+    Promise<Result> initStrategyOld();
+
+    void showChapter(final int i);
+
+    void next();
+
+    void initStrategy();
 
     void previous() throws ShowMangaException;
-
-    Promise<Result> initStrategy();
 
     int getCurrentImageNumber();
 
@@ -34,7 +42,7 @@ public interface MangaShowStrategy {
 
     void setObserver(final MangaShowObserver observer);
 
-    void setOnStrategyListener(MangaStrategyListener mangaStrategyListener);
+    void setOnStrategyListener(final StrategyDelegate.MangaShowListener listener);
 
     void destroy();
 
@@ -50,18 +58,18 @@ public interface MangaShowStrategy {
         NOT_DOWNLOADED
     }
 
-    public interface MangaStrategyListener {
-
-        public void onImageLoadStart(final MangaShowStrategy strategy);
-
-        public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total);
-
-        public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
-
-        public void onChapterInfoLoadStart(final MangaShowStrategy strategy);
-
-        public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
-
-    }
+//    public interface MangaStrategyListener {
+//
+//        public void onImageLoadStart(final MangaShowStrategy strategy);
+//
+//        public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total);
+//
+//        public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
+//
+//        public void onChapterInfoLoadStart(final MangaShowStrategy strategy);
+//
+//        public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
+//
+//    }
 
 }

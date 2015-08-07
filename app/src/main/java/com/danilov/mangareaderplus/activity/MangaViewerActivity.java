@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +44,8 @@ import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.strategy.OfflineManga;
 import com.danilov.mangareaderplus.core.strategy.OnlineManga;
 import com.danilov.mangareaderplus.core.strategy.ShowMangaException;
+import com.danilov.mangareaderplus.core.strategy.StrategyDelegate;
+import com.danilov.mangareaderplus.core.strategy.StrategyHolder;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.Promise;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
@@ -58,7 +62,7 @@ import java.util.ArrayList;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends BaseToolbarActivity implements ViewPager.OnPageChangeListener, MangaShowObserver, MangaShowStrategy.MangaStrategyListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, StrategyDelegate.MangaShowListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -83,7 +87,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     private View drawerRightOffsetBottom;
     private View bottomBar;
 
-    private MangaShowStrategy currentStrategy;
+    private StrategyDelegate strategy;
+    private StrategyHolder strategyHolder;
     private Manga manga;
     private int fromChapter;
     private int fromPage;
@@ -167,14 +172,26 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
         InAndOutAnim prev = new InAndOutAnim(prevInAnim, prevOutAnim);
         prev.setDuration(150);
 
-        if (!showOnline) {
-            currentStrategy = new OfflineManga((LocalManga) manga, mangaViewPager, next, prev);
-        } else {
-            prepareOnlineManga();
-            currentStrategy = new OnlineManga(manga, mangaViewPager, next, prev);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (savedInstanceState != null) {
+            strategyHolder = (StrategyHolder) fragmentManager.getFragment(savedInstanceState, StrategyHolder.NAME);
         }
-        currentStrategy.setOnStrategyListener(this);
-        currentStrategy.setObserver(this);
+        if (strategyHolder == null) {
+            if (!showOnline) {
+                strategy = new StrategyDelegate(new OfflineManga((LocalManga) manga, mangaViewPager, next, prev));
+            } else {
+                prepareOnlineManga();
+                strategy =  new StrategyDelegate(new OnlineManga(manga, mangaViewPager, next, prev));
+            }
+
+            strategyHolder = StrategyHolder.newInstance(strategy);
+
+            fragmentManager.beginTransaction().add(strategyHolder, StrategyHolder.NAME).commit();
+        } else {
+            strategy = strategyHolder.getStrategyDelegate();
+        }
+
+        strategy.setObserver(this);
         init(savedInstanceState);
         closeKeyboard();
         if (!settings.isShowViewerButtonsAlways()) {
@@ -275,6 +292,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     }
 
+    private boolean hasUrisLoaded = false;
+    private int currentChapterNumber = -1;
+    private int currentImageNumber = -1;
+
     private void init(final Bundle savedState) {
         int _currentChapterNumber = fromChapter;
         int _currentImageNumber = fromPage;
@@ -289,71 +310,68 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
             _hasUriLoaded = uris != null;
             Log.d(TAG, "RESTORE CCN: " + _currentChapterNumber + " CIN: " + _currentImageNumber);
-            currentStrategy.restoreState(uris, _currentChapterNumber, _currentImageNumber);
+            strategy.restoreState(uris, _currentChapterNumber, _currentImageNumber, mangaViewPager);
         }
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
         progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
-        final boolean hasUrisLoaded = _hasUriLoaded;
-        final int currentChapterNumber = _currentChapterNumber;
-        final int currentImageNumber = _currentImageNumber == -1 ? 0 : _currentImageNumber;
+        hasUrisLoaded = _hasUriLoaded;
+        currentChapterNumber = _currentChapterNumber;
+        currentImageNumber = _currentImageNumber == -1 ? 0 : _currentImageNumber;
+        strategy.initStrategy();
+    }
 
-        currentStrategy.initStrategy().then(new Promise.Action<MangaShowStrategy.Result, Promise<MangaShowStrategy.Result>>() {
+    @Override
+    public void onShowImage() {
 
-            @Override
-            public Promise<MangaShowStrategy.Result> action(final MangaShowStrategy.Result data, final boolean success) {
-                try {
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
-                    }
-                    if (hasUrisLoaded) {
-                        currentStrategy.showImage(currentImageNumber);
-                    } else {
-                        return currentStrategy.showChapter(currentChapterNumber);
-                    }
-                } catch (ShowMangaException e) {
-                    Log.e(TAG, "Failed to show chapter: " + e.getMessage(), e);
-                }
-                return null;
-            }
+    }
 
-        }).then(new Promise.Action<Promise<MangaShowStrategy.Result>, Object>() {
+    @Override
+    public void onPreviousPicture() {
 
-            @Override
-            public Object action(final Promise<MangaShowStrategy.Result> promise, final boolean success) {
-                if (promise != null) {
-                    promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
+    }
 
-                        @Override
-                        public Object action(final MangaShowStrategy.Result result, final boolean success) {
-                            switch (result) {
-                                case ERROR:
-                                    break;
-                                case LAST_DOWNLOADED:
-                                    onShowMessage("Последняя из скачанных");
-                                case SUCCESS:
-                                    currentStrategy.showImage(currentImageNumber);
-                                    break;
-                                case NOT_DOWNLOADED:
-                                    onShowMessage("Эта глава не загружена");
-                                    break;
-                                case NO_SUCH_CHAPTER:
-                                    onShowMessage("Главы с таким номером нет");
-                                    return null;
-                                case ALREADY_FINAL_CHAPTER:
-                                    onShowMessage("Это последняя глава");
-                                    return null;
-                            }
-                            return null;
-                        }
+    @Override
+    public void onShowChapter(final MangaShowStrategy.Result result, final String message) {
+        switch (result) {
+            case ERROR:
+                break;
+            case LAST_DOWNLOADED:
+                onShowMessage("Последняя из скачанных");
+            case SUCCESS:
+                strategy.showImage(currentImageNumber);
+                break;
+            case NOT_DOWNLOADED:
+                onShowMessage("Эта глава не загружена");
+                break;
+            case NO_SUCH_CHAPTER:
+                onShowMessage("Главы с таким номером нет");
+                break;
+            case ALREADY_FINAL_CHAPTER:
+                onShowMessage("Это последняя глава");
+                break;
+        }
+    }
 
-                    });
-                }
-                return null;
-            }
-        });
+    @Override
+    public void onNext(@Nullable final Integer chapterNum) {
+        if (chapterNum != null) {
+            strategy.showImage(0);
+        }
+    }
+
+    @Override
+    public void onInit(final MangaShowStrategy.Result result, final String message) {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        if (hasUrisLoaded) {
+            strategy.showImage(currentImageNumber);
+        } else {
+            strategy.showChapter(currentChapterNumber);
+        }
     }
 
     private void onShowMessage(final String message) {
@@ -433,7 +451,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             if (imageNum < 0) {
                 imageNum = 0;
             }
-            currentStrategy.showImage(imageNum);
+            strategy.showImage(imageNum);
         }
 
         @Override
@@ -443,34 +461,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     private void showChapter(final int chapterNum) {
-        try {
-            currentStrategy.showChapter(chapterNum).then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-                @Override
-                public Object action(final MangaShowStrategy.Result data, final boolean success) {
-                    switch (data) {
-                        case ERROR:
-                            break;
-                        case LAST_DOWNLOADED:
-                            Toast.makeText(MangaViewerActivity.this, "Последняя из скачанных", Toast.LENGTH_LONG).show();
-                        case SUCCESS:
-                            currentStrategy.showImage(0);
-                            break;
-                        case NOT_DOWNLOADED:
-                            Toast.makeText(MangaViewerActivity.this, "Эта глава не загружена", Toast.LENGTH_LONG).show();
-                            break;
-                        case NO_SUCH_CHAPTER:
-                            Toast.makeText(MangaViewerActivity.this, "Главы с таким номером нет", Toast.LENGTH_LONG).show();
-                            return null;
-                        case ALREADY_FINAL_CHAPTER:
-                            Toast.makeText(MangaViewerActivity.this, "Это последняя глава", Toast.LENGTH_LONG).show();
-                            return null;
-                    }
-                    return null;
-                }
-            });
-        } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
+        strategy.showChapter(chapterNum);
     }
 
     @Override
@@ -604,66 +595,35 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     private void onPrevious() {
         try {
-            currentStrategy.previous();
+            strategy.previous();
         } catch (ShowMangaException e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     private void onNext() {
-        try {
-            Promise<MangaShowStrategy.Result> promise = currentStrategy.next();
-            if (promise != null) {
-
-                //это значит, что мы показываем следующую главу
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                }
-
-                promise.then(new Promise.Action<MangaShowStrategy.Result, Object>() {
-                    @Override
-                    public Object action(final MangaShowStrategy.Result result, final boolean success) {
-                        switch (result) {
-                            case LAST_DOWNLOADED:
-                                onShowMessage("Последняя из скачанных");
-                                break;
-                            case NOT_DOWNLOADED:
-                                onShowMessage("Эта глава не загружена");
-                                return null;
-                            case NO_SUCH_CHAPTER:
-                                onShowMessage("Главы с таким номером нет");
-                                return null;
-                            case ALREADY_FINAL_CHAPTER:
-                                onShowMessage("Это последняя глава");
-                                return null;
-                        }
-                        currentStrategy.showImage(0);
-                        return null;
-                    }
-                });
-            }
-        } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
+        strategy.next();
     }
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
-        int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
-        int currentImageNumber = currentStrategy.getCurrentImageNumber();
+        int currentChapterNumber = strategy.getCurrentChapterNumber();
+        int currentImageNumber = strategy.getCurrentImageNumber();
         Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-        outState.putInt(CURRENT_CHAPTER_KEY, currentStrategy.getCurrentChapterNumber());
-        outState.putInt(CURRENT_IMAGE_KEY, currentStrategy.getCurrentImageNumber());
+        outState.putInt(CURRENT_CHAPTER_KEY, strategy.getCurrentChapterNumber());
+        outState.putInt(CURRENT_IMAGE_KEY, strategy.getCurrentImageNumber());
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
 
         ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
         if (chapterList != null) {
             outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
         }
-        ArrayList<String> uris = Utils.listToArrayList(currentStrategy.getChapterUris());
+        ArrayList<String> uris = Utils.listToArrayList(strategy.getChapterUris());
         if (uris != null) {
             outState.putStringArrayList(URIS_KEY, uris);
         }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.putFragment(outState, StrategyHolder.NAME, strategyHolder);
         super.onSaveInstanceState(outState);
     }
 
@@ -682,17 +642,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
             save();
             saved = true;
         }
-        currentStrategy.destroy();
+//        strategy.destroy();
         super.onDestroy();
     }
 
     private void save() {
-        int currentChapterNumber = currentStrategy.getCurrentChapterNumber();
-        int currentImageNumber = currentStrategy.getCurrentImageNumber();
+        int currentChapterNumber = strategy.getCurrentChapterNumber();
+        int currentImageNumber = strategy.getCurrentImageNumber();
 
         HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
         try {
-            historyDAO.updateHistory(manga, currentStrategy.isOnline(), currentChapterNumber, currentImageNumber);
+            historyDAO.updateHistory(manga, strategy.isOnline(), currentChapterNumber, currentImageNumber);
         } catch (DatabaseAccessException e) {
             Log.e(TAG, "Failed to update history: " + e.getMessage());
         }
@@ -700,43 +660,43 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
     }
 
     // the part with MangaStrategyListener
-    @Override
-    public void onImageLoadStart(final MangaShowStrategy strategy) {
-        imageProgressBar.setProgress(0);
-        imageProgressBar.setMax(100);
-        imageProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total) {
-        imageProgressBar.setMax(total);
-        imageProgressBar.setProgress(current);
-    }
-
-    @Override
-    public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
-        imageProgressBar.setVisibility(View.GONE);
-    }
-
-
-    @Override
-    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Loading chapter");
-    }
-
-    @Override
-    public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
-        if (!success) {
-            String errorMsg = Utils.errorMessage(this, message, R.string.p_failed_to_load_chapter_info);
-            Utils.showToast(this, errorMsg);
-        }
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-    }
+//    @Override
+//    public void onImageLoadStart(final MangaShowStrategy strategy) {
+//        imageProgressBar.setProgress(0);
+//        imageProgressBar.setMax(100);
+//        imageProgressBar.setVisibility(View.VISIBLE);
+//    }
+//
+//    @Override
+//    public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total) {
+//        imageProgressBar.setMax(total);
+//        imageProgressBar.setProgress(current);
+//    }
+//
+//    @Override
+//    public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
+//        imageProgressBar.setVisibility(View.GONE);
+//    }
+//
+//
+//    @Override
+//    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
+//        if (progressDialog != null) {
+//            progressDialog.dismiss();
+//        }
+//        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Loading chapter");
+//    }
+//
+//    @Override
+//    public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
+//        if (!success) {
+//            String errorMsg = Utils.errorMessage(this, message, R.string.p_failed_to_load_chapter_info);
+//            Utils.showToast(this, errorMsg);
+//        }
+//        if (progressDialog != null) {
+//            progressDialog.dismiss();
+//        }
+//    }
 
     @Override
     public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
@@ -756,30 +716,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                 }
                 break;
         }
-    }
-
-    int pos = 0;
-
-    @Override
-    public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
-        if (pos != position) {
-            try {
-                currentStrategy.next();
-            } catch (ShowMangaException e) {
-                e.printStackTrace();
-            }
-            pos = position;
-        }
-    }
-
-    @Override
-    public void onPageSelected(final int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(final int state) {
-
     }
 
     // MangaStrategyListener realization end
@@ -829,11 +765,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
 
     @Override
     protected void onPause() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
+//        if (progressDialog != null) {
+//            progressDialog.dismiss();
+//            progressDialog = null;
+//        }
+        strategy.onPause();
         super.onPause();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        strategy.onResume(this);
     }
 
     private void toggleFullscreen(final boolean fullscreen) {
@@ -926,5 +868,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements ViewPage
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }
+
 
 }

@@ -66,4 +66,6 @@
     <string name="error_while_update">Ошибка при обновлении, повторите позже</string>
     <string name="sv_toggle_rtl">Читать справа налево</string>
     <string name="got_updates">Есть обновления: </string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
 </resources>
