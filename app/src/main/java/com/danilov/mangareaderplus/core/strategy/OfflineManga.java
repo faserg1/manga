@@ -33,8 +33,8 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     private boolean destroyed = false;
 
-    private int currentImageNumber = -1;
-    private int currentChapter = -1;
+    private int currentImageNumber = 0;
+    private int currentChapter = 0;
 
     private MangaShowObserver observer;
     private StrategyDelegate.MangaShowListener listener;
@@ -56,6 +56,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         }
         if (pair == null) {
             listener.onShowChapter(Result.NOT_DOWNLOADED, "");
+            return;
         }
         MangaChapter chapter = (MangaChapter) pair.first;
         boolean isLast = (boolean) pair.second;
@@ -64,11 +65,12 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         } else {
             this.currentChapter = chapterToShow;
         }
-        this.currentImageNumber = -1;
+        this.currentImageNumber = 0;
         try {
             uris = engine.getChapterImages(chapter);
         } catch (RepositoryException e) {
             listener.onShowChapter(Result.ERROR, e.getMessage());
+            return;
         }
         mangaViewPager.setUris(uris);
         updateObserver();
@@ -101,6 +103,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         if (currentImageNumber + 1 >= uris.size()) {
             //TODO: переход с 1 до 3 главы, если вторая не скачана - спрашивать юзера?
             showChapterFromNext();
+            return;
         }
         showImage(currentImageNumber + 1);
     }

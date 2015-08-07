@@ -34,7 +34,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     private Manga manga;
     private RepositoryEngine engine;
-    private int currentImageNumber = -1;
+    private int currentImageNumber = 0;
     private int currentChapter;
     private int totalImages = 0;
     private List<String> uris = null;
@@ -60,7 +60,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     @Override
     public void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
         this.currentChapter = chapter;
-        this.savedCurrentImageNumber = image;
         this.mangaViewPager = mangaViewPager;
         this.mangaViewPager.setOnline(true);
         this.mangaViewPager.setOnPageChangeListener(this);
@@ -87,8 +86,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         }
     }
 
-    private int savedCurrentImageNumber = 0;
-
     @Override
     public void showChapter(final int i) {
         this.uris = null;
@@ -96,15 +93,16 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         int chaptersQuantity = manga.getChaptersQuantity();
         if (chaptersQuantity <= 0) {
             listener.onShowChapter(Result.ERROR, "No chapters to show"); //TODO: replace with getString
+            return;
         }
         final MangaChapter chapter = manga.getChapterByNumber(chapterNum);
         if (chapter == null) {
             boolean isOnLastChapterAndTappedNext = currentChapter == (chaptersQuantity - 1) && chapterNum == chaptersQuantity;
             listener.onShowChapter(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, "");
+            return;
         }
         this.currentChapter = chapterNum;
-        this.savedCurrentImageNumber = this.currentImageNumber;
-        this.currentImageNumber = -1;
+        this.currentImageNumber = 0;
         Thread thread = new Thread() {
 
             @Override
@@ -138,6 +136,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     public void next() {
         if (currentImageNumber + 1 >= uris.size()) {
             showChapter(currentChapter + 1);
+            return;
         }
         showImage(currentImageNumber + 1);
     }
@@ -189,9 +188,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public int getCurrentImageNumber() {
-        if (currentImageNumber == -1) {
-            return savedCurrentImageNumber;
-        }
         return currentImageNumber;
     }
 

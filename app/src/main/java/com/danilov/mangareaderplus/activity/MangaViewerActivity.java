@@ -315,7 +315,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
 
     @Override
     public void onShowImage() {
-
+        //TODO: убрать Observer и получать инфу тут и в onShowChapter с onPreviousPicture
     }
 
     @Override
