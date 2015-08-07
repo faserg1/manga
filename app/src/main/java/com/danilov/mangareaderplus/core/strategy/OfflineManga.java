@@ -48,21 +48,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
-    public Promise<Result> initStrategyOld() {
-        return null;
-    }
-
-    @Override
-    public Promise<Result> showChapterOld(final int chapterToShow) throws ShowMangaException {
-        return null;
-    }
-
-    @Override
-    public Promise<Result> nextOld() throws ShowMangaException {
-        return null;
-    }
-
-    @Override
     public void showChapter(final int chapterToShow) {
         Pair pair = null;
         if (chapterToShow == -1) {

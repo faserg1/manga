@@ -16,12 +16,6 @@ public interface MangaShowStrategy {
 
     void showImage(final int i);
 
-    Promise<Result> showChapterOld(final int i) throws ShowMangaException;
-
-    Promise<Result> nextOld() throws ShowMangaException;
-
-    Promise<Result> initStrategyOld();
-
     void showChapter(final int i);
 
     void next();
