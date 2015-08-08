@@ -131,8 +131,6 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
         try {
             historyElement = historyDAO.getHistoryByManga(manga, false);
         } catch (DatabaseAccessException e) {
-            //TODO: auto stub
-            e.printStackTrace();
         }
 
         Intent intent = new Intent(getActivity(), MangaViewerActivity.class);

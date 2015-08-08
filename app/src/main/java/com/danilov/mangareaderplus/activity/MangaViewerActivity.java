@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -47,7 +46,6 @@ import com.danilov.mangareaderplus.core.strategy.StrategyHolder;
 import com.danilov.mangareaderplus.core.util.Constants;
 import com.danilov.mangareaderplus.core.util.ServiceContainer;
 import com.danilov.mangareaderplus.core.util.Utils;
-import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 import com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView;
 import com.google.android.gms.ads.AdListener;
@@ -341,6 +339,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     public void onNext(@Nullable final Integer chapterNum) {
         if (chapterNum != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            }
             strategy.showImage(0);
         }
     }
@@ -381,7 +382,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 break;
             case R.id.next_chapter:
                 if (mInterstitialAd.isLoaded()) {
-//                    mInterstitialAd.show();
+                    mInterstitialAd.show();
                 }
                 int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
                 showChapter(curChapter + 1);
@@ -558,7 +559,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             if (view != null) {
                 textView = (TextView) view;
             } else {
-                textView = (TextView) View.inflate(context, R.layout.chapter_or_page_spinner_item, null);
+                textView = (TextView) View.inflate(context, R.layout.chapter_or_page_spinner_item_selected, null);
             }
             textView.setText("" + (i + 1 + first));
             return textView;
@@ -805,7 +806,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 requestNewInterstitial();
             }
         });
-//        requestNewInterstitial();
+        requestNewInterstitial();
     }
 
     private void requestNewInterstitial() {

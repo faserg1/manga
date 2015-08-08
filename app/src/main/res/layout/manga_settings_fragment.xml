@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_download_path"
+            android:textStyle="bold"
             android:textColor="@color/text_view_normal"/>
 
         <LinearLayout
@@ -27,14 +28,18 @@
 
 
             <EditText
+                android:id="@+id/download_path"
                 android:inputType="none"
                 android:editable="false"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_view_normal"
+                android:singleLine="true"
                 android:lines="1"
-                android:id="@+id/download_path"/>
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:ellipsize="none"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -47,22 +52,26 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_main_page"
+            android:textStyle="bold"
             android:textColor="@color/text_view_normal"/>
 
         <Spinner
+            android:id="@+id/main_page_selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/main_page_selector"/>
+            android:layout_marginTop="15dp"
+            style="@style/Manga.Spinner"/>
 
 
         <CheckBox
-            android:layout_marginTop="10dp"
             android:id="@+id/show_viewer_controls"
-            android:text="@string/sv_always_show_viewer_controls"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/sv_always_show_viewer_controls"/>
 
     </LinearLayout>
 

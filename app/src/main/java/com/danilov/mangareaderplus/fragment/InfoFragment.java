@@ -21,8 +21,10 @@ import com.danilov.mangareaderplus.activity.MangaInfoActivity;
 import com.danilov.mangareaderplus.activity.MangaViewerActivity;
 import com.danilov.mangareaderplus.core.animation.OverXFlipper;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
+import com.danilov.mangareaderplus.core.database.HistoryDAO;
 import com.danilov.mangareaderplus.core.database.MangaDAO;
 import com.danilov.mangareaderplus.core.interfaces.RefreshableActivity;
+import com.danilov.mangareaderplus.core.model.HistoryElement;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
@@ -461,6 +463,19 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.read_online:
                 intent = new Intent(activity, MangaViewerActivity.class);
+
+                HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+                HistoryElement historyElement = null;
+                try {
+                    historyElement = historyDAO.getHistoryByManga(manga, false);
+                } catch (DatabaseAccessException e) {
+                }
+
+                if (historyElement != null) {
+                    intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
+                    intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
+                }
+
                 intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
                 startActivity(intent);
                 break;

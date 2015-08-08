@@ -118,7 +118,7 @@ public class SettingsFragment extends BaseFragment {
             if (view != null) {
                 textView = (TextView) view;
             } else {
-                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item, null);
+                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_dropdown, null);
             }
             String text = getActivity().getString(items[i].getStringId());
             textView.setText(text);
@@ -165,7 +165,7 @@ public class SettingsFragment extends BaseFragment {
             if (view != null) {
                 textView = (TextView) view;
             } else {
-                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item, null);
+                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_selected, null);
             }
             String text = getActivity().getString(items[i].getStringId());
             textView.setText(text);
