@@ -24,26 +24,18 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     private LocalManga manga;
     private MangaViewPager mangaViewPager;
-    private InAndOutAnim nextImageAnim;
-    private InAndOutAnim prevImageAnim;
 
     private RepositoryEngine engine = RepositoryEngine.Repository.OFFLINE.getEngine();
 
     private List<String> uris = null;
 
-    private boolean destroyed = false;
-
     private int currentImageNumber = 0;
     private int currentChapter = 0;
-
-    private MangaShowObserver observer;
     private StrategyDelegate.MangaShowListener listener;
 
-    public OfflineManga(final LocalManga manga, final MangaViewPager mangaViewPager, final InAndOutAnim nextImageAnim, final InAndOutAnim prevImageAnim) {
+    public OfflineManga(final LocalManga manga, final MangaViewPager mangaViewPager) {
         this.manga = manga;
         this.mangaViewPager = mangaViewPager;
-        this.nextImageAnim = nextImageAnim;
-        this.prevImageAnim = prevImageAnim;
     }
 
     @Override
@@ -73,7 +65,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             return;
         }
         mangaViewPager.setUris(uris);
-        updateObserver();
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
     }
 
@@ -144,24 +135,11 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             return;
         }
         this.currentImageNumber = i;
-        updateObserver();
         mangaViewPager.setCurrentItem(i);
+        this.listener.onShowImage(i);
     }
 
     private Handler handler = new Handler();
-
-    private void updateObserver() {
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                if (observer != null) {
-                    observer.onUpdate(OfflineManga.this);
-                }
-            }
-
-        });
-    }
 
     @Override
     public void previous() throws ShowMangaException {
@@ -187,18 +165,8 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
-    public void setObserver(final MangaShowObserver observer) {
-        this.observer = observer;
-    }
-
-    @Override
     public void setOnStrategyListener(final StrategyDelegate.MangaShowListener listener) {
         this.listener = listener;
-    }
-
-    @Override
-    public void destroy() {
-        this.destroyed = true;
     }
 
     @Override
@@ -222,7 +190,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     @Override
     public void onPageSelected(final int position) {
         this.currentImageNumber = position;
-        updateObserver();
+        this.listener.onShowImage(position);
     }
 
     @Override

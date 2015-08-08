@@ -35,7 +35,6 @@ import com.danilov.mangareaderplus.core.application.ApplicationSettings;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
 import com.danilov.mangareaderplus.core.database.HistoryDAO;
 import com.danilov.mangareaderplus.core.database.MangaDAO;
-import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareaderplus.core.model.LocalManga;
 import com.danilov.mangareaderplus.core.model.Manga;
@@ -60,7 +59,7 @@ import java.util.ArrayList;
 /**
  * Created by Semyon Danilov on 06.08.2014.
  */
-public class MangaViewerActivity extends BaseToolbarActivity implements MangaShowObserver, StrategyDelegate.MangaShowListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class MangaViewerActivity extends BaseToolbarActivity implements StrategyDelegate.MangaShowListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "MangaViewerActivity";
 
@@ -159,27 +158,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         fromPage = intent.getIntExtra(Constants.FROM_PAGE_KEY, -1);
         showOnline = intent.getBooleanExtra(Constants.SHOW_ONLINE, true);
 
-        //loading anims
-        Animation nextInAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_right);
-        Animation nextOutAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_left);
-        Animation prevInAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_in_left);
-        Animation prevOutAnim = AnimationUtils.loadAnimation(getBaseContext(), R.anim.slide_out_right);
-
-        InAndOutAnim next = new InAndOutAnim(nextInAnim, nextOutAnim);
-        next.setDuration(150);
-        InAndOutAnim prev = new InAndOutAnim(prevInAnim, prevOutAnim);
-        prev.setDuration(150);
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             strategyHolder = (StrategyHolder) fragmentManager.getFragment(savedInstanceState, StrategyHolder.NAME);
         }
         if (strategyHolder == null) {
             if (!showOnline) {
-                strategy = new StrategyDelegate(new OfflineManga((LocalManga) manga, mangaViewPager, next, prev));
+                strategy = new StrategyDelegate(new OfflineManga((LocalManga) manga, mangaViewPager));
             } else {
                 prepareOnlineManga();
-                strategy =  new StrategyDelegate(new OnlineManga(manga, mangaViewPager, next, prev));
+                strategy =  new StrategyDelegate(new OnlineManga(manga, mangaViewPager));
             }
 
             strategyHolder = StrategyHolder.newInstance(strategy);
@@ -189,7 +177,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
             strategy = strategyHolder.getStrategyDelegate();
         }
 
-        strategy.setObserver(this);
         init(savedInstanceState);
         closeKeyboard();
         if (!settings.isShowViewerButtonsAlways()) {
@@ -314,8 +301,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
     }
 
     @Override
-    public void onShowImage() {
+    public void onShowImage(final int number) {
         //TODO: убрать Observer и получать инфу тут и в onShowChapter с onPreviousPicture
+        update();
     }
 
     @Override
@@ -449,8 +437,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements MangaSho
         strategy.showChapter(chapterNum);
     }
 
-    @Override
-    public void onUpdate(final MangaShowStrategy strategy) {
+    public void update() {
         int currentChapter = strategy.getCurrentChapterNumber();
         int totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();

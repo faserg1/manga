@@ -33,11 +33,7 @@ public interface MangaShowStrategy {
 
     List<String> getChapterUris();
 
-    void setObserver(final MangaShowObserver observer);
-
     void setOnStrategyListener(final StrategyDelegate.MangaShowListener listener);
-
-    void destroy();
 
     boolean isOnline();
 

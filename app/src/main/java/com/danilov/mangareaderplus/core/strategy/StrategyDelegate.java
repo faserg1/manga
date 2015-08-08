@@ -50,16 +50,8 @@ public class StrategyDelegate {
         return strategy.isOnline();
     }
 
-    public void setObserver(final MangaShowObserver observer) {
-        strategy.setObserver(observer);
-    }
-
     public void previous() throws ShowMangaException {
         strategy.previous();
-    }
-
-    public void destroy() {
-        strategy.destroy();
     }
 
     public int getTotalChaptersNumber() {
@@ -89,14 +81,14 @@ public class StrategyDelegate {
     private MangaShowListener listenerWrapper = new MangaShowListener() {
 
         @Override
-        public void onShowImage() {
+        public void onShowImage(final int number) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (canHandle && listener != null) {
-                            listener.onShowImage();
+                            listener.onShowImage(number);
                     } else {
-                        delayedActions.add(new DelayedAction(ActionType.ON_SHOW_IMAGE));
+                        delayedActions.add(new DelayedAction(ActionType.ON_SHOW_IMAGE, number));
                     }
                 }
             });
@@ -162,7 +154,7 @@ public class StrategyDelegate {
 
     public interface MangaShowListener {
 
-        void onShowImage();
+        void onShowImage(final int pageNum);
 
         void onPreviousPicture();
 
@@ -178,7 +170,7 @@ public class StrategyDelegate {
 
         private ActionType type;
 
-        private Integer chapterNum;
+        private Integer number;
 
         private MangaShowStrategy.Result result;
         private String message;
@@ -193,15 +185,15 @@ public class StrategyDelegate {
             this.message = message;
         }
 
-        private DelayedAction(final ActionType type, final Integer chapterNum) {
+        private DelayedAction(final ActionType type, final Integer number) {
             this.type = type;
-            this.chapterNum = chapterNum;
+            this.number = number;
         }
 
         public void run() {
             switch (type) {
                 case ON_SHOW_IMAGE:
-                    listenerWrapper.onShowImage();
+                    listenerWrapper.onShowImage(number);
                     break;
                 case ON_PREVIOUS_PICTURE:
                     listenerWrapper.onPreviousPicture();
@@ -210,7 +202,7 @@ public class StrategyDelegate {
                     listenerWrapper.onShowChapter(result, message);
                     break;
                 case ON_NEXT:
-                    listenerWrapper.onNext(chapterNum);
+                    listenerWrapper.onNext(number);
                     break;
                 case ON_INIT:
                     listenerWrapper.onInit(result, message);

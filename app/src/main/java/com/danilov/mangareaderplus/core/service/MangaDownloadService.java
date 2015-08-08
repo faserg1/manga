@@ -108,6 +108,9 @@ public class MangaDownloadService extends Service {
         try {
             downloadManager.setDownloads(downloads);
             requests.addAll(requestList);
+            if (requests.isEmpty()) {
+                return;
+            }
             currentRequest = requests.peek();
             currentRequest.setHasError(false);
             sendStatus();
