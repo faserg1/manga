@@ -2,13 +2,16 @@ package com.danilov.mangareaderplus.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,13 +20,23 @@ import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.activity.MangaQueryActivity;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.util.Constants;
+import com.danilov.mangareaderplus.core.util.Utils;
+import com.danilov.mangareaderplus.core.view.ViewV16;
+
+import java.util.Random;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class RepositoryPickerFragment extends Fragment {
+public class RepositoryPickerFragment extends BaseFragment {
 
-    private View view;
+    private static final String ADULT_SHOWN = "ADULT_SHOWN";
+
+    private boolean adultShown = false;
+
+    private RepositoryEngine.Repository[] repositories;
+    private GridView repositoriesView;;
+    private Button showAdultButton;
 
     public static RepositoryPickerFragment newInstance() {
         return new RepositoryPickerFragment();
@@ -37,8 +50,11 @@ public class RepositoryPickerFragment extends Fragment {
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
-        GridView repositoriesView = (GridView) view.findViewById(R.id.repositories);
-        final RepositoryEngine.Repository[] repositories = RepositoryEngine.Repository.getWithoutOffline();
+        repositoriesView = findViewById(R.id.repositories);
+        if (savedInstanceState != null) {
+            adultShown = savedInstanceState.getBoolean(ADULT_SHOWN, false);
+        }
+        repositories = adultShown ? RepositoryEngine.Repository.getWithAdult() : RepositoryEngine.Repository.getWithoutAdult();
         repositoriesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -52,7 +68,69 @@ public class RepositoryPickerFragment extends Fragment {
 
         });
         repositoriesView.setAdapter(new RepoAdapter(this.getActivity(), R.layout.repository_item, repositories));
+        showAdultButton = findViewById(R.id.show_adult);
+        showAdultButton.setVisibility(adultShown ? View.GONE : View.VISIBLE);
+        showAdultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                showAdult();
+            }
+        });
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private long ANIM_DURATION = 300l;
+    private long WAIT_DURATION = 1200l;
+
+    private void showAdult() {
+        adultShown = true;
+        showAdultButton.setVisibility(View.GONE);
+        repositories = RepositoryEngine.Repository.getWithAdult();
+        repositoriesView.setAdapter(new RepoAdapter(getActivity(), R.layout.repository_item, repositories));
+
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean shownHentaiAnim = sharedPreferences.getBoolean("SHOWN_HENTAI_ANIM", false);
+        if (shownHentaiAnim) {
+            Random random = new Random();
+            if (random.nextInt(5) < 4) {
+                return;
+            }
+        }
+        sharedPreferences.edit().putBoolean("SHOWN_HENTAI_ANIM", true).apply();
+
+
+        final View hentaiView = findViewById(R.id.hentai_animator);
+        final ViewV16 hentaiAnimator = ViewV16.wrap(hentaiView);
+
+        hentaiView.setVisibility(View.VISIBLE);
+        final int translation = Utils.dpToPx(150);
+        hentaiAnimator.setTranslationY(translation);
+        hentaiAnimator.setTranslationX(translation);
+        hentaiAnimator.animate().setDuration(ANIM_DURATION).translationY(0).translationX(0).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        hentaiAnimator.animate().setDuration(ANIM_DURATION).translationY(translation).translationX(translation).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                hentaiView.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }, WAIT_DURATION);
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ADULT_SHOWN, adultShown);
     }
 
     private class RepoAdapter extends ArrayAdapter<RepositoryEngine.Repository> {

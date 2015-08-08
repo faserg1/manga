@@ -7,6 +7,7 @@ import com.danilov.mangareaderplus.core.model.MangaSuggestion;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -63,23 +64,25 @@ public interface RepositoryEngine {
     //enum of names containing matched engines
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine(), "ReadManga", R.drawable.ic_readmanga, R.drawable.ic_russia),
-        ALLHENTAI(new AllHentaiEngine(), "AllHentai", R.drawable.ic_allhentai, R.drawable.ic_russia),
-        ADULTMANGA(new AdultmangaEngine(), "AdultManga", R.drawable.ic_adultmanga, R.drawable.ic_russia),
-        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", R.drawable.ic_mangareadernet, R.drawable.ic_english),
-        KISSMANGA(new KissmangaEngine(), "KissManga", R.drawable.ic_mangareadernet, R.drawable.ic_english),
-        OFFLINE(new OfflineEngine(), "", 0, -1);
+        READMANGA(new ReadmangaEngine(), "ReadManga", false, R.drawable.ic_readmanga, R.drawable.ic_russia),
+        ALLHENTAI(new AllHentaiEngine(), "AllHentai", true, R.drawable.ic_allhentai, R.drawable.ic_russia),
+        ADULTMANGA(new AdultmangaEngine(), "AdultManga", true, R.drawable.ic_adultmanga, R.drawable.ic_russia),
+        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", false, R.drawable.ic_mangareadernet, R.drawable.ic_english),
+        KISSMANGA(new KissmangaEngine(), "KissManga", false, R.drawable.ic_mangareadernet, R.drawable.ic_english),
+        OFFLINE(new OfflineEngine(), "", false, 0, -1);
 
         private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, KISSMANGA, ALLHENTAI, MANGAREADERNET};
 
         private RepositoryEngine engine;
         private String name;
         private int iconId;
+        private boolean isAdult;
         private int countryIconId;
 
-        Repository(final RepositoryEngine engine, final String name, final int iconId, final int countryIconId) {
+        Repository(final RepositoryEngine engine, final String name, final boolean isAdult, final int iconId, final int countryIconId) {
             this.engine = engine;
             this.name = name;
+            this.isAdult = isAdult;
             this.iconId = iconId;
             this.countryIconId = countryIconId;
         }
@@ -97,6 +100,20 @@ public interface RepositoryEngine {
         }
 
         public static Repository[] getWithoutOffline() {
+            return withoutOffline;
+        }
+
+        public static Repository[] getWithoutAdult() {
+            List<Repository> repositories = new LinkedList<>();
+            for (Repository repository : withoutOffline) {
+                if (!repository.isAdult) {
+                    repositories.add(repository);
+                }
+            }
+            return repositories.toArray(new Repository[repositories.size()]);
+        }
+
+        public static Repository[] getWithAdult() {
             return withoutOffline;
         }
 

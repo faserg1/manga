@@ -42,6 +42,10 @@ public class SafeHandler {
         return isHandling && handler.post(new SafeRunnable(runnable));
     }
 
+    public boolean postDelayed(final Runnable runnable, final long millis) {
+        return isHandling && handler.postDelayed(new SafeRunnable(runnable), millis);
+    }
+
     public void handleMessage(final Message message) {
 
     }

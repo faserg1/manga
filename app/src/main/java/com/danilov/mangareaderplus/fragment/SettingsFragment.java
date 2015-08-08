@@ -88,6 +88,16 @@ public class SettingsFragment extends BaseFragment {
             }
 
         });
+        String mainMenuItem = settings.getMainMenuItem();
+        int idx = 0;
+        MainActivity.MainMenuItem[] values = MainActivity.MainMenuItem.values();
+        for (int i = 0; i < values.length; i++) {
+            MainActivity.MainMenuItem menuItem = values[i];
+            if (menuItem.toString().equals(mainMenuItem)) {
+                idx = i;
+            }
+        }
+        mainPageSelector.setSelection(idx, false);
         super.onActivityCreated(savedInstanceState);
     }
 

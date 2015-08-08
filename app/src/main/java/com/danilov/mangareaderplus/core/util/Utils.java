@@ -5,12 +5,14 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.danilov.mangareaderplus.core.application.MangaApplication;
 import com.danilov.mangareaderplus.core.dialog.EasyDialog;
 
 import org.json.JSONArray;
@@ -116,6 +118,11 @@ public class Utils {
         } catch (NumberFormatException e) {
         }
         return integer;
+    }
+    public static int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = MangaApplication.getContext().getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
     public static <T> ArrayList<T> listToArrayList(final List<? extends T> oldList) {
