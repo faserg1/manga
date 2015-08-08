@@ -25,6 +25,8 @@ public class StrategyDelegate {
 
     private Handler handler = new Handler();
 
+    private boolean isStrategyInitialized = false;
+
     public StrategyDelegate(final MangaShowStrategy strategy) {
         this.strategy = strategy;
         strategy.setOnStrategyListener(listenerWrapper);
@@ -115,6 +117,7 @@ public class StrategyDelegate {
                 public void run() {
                     if (canHandle && listener != null) {
                         listener.onShowChapter(result, message);
+                        strategy.onCallbackDelivered(ActionType.ON_SHOW_CHAPTER);
                     } else {
                         delayedActions.add(new DelayedAction(ActionType.ON_SHOW_CHAPTER, result, message));
                     }
@@ -138,6 +141,9 @@ public class StrategyDelegate {
 
         @Override
         public void onInit(final MangaShowStrategy.Result result, final String message) {
+            if (result == MangaShowStrategy.Result.SUCCESS) {
+                isStrategyInitialized = true;
+            }
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -151,6 +157,10 @@ public class StrategyDelegate {
         }
 
     };
+
+    public boolean isStrategyInitialized() {
+        return isStrategyInitialized;
+    }
 
     public interface MangaShowListener {
 
@@ -212,7 +222,11 @@ public class StrategyDelegate {
 
     }
 
-    private enum ActionType {
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
+        strategy.showChapterAndImage(chapterNumber, imageNumber);
+    }
+
+    public enum ActionType {
         ON_SHOW_IMAGE,
         ON_PREVIOUS_PICTURE,
         ON_SHOW_CHAPTER,

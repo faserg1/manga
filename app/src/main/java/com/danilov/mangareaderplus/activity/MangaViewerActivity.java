@@ -63,6 +63,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private static final String TAG = "MangaViewerActivity";
 
+    private static final String PROGRESS_DIALOG_TAG = "MangaViewerActivityProgressDialog";
+
     private static final String CURRENT_CHAPTER_KEY = "CCK";
     private static final String CURRENT_IMAGE_KEY = "CIK";
     private static final String CHAPTERS_KEY = "CK";
@@ -161,6 +163,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             strategyHolder = (StrategyHolder) fragmentManager.getFragment(savedInstanceState, StrategyHolder.NAME);
+            progressDialog = (DialogFragment) fragmentManager.findFragmentByTag(PROGRESS_DIALOG_TAG);
         }
         if (strategyHolder == null) {
             if (!showOnline) {
@@ -291,18 +294,18 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
             strategy.restoreState(uris, currentChapterNumber, currentImageNumber, mangaViewPager);
         }
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Initializing chapters");
 
         currentImageNumber = currentImageNumber == -1 ? 0 : currentImageNumber;
-        strategy.initStrategy(currentChapterNumber, currentImageNumber);
+        if (!strategy.isStrategyInitialized()) {
+            showProgressDialog("Loading", "Initializing chapters");
+            strategy.initStrategy(currentChapterNumber, currentImageNumber);
+        } else {
+            strategy.showChapterAndImage(currentChapterNumber, currentImageNumber);
+        }
     }
 
     @Override
     public void onShowImage(final int number) {
-        //TODO: убрать Observer и получать инфу тут и в onShowChapter с onPreviousPicture
         update();
     }
 
@@ -331,6 +334,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 onShowMessage("Это последняя глава");
                 break;
         }
+        hideProgress();
     }
 
     @Override
@@ -342,9 +346,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     @Override
     public void onInit(final MangaShowStrategy.Result result, final String message) {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
+        hideProgress();
+        showProgressDialog("Loading", "Getting chapter info");
     }
 
     private void onShowMessage(final String message) {
@@ -434,6 +437,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void showChapter(final int chapterNum) {
+        showProgressDialog("Loading", "Getting chapter info");
         strategy.showChapter(chapterNum);
     }
 
@@ -471,6 +475,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private void toggleNextChapterButton(final boolean enable) {
         nextChapter.setVisibility(enable ? View.VISIBLE : View.GONE);
         bottomBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private void showProgressDialog(final String title, final String message) {
+        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+    }
+
+    private void hideProgress() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private class MangaControlSpinnerAdapter implements SpinnerAdapter {
@@ -632,25 +646,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     // the part with MangaStrategyListener
-//
-//    @Override
-//    public void onChapterInfoLoadStart(final MangaShowStrategy strategy) {
-//        if (progressDialog != null) {
-//            progressDialog.dismiss();
-//        }
-//        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), "Loading", "Loading chapter");
-//    }
-//
-//    @Override
-//    public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message) {
-//        if (!success) {
-//            String errorMsg = Utils.errorMessage(this, message, R.string.p_failed_to_load_chapter_info);
-//            Utils.showToast(this, errorMsg);
-//        }
-//        if (progressDialog != null) {
-//            progressDialog.dismiss();
-//        }
-//    }
 
     @Override
     public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
@@ -719,10 +714,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     @Override
     protected void onPause() {
-//        if (progressDialog != null) {
-//            progressDialog.dismiss();
-//            progressDialog = null;
-//        }
         strategy.onPause();
         super.onPause();
     }

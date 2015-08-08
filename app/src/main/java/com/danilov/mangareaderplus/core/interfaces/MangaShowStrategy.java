@@ -17,6 +17,10 @@ public interface MangaShowStrategy {
 
     void showChapter(final int i);
 
+    void showChapterAndImage(final int chapterNumber, final int imageNumber);
+
+    void onCallbackDelivered(final StrategyDelegate.ActionType actionType);
+
     void next();
 
     void initStrategy(final int chapter, final int image);
@@ -46,19 +50,5 @@ public interface MangaShowStrategy {
         LAST_DOWNLOADED,
         NOT_DOWNLOADED
     }
-
-//    public interface MangaStrategyListener {
-//
-//        public void onImageLoadStart(final MangaShowStrategy strategy);
-//
-//        public void onImageLoadProgress(final MangaShowStrategy strategy, final int current, final int total);
-//
-//        public void onImageLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
-//
-//        public void onChapterInfoLoadStart(final MangaShowStrategy strategy);
-//
-//        public void onChapterInfoLoadEnd(final MangaShowStrategy strategy, final boolean success, final String message);
-//
-//    }
 
 }

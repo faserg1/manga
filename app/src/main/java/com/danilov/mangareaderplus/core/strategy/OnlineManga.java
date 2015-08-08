@@ -72,6 +72,26 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public void showChapter(final int i) {
+        showChapterInternal(i, null);
+    }
+
+    @Override
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
+        showChapterInternal(chapterNumber, new Runnable() {
+            @Override
+            public void run() {
+                showImage(imageNumber);
+            }
+        });
+    }
+
+    private boolean isShowChapterInProgress = false;
+
+    private void showChapterInternal(final int i, final Runnable runnable) {
+        if (isShowChapterInProgress) {
+            return;
+        }
+        isShowChapterInProgress = true;
         this.uris = null;
         int chapterNum = i < 0 ? 0 : i;
         int chaptersQuantity = manga.getChaptersQuantity();
@@ -92,6 +112,11 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             @Override
             public void run() {
                 try {
+                    Thread.sleep(6000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
                 } catch (final Exception e) {
@@ -105,11 +130,21 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                             mangaViewPager.setUris(uris);
                         }
                         listener.onShowChapter(Result.SUCCESS, "");
+                        if (runnable != null) {
+                            runnable.run();
+                        }
                     }
                 });
             }
         };
         thread.start();
+    }
+
+    @Override
+    public void onCallbackDelivered(final StrategyDelegate.ActionType actionType) {
+        if (actionType == StrategyDelegate.ActionType.ON_SHOW_CHAPTER) {
+            isShowChapterInProgress = false;
+        }
     }
 
     @Override
@@ -149,7 +184,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
                     } catch (RepositoryException e) {
                         Log.e(TAG, "Failed to load chapters: " + e.getMessage());
-                        listener.onInit(Result.ERROR,  e.getMessage());
+                        listener.onInit(Result.ERROR, e.getMessage());
                     }
                 }
 

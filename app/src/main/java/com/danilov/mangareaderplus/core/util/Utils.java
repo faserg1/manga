@@ -99,6 +99,16 @@ public class Utils {
         return easyDialog;
     }
 
+    public static DialogFragment easyDialogProgress(final FragmentManager fm, final String tag, final String title, final String message) {
+        EasyDialog easyDialog = new EasyDialog();
+        easyDialog.setHasProgress(true);
+        easyDialog.setUserClosable(false);
+        easyDialog.setTextData(message);
+        easyDialog.setTitle(title);
+        easyDialog.show(fm, tag);
+        return easyDialog;
+    }
+
     public static Integer stringToInt(final String s) {
         Integer integer = null;
         try {

@@ -40,6 +40,26 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     @Override
     public void showChapter(final int chapterToShow) {
+        showChapterInternal(chapterToShow, null);
+    }
+
+    @Override
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
+        showChapterInternal(chapterNumber, new Runnable() {
+            @Override
+            public void run() {
+                showImage(imageNumber);
+            }
+        });
+    }
+
+    private boolean isShowChapterInProgress = false;
+
+    private void showChapterInternal(final int chapterToShow, final Runnable runnable) {
+        if (isShowChapterInProgress) {
+            return;
+        }
+        isShowChapterInProgress = true;
         Pair pair = null;
         if (chapterToShow == -1) {
             pair = manga.getFirstExistingChapterAndIsLast();
@@ -66,6 +86,16 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         }
         mangaViewPager.setUris(uris);
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
+        if (runnable != null) {
+            runnable.run();
+        }
+    }
+
+    @Override
+    public void onCallbackDelivered(final StrategyDelegate.ActionType actionType) {
+        if (actionType == StrategyDelegate.ActionType.ON_SHOW_CHAPTER) {
+            isShowChapterInProgress = false;
+        }
     }
 
     private void showChapterFromNext() {
