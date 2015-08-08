@@ -3,15 +3,12 @@ package com.danilov.mangareaderplus.core.strategy;
 import android.os.Handler;
 import android.util.Log;
 
-import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareaderplus.core.model.Manga;
 import com.danilov.mangareaderplus.core.model.MangaChapter;
 import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
-import com.danilov.mangareaderplus.core.service.DownloadManager;
 import com.danilov.mangareaderplus.core.view.CompatPager;
-import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.List;
@@ -48,7 +45,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
-    public void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
+    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
         this.currentChapter = chapter;
         this.mangaViewPager = mangaViewPager;
         this.mangaViewPager.setOnline(true);
@@ -57,7 +54,10 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         if (uris != null) {
             this.totalImages = uris.size();
             this.mangaViewPager.setUris(uris);
+            showImage(currentImageNumber);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -111,11 +111,11 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
             @Override
             public void run() {
-                try {
+              /*  try {
                     Thread.sleep(6000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
                 try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
@@ -164,7 +164,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             if (uris != null) {
                 showImage(image);
             } else {
-                showChapter(chapter);
+                showChapterAndImage(chapter, image);
             }
 
         } else {
@@ -179,7 +179,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                         if (uris != null) {
                             showImage(image);
                         } else {
-                            showChapter(chapter);
+                            showChapterAndImage(chapter, image);
                         }
 
                     } catch (RepositoryException e) {

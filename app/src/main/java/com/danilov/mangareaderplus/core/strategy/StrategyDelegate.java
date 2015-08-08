@@ -32,8 +32,8 @@ public class StrategyDelegate {
         strategy.setOnStrategyListener(listenerWrapper);
     }
 
-    public void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
-        strategy.restoreState(uris, chapter, image, mangaViewPager);
+    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
+        return strategy.restoreState(uris, chapter, image, mangaViewPager);
     }
 
     public void showImage(final int i) {

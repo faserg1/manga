@@ -292,7 +292,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             }
             ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
             Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-            strategy.restoreState(uris, currentChapterNumber, currentImageNumber, mangaViewPager);
+            if (strategy.restoreState(uris, currentChapterNumber, currentImageNumber, mangaViewPager)) {
+                return;
+            }
         }
 
         currentImageNumber = currentImageNumber == -1 ? 0 : currentImageNumber;
@@ -322,7 +324,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             case LAST_DOWNLOADED:
                 onShowMessage("Последняя из скачанных");
             case SUCCESS:
-                strategy.showImage(0);
                 break;
             case NOT_DOWNLOADED:
                 onShowMessage("Эта глава не загружена");
@@ -438,7 +439,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void showChapter(final int chapterNum) {
         showProgressDialog("Loading", "Getting chapter info");
-        strategy.showChapter(chapterNum);
+        strategy.showChapterAndImage(chapterNum, 0);
     }
 
     public void update() {

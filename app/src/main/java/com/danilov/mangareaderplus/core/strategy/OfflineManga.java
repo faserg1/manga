@@ -2,7 +2,6 @@ package com.danilov.mangareaderplus.core.strategy;
 
 import android.os.Handler;
 
-import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
 import com.danilov.mangareaderplus.core.model.LocalManga;
 import com.danilov.mangareaderplus.core.model.MangaChapter;
@@ -10,7 +9,6 @@ import com.danilov.mangareaderplus.core.repository.RepositoryEngine;
 import com.danilov.mangareaderplus.core.repository.RepositoryException;
 import com.danilov.mangareaderplus.core.util.Pair;
 import com.danilov.mangareaderplus.core.view.CompatPager;
-import com.danilov.mangareaderplus.core.view.InAndOutAnim;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.List;
@@ -36,6 +34,8 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     public OfflineManga(final LocalManga manga, final MangaViewPager mangaViewPager) {
         this.manga = manga;
         this.mangaViewPager = mangaViewPager;
+        mangaViewPager.setOnline(false);
+        mangaViewPager.setOnPageChangeListener(this);
     }
 
     @Override
@@ -133,6 +133,11 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     public void initStrategy(final int chapter, final int image) {
         if (manga.getChapters() != null) {
             listener.onInit(Result.SUCCESS, "");
+            if (uris != null) {
+                showImage(image);
+            } else {
+                showChapterAndImage(chapter, image);
+            }
         } else {
             try {
                 engine.queryForChapters(manga);
@@ -145,18 +150,23 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         if (uris != null) {
             showImage(image);
         } else {
-            showChapter(chapter);
+            showChapterAndImage(chapter, image);
         }
     }
 
     @Override
-    public void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
+    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
         this.currentChapter = chapter;
         this.uris = uris;
         this.mangaViewPager = mangaViewPager;
-        this.mangaViewPager.setUris(uris);
         this.mangaViewPager.setOnline(false);
         this.mangaViewPager.setOnPageChangeListener(this);
+        if (uris != null) {
+            this.mangaViewPager.setUris(uris);
+            showImage(currentImageNumber);
+            return true;
+        }
+        return false;
     }
 
     @Override

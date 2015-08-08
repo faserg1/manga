@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface MangaShowStrategy {
 
-    void restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager);
+    boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager);
 
     void showImage(final int i);
 
