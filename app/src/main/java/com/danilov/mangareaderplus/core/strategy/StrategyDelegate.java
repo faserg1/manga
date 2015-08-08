@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.danilov.mangareaderplus.core.interfaces.MangaShowObserver;
 import com.danilov.mangareaderplus.core.interfaces.MangaShowStrategy;
+import com.danilov.mangareaderplus.core.view.CompatPager;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Created by Semyon on 07.08.2015.
  */
-public class StrategyDelegate {
+public class StrategyDelegate implements CompatPager.OnPageChangeListener {
 
     private MangaShowStrategy strategy;
 
@@ -27,13 +28,30 @@ public class StrategyDelegate {
 
     private boolean isStrategyInitialized = false;
 
-    public StrategyDelegate(final MangaShowStrategy strategy) {
+    private MangaViewPager mangaViewPager;
+
+    private boolean isOnline;
+
+    public StrategyDelegate(final MangaViewPager mangaViewPager, final MangaShowStrategy strategy, final boolean isOnline) {
         this.strategy = strategy;
+        this.isOnline = isOnline;
         strategy.setOnStrategyListener(listenerWrapper);
+        this.mangaViewPager = mangaViewPager;
+        this.mangaViewPager.setOnline(isOnline);
+        this.mangaViewPager.setOnPageChangeListener(this);
     }
 
-    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
-        return strategy.restoreState(uris, chapter, image, mangaViewPager);
+    public boolean restoreState(final MangaViewPager mangaViewPager) {
+        this.mangaViewPager = mangaViewPager;
+        this.mangaViewPager.setOnline(isOnline);
+        this.mangaViewPager.setOnPageChangeListener(this);
+
+        List<String> chapterUris = strategy.getChapterUris();
+        if (chapterUris != null) {
+            mangaViewPager.setUris(chapterUris);
+        }
+
+        return strategy.restoreState();
     }
 
     public void showImage(final int i) {
@@ -80,6 +98,10 @@ public class StrategyDelegate {
         strategy.showChapter(i);
     }
 
+    public boolean isInitializationInProgress() { //shepard
+        return strategy.isInitInProgress();
+    }
+
     private MangaShowListener listenerWrapper = new MangaShowListener() {
 
         @Override
@@ -88,6 +110,7 @@ public class StrategyDelegate {
                 @Override
                 public void run() {
                     if (canHandle && listener != null) {
+                            mangaViewPager.setCurrentItem(number);
                             listener.onShowImage(number);
                     } else {
                         delayedActions.add(new DelayedAction(ActionType.ON_SHOW_IMAGE, number));
@@ -116,6 +139,12 @@ public class StrategyDelegate {
                 @Override
                 public void run() {
                     if (canHandle && listener != null) {
+                        if (result == MangaShowStrategy.Result.SUCCESS || result == MangaShowStrategy.Result.LAST_DOWNLOADED) {
+                            List<String> chapterUris = strategy.getChapterUris();
+                            if (chapterUris != null) {
+                                mangaViewPager.setUris(chapterUris);
+                            }
+                        }
                         listener.onShowChapter(result, message);
                         strategy.onCallbackDelivered(ActionType.ON_SHOW_CHAPTER);
                     } else {
@@ -160,6 +189,24 @@ public class StrategyDelegate {
 
     public boolean isStrategyInitialized() {
         return isStrategyInitialized;
+    }
+
+    @Override
+    public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(final int position) {
+        strategy.onPageSelected(position);
+        if (listener != null) {
+            listener.onShowImage(position);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(final int state) {
+
     }
 
     public interface MangaShowListener {

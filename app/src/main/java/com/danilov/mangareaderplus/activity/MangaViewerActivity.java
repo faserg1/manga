@@ -165,10 +165,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
         if (strategyHolder == null) {
             if (!showOnline) {
-                strategy = new StrategyDelegate(new OfflineManga((LocalManga) manga, mangaViewPager));
+                strategy = new StrategyDelegate(mangaViewPager, new OfflineManga((LocalManga) manga), false);
             } else {
                 prepareOnlineManga();
-                strategy =  new StrategyDelegate(new OnlineManga(manga, mangaViewPager));
+                strategy =  new StrategyDelegate(mangaViewPager, new OnlineManga(manga), true);
             }
 
             strategyHolder = StrategyHolder.newInstance(strategy);
@@ -290,15 +290,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             }
             ArrayList<String> uris = savedState.getStringArrayList(URIS_KEY);
             Log.d(TAG, "RESTORE CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-            if (strategy.restoreState(uris, currentChapterNumber, currentImageNumber, mangaViewPager)) {
+            if (strategy.restoreState(mangaViewPager)) {
                 return;
             }
         }
 
         currentImageNumber = currentImageNumber == -1 ? 0 : currentImageNumber;
         if (!strategy.isStrategyInitialized()) {
-            showProgressDialog("Loading", "Initializing chapters");
-            strategy.initStrategy(currentChapterNumber, currentImageNumber);
+            if (!strategy.isInitializationInProgress()) {
+                showProgressDialog("Loading", "Initializing chapters");
+                strategy.initStrategy(currentChapterNumber, currentImageNumber);
+            }
         } else {
             strategy.showChapterAndImage(currentChapterNumber, currentImageNumber);
         }

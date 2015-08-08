@@ -48,7 +48,7 @@
         <item name="android:src">@drawable/card_shadow</item>
     </style>
 
-    <style name="Manga.ProgressBar.Round">
+    <style name="Manga.RoundProgressBar">
         <item name="android:indeterminate">true</item>
         <item name="android:indeterminateDrawable">@drawable/spinner</item>
         <item name="android:indeterminateDuration">2000</item>

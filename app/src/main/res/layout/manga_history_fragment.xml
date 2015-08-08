@@ -16,7 +16,7 @@
     </GridView>
 
     <ProgressBar
-        style="@style/Manga.ProgressBar.Round"
+        style="@style/Manga.RoundProgressBar"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"

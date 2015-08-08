@@ -23,8 +23,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     private static final String TAG = "OnlineManga";
 
-    private MangaViewPager mangaViewPager;
-
     private Manga manga;
     private RepositoryEngine engine;
     private int currentImageNumber = 0;
@@ -36,24 +34,15 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     private StrategyDelegate.MangaShowListener listener;
 
-    public OnlineManga(final Manga manga, final MangaViewPager mangaViewPager) {
+    public OnlineManga(final Manga manga) {
         this.manga = manga;
         this.engine = manga.getRepository().getEngine();
-        this.mangaViewPager = mangaViewPager;
-        mangaViewPager.setOnline(true);
-        mangaViewPager.setOnPageChangeListener(this);
     }
 
     @Override
-    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
-        this.currentChapter = chapter;
-        this.mangaViewPager = mangaViewPager;
-        this.mangaViewPager.setOnline(true);
-        this.mangaViewPager.setOnPageChangeListener(this);
-        this.uris = uris;
+    public boolean restoreState() {
         if (uris != null) {
             this.totalImages = uris.size();
-            this.mangaViewPager.setUris(uris);
             showImage(currentImageNumber);
             return true;
         }
@@ -66,7 +55,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             return;
         }
         this.currentImageNumber = i;
-        mangaViewPager.setCurrentItem(i);
         this.listener.onShowImage(i);
     }
 
@@ -111,7 +99,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
             @Override
             public void run() {
-              /*  try {
+               /* try {
                     Thread.sleep(6000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -126,9 +114,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (uris != null) {
-                            mangaViewPager.setUris(uris);
-                        }
                         listener.onShowChapter(Result.SUCCESS, "");
                         if (runnable != null) {
                             runnable.run();
@@ -142,8 +127,13 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public void onCallbackDelivered(final StrategyDelegate.ActionType actionType) {
-        if (actionType == StrategyDelegate.ActionType.ON_SHOW_CHAPTER) {
-            isShowChapterInProgress = false;
+        switch (actionType) {
+            case ON_SHOW_CHAPTER:
+                isShowChapterInProgress = false;
+                break;
+            case ON_INIT:
+                isInitStrategyInProgress = false;
+                break;
         }
     }
 
@@ -156,8 +146,14 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         showImage(currentImageNumber + 1);
     }
 
+    private boolean isInitStrategyInProgress = false;
+
     @Override
     public void initStrategy(final int chapter, final int image) {
+        if (isInitStrategyInProgress) {
+            return;
+        }
+        isInitStrategyInProgress = true;
         if (manga.getChapters() != null) {
             listener.onInit(Result.SUCCESS, "");
 
@@ -173,6 +169,11 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                 @Override
                 public void run() {
                     try {
+                        try {
+                            Thread.sleep(6000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         engine.queryForChapters(manga);
                         listener.onInit(Result.SUCCESS, "");
 
@@ -237,6 +238,11 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
+    public boolean isInitInProgress() {
+        return isInitStrategyInProgress;
+    }
+
+    @Override
     public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
 
     }
@@ -244,7 +250,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     @Override
     public void onPageSelected(final int position) {
         this.currentImageNumber = position;
-        this.listener.onShowImage(position);
     }
 
     @Override

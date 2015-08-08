@@ -21,7 +21,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     private static final String TAG = "OfflineManga";
 
     private LocalManga manga;
-    private MangaViewPager mangaViewPager;
 
     private RepositoryEngine engine = RepositoryEngine.Repository.OFFLINE.getEngine();
 
@@ -31,11 +30,8 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     private int currentChapter = 0;
     private StrategyDelegate.MangaShowListener listener;
 
-    public OfflineManga(final LocalManga manga, final MangaViewPager mangaViewPager) {
+    public OfflineManga(final LocalManga manga) {
         this.manga = manga;
-        this.mangaViewPager = mangaViewPager;
-        mangaViewPager.setOnline(false);
-        mangaViewPager.setOnPageChangeListener(this);
     }
 
     @Override
@@ -84,7 +80,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             listener.onShowChapter(Result.ERROR, e.getMessage());
             return;
         }
-        mangaViewPager.setUris(uris);
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
         if (runnable != null) {
             runnable.run();
@@ -93,8 +88,13 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     @Override
     public void onCallbackDelivered(final StrategyDelegate.ActionType actionType) {
-        if (actionType == StrategyDelegate.ActionType.ON_SHOW_CHAPTER) {
-            isShowChapterInProgress = false;
+        switch (actionType) {
+            case ON_SHOW_CHAPTER:
+                isShowChapterInProgress = false;
+                break;
+            case ON_INIT:
+                isInitStrategyInProgress = false;
+                break;
         }
     }
 
@@ -129,8 +129,14 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         showImage(currentImageNumber + 1);
     }
 
+    private boolean isInitStrategyInProgress = false;
+
     @Override
     public void initStrategy(final int chapter, final int image) {
+        if (isInitStrategyInProgress) {
+            return;
+        }
+        isInitStrategyInProgress = true;
         if (manga.getChapters() != null) {
             listener.onInit(Result.SUCCESS, "");
             if (uris != null) {
@@ -155,14 +161,8 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
-    public boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager) {
-        this.currentChapter = chapter;
-        this.uris = uris;
-        this.mangaViewPager = mangaViewPager;
-        this.mangaViewPager.setOnline(false);
-        this.mangaViewPager.setOnPageChangeListener(this);
+    public boolean restoreState() {
         if (uris != null) {
-            this.mangaViewPager.setUris(uris);
             showImage(currentImageNumber);
             return true;
         }
@@ -175,7 +175,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             return;
         }
         this.currentImageNumber = i;
-        mangaViewPager.setCurrentItem(i);
         this.listener.onShowImage(i);
     }
 
@@ -215,6 +214,11 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
+    public boolean isInitInProgress() {
+        return isInitStrategyInProgress;
+    }
+
+    @Override
     public int getCurrentImageNumber() {
         return currentImageNumber;
     }
@@ -230,7 +234,6 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     @Override
     public void onPageSelected(final int position) {
         this.currentImageNumber = position;
-        this.listener.onShowImage(position);
     }
 
     @Override

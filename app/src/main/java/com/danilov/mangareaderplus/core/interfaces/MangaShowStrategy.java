@@ -2,6 +2,7 @@ package com.danilov.mangareaderplus.core.interfaces;
 
 import com.danilov.mangareaderplus.core.strategy.ShowMangaException;
 import com.danilov.mangareaderplus.core.strategy.StrategyDelegate;
+import com.danilov.mangareaderplus.core.view.CompatPager;
 import com.danilov.mangareaderplus.core.view.MangaViewPager;
 
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 21.06.2014.
  */
-public interface MangaShowStrategy {
+public interface MangaShowStrategy extends CompatPager.OnPageChangeListener {
 
-    boolean restoreState(final List<String> uris, final int chapter, final int image, final MangaViewPager mangaViewPager);
+    boolean restoreState();
 
     void showImage(final int i);
 
@@ -40,6 +41,8 @@ public interface MangaShowStrategy {
     void setOnStrategyListener(final StrategyDelegate.MangaShowListener listener);
 
     boolean isOnline();
+
+    boolean isInitInProgress();
 
     //TODO: return them actually!
     public enum Result {
