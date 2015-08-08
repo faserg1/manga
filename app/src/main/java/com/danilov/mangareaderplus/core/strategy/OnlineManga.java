@@ -169,11 +169,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                 @Override
                 public void run() {
                     try {
-                        try {
-                            Thread.sleep(6000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         engine.queryForChapters(manga);
                         listener.onInit(Result.SUCCESS, "");
 
