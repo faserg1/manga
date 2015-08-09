@@ -30,8 +30,6 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private int totalImages = 0;
     private List<String> uris = null;
 
-    private Handler handler = new Handler();
-
     private StrategyDelegate.MangaShowListener listener;
 
     public OnlineManga(final Manga manga) {
@@ -80,8 +78,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             return;
         }
         isShowChapterInProgress = true;
-        this.uris = null;
-        int chapterNum = i < 0 ? 0 : i;
+        final int chapterNum = i < 0 ? 0 : i;
         int chaptersQuantity = manga.getChaptersQuantity();
         if (chaptersQuantity <= 0) {
             listener.onShowChapter(Result.ERROR, "No chapters to show"); //TODO: replace with getString
@@ -93,33 +90,23 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             listener.onShowChapter(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, "");
             return;
         }
-        this.currentChapter = chapterNum;
-        this.currentImageNumber = 0;
         Thread thread = new Thread() {
 
             @Override
             public void run() {
-               /* try {
-                    Thread.sleep(6000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                 try {
                     uris = engine.getChapterImages(chapter);
                     totalImages = uris.size();
+                    OnlineManga.this.currentChapter = chapterNum;
+                    OnlineManga.this.currentImageNumber = 0;
                 } catch (final Exception e) {
                     listener.onShowChapter(Result.ERROR, e.getMessage());
                     return;
                 }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onShowChapter(Result.SUCCESS, "");
-                        if (runnable != null) {
-                            runnable.run();
-                        }
-                    }
-                });
+                listener.onShowChapter(Result.SUCCESS, "");
+                if (runnable != null) {
+                    runnable.run();
+                }
             }
         };
         thread.start();

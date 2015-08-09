@@ -1,7 +1,6 @@
 package com.danilov.mangareaderplus.core.database;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 /**
  * Created by Semyon Danilov on 04.07.2014.
@@ -9,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DatabaseHelper {
 
     private String path;
-    private SQLiteDatabase database;
+    private Database database;
     private int version;
     private DatabaseUpgradeHandler handler;
 
@@ -28,11 +27,13 @@ public class DatabaseHelper {
         this.tableName = tableName;
     }
 
-    public synchronized SQLiteDatabase openWritable() throws DatabaseAccessException {
-        return withSpecificTable ? internalOpenWritableWithSpecificTable() : internalOpenWritable();
+    public synchronized Database openWritable() throws DatabaseAccessException {
+        Database database = withSpecificTable ? internalOpenWritableWithSpecificTable() : internalOpenWritable();
+        database.incOpen();
+        return database;
     }
 
-    private SQLiteDatabase internalOpenWritableWithSpecificTable() throws DatabaseAccessException {
+    private Database internalOpenWritableWithSpecificTable() throws DatabaseAccessException {
         if (database != null) {
             if (!database.isOpen()) {
                 database = null;
@@ -44,7 +45,7 @@ public class DatabaseHelper {
             throw new DatabaseAccessException("Can't open writable");
         }
         tryCreateDatabase();
-        database = SQLiteDatabase.openOrCreateDatabase(path, null);
+        database = Database.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
         if (v != version || !tableExists(tableName, database)) {
@@ -65,7 +66,7 @@ public class DatabaseHelper {
         return database;
     }
 
-    private SQLiteDatabase internalOpenWritable() throws DatabaseAccessException {
+    private Database internalOpenWritable() throws DatabaseAccessException {
         if (database != null) {
             if (!database.isOpen()) {
                 database = null;
@@ -77,7 +78,7 @@ public class DatabaseHelper {
             throw new DatabaseAccessException("Can't open writable");
         }
         tryCreateDatabase();
-        database = SQLiteDatabase.openOrCreateDatabase(path, null);
+        database = Database.openOrCreateDatabase(path, null);
         int v = database.getVersion();
         boolean shouldUpgrade = false;
         if (v != version) {
@@ -98,69 +99,69 @@ public class DatabaseHelper {
         return database;
     }
 
-    public synchronized SQLiteDatabase openReadable() throws DatabaseAccessException {
-        return withSpecificTable ? internalOpenReadableWithSpecificTable() : internalOpenReadable();
-    }
-
-    private SQLiteDatabase internalOpenReadable() throws DatabaseAccessException {
-        if (database != null) {
-            if (!database.isOpen()) {
-                database = null;
-            } else {
-                return database;
-            }
-        }
-        tryCreateDatabase();
-        database = SQLiteDatabase.openOrCreateDatabase(path, null);
-        int v = database.getVersion();
-        boolean shouldUpgrade = false;
-        if (v != version) {
-            shouldUpgrade = true;
-        }
-        if (shouldUpgrade) {
-            database.beginTransaction();
-            try {
-                if (handler != null) {
-                    handler.onUpgrade(database, v);
-                }
-                database.setVersion(version);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-        }
-        return database;
-    }
-
-    private SQLiteDatabase internalOpenReadableWithSpecificTable() throws DatabaseAccessException {
-        if (database != null) {
-            if (!database.isOpen()) {
-                database = null;
-            } else {
-                return database;
-            }
-        }
-        tryCreateDatabase();
-        database = SQLiteDatabase.openOrCreateDatabase(path, null);
-        int v = database.getVersion();
-        boolean shouldUpgrade = false;
-        if (v != version || !tableExists(tableName, database)) {
-            shouldUpgrade = true;
-        }
-        if (shouldUpgrade) {
-            database.beginTransaction();
-            try {
-                if (handler != null) {
-                    handler.onUpgrade(database, v);
-                }
-                database.setVersion(version);
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-        }
-        return database;
-    }
+//    public synchronized Database openReadable() throws DatabaseAccessException {
+//        return withSpecificTable ? internalOpenReadableWithSpecificTable() : internalOpenReadable();
+//    }
+//
+//    private Database internalOpenReadable() throws DatabaseAccessException {
+//        if (database != null) {
+//            if (!database.isOpen()) {
+//                database = null;
+//            } else {
+//                return database;
+//            }
+//        }
+//        tryCreateDatabase();
+//        database = Database.openOrCreateDatabase(path, null);
+//        int v = database.getVersion();
+//        boolean shouldUpgrade = false;
+//        if (v != version) {
+//            shouldUpgrade = true;
+//        }
+//        if (shouldUpgrade) {
+//            database.beginTransaction();
+//            try {
+//                if (handler != null) {
+//                    handler.onUpgrade(database, v);
+//                }
+//                database.setVersion(version);
+//                database.setTransactionSuccessful();
+//            } finally {
+//                database.endTransaction();
+//            }
+//        }
+//        return database;
+//    }
+//
+//    private Database internalOpenReadableWithSpecificTable() throws DatabaseAccessException {
+//        if (database != null) {
+//            if (!database.isOpen()) {
+//                database = null;
+//            } else {
+//                return database;
+//            }
+//        }
+//        tryCreateDatabase();
+//        database = Database.openOrCreateDatabase(path, null);
+//        int v = database.getVersion();
+//        boolean shouldUpgrade = false;
+//        if (v != version || !tableExists(tableName, database)) {
+//            shouldUpgrade = true;
+//        }
+//        if (shouldUpgrade) {
+//            database.beginTransaction();
+//            try {
+//                if (handler != null) {
+//                    handler.onUpgrade(database, v);
+//                }
+//                database.setVersion(version);
+//                database.setTransactionSuccessful();
+//            } finally {
+//                database.endTransaction();
+//            }
+//        }
+//        return database;
+//    }
 
     public void tryCreateDatabase() throws DatabaseAccessException {
         //TODO: implementation
@@ -186,11 +187,11 @@ public class DatabaseHelper {
 
     public static interface DatabaseUpgradeHandler {
 
-        void onUpgrade(final SQLiteDatabase database, final int currentVersion);
+        void onUpgrade(final Database database, final int currentVersion);
 
     }
 
-    private boolean tableExists(final String tableName, final SQLiteDatabase database) {
+    private boolean tableExists(final String tableName, final Database database) {
         Cursor cursor = database.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {

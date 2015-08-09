@@ -2,7 +2,6 @@ package com.danilov.mangareaderplus.core.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -60,7 +59,7 @@ public class MangaDAO {
     }
 
     public synchronized long addManga(final Manga manga) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
 
         cv.put(MANGA_TITLE, manga.getTitle());
@@ -86,11 +85,13 @@ public class MangaDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public synchronized List<Manga> getAllManga() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         List<Manga> mangaList = new ArrayList<Manga>();
         try {
             Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
@@ -104,12 +105,14 @@ public class MangaDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return mangaList;
     }
 
     public synchronized Manga getByLinkAndRepository(final String inetUri, final RepositoryEngine.Repository repository) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {inetUri, repository.toString()};
         Manga manga = null;
@@ -121,12 +124,14 @@ public class MangaDAO {
             manga = resolve(cursor);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return manga;
     }
 
     public synchronized List<LocalManga> getAllDownloaded() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = IS_DOWNLOADED + " = 1";
         List<LocalManga> mangaList = new ArrayList<LocalManga>();
         try {
@@ -141,13 +146,15 @@ public class MangaDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return mangaList;
     }
 
     @NonNull
     public synchronized List<Manga> getFavorite() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = IS_FAVORITE + " = 1";
         List<Manga> mangaList = new ArrayList<Manga>();
         try {
@@ -162,12 +169,14 @@ public class MangaDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return mangaList;
     }
 
     public synchronized Manga getById(final int id) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + id};
         Manga manga = null;
@@ -179,18 +188,22 @@ public class MangaDAO {
             manga = resolve(cursor);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return manga;
     }
 
     public synchronized void deleteManga(final Manga manga) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
@@ -198,7 +211,7 @@ public class MangaDAO {
         Manga _manga = null;
         _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (_manga != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(CHAPTERS_QUANTITY, chapters);
@@ -207,6 +220,8 @@ public class MangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return _manga;
         } else {
@@ -222,7 +237,7 @@ public class MangaDAO {
             localManga = (LocalManga) _manga;
         }
         if (_manga != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(CHAPTERS_QUANTITY, chapters);
@@ -235,6 +250,8 @@ public class MangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return localManga;
         } else {
@@ -244,7 +261,7 @@ public class MangaDAO {
     }
 
     public void update(@NonNull final Manga manga) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         try {
             ContentValues cv = new ContentValues();
             String id = String.valueOf(manga.getId());
@@ -271,6 +288,8 @@ public class MangaDAO {
             db.update(TABLE_NAME, cv, selection, new String[] {id});
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
@@ -278,7 +297,7 @@ public class MangaDAO {
         Manga _manga = null;
         _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (_manga != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(IS_FAVORITE, isFavorite ? 1 : 0);
@@ -287,6 +306,8 @@ public class MangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return _manga;
         } else {
@@ -299,7 +320,7 @@ public class MangaDAO {
         Manga _manga = null;
         _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
         if (_manga != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(IS_DOWNLOADED, isDownloaded ? 1 : 0);
@@ -308,6 +329,8 @@ public class MangaDAO {
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return _manga;
         } else {
@@ -366,7 +389,7 @@ public class MangaDAO {
         private String constraint = "repo_uri";
 
         @Override
-        public void onUpgrade(final SQLiteDatabase database, final int currentVersion) {
+        public void onUpgrade(final Database database, final int currentVersion) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);

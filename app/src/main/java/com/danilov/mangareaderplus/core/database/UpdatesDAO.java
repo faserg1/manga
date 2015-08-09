@@ -2,7 +2,6 @@ package com.danilov.mangareaderplus.core.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
@@ -54,7 +53,7 @@ public class UpdatesDAO {
      * @throws DatabaseAccessException
      */
     public UpdatesElement getUpdatesByManga(final Manga manga) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId()};
         UpdatesElement element = null;
@@ -82,7 +81,7 @@ public class UpdatesDAO {
     }
 
     public int getUpdatesQuantity() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         try {
             Cursor cursor = db.rawQuery("select count(*) from " + TABLE_NAME, null);
             if (!cursor.moveToFirst()) {
@@ -95,7 +94,7 @@ public class UpdatesDAO {
     }
 
     public List<UpdatesElement> getAllUpdates() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
         List<UpdatesElement> mangaList = null;
         try {
@@ -123,34 +122,40 @@ public class UpdatesDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return mangaList;
     }
 
     public void deleteByManga(final Manga manga) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public void delete(final UpdatesElement updatesElement) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + updatesElement.getId()};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public long addUpdatesElement(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(TIMESTAMP, timestamp.getTime());
         cv.put(MANGA_ID, manga.getId());
@@ -160,13 +165,15 @@ public class UpdatesDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public UpdatesElement updateInfo(final Manga manga, final int difference, final Date timestamp) throws DatabaseAccessException{
         UpdatesElement updatesElement = getUpdatesByManga(manga);
         if (updatesElement != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(DIFFERENCE, updatesElement.getDifference() + difference);
@@ -178,6 +185,8 @@ public class UpdatesDAO {
                 updatesElement.setDifference(updatesElement.getDifference() + difference);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return updatesElement;
         } else {
@@ -189,7 +198,7 @@ public class UpdatesDAO {
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 
         @Override
-        public void onUpgrade(final SQLiteDatabase database, final int currentVersion) {
+        public void onUpgrade(final Database database, final int currentVersion) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);

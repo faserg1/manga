@@ -68,7 +68,7 @@ public class HistoryDAO {
      * @throws DatabaseAccessException
      */
     public HistoryElement getHistoryByManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
         HistoryElement historyElement = null;
@@ -91,13 +91,15 @@ public class HistoryDAO {
             historyElement.setDate(date);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         return historyElement;
     }
 
     @NonNull
     public List<HistoryElement> getMangaHistory() throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openReadable();
+        Database db = databaseHelper.openWritable();
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
         List<HistoryElement> mangaList = Collections.emptyList();
 
@@ -144,6 +146,8 @@ public class HistoryDAO {
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
         executor.execute(new Runnable() {
             @Override
@@ -165,24 +169,28 @@ public class HistoryDAO {
      * @param id
      */
     public void deleteHistoryById(final int id) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + id};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public void deleteManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
@@ -194,7 +202,7 @@ public class HistoryDAO {
             mangaDAO.addManga(manga);
             _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
         }
-        SQLiteDatabase db = databaseHelper.openWritable();
+        Database db = databaseHelper.openWritable();
         ContentValues cv = new ContentValues();
         cv.put(CHAPTER, chapter);
         cv.put(MANGA_ID, _manga.getId());
@@ -206,13 +214,15 @@ public class HistoryDAO {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
         }
     }
 
     public HistoryElement updateHistory(final Manga manga, final boolean isOnline, final int chapter, final int page) throws DatabaseAccessException{
         HistoryElement historyElement = getHistoryByManga(manga, isOnline);
         if (historyElement != null) {
-            SQLiteDatabase db = databaseHelper.openWritable();
+            Database db = databaseHelper.openWritable();
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(PAGE, page);
@@ -226,6 +236,8 @@ public class HistoryDAO {
                 historyElement.setPage(page);
             } catch (Exception e) {
                 throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
             }
             return historyElement;
         } else {
@@ -237,7 +249,7 @@ public class HistoryDAO {
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 
         @Override
-        public void onUpgrade(final SQLiteDatabase database, final int currentVersion) {
+        public void onUpgrade(final Database database, final int currentVersion) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);

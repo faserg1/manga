@@ -68,18 +68,18 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         }
         MangaChapter chapter = (MangaChapter) pair.first;
         boolean isLast = (boolean) pair.second;
-        if (chapterToShow == -1) {
-            this.currentChapter = chapter.getNumber();
-        } else {
-            this.currentChapter = chapterToShow;
-        }
-        this.currentImageNumber = 0;
         try {
             uris = engine.getChapterImages(chapter);
         } catch (RepositoryException e) {
             listener.onShowChapter(Result.ERROR, e.getMessage());
             return;
         }
+        if (chapterToShow == -1) {
+            this.currentChapter = chapter.getNumber();
+        } else {
+            this.currentChapter = chapterToShow;
+        }
+        this.currentImageNumber = 0;
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
         if (runnable != null) {
             runnable.run();

@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.danilov.mangareaderplus.R;
 import com.danilov.mangareaderplus.activity.MangaViewerActivity;
 import com.danilov.mangareaderplus.core.database.DatabaseAccessException;
-import com.danilov.mangareaderplus.core.database.DownloadedMangaDAO;
 import com.danilov.mangareaderplus.core.model.LocalManga;
 import com.danilov.mangareaderplus.core.service.LocalImageManager;
 import com.danilov.mangareaderplus.core.util.Constants;
@@ -36,22 +35,15 @@ public class LocalMangaActivity extends Activity implements AdapterView.OnItemCl
     int sizeOfImage = 0;
 
     private LocalImageManager localImageManager = null;
-    private DownloadedMangaDAO downloadedMangaDAO = null;
 
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
-        downloadedMangaDAO = ServiceContainer.getService(DownloadedMangaDAO.class);
         setContentView(R.layout.test_local_manga_activity);
         gridView = (GridView) findViewById(R.id.grid_view);
-        try {
-            List<LocalManga> localMangas = downloadedMangaDAO.getAllManga();
-            GridViewAdapter adapter = new GridViewAdapter(this, localMangas);
-            gridView.setAdapter(adapter);
-        } catch (DatabaseAccessException e) {
-            e.printStackTrace();
-        }
+        GridViewAdapter adapter = new GridViewAdapter(this, null);
+        gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
         sizeOfImage = getApplicationContext().getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
     }
