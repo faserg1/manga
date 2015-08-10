@@ -12,7 +12,7 @@ import android.widget.Scroller;
  */
 
 
-public class Slider extends FrameLayout {
+public class  Slider extends FrameLayout {
 
     private static final int MAX_SCROLLING_DURATION = 600; // in ms
 

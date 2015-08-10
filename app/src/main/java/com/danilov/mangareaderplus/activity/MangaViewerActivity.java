@@ -813,7 +813,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(Utils.getDeviceId(this))
+//                .addTestDevice(Utils.getDeviceId(this))
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }
