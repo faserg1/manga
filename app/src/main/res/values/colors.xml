@@ -22,10 +22,21 @@
     <color name="red">#ff0000</color>
 
     <color name="darkest_blue">#ff133c78</color>
-    <color name="dark_blue">#134697</color>
+    <color name="dark_blue">#0055b8</color>
     <color name="medium_dark_blue">#ff4a6ba7</color>
     <color name="medium_dark_blue_semi_transparent">#af4a6ba7</color>
     <color name="light_blue">#ff7dadd8</color>
 
+    <color name="light_orange">#ffff9403</color>
+    <color name="lighter_orange">#ffffae08</color>
+
+    <color name="light_gray">#ffd1d5dd</color>
+    <color name="lighter_gray">#ffacb0b8</color>
+
+    <color name="darkest_green">#ff5aa806</color>
+    <color name="dark_green">#78CA06</color>
+    <color name="medium_dark_green">#ff90e806</color>
+    <color name="medium_dark_green_semi_transparent">#af90e806</color>
+    <color name="light_green">#ff9aca6f</color>
 
 </resources>

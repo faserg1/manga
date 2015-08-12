@@ -17,7 +17,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_download_path"
-            android:textStyle="bold"
             android:textColor="@color/text_view_normal"/>
 
         <LinearLayout
@@ -55,7 +54,6 @@
             android:layout_marginTop="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_main_page"
-            android:textStyle="bold"
             android:textColor="@color/text_view_normal"/>
 
         <Spinner

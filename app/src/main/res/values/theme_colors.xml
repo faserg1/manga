@@ -12,10 +12,22 @@
     <color name="btn_beauty_pressed">@color/medium_dark_blue</color>
     <color name="btn_beauty_disabled">@color/light_blue</color>
 
+
+    <color name="btn_normal_normal">@color/dark_blue</color>
+    <color name="btn_normal_pressed">@color/medium_dark_blue</color>
+    <color name="btn_normal_disabled">@color/light_blue</color>
+
+    <color name="btn_fab_enabled_normal">@color/light_orange</color>
+    <color name="btn_fab_enabled_pressed">@color/lighter_orange</color>
+    <color name="btn_fab_disabled_normal">@color/light_gray</color>
+    <color name="btn_fab_disabled_pressed">@color/lighter_gray</color>
+
     <color name="spinner_dark_normal">@color/dark_blue</color>
     <color name="spinner_dark_pressed">@color/medium_dark_blue</color>
     <color name="spinner_dark_disabled">@android:color/black</color>
 
     <color name="selected_color">@color/medium_dark_blue_semi_transparent</color>
+
+    <color name="error_message_color">@color/red</color>
 
 </resources>

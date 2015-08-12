@@ -155,8 +155,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             app:image="@drawable/ic_action_important"
-            app:button_color="#ffd1d5dd"
-            app:button_colorPressed="#ffacb0b8"
+            app:button_color="@color/btn_fab_disabled_normal"
+            app:button_colorPressed="@color/btn_fab_disabled_pressed"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
             android:id="@+id/add_to_favorites"/>
@@ -167,9 +167,9 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             app:image="@drawable/ic_action_important"
-            app:button_color="#FFD600"
             android:visibility="gone"
-            app:button_colorPressed="#ffe6bd00"
+            app:button_color="@color/btn_fab_enabled_normal"
+            app:button_colorPressed="@color/btn_fab_enabled_pressed"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
             android:id="@+id/remove_from_favorites"/>
