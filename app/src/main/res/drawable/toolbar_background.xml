@@ -2,6 +2,6 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="#ffe97823"/>
+    <solid android:color="@color/toolbar_color"/>
 
 </shape>

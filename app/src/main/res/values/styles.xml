@@ -88,7 +88,7 @@
 
     <style name="Manga.Spinner"  parent="@style/Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/spinner_selector</item>
-        <item name="android:dropDownSelector">@drawable/red_selector</item>
+        <item name="android:dropDownSelector">@drawable/item_selector</item>
     </style>
 
 

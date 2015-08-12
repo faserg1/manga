@@ -2,7 +2,7 @@
 <resources>
 
     <style name="MangaBaseTheme.AppCompatActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="background">@drawable/orange_square</item>
+        <item name="background">@drawable/toolbar_background</item>
         <item name="titleTextStyle">@style/Manga.AppCompatActionBar.TitleTextStyle</item>
     </style>
 

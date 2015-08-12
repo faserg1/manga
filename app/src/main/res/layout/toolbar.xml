@@ -7,4 +7,4 @@
     android:layout_width="match_parent"
     android:minHeight="?attr/actionBarSize"
     theme="@style/Manga"
-    android:background="@drawable/orange_square" />
+    android:background="@drawable/toolbar_background" />

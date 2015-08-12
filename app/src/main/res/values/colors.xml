@@ -4,13 +4,13 @@
     <color name="holo_orange_dark">#ffe57650</color>
 
     <color name="manga_orange">#DC5F2F</color>
-    <color name="color_primary">#ffe97823</color>
+    <!--<color name="color_primary">#ffe97823</color>-->
     <color name="manga_main_orange">#ffe97823</color>
-    <color name="action_mode_background">#fff79b5c</color>
-    <color name="selected_color">#afff7d25</color>
+    <!--<color name="action_mode_background">#fff79b5c</color>-->
+    <!--<color name="selected_color">#afff7d25</color>-->
     <!--<color name="selected_color">#AAEE7942</color>-->
     <color name="status_bar_color">#ffcd6b24</color>
-    <color name="accent">#CCDC5F2F</color>
+    <!--<color name="accent">#CCDC5F2F</color>-->
 
     <color name="dialog_text">#000</color>
     <color name="text_view_normal">#000</color>
@@ -20,6 +20,12 @@
     <color name="viewer_spinner_default_color">#ff5287cb</color>
     <color name="viewer_spinner_pressed_color">#ff5ca6f4</color>
     <color name="red">#ff0000</color>
+
+    <color name="darkest_blue">#ff133c78</color>
+    <color name="dark_blue">#134697</color>
+    <color name="medium_dark_blue">#ff4a6ba7</color>
+    <color name="medium_dark_blue_semi_transparent">#af4a6ba7</color>
+    <color name="light_blue">#ff7dadd8</color>
 
 
 </resources>
