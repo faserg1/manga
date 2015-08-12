@@ -14,7 +14,7 @@
           android:layout_width="fill_parent"
           android:layout_height="fill_parent"/>
 
-      <com.danilov.mangareaderplus.core.view.ScrollViewParallax
+      <com.danilov.supermanga.core.view.ScrollViewParallax
             android:id="@+id/scrollView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -185,6 +185,6 @@
 
           <!--end of main layout-->
 
-      </com.danilov.mangareaderplus.core.view.ScrollViewParallax>
+      </com.danilov.supermanga.core.view.ScrollViewParallax>
 
 </RelativeLayout>

@@ -7,9 +7,9 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.danilov.mangareaderplus.core.http.AsyncDrawable;
-import com.danilov.mangareaderplus.core.http.HttpBitmapReader;
-import com.danilov.mangareaderplus.core.util.BitmapUtils;
+import com.danilov.supermanga.core.http.AsyncDrawable;
+import com.danilov.supermanga.core.http.HttpBitmapReader;
+import com.danilov.supermanga.core.util.BitmapUtils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

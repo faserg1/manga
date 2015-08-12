@@ -20,7 +20,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.danilov.mangareaderplus.R;
+import com.danilov.supermanga.R;
 
 /**
  * Created by curraa01 on 13/10/2013.

@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     
-    <com.danilov.mangareaderplus.core.view.SubsamplingScaleImageView
+    <com.danilov.supermanga.core.view.SubsamplingScaleImageView
         android:id="@+id/imageView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

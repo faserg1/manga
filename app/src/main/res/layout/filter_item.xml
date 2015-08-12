@@ -13,7 +13,7 @@
         android:textColor="@android:color/black"
         android:layout_height="wrap_content"/>
 
-    <com.danilov.mangareaderplus.core.widget.TriStateCheckbox
+    <com.danilov.supermanga.core.widget.TriStateCheckbox
         android:layout_width="wrap_content"
         android:paddingLeft="30dp"
         android:paddingTop="5dp"

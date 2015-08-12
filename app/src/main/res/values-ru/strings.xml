@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Манга Ридер+</string>
+    <string name="app_name">SuperManga</string>
 
     <string name="sv_download">Скачать</string>
     <string name="sv_back">Назад</string>
@@ -68,5 +68,9 @@
     <string name="got_updates">Есть обновления: </string>
 
     <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
-    <string name="show_adult_content">Показать контент для взрослых</string>
+    <string name="add_source">Введите название источника</string>
+    <string name="popular_sources">Популярные источники:</string>
+    <string name="source_name">Имя источника</string>
+    <string name="source_not_supported">Такой источник не поддерживается</string>
+    <string name="source_already_added">Этот источник уже добавлен</string>
 </resources>

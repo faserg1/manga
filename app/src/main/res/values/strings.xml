@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Manga Reader+</string>
+    <string name="app_name">SuperManga</string>
     <!-- sv means string values -->
     <string name="sv_download">Download</string>
     <string name="sv_back">Back</string>
@@ -67,5 +67,9 @@
 
 
     <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/7234971096</string>
-    <string name="show_adult_content">Show adult content</string>
+    <string name="add_source">Enter source\'s name</string>
+    <string name="popular_sources">Popular sources:</string>
+    <string name="source_name">Source\'s name</string>
+    <string name="source_not_supported">This source is not available</string>
+    <string name="source_already_added">Source already added</string>
 </resources>

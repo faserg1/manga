@@ -35,7 +35,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.danilov.mangareaderplus.R;
+import com.danilov.supermanga.R;
 import com.github.amlcurran.showcaseview.targets.Target;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;

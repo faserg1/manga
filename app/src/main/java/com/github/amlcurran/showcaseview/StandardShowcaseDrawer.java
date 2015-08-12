@@ -24,7 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 
-import com.danilov.mangareaderplus.R;
+import com.danilov.supermanga.R;
 
 class StandardShowcaseDrawer implements ShowcaseDrawer {
 

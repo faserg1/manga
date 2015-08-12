@@ -13,7 +13,7 @@
         android:background="#ff373737">
 
 
-        <com.danilov.mangareaderplus.core.view.MangaViewPager
+        <com.danilov.supermanga.core.view.MangaViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layoutDirection="rtl"
@@ -107,8 +107,8 @@
 
         </LinearLayout>
 
-        <com.danilov.mangareaderplus.core.view.SlidingLayer
-            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.mangareaderplus"
+        <com.danilov.supermanga.core.view.SlidingLayer
+            xmlns:slidingLayer="http://schemas.android.com/apk/res/com.danilov.supermanga"
             android:id="@+id/selector"
             android:layout_width="@dimen/viewer_slider_outer_width"
             android:layout_height="fill_parent"
@@ -226,7 +226,7 @@
 
             </RelativeLayout>
 
-        </com.danilov.mangareaderplus.core.view.SlidingLayer>
+        </com.danilov.supermanga.core.view.SlidingLayer>
 
         <!--stydyview-->
 

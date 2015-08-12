@@ -27,7 +27,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 
-import com.danilov.mangareaderplus.R;
+import com.danilov.supermanga.R;
 
 /**
  * Draws the text as required by the ShowcaseView

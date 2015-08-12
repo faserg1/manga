@@ -4,8 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.danilov.mangareaderplus.core.cache.CacheDirectoryManager;
-import com.danilov.mangareaderplus.core.util.IoUtils;
+import com.danilov.supermanga.core.cache.CacheDirectoryManager;
+import com.danilov.supermanga.core.util.IoUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
