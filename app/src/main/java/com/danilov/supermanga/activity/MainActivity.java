@@ -146,6 +146,7 @@ public class MainActivity extends BaseToolbarActivity {
                         .setContentText(getString(R.string.tutorial_menu_text))
                         .hideOnTouchOutside()
                         .build();
+                showcaseView.setButtonText(getString(R.string.tutorial_close));
                 showcaseView.setButtonPosition(Utils.getRightParam(this, getResources()));
                 showcaseView.setOnShowcaseEventListener(new OnShowcaseEventListener() {
                     @Override

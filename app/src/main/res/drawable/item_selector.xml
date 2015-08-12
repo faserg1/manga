@@ -8,4 +8,5 @@
     <item android:state_selected="true" android:drawable="@drawable/toolbar_background" />
     <item android:state_activated="true" android:drawable="@drawable/toolbar_background" />
     <item android:drawable="@android:color/transparent" />
+
 </selector>

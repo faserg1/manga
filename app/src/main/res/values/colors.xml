@@ -23,7 +23,10 @@
 
     <color name="darkest_blue">#ff133c78</color>
     <color name="dark_blue">#0055b8</color>
+    <color name="dark_blue_semi_transparent">#dc0055b8</color>
     <color name="medium_dark_blue">#ff4a6ba7</color>
+    <color name="blue">#ff5d80a8</color>
+    <color name="blue_half_transparent">#8f5d80a8</color>
     <color name="medium_dark_blue_semi_transparent">#af4a6ba7</color>
     <color name="light_blue">#ff7dadd8</color>
 

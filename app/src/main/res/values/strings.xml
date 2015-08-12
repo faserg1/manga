@@ -45,7 +45,7 @@
     <string name="p_manga_new_chapters">Manga new chapters</string>
     <string name="sv_disable_ads">Disable ads</string>
     <string name="p_want_ads_question">By leaving advertisement enabled, you support the author</string>
-    <string name="sv_update">Update</string>
+    <string name="sv_update">Check updates</string>
     <string name="p_useful_main_fragment">There will be displayed information about new chapters. In the next version it will be done automatically, and now you will need to press \'Refresh\'</string>
     <string name="profile_promise">Here will be your profile, as I implement this</string>
     <string name="tutorial_menu_title">Open menu</string>
@@ -72,4 +72,5 @@
     <string name="source_name">Source\'s name</string>
     <string name="source_not_supported">This source is not available</string>
     <string name="source_already_added">Source already added</string>
+    <string name="tutorial_close">Got it!</string>
 </resources>

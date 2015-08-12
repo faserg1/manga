@@ -19,8 +19,8 @@
     </style>
 
     <style name="ShowcaseView.Dark" parent="ShowcaseView">
-        <item name="sv_showcaseColor">#dcf7681a</item>
-        <item name="sv_backgroundColor">#dcf79436</item>
+        <item name="sv_showcaseColor">@color/color_showcase</item>
+        <item name="sv_backgroundColor">@color/color_showcase_background</item>
         <item name="sv_buttonText">Close</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
         <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Dark.Detail</item>

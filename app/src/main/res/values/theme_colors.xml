@@ -6,10 +6,18 @@
     <color name="action_mode_background">@color/light_blue</color>
     <color name="color_accent">@color/medium_dark_blue</color>
 
+
+    <color name="color_showcase">@color/dark_blue</color>
+    <color name="color_showcase_background">@color/dark_blue_semi_transparent</color>
+
+    <color name="dialog_top_bar">@color/medium_dark_blue</color>
+    <color name="dialog_top_bar_divider">@color/dark_blue_semi_transparent</color>
+
     <color name="toolbar_color">@color/dark_blue</color>
 
     <color name="btn_beauty_normal">@color/dark_blue</color>
     <color name="btn_beauty_pressed">@color/medium_dark_blue</color>
+    <color name="btn_beauty_ripple">@color/blue</color>
     <color name="btn_beauty_disabled">@color/light_blue</color>
 
 
@@ -24,6 +32,7 @@
 
     <color name="spinner_dark_normal">@color/dark_blue</color>
     <color name="spinner_dark_pressed">@color/medium_dark_blue</color>
+    <color name="spinner_dark_ripple">@color/blue_half_transparent</color>
     <color name="spinner_dark_disabled">@android:color/black</color>
 
     <color name="selected_color">@color/medium_dark_blue_semi_transparent</color>
