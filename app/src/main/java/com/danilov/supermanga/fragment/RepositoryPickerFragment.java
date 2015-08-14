@@ -60,7 +60,6 @@ public class RepositoryPickerFragment extends BaseFragment {
         repositoryUrl = findViewById(R.id.repository_url);
 
         SharedPreferences sharedPreferences = getDefaultSharedPreferences();
-        sharedPreferences.edit().putString("ADDED_REPOSITORIES", "").apply();
         String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
         String[] addedRepositoriesStringArray = addedRepositoriesString.split(",");
 
