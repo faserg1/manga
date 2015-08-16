@@ -88,4 +88,5 @@
     <string name="already_last_chapter">Это последняя глава</string>
     <string name="retry">Повторить</string>
     <string name="error_while_init_manga">Произошла ошибка загрузки информации о главах</string>
+    <string name="error_while_loading_chapter">Ошибка при загрузке главы. Проверьте интернет соединение.</string>
 </resources>

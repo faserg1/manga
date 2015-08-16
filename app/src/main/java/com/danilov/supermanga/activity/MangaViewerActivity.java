@@ -324,7 +324,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     @Override
     public void onShowImage(final int number) {
-        update();
+        update(false);
     }
 
     @Override
@@ -336,6 +336,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     public void onShowChapter(final MangaShowStrategy.Result result, final String message) {
         switch (result) {
             case ERROR:
+                onShowMessage(getString(R.string.error_while_loading_chapter));
                 break;
             case LAST_DOWNLOADED:
                 onShowMessage(getString(R.string.last_downloaded));
@@ -389,6 +390,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             reInitButton.setVisibility(View.VISIBLE);
             onShowMessage(getString(R.string.error_while_init_manga) + ": " + message);
         }
+        update(true);
     }
 
     private void onShowMessage(final String message) {
@@ -491,35 +493,41 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         strategy.showChapterAndImage(chapterNum, 0, fromNext);
     }
 
-    public void update() {
+    public void update(final boolean fromInit) {
         int currentChapter = strategy.getCurrentChapterNumber();
         int totalChapters = strategy.getTotalChaptersNumber();
         int currentImage = strategy.getCurrentImageNumber();
         int totalImages = strategy.getTotalImageNumber();
 
-        MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
-        if (chapterAdapter == null) {
-            chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
-            chapterSpinner.setAdapter(chapterAdapter);
-        } else {
-            chapterAdapter.change(0, totalChapters);
+
+        if (currentChapter <= totalChapters) {
+            MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
+            if (chapterAdapter == null) {
+                chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
+                chapterSpinner.setAdapter(chapterAdapter);
+            } else {
+                chapterAdapter.change(0, totalChapters);
+            }
+            chapterSpinner.setTag(currentChapter);
+            chapterSpinner.setSelection(currentChapter, false);
         }
-        chapterSpinner.setTag(currentChapter);
-        chapterSpinner.setSelection(currentChapter, false);
 
 
-        MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
-        if (pageAdapter == null) {
-            pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);
-            pageSpinner.setAdapter(pageAdapter);
-        } else {
-            pageAdapter.change(0, totalImages);
+        if (currentImage <= totalImages) {
+            MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
+            if (pageAdapter == null) {
+                pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);
+                pageSpinner.setAdapter(pageAdapter);
+            } else {
+                pageAdapter.change(0, totalImages);
+            }
+            pageSpinner.setTag(currentImage);
+            pageSpinner.setSelection(currentImage);
         }
-        pageSpinner.setTag(currentImage);
-        pageSpinner.setSelection(currentImage);
 
-        toggleNextChapterButton(currentImage == totalImages - 1);
-
+        if (!fromInit) {
+            toggleNextChapterButton(currentImage == totalImages - 1);
+        }
     }
 
     private void toggleNextChapterButton(final boolean enable) {
@@ -867,7 +875,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(Utils.getDeviceId(this))
+//                .addTestDevice(Utils.getDeviceId(this))
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }

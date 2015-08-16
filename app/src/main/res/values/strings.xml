@@ -87,4 +87,5 @@
     <string name="already_last_chapter">This is the last chapter</string>
     <string name="retry">Retry</string>
     <string name="error_while_init_manga">Error while loading manga info</string>
+    <string name="error_while_loading_chapter">Error while loading chapter. Check your internet connection.</string>
 </resources>
