@@ -62,7 +62,7 @@
     <string name="sv_next_chapter">Next chapter</string>
     <string name="error_while_update">Error while updating, try again later</string>
     <string name="sv_toggle_rtl">Read right to left</string>
-    <string name="got_updates">Got updates: </string>
+    <string name="got_updates">Got new chapters of manga:</string>
 
 
 
@@ -78,4 +78,13 @@
     <string name="please_rate_forget_about_it">I don\'t want to</string>
     <string name="please_rate_later">Later</string>
     <string name="please_rate_ok">OK</string>
+    <string name="loading">Loading</string>
+    <string name="getting_chapter_info">Initializing chapter</string>
+    <string name="getting_manga_info">Initializing manga</string>
+    <string name="last_downloaded">Last downloaded</string>
+    <string name="not_downloaded">This chapter is not downloaded</string>
+    <string name="no_such_chapter">No such chapter</string>
+    <string name="already_last_chapter">This is the last chapter</string>
+    <string name="retry">Retry</string>
+    <string name="error_while_init_manga">Error while loading manga info</string>
 </resources>

@@ -65,7 +65,7 @@
     <string name="sv_next_chapter">Следующая глава</string>
     <string name="error_while_update">Ошибка при обновлении, повторите позже</string>
     <string name="sv_toggle_rtl">Читать справа налево</string>
-    <string name="got_updates">Есть обновления: </string>
+    <string name="got_updates">Есть новые главы манги:</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/6277438290</string>
     <string name="add_source">Введите название источника</string>
@@ -79,4 +79,13 @@
     <string name="please_rate_forget_about_it">Не хочу</string>
     <string name="please_rate_later">Позже</string>
     <string name="please_rate_ok">ОК</string>
+    <string name="loading">Загрузка</string>
+    <string name="getting_chapter_info">Получаем информацию о главе</string>
+    <string name="getting_manga_info">Получаем информацию о манге</string>
+    <string name="last_downloaded">Последняя из скачанных</string>
+    <string name="not_downloaded">Эта глава не загружена</string>
+    <string name="no_such_chapter">Главы с таким номером нет</string>
+    <string name="already_last_chapter">Это последняя глава</string>
+    <string name="retry">Повторить</string>
+    <string name="error_while_init_manga">Произошла ошибка загрузки информации о главах</string>
 </resources>

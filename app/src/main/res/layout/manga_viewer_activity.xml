@@ -12,12 +12,20 @@
         android:layout_height="match_parent"
         android:background="#ff373737">
 
-
         <com.danilov.supermanga.core.view.MangaViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layoutDirection="rtl"
             android:id="@+id/imageSwitcher"/>
+
+        <Button
+            android:id="@+id/reinit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry"
+            android:visibility="gone"
+            style="@style/Manga.ButtonCommon"
+            android:layout_centerInParent="true"/>
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -96,7 +104,7 @@
             <Button
                 android:id="@+id/next_chapter"
                 android:layout_width="fill_parent"
-                style="@style/Manga.ButtonBlue"
+                style="@style/Manga.ButtonCommon"
                 android:layout_height="wrap_content"
                 android:text="@string/sv_next_chapter"
                 android:textSize="20sp"

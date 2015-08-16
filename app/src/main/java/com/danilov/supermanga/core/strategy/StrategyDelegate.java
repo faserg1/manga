@@ -59,10 +59,16 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
     }
 
     public int getCurrentImageNumber() {
+        if (_initTempImage != -1) {
+            return _initTempImage;
+        }
         return strategy.getCurrentImageNumber();
     }
 
     public int getCurrentChapterNumber() {
+        if (_initTempChapter != -1) {
+            return _initTempChapter;
+        }
         return strategy.getCurrentChapterNumber();
     }
 
@@ -86,8 +92,17 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
         return strategy.getChapterUris();
     }
 
+    private int _initTempChapter = -1;
+    private int _initTempImage = -1;
+
     public void initStrategy(final int chapter, final int image) {
+        _initTempChapter = chapter;
+        _initTempImage = image;
         strategy.initStrategy(chapter, image);
+    }
+
+    public void reInit() {
+        strategy.initStrategy(_initTempChapter, _initTempImage);
     }
 
     public void next() {
@@ -178,6 +193,11 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
                 public void run() {
                     if (canHandle && listener != null) {
                             listener.onInit(result, message);
+                            strategy.onCallbackDelivered(ActionType.ON_INIT);
+                            if (result == MangaShowStrategy.Result.SUCCESS) {
+                                _initTempChapter = -1;
+                                _initTempImage = -1;
+                            }
                     } else {
                         delayedActions.add(new DelayedAction(ActionType.ON_INIT, result, message));
                     }

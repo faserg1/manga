@@ -85,6 +85,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private CheckBox showButtonsCheckbox;
     private CheckBox rtlCheckbox;
     private Button nextChapter;
+    private Button reInitButton;
 
     private View drawerRightOffsetTop;
     private View drawerRightOffsetBottom;
@@ -134,6 +135,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
         this.rtlCheckbox = findViewWithId(R.id.rtl_checkbox);
         this.bottomBar = findViewWithId(R.id.bottom_bar);
+        this.reInitButton = findViewWithId(R.id.reinit);
+        reInitButton.setOnClickListener(this);
         chapterSpinner.setOnItemSelectedListener(new ChapterSpinnerListener());
         pageSpinner.setOnItemSelectedListener(new ImageSpinnerListener());
         settings = ApplicationSettings.get(this);
@@ -174,7 +177,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             progressDialog = (DialogFragment) fragmentManager.findFragmentByTag(PROGRESS_DIALOG_TAG);
             rateDialog = (RateDialog) fragmentManager.findFragmentByTag(RateDialog.TAG);
         }
-        if (strategyHolder == null || strategyHolder.getStrategyDelegate() != null) {
+        if (strategyHolder == null || strategyHolder.getStrategyDelegate() == null) {
             if (!showOnline) {
                 strategy = new StrategyDelegate(mangaViewPager, new OfflineManga((LocalManga) manga), false);
             } else {
@@ -191,6 +194,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
         init(savedInstanceState);
         closeKeyboard();
+        toggleNextChapterButton(false);
         if (!settings.isShowViewerButtonsAlways()) {
             hideBtns(HIDE_TIME_OFFSET);
         }
@@ -310,7 +314,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         currentImageNumber = currentImageNumber == -1 ? 0 : currentImageNumber;
         if (!strategy.isStrategyInitialized()) {
             if (!strategy.isInitializationInProgress()) {
-                showProgressDialog("Loading", "Initializing chapters");
+                showProgressDialog(getString(R.string.loading), getString(R.string.getting_manga_info));
                 strategy.initStrategy(currentChapterNumber, currentImageNumber);
             }
         } else {
@@ -334,17 +338,17 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             case ERROR:
                 break;
             case LAST_DOWNLOADED:
-                onShowMessage("Последняя из скачанных");
+                onShowMessage(getString(R.string.last_downloaded));
             case SUCCESS:
                 break;
             case NOT_DOWNLOADED:
-                onShowMessage("Эта глава не загружена");
+                onShowMessage(getString(R.string.not_downloaded));
                 break;
             case NO_SUCH_CHAPTER:
-                onShowMessage("Главы с таким номером нет");
+                onShowMessage(getString(R.string.no_such_chapter));
                 break;
             case ALREADY_FINAL_CHAPTER:
-                onShowMessage("Это последняя глава");
+                onShowMessage(getString(R.string.already_last_chapter));
                 break;
         }
         hideProgress();
@@ -379,7 +383,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     public void onInit(final MangaShowStrategy.Result result, final String message) {
         hideProgress();
-        showProgressDialog("Loading", "Getting chapter info");
+        if (result == MangaShowStrategy.Result.SUCCESS) {
+            showProgressDialog(getString(R.string.loading), getString(R.string.getting_chapter_info));
+        } else if (result == MangaShowStrategy.Result.ERROR) {
+            reInitButton.setVisibility(View.VISIBLE);
+            onShowMessage(getString(R.string.error_while_init_manga) + ": " + message);
+        }
     }
 
     private void onShowMessage(final String message) {
@@ -411,8 +420,20 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 }
                 break;
             case R.id.next_chapter:
+                if (!strategy.isStrategyInitialized()) {
+                    return;
+                }
                 int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
                 showChapter(curChapter + 1, true);
+                break;
+            case R.id.reinit:
+                if (!strategy.isStrategyInitialized()) {
+                    if (!strategy.isInitializationInProgress()) {
+                        showProgressDialog(getString(R.string.loading), getString(R.string.getting_manga_info));
+                        strategy.reInit();
+                    }
+                }
+                reInitButton.setVisibility(View.GONE);
                 break;
         }
     }
@@ -466,7 +487,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void showChapter(final int chapterNum, final boolean fromNext) {
-        showProgressDialog("Loading", "Getting chapter info");
+        showProgressDialog(getString(R.string.loading), getString(R.string.getting_chapter_info));
         strategy.showChapterAndImage(chapterNum, 0, fromNext);
     }
 

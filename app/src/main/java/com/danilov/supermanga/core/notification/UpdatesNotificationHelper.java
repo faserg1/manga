@@ -34,12 +34,14 @@ public class UpdatesNotificationHelper {
 
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification_layout);
         contentView.setImageViewResource(R.id.icon, R.drawable.ic_launcher);
-        contentView.setTextViewText(R.id.text, context.getString(R.string.got_updates) + quantity);
+        String message = context.getString(R.string.got_updates) + quantity;
+        contentView.setTextViewText(R.id.text, context.getString(R.string.got_updates) + " " + quantity);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setContentIntent(pendingIntent)
                         .setSmallIcon(R.drawable.ic_launcher)
+                        .setTicker(message)
                         .setContent(contentView);
         this.notification = mBuilder.build();
         this.notification.contentView = contentView;
