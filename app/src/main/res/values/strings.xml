@@ -73,4 +73,9 @@
     <string name="source_not_supported">This source is not available</string>
     <string name="source_already_added">Source already added</string>
     <string name="tutorial_close">Got it!</string>
+    <string name="please_rate">Like this app? Why not give it a 5 star in Google Play?</string>
+    <string name="please_rate_title">Rate this app</string>
+    <string name="please_rate_forget_about_it">I don\'t want to</string>
+    <string name="please_rate_later">Later</string>
+    <string name="please_rate_ok">OK</string>
 </resources>

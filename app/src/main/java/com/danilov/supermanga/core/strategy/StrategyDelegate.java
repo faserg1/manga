@@ -94,8 +94,8 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
         strategy.next();
     }
 
-    public void showChapter(final int i) {
-        strategy.showChapter(i);
+    public void showChapter(final int i, final boolean fromNext) {
+        strategy.showChapter(i, fromNext);
     }
 
     public boolean isInitializationInProgress() { //shepard
@@ -269,8 +269,8 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
 
     }
 
-    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
-        strategy.showChapterAndImage(chapterNumber, imageNumber);
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber, final boolean fromNext) {
+        strategy.showChapterAndImage(chapterNumber, imageNumber, fromNext);
     }
 
     public enum ActionType {

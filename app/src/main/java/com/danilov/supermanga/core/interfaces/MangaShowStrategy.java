@@ -16,9 +16,9 @@ public interface MangaShowStrategy extends CompatPager.OnPageChangeListener {
 
     void showImage(final int i);
 
-    void showChapter(final int i);
+    void showChapter(int i, boolean fromNext);
 
-    void showChapterAndImage(final int chapterNumber, final int imageNumber);
+    void showChapterAndImage(int chapterNumber, int imageNumber, boolean fromNext);
 
     void onCallbackDelivered(final StrategyDelegate.ActionType actionType);
 

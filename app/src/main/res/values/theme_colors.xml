@@ -15,6 +15,9 @@
 
     <color name="toolbar_color">@color/dark_blue</color>
 
+    <color name="dialog_top_bar_color">@color/dark_blue</color>
+    <color name="dialog_divider_color">@color/darkest_blue</color>
+
     <color name="btn_beauty_normal">@color/dark_blue</color>
     <color name="btn_beauty_pressed">@color/medium_dark_blue</color>
     <color name="btn_beauty_ripple">@color/blue</color>

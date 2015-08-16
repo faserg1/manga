@@ -2,8 +2,10 @@ package com.danilov.supermanga.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -34,6 +36,7 @@ import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
+import com.danilov.supermanga.core.dialog.RateDialog;
 import com.danilov.supermanga.core.interfaces.MangaShowStrategy;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
@@ -63,10 +66,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private static final String PROGRESS_DIALOG_TAG = "MangaViewerActivityProgressDialog";
 
+    private static final int CHAPTERS_READ_RATE_THRESHOLD = 4; //сколько глав до показа диалога "оцените"
+
     private static final String CURRENT_CHAPTER_KEY = "CCK";
     private static final String CURRENT_IMAGE_KEY = "CIK";
     private static final String CHAPTERS_KEY = "CK";
     private static final String URIS_KEY = "UK";
+    private static final String CHAPTERS_READ = "CR";
 
     private MangaViewPager mangaViewPager;
     private TextView nextBtn;
@@ -90,11 +96,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private int fromChapter;
     private int fromPage;
 
+    private int chaptersRead = 0;
+
     private ApplicationSettings settings;
 
     private View tutorials;
 
     private DialogFragment progressDialog = null;
+    private RateDialog rateDialog = null;
+
     private boolean isFullscreen = false;
     private boolean isTutorialPassed = false;
 
@@ -162,8 +172,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         if (savedInstanceState != null) {
             strategyHolder = (StrategyHolder) fragmentManager.getFragment(savedInstanceState, StrategyHolder.NAME);
             progressDialog = (DialogFragment) fragmentManager.findFragmentByTag(PROGRESS_DIALOG_TAG);
+            rateDialog = (RateDialog) fragmentManager.findFragmentByTag(RateDialog.TAG);
         }
-        if (strategyHolder == null) {
+        if (strategyHolder == null || strategyHolder.getStrategyDelegate() != null) {
             if (!showOnline) {
                 strategy = new StrategyDelegate(mangaViewPager, new OfflineManga((LocalManga) manga), false);
             } else {
@@ -284,6 +295,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         if (savedState != null) {
             currentChapterNumber = savedState.getInt(CURRENT_CHAPTER_KEY, -1);
             currentImageNumber = savedState.getInt(CURRENT_IMAGE_KEY, 0);
+            chaptersRead = savedState.getInt(CHAPTERS_READ, 0);
             ArrayList<MangaChapter> chapters = savedState.getParcelableArrayList(CHAPTERS_KEY);
             if (chapters != null) {
                 manga.setChapters(chapters);
@@ -302,7 +314,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 strategy.initStrategy(currentChapterNumber, currentImageNumber);
             }
         } else {
-            strategy.showChapterAndImage(currentChapterNumber, currentImageNumber);
+            strategy.showChapterAndImage(currentChapterNumber, currentImageNumber, false);
         }
     }
 
@@ -340,11 +352,27 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     @Override
     public void onNext(@Nullable final Integer chapterNum) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean rated = sharedPreferences.getBoolean(Constants.RATED, false);
+
+
         if (chapterNum != null) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
+            if (chapterNum == -1) {
+                if (!rated && rateDialog == null) {
+                    rateDialog = new RateDialog();
+                    rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
+                }
+            } else {
+                chaptersRead++;
+                if (!rated && chaptersRead >= CHAPTERS_READ_RATE_THRESHOLD && rateDialog == null) {
+                    rateDialog = new RateDialog();
+                    rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
+                } else {
+                    if (mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                    }
+                }
             }
-            strategy.showImage(0);
         }
     }
 
@@ -383,11 +411,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 }
                 break;
             case R.id.next_chapter:
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                }
                 int curChapter = (int) chapterSpinner.getSelectedItem() - 1;
-                showChapter(curChapter + 1);
+                showChapter(curChapter + 1, true);
                 break;
         }
     }
@@ -407,7 +432,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             if (chapterNum < 0) {
                 chapterNum = 0;
             }
-            showChapter(chapterNum);
+            showChapter(chapterNum, false);
         }
 
         @Override
@@ -440,9 +465,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
-    private void showChapter(final int chapterNum) {
+    private void showChapter(final int chapterNum, final boolean fromNext) {
         showProgressDialog("Loading", "Getting chapter info");
-        strategy.showChapterAndImage(chapterNum, 0);
+        strategy.showChapterAndImage(chapterNum, 0, fromNext);
     }
 
     public void update() {
@@ -482,12 +507,18 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void showProgressDialog(final String title, final String message) {
-        progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+        if (progressDialog == null) {
+            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+        } else {
+            hideProgress();
+            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+        }
     }
 
     private void hideProgress() {
         if (progressDialog != null) {
             progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 
@@ -602,6 +633,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
         outState.putInt(CURRENT_CHAPTER_KEY, strategy.getCurrentChapterNumber());
         outState.putInt(CURRENT_IMAGE_KEY, strategy.getCurrentImageNumber());
+        outState.putInt(CHAPTERS_READ, chaptersRead);
         outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
 
         ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
@@ -632,6 +664,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             save();
             saved = true;
         }
+
 //        strategy.destroy();
         super.onDestroy();
     }
@@ -813,7 +846,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-//                .addTestDevice(Utils.getDeviceId(this))
+                .addTestDevice(Utils.getDeviceId(this))
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }

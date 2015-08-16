@@ -57,23 +57,23 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     }
 
     @Override
-    public void showChapter(final int i) {
-        showChapterInternal(i, null);
+    public void showChapter(final int i, final boolean fromNext) {
+        showChapterInternal(i, null, fromNext);
     }
 
     @Override
-    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber, final boolean fromNext) {
         showChapterInternal(chapterNumber, new Runnable() {
             @Override
             public void run() {
                 showImage(imageNumber);
             }
-        });
+        }, fromNext);
     }
 
     private boolean isShowChapterInProgress = false;
 
-    private void showChapterInternal(final int i, final Runnable runnable) {
+    private void showChapterInternal(final int i, final Runnable runnable, final boolean fromNext) {
         if (isShowChapterInProgress) {
             return;
         }
@@ -87,8 +87,14 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
         final MangaChapter chapter = manga.getChapterByNumber(chapterNum);
         if (chapter == null) {
             boolean isOnLastChapterAndTappedNext = currentChapter == (chaptersQuantity - 1) && chapterNum == chaptersQuantity;
+            if (fromNext) {
+                listener.onNext(-1);
+            }
             listener.onShowChapter(isOnLastChapterAndTappedNext ? Result.ALREADY_FINAL_CHAPTER : Result.NO_SUCH_CHAPTER, "");
             return;
+        }
+        if (fromNext) {
+            listener.onNext(i);
         }
         Thread thread = new Thread() {
 
@@ -127,7 +133,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     @Override
     public void next() {
         if (currentImageNumber + 1 >= uris.size()) {
-            showChapter(currentChapter + 1);
+            showChapter(currentChapter + 1, true);
             return;
         }
         showImage(currentImageNumber + 1);
@@ -147,7 +153,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
             if (uris != null) {
                 showImage(image);
             } else {
-                showChapterAndImage(chapter, image);
+                showChapterAndImage(chapter, image, false);
             }
 
         } else {
@@ -162,7 +168,7 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
                         if (uris != null) {
                             showImage(image);
                         } else {
-                            showChapterAndImage(chapter, image);
+                            showChapterAndImage(chapter, image, false);
                         }
 
                     } catch (RepositoryException e) {

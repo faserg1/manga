@@ -35,23 +35,23 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
-    public void showChapter(final int chapterToShow) {
-        showChapterInternal(chapterToShow, null);
+    public void showChapter(final int chapterToShow, final boolean fromNext) {
+        showChapterInternal(chapterToShow, null, fromNext);
     }
 
     @Override
-    public void showChapterAndImage(final int chapterNumber, final int imageNumber) {
+    public void showChapterAndImage(final int chapterNumber, final int imageNumber, final boolean fromNext) {
         showChapterInternal(chapterNumber, new Runnable() {
             @Override
             public void run() {
                 showImage(imageNumber);
             }
-        });
+        }, fromNext);
     }
 
     private boolean isShowChapterInProgress = false;
 
-    private void showChapterInternal(final int chapterToShow, final Runnable runnable) {
+    private void showChapterInternal(final int chapterToShow, final Runnable runnable, final boolean fromNext) {
         if (isShowChapterInProgress) {
             return;
         }
@@ -63,6 +63,9 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             pair = manga.getChapterAndIsLastByNumber(chapterToShow);
         }
         if (pair == null) {
+            if (fromNext) {
+                listener.onNext(-1);
+            }
             listener.onShowChapter(Result.NOT_DOWNLOADED, "");
             return;
         }
@@ -78,6 +81,9 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             this.currentChapter = chapter.getNumber();
         } else {
             this.currentChapter = chapterToShow;
+        }
+        if (fromNext) {
+            listener.onNext(currentChapter);
         }
         this.currentImageNumber = 0;
         listener.onShowChapter(isLast ? Result.LAST_DOWNLOADED : Result.SUCCESS, "");
@@ -116,7 +122,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             listener.onShowChapter(Result.NOT_DOWNLOADED, "");
             return;
         }
-        showChapter(chapter.getNumber());
+        showChapter(chapter.getNumber(), true);
     }
 
     @Override
@@ -142,7 +148,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
             if (uris != null) {
                 showImage(image);
             } else {
-                showChapterAndImage(chapter, image);
+                showChapterAndImage(chapter, image, false);
             }
         } else {
             try {
@@ -156,7 +162,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
         if (uris != null) {
             showImage(image);
         } else {
-            showChapterAndImage(chapter, image);
+            showChapterAndImage(chapter, image, false);
         }
     }
 

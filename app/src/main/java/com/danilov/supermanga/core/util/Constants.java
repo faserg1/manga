@@ -27,4 +27,5 @@ public class Constants {
 
     public static final long UPDATES_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
 
+    public static final String RATED = "RATED";
 }

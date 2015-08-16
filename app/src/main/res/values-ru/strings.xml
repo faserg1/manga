@@ -74,4 +74,9 @@
     <string name="source_not_supported">Такой источник не поддерживается</string>
     <string name="source_already_added">Этот источник уже добавлен</string>
     <string name="tutorial_close">Окей!</string>
+    <string name="please_rate">Нравится приложение? Почему бы не оценить его в Google Play?</string>
+    <string name="please_rate_title">Оцените приложение</string>
+    <string name="please_rate_forget_about_it">Не хочу</string>
+    <string name="please_rate_later">Позже</string>
+    <string name="please_rate_ok">ОК</string>
 </resources>
