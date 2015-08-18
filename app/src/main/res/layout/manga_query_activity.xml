@@ -41,6 +41,15 @@
 
     </GridView>
 
+    <TextView
+        android:id="@+id/nothing_found"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/search_nothing_found"
+        android:visibility="gone"
+        android:gravity="center"/>
+
     <ProgressBar
         style="@style/Manga.RoundProgressBar"
         android:layout_width="100dp"

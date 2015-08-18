@@ -15,14 +15,19 @@ import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -46,15 +51,49 @@ public class KissmangaEngine implements RepositoryEngine {
 
     private final String baseSearchUri = "http://kissmanga.com/Search/Manga?keyword=";
     public static final String baseUri = "http://kissmanga.com";
+    public static final String baseSuggestUri = "http://kissmanga.com/Search/SearchSuggest";
 
     @Override
     public String getLanguage() {
         return "English";
     }
 
+    private String suggestionPattern = "a href=\"(.*?)\">(.*?)<\\/a>";
+
     @Override
     public List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException {
-        return Collections.emptyList();
+        List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
+        try {
+            DefaultHttpClient httpClient = new ExtendedHttpClient();
+            HttpPost request = new HttpPost(baseSuggestUri);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            nameValuePairs.add(new BasicNameValuePair("keyword", query));
+            nameValuePairs.add(new BasicNameValuePair("type", "Manga"));
+            request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            HttpResponse response = httpClient.execute(request);
+            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+            String responseString = IoUtils.convertBytesToString(result);
+
+            Pattern p = Pattern.compile(suggestionPattern);
+            Matcher m = p.matcher(responseString);
+            while (m.find()) {
+                String link = m.group(1);
+                int idx = link.indexOf(".com/Manga");
+                if (idx != -1) {
+                    link = link.substring(idx + 4);
+                }
+                String title = m.group(2);
+                MangaSuggestion suggestion = new MangaSuggestion(title, link, Repository.KISSMANGA);
+                mangaSuggestions.add(suggestion);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mangaSuggestions;
     }
 
     @Override
@@ -72,12 +111,29 @@ public class KissmangaEngine implements RepositoryEngine {
             nameValuePairs.add(new BasicNameValuePair("keyword", query));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-            HttpResponse response = httpClient.execute(request);
-            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+            HttpContext context = new BasicHttpContext();
+            HttpResponse response = httpClient.execute(request, context);
 
+            HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(
+                    ExecutionContext.HTTP_REQUEST);
+            HttpHost currentHost = (HttpHost)  context.getAttribute(
+                    ExecutionContext.HTTP_TARGET_HOST);
+            String currentUrl = (currentReq.getURI().isAbsolute()) ? currentReq.getURI().toString() : (currentHost.toURI() + currentReq.getURI());
+
+
+            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
             String responseString = IoUtils.convertBytesToString(result);
 
-            mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
+            if (currentUrl.contains("kissmanga.com/Manga")) {
+                Manga manga = new Manga("", currentUrl, Repository.KISSMANGA);
+                parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
+                if (!"".equals(manga.getTitle())) {
+                    mangaList = new ArrayList<>(1);
+                    mangaList.add(manga);
+                }
+            } else if (currentUrl.contains("kissmanga.com/Search")) {
+                mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ClientProtocolException e) {
@@ -98,6 +154,9 @@ public class KissmangaEngine implements RepositoryEngine {
     private List<Manga> parseMangaSearchResponse(final Document document) {
         List<Manga> mangas = new ArrayList<>();
         Element results = document.getElementsByClass(RESULTS_CLASS).first();
+        if (results == null) {
+            return mangas;
+        }
         Elements mangaResults = results.getElementsByTag(RESULT_TAG);
         int i = 0;
         for (Element td : mangaResults) {
@@ -158,6 +217,7 @@ public class KissmangaEngine implements RepositoryEngine {
             Element parent = titleElement.parent();
             Element description = parent.child(6);
             manga.setDescription(description.text());
+            manga.setTitle(titleElement.text());
             if (manga.getCoverUri() == null || manga.getCoverUri().length() <= 0) {
                 Element img = document.getElementById("rightside").getElementsByTag("img").first();
                 manga.setCoverUri(img.attr("src"));

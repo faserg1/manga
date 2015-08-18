@@ -64,6 +64,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private ProgressBar progressBar;
 
+    private TextView nothingFoundView;
+
     private boolean pagerShown = true;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         }
         setContentView(R.layout.manga_query_activity);
 
-        searchResultsView = (GridView) findViewById(R.id.search_results);
+        nothingFoundView = findViewWithId(R.id.nothing_found);
+        searchResultsView = findViewWithId(R.id.search_results);
         repositoryTitleTextView = findViewWithId(R.id.repository_title);
         progressBar = findViewWithId(R.id.progress_bar);
         hideProgressBar();
@@ -140,6 +143,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     }
 
     public void showProgressBar() {
+        nothingFoundView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
     }
 
@@ -211,6 +215,11 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         adapter = new MangaListAdapter(this, R.layout.manga_list_item, foundManga, this);
         searchResultsView.setAdapter(adapter);
         searchResultsView.setOnItemClickListener(this);
+        if (foundManga.isEmpty()) {
+            nothingFoundView.setVisibility(View.VISIBLE);
+        } else {
+            nothingFoundView.setVisibility(View.GONE);
+        }
     }
 
     public void hideViewPager() {

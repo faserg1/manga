@@ -8,6 +8,7 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.filter.BasicFilters;
+import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -384,7 +385,11 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         genres.add(new BasicFilters.MangaReaderTriState("Comedy"));
         genres.add(new BasicFilters.MangaReaderTriState("Demons"));
         genres.add(new BasicFilters.MangaReaderTriState("Drama"));
-        genres.add(new BasicFilters.MangaReaderTriState("Ecchi"));
+
+        if (!Constants.IS_MARKET_VERSION) {
+            genres.add(new BasicFilters.MangaReaderTriState("Ecchi"));
+        }
+
         genres.add(new BasicFilters.MangaReaderTriState("Fantasy"));
         genres.add(new BasicFilters.MangaReaderTriState("Gender Bender"));
         genres.add(new BasicFilters.MangaReaderTriState("Harem"));
@@ -393,7 +398,9 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         genres.add(new BasicFilters.MangaReaderTriState("Josei"));
         genres.add(new BasicFilters.MangaReaderTriState("Magic"));
         genres.add(new BasicFilters.MangaReaderTriState("Martial Arts"));
-        genres.add(new BasicFilters.MangaReaderTriState("Mature"));
+        if (!Constants.IS_MARKET_VERSION) {
+            genres.add(new BasicFilters.MangaReaderTriState("Mature"));
+        }
         genres.add(new BasicFilters.MangaReaderTriState("Mecha"));
         genres.add(new BasicFilters.MangaReaderTriState("Military"));
         genres.add(new BasicFilters.MangaReaderTriState("Mystery"));
@@ -414,8 +421,10 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         genres.add(new BasicFilters.MangaReaderTriState("Supernatural"));
         genres.add(new BasicFilters.MangaReaderTriState("Tragedy"));
         genres.add(new BasicFilters.MangaReaderTriState("Vampire"));
-        genres.add(new BasicFilters.MangaReaderTriState("Yaoi"));
-        genres.add(new BasicFilters.MangaReaderTriState("Yuri"));
+        if (!Constants.IS_MARKET_VERSION) {
+            genres.add(new BasicFilters.MangaReaderTriState("Yaoi"));
+            genres.add(new BasicFilters.MangaReaderTriState("Yuri"));
+        }
 
         filterGroups.add(genres);
 
