@@ -23,11 +23,14 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -300,6 +303,10 @@ public class SubsamplingScaleImageView extends View {
      */
     public final void setImageAsset(String assetName) {
         setImageAsset(assetName, null);
+    }
+
+    public boolean isLargePicture() {
+        return isLargePicture;
     }
 
     /**
@@ -592,6 +599,44 @@ public class SubsamplingScaleImageView extends View {
         this.onLongClickListener = onLongClickListener;
     }
 
+    private boolean isLargePicture = false;
+    private boolean shouldDrawLarge = false;
+
+    public void setShouldDrawLarge(final boolean shouldDrawLarge) {
+        this.shouldDrawLarge = shouldDrawLarge;
+        invalidate();
+    }
+
+    /**
+     * Called by worker task when decoder is ready and image size and EXIF orientation is known.
+     */
+    private void onImageInited(int sWidth, int sHeight, int sOrientation) {
+        this.sWidth = sWidth;
+        this.sHeight = sHeight;
+        if (sWidth > Constants.ImageRestrictions.MAX_SIDE_SIZE || sHeight > Constants.ImageRestrictions.MAX_SIDE_SIZE) {
+            //не начинаем грузить, пока не попросят
+            isLargePicture = true;
+        }
+
+        if (sHeight > sWidth) {
+            //если по высоте больше, надо выставить scale и поднять center
+            //вычисляем, на сколько сжато изображение
+            // высота картинки : высота экрана (или высота вью?) - коэффициент сжатия
+            // ширина картинки : коэффициент сжатия = реальная ширина картинки на экране
+            // ширина экрана : реальная ширина картинки на экране = scale
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            int width = display.getWidth();  // deprecated
+            int height = display.getHeight();  // deprecated
+            float setScale = (float) width / sWidth;
+            setScaleAndCenter(Math.min(maxScale, setScale), new PointF(0, 0));
+        }
+
+        this.sOrientation = sOrientation;
+        requestLayout();
+        invalidate();
+    }
+
     /**
      * Draw method should not be called until the view has dimensions so the first calls are used as triggers to calculate
      * the scaling and tiling required. Once the view is setup, tiles are displayed as they are loaded.
@@ -603,6 +648,9 @@ public class SubsamplingScaleImageView extends View {
 
         // If image or view dimensions are not known yet, abort.
         if (sWidth == 0 || sHeight == 0 || getWidth() == 0 || getHeight() == 0) {
+            return;
+        }
+        if (isLargePicture && !shouldDrawLarge) {
             return;
         }
 
@@ -946,17 +994,6 @@ public class SubsamplingScaleImageView extends View {
                 sampleSize /= 2;
             }
         }
-    }
-
-    /**
-     * Called by worker task when decoder is ready and image size and EXIF orientation is known.
-     */
-    private void onImageInited(int sWidth, int sHeight, int sOrientation) {
-        this.sWidth = sWidth;
-        this.sHeight = sHeight;
-        this.sOrientation = sOrientation;
-        requestLayout();
-        invalidate();
     }
 
     /**

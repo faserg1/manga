@@ -185,11 +185,17 @@ public class MangaViewPager extends CompatPager {
                     entry.getValue().reset();
                 }
             }
+            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view.findViewById(R.id.imageView);
+            if (imageView.isLargePicture()) {
+                imageView.reset();
+            }
+            imageView.setShouldDrawLarge(false);
         }
 
         @Override
         protected void onViewSelected(final int position, final View view) {
-//            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
+            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view.findViewById(R.id.imageView);
+            imageView.setShouldDrawLarge(true);
         }
     }
 

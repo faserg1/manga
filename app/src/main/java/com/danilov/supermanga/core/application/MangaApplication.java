@@ -66,7 +66,7 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
 
-        setUpdateAlarm();
+        AlarmReceiver.setUpdateAlarm(this);
 
         //Google Play Service ты офигел!
         try {
@@ -78,18 +78,7 @@ public class MangaApplication extends Application {
         ACRA.init(this);
     }
 
-    private void setUpdateAlarm() {
 
-        Calendar cal= Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 12);
-
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 1123, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.UPDATES_INTERVAL, pendingIntent);
-    }
 
     public static Context getContext() {
         return context;

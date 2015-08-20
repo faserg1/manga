@@ -28,4 +28,12 @@ public class Constants {
     public static final long UPDATES_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
 
     public static final String RATED = "RATED";
+
+    public static class ImageRestrictions {
+
+        //если превышает, то не грузим заранее
+        public static final int MAX_SIDE_SIZE = 2500; //pxls
+
+    }
+
 }
