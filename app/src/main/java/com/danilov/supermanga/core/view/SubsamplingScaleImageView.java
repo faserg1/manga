@@ -656,6 +656,11 @@ public class SubsamplingScaleImageView extends View {
 
         // On first render with no tile map ready, initialise it and kick off async base image loading.
         if (tileMap == null) {
+//            if (pendingScale != null) {
+//                initialiseBaseLayer(getMaxBitmapDimensions(canvas), true);
+//            } else {
+//                initialiseBaseLayer(getMaxBitmapDimensions(canvas));
+//            }
             initialiseBaseLayer(getMaxBitmapDimensions(canvas));
             return;
         }
@@ -795,6 +800,31 @@ public class SubsamplingScaleImageView extends View {
         }
 
         initialiseTileMap(maxTileDimensions);
+
+        List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
+        for (Tile baseTile : baseGrid) {
+            BitmapTileTask task = new BitmapTileTask(this, decoderLock, baseTile);
+            task.execute();
+        }
+
+    }
+
+    private synchronized void initialiseBaseLayer(Point maxTileDimensions, final boolean dontRunTasksNow) {
+
+        fitToBounds(true);
+
+        // Load double resolution - next level will be split into four tiles and at the center all four are required,
+        // so don't bother with tiling until the next level 16 tiles are needed.
+        fullImageSampleSize = calculateInSampleSize();
+        if (fullImageSampleSize > 1) {
+            fullImageSampleSize /= 2;
+        }
+
+        initialiseTileMap(maxTileDimensions);
+
+        if (dontRunTasksNow) {
+            return;
+        }
 
         List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
         for (Tile baseTile : baseGrid) {
