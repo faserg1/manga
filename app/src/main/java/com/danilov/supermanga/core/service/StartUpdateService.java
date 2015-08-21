@@ -47,7 +47,7 @@ public class StartUpdateService extends Service {
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         super.onStartCommand(intent, flags, startId);
         startUpdate();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void startUpdate() {
@@ -119,8 +119,8 @@ public class StartUpdateService extends Service {
                         if (quantity < 1) {
                             return;
                         }
-
                         new UpdatesNotificationHelper(applicationContext).buildNotification(quantity);
+                        stopSelf();
                     }
                     break;
             }

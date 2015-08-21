@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +39,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import rapid.decoder.BitmapDecoder;
 import rapid.decoder.BitmapLoader;
@@ -178,6 +181,8 @@ public class SubsamplingScaleImageView extends View {
     // Paint objects created once and reused for efficiency
     private Paint bitmapPaint;
     private Paint debugPaint;
+
+    private final Executor executor = Executors.newFixedThreadPool(5);
 
     public SubsamplingScaleImageView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -328,10 +333,13 @@ public class SubsamplingScaleImageView extends View {
         reset(false);
     }
 
+    private boolean reset = true;
+
     /**
      * Reset all state before setting/changing image or setting new rotation.
      */
     private void reset(boolean newImage) {
+        reset = true;
         scale = 0f;
         scaleStart = 0f;
         vTranslate = null;
@@ -359,6 +367,9 @@ public class SubsamplingScaleImageView extends View {
                     if (tile.bitmap != null) {
                         tile.bitmap.recycle();
                         tile.bitmap = null;
+                    }
+                    if (tile.task != null) {
+                        tile.task.cancel(true);
                     }
                 }
             }
@@ -618,20 +629,6 @@ public class SubsamplingScaleImageView extends View {
             isLargePicture = true;
         }
 
-        if (sHeight > sWidth) {
-            //если по высоте больше, надо выставить scale и поднять center
-            //вычисляем, на сколько сжато изображение
-            // высота картинки : высота экрана (или высота вью?) - коэффициент сжатия
-            // ширина картинки : коэффициент сжатия = реальная ширина картинки на экране
-            // ширина экрана : реальная ширина картинки на экране = scale
-            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            int width = display.getWidth();  // deprecated
-            int height = display.getHeight();  // deprecated
-            float setScale = (float) width / sWidth;
-            setScaleAndCenter(Math.min(maxScale, setScale), new PointF(0, 0));
-        }
-
         this.sOrientation = sOrientation;
         requestLayout();
         invalidate();
@@ -650,6 +647,22 @@ public class SubsamplingScaleImageView extends View {
         if (sWidth == 0 || sHeight == 0 || getWidth() == 0 || getHeight() == 0) {
             return;
         }
+
+        if (reset) {
+            if (sHeight > sWidth) {
+                reset = false;
+                 //если по высоте больше, надо выставить scale и поднять center
+                //вычисляем, на сколько на сколько надо сжать изображение, чтобы оно заняло всю область по ширине
+                WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                int width = display.getWidth();  // deprecated
+                int height = display.getHeight();  // deprecated
+                float setScale = (float) width / sWidth;
+                setScaleAndCenter(Math.min(maxScale, setScale), new PointF(0, 0)); //это вызывается один раз всего
+                return;
+            }
+        }
+
         if (isLargePicture && !shouldDrawLarge) {
             return;
         }
@@ -730,7 +743,8 @@ public class SubsamplingScaleImageView extends View {
 
         // Render all loaded tiles. LinkedHashMap used for bottom up rendering - lower res tiles underneath.
         for (Map.Entry<Integer, List<Tile>> tileMapEntry : tileMap.entrySet()) {
-            if (tileMapEntry.getKey() == sampleSize || hasMissingTiles) {
+            int curSampleSize = tileMapEntry.getKey();
+            if (curSampleSize == sampleSize || hasMissingTiles) {
                 for (Tile tile : tileMapEntry.getValue()) {
                     Rect vRect = convertRect(sourceToViewRect(tile.sRect));
                     if (!tile.loading && tile.bitmap != null) {
@@ -740,6 +754,10 @@ public class SubsamplingScaleImageView extends View {
                         }
                     } else if (tile.loading && debug) {
                         canvas.drawText("LOADING", vRect.left + 5, vRect.top + 35, debugPaint);
+                    } else if (tile.loading) {
+                        if (hasMissingTiles && fullImageSampleSize == curSampleSize) {
+                            canvas.drawRect(vRect, emptyBitmapPaint);
+                        }
                     }
                     if (tile.visible && debug) {
                         canvas.drawText("ISS " + tile.sampleSize + " RECT " + tile.sRect.top + "," + tile.sRect.left + "," + tile.sRect.bottom + "," + tile.sRect.right, vRect.left + 5, vRect.top + 15, debugPaint);
@@ -766,6 +784,8 @@ public class SubsamplingScaleImageView extends View {
         }
     }
 
+    private Paint emptyBitmapPaint = null;
+
     /**
      * Creates Paint objects once when first needed.
      */
@@ -775,6 +795,11 @@ public class SubsamplingScaleImageView extends View {
             bitmapPaint.setAntiAlias(true);
             bitmapPaint.setFilterBitmap(true);
             bitmapPaint.setDither(true);
+        }
+        if (emptyBitmapPaint == null) {
+            emptyBitmapPaint = new Paint();
+            emptyBitmapPaint.setAntiAlias(true);
+            emptyBitmapPaint.setColor(Color.argb(255, 173, 173, 173));
         }
         if (debugPaint == null && debug) {
             debugPaint = new Paint();
@@ -804,9 +829,13 @@ public class SubsamplingScaleImageView extends View {
         List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
         for (Tile baseTile : baseGrid) {
             BitmapTileTask task = new BitmapTileTask(this, decoderLock, baseTile);
-            task.execute();
+            if (VERSION.SDK_INT >= 11) {
+                task.executeOnExecutor(executor);
+            } else {
+                task.execute();
+            }
         }
-
+        invalidate(); //это мы первую отрисовку без всего зовём
     }
 
     private synchronized void initialiseBaseLayer(Point maxTileDimensions, final boolean dontRunTasksNow) {
@@ -829,7 +858,11 @@ public class SubsamplingScaleImageView extends View {
         List<Tile> baseGrid = tileMap.get(fullImageSampleSize);
         for (Tile baseTile : baseGrid) {
             BitmapTileTask task = new BitmapTileTask(this, decoderLock, baseTile);
-            task.execute();
+            if (VERSION.SDK_INT >= 11) {
+                task.executeOnExecutor(executor);
+            } else {
+                task.execute();
+            }
         }
 
     }
@@ -860,13 +893,21 @@ public class SubsamplingScaleImageView extends View {
                         tile.visible = true;
                         if (!tile.loading && tile.bitmap == null && load) {
                             BitmapTileTask task = new BitmapTileTask(this, decoderLock, tile);
-                            task.execute();
+                            if (VERSION.SDK_INT >= 11) {
+                                task.executeOnExecutor(executor);
+                            } else {
+                                task.execute();
+                            }
                         }
                     } else if (tile.sampleSize != fullImageSampleSize) {
                         tile.visible = false;
                         if (tile.bitmap != null) {
                             tile.bitmap.recycle();
                             tile.bitmap = null;
+                        }
+                        if (tile.task != null) {
+                            tile.task.cancel(true);
+                            tile.loading = false;
                         }
                     }
                 } else if (tile.sampleSize == fullImageSampleSize) {
@@ -1124,6 +1165,7 @@ public class SubsamplingScaleImageView extends View {
             this.decoderLockRef = new WeakReference<Object>(decoderLock);
             this.tileRef = new WeakReference<Tile>(tile);
             tile.loading = true;
+            tile.task = this;
         }
 
         @Override
@@ -1201,6 +1243,7 @@ public class SubsamplingScaleImageView extends View {
         private Bitmap bitmap;
         private boolean loading;
         private boolean visible;
+        private BitmapTileTask task;
 
     }
 
