@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -245,7 +246,8 @@ public class MangaDownloadService extends Service {
                     deleteRequest((MangaDownloadRequest) msg.obj);
                     break;
                 case DELETE_REQUEST:
-                    downloadManager.resumeDownload();
+                    deleteRequestFromList((MangaDownloadRequest) msg.obj);
+                    sendStatus();
                     break;
                 default:
                     break;
@@ -266,6 +268,23 @@ public class MangaDownloadService extends Service {
             message.what = REQUEST_COMPLETE;
             message.obj = manga;
             notifyObservers(message);
+        }
+    }
+
+    private void deleteRequestFromList(final MangaDownloadRequest request) {
+        downloadManager.cancelDownloadsWithTag(request);
+        if (request.equals(currentRequest)) {
+            Manga manga = currentRequest.getManga();
+            Message message = Message.obtain();
+            message.what = DownloadServiceHandler.START_NEXT_REQUEST;
+            serviceHandler.sendMessage(message);
+
+            message = Message.obtain(); //that's a new message
+            message.what = REQUEST_COMPLETE;
+            message.obj = manga;
+            notifyObservers(message);
+        } else {
+            requests.remove(request);
         }
     }
 
@@ -338,6 +357,13 @@ public class MangaDownloadService extends Service {
     public void deleteCurRequest(final MangaDownloadRequest request) {
         Message message = Message.obtain();
         message.what = DownloadServiceHandler.DELETE_CURRENT_REQUEST;
+        message.obj = request;
+        serviceHandler.sendMessage(message);
+    }
+
+    public void deleteSomeRequest(final MangaDownloadRequest request) {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.DELETE_REQUEST;
         message.obj = request;
         serviceHandler.sendMessage(message);
     }
@@ -444,7 +470,11 @@ public class MangaDownloadService extends Service {
 
     }
 
+    private static final Random RANDOM = new Random();
+
     public class MangaDownloadRequest {
+
+        private long requestId = RANDOM.nextLong();
 
         private int currentChapterInList;
 
@@ -570,10 +600,7 @@ public class MangaDownloadService extends Service {
 
             MangaDownloadRequest that = (MangaDownloadRequest) o;
 
-            if (quantity != that.quantity) return false;
-            if (!manga.equals(that.manga)) return false;
-
-            return true;
+            return requestId == that.requestId;
         }
 
         @Override

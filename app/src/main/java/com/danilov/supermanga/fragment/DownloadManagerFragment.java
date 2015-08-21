@@ -375,8 +375,16 @@ public class DownloadManagerFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(final Holder holder, final int position) {
-            MangaDownloadService.MangaDownloadRequest request = requests.get(position);
+            final MangaDownloadService.MangaDownloadRequest request = requests.get(position);
             holder.title.setText(request.getManga().getTitle());
+            holder.removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    if (service != null) {
+                        service.deleteSomeRequest(request);
+                    }
+                }
+            });
         }
 
         @Override
