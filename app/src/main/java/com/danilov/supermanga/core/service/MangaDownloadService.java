@@ -194,6 +194,8 @@ public class MangaDownloadService extends Service {
         public static final int SKIP_PICTURE = 4;
         public static final int PAUSE = 5;
         public static final int RESUME = 6;
+        public static final int DELETE_CURRENT_REQUEST = 7;
+        public static final int DELETE_REQUEST = 8;
 
         @Override
         public void handleMessage(final Message msg) {
@@ -239,12 +241,31 @@ public class MangaDownloadService extends Service {
                 case PAUSE:
                     downloadManager.pauseDownload();
                     break;
-                case RESUME:
+                case DELETE_CURRENT_REQUEST:
+                    deleteRequest((MangaDownloadRequest) msg.obj);
+                    break;
+                case DELETE_REQUEST:
                     downloadManager.resumeDownload();
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    private void deleteRequest(final MangaDownloadRequest request) {
+        downloadManager.cancelDownloadsWithTag(request);
+
+        if (request.equals(currentRequest)) {
+            Manga manga = currentRequest.getManga();
+            Message message = Message.obtain();
+            message.what = DownloadServiceHandler.START_NEXT_REQUEST;
+            serviceHandler.sendMessage(message);
+
+            message = Message.obtain(); //that's a new message
+            message.what = REQUEST_COMPLETE;
+            message.obj = manga;
+            notifyObservers(message);
         }
     }
 
@@ -314,7 +335,12 @@ public class MangaDownloadService extends Service {
         serviceHandler.sendMessage(message);
     }
 
-
+    public void deleteCurRequest(final MangaDownloadRequest request) {
+        Message message = Message.obtain();
+        message.what = DownloadServiceHandler.DELETE_CURRENT_REQUEST;
+        message.obj = request;
+        serviceHandler.sendMessage(message);
+    }
 
     public MangaDownloadRequest obtainRequest() {
         return new MangaDownloadRequest();
@@ -411,7 +437,7 @@ public class MangaDownloadService extends Service {
             currentRequest.setCurrentImageQuantity(currentImageQuantity);
             sendStatus();
             for (String url : urls) {
-                downloadManager.startDownload(url, chapterPath + i + ".png", curChapterNumber);
+                downloadManager.startDownload(url, chapterPath + i + ".png", currentRequest);
                 i++;
             }
         }
@@ -536,6 +562,27 @@ public class MangaDownloadService extends Service {
         public void setCurrentChapterInList(final int currentChapterInList) {
             this.currentChapterInList = currentChapterInList;
         }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            MangaDownloadRequest that = (MangaDownloadRequest) o;
+
+            if (quantity != that.quantity) return false;
+            if (!manga.equals(that.manga)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = quantity;
+            result = 31 * result + manga.hashCode();
+            return result;
+        }
+
     }
 
     private class MangaDownloadListener implements DownloadManager.DownloadProgressListener {

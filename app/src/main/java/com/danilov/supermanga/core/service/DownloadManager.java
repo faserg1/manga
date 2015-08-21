@@ -76,7 +76,7 @@ public class DownloadManager {
         return startDownload(uri, filePath, null);
     }
 
-    public Download startDownload(final String uri, final String filePath, final Object tag) {
+    public Download  startDownload(final String uri, final String filePath, final Object tag) {
         lock.lock();
         Download download = null;
         try {
@@ -100,6 +100,23 @@ public class DownloadManager {
         lock.lock();
         try {
             download.setStatus(DownloadStatus.CANCELLED);
+            wakeUp();
+            Log.e(TAG, "Cancelling download");
+        } catch (Exception e) {
+            Log.d(TAG, "Exception occurred in cancelDownload(), error: " + e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void cancelDownloadsWithTag(final Object tag) {
+        lock.lock();
+        try {
+            for (Download download : downloads) {
+                if (tag.equals(download.getTag())) {
+                    download.setStatus(DownloadStatus.CANCELLED);
+                }
+            }
             wakeUp();
             Log.e(TAG, "Cancelling download");
         } catch (Exception e) {

@@ -145,8 +145,8 @@ public class AllHentaiEngine implements RepositoryEngine {
             try {
                 response = httpBytesReader.fromUri(uri);
             } catch (HttpRequestException e) {
-                Log.d(TAG, e.getMessage());
-                throw new RepositoryException(e.getMessage());
+                Log.d(TAG, "Failed to load: " + e.getMessage());
+                throw new RepositoryException("Failed to load: " + e.getMessage());
             }
             String responseString = IoUtils.convertBytesToString(response);
             List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.toDocument(responseString));
@@ -176,11 +176,11 @@ public class AllHentaiEngine implements RepositoryEngine {
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = extractUrls(str);
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
-            throw new RepositoryException(e.getMessage());
+            Log.d(TAG, "Failed to load: " + e.getMessage());
+            throw new RepositoryException("Failed to load: " + e.getMessage());
         } catch (HttpRequestException e) {
-            Log.d(TAG, e.getMessage());
-            throw new RepositoryException(e.getMessage());
+            Log.d(TAG, "Failed to load: " + e.getMessage());
+            throw new RepositoryException("Failed to load: " + e.getMessage());
         } finally {
             if (inputStream != null) {
                 try {

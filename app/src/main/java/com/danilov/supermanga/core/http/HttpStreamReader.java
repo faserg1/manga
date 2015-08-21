@@ -151,7 +151,11 @@ public class HttpStreamReader {
 
         if (responseException != null) {
             ExtendedHttpClient.releaseRequestResponse(request, response);
-            throw new HttpRequestException(responseException.getMessage());
+            if (responseException.getMessage() != null) {
+                throw new HttpRequestException(responseException.getMessage());
+            } else {
+                throw new HttpRequestException("");
+            }
         }
 
         return response;

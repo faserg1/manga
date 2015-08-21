@@ -34,7 +34,6 @@ public class MangaViewPager extends CompatPager {
 
 
     private DownloadManager downloadManager = new DownloadManager();
-    private ViewSwitcher.ViewFactory viewFactory = null;
     private Adapter adapter = null;
     private CacheDirectoryManager cacheDirectoryManager = null;
     private String cachePath = null;
@@ -80,10 +79,6 @@ public class MangaViewPager extends CompatPager {
         } catch (Exception e) {
         }
         return false;
-    }
-
-    public void setFactory(final ViewSwitcher.ViewFactory factory) {
-        this.viewFactory = factory;
     }
 
     public void setOnline(final boolean isOnline) {

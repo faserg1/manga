@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -56,6 +57,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Semyon Danilov on 06.08.2014.
@@ -120,7 +123,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
         this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
         mangaViewPager.setFragmentManager(getSupportFragmentManager());
-        mangaViewPager.setFactory(new SubsamplingImageViewFactory());
         this.nextBtn = findViewWithId(R.id.nextBtn);
         this.prevBtn = findViewWithId(R.id.prevBtn);
         this.nextBtnBottom = findViewWithId(R.id.nextBtnBottom);
@@ -322,8 +324,14 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
+    private boolean saveTimerScheduled = false;
+
     @Override
     public void onShowImage(final int number) {
+        if (!saveTimerScheduled) {
+            timer.schedule(saveProgressTask, 1000, Constants.VIEWER_SAVE_PERIOD);
+            saveTimerScheduled = true;
+        }
         update(false);
     }
 
@@ -694,6 +702,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             saved = true;
         }
 
+        timer.cancel();
+
 //        strategy.destroy();
         super.onDestroy();
     }
@@ -708,7 +718,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         } catch (DatabaseAccessException e) {
             Log.e(TAG, "Failed to update history: " + e.getMessage());
         }
-        saved = true;
     }
 
     // the part with MangaStrategyListener
@@ -734,23 +743,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     // MangaStrategyListener realization end
-
-    private class SubsamplingImageViewFactory implements ViewSwitcher.ViewFactory {
-
-        @Override
-        public View makeView() {
-            SubsamplingScaleImageView touchImageView = new SubsamplingScaleImageView(MangaViewerActivity.this);
-
-            touchImageView.setLayoutParams(new
-                    ImageSwitcher.LayoutParams(
-                    ImageSwitcher.LayoutParams.MATCH_PARENT, ImageSwitcher.LayoutParams.MATCH_PARENT));
-            touchImageView.setVisibility(View.INVISIBLE);
-            touchImageView.setMaxScale(4);
-            //touchImageView.setDebug(true);
-            return touchImageView;
-        }
-
-    }
 
     private void closeKeyboard() {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -781,6 +773,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     protected void onPause() {
         strategy.onPause();
+        if (!saved && strategy.isStrategyInitialized()) {
+            save();
+        }
         super.onPause();
     }
     @Override
@@ -855,7 +850,39 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     }
 
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                onNext();
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                onPrevious();
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private Timer timer = new Timer();
+
+    private TimerTask saveProgressTask = new TimerTask() {
+
+        @Override
+        public void run() {
+            save();
+        }
+
+    };
 
     //ad routine
 

@@ -55,6 +55,10 @@ public class DownloadManagerFragment extends BaseFragment {
     private ImageButton restartButton;
     private ImageButton pauseButton;
     private ImageButton skipButton;
+    private ImageButton removeButton;
+
+    private View cardWrapper;
+    private TextView noActiveDownloadSign;
 
     private Button restoreButton;
 
@@ -63,6 +67,8 @@ public class DownloadManagerFragment extends BaseFragment {
     private ActionBarActivity actionBarActivity;
 
     private Context context;
+
+    private MangaDownloadService.MangaDownloadRequest currentRequest;
 
     public static DownloadManagerFragment newInstance() {
         return new DownloadManagerFragment();
@@ -79,8 +85,9 @@ public class DownloadManagerFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         actionBarActivity = (ActionBarActivity) getActivity();
         context = actionBarActivity;
-
+        cardWrapper = findViewById(R.id.card_wrapper);
         title = findViewById(R.id.title);
+        noActiveDownloadSign = findViewById(R.id.no_downloads);
         chaptersProgressBar = findViewById(R.id.chaptersProgressBar);
         imageProgressBar = findViewById(R.id.imageProgressBar);
         chaptersProgress = findViewById(R.id.chaptersProgress);
@@ -93,6 +100,16 @@ public class DownloadManagerFragment extends BaseFragment {
         pauseButton = findViewById(R.id.pause_btn);
         restartButton = findViewById(R.id.restart_btn);
         skipButton = findViewById(R.id.skip_btn);
+        removeButton = findViewById(R.id.remove);
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (currentRequest != null && service != null) {
+                    service.deleteCurRequest(currentRequest);
+                }
+            }
+        });
 
         restartButton.setOnClickListener(new View.OnClickListener() {
 
@@ -140,6 +157,8 @@ public class DownloadManagerFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        noActiveDownloadSign.setVisibility(View.VISIBLE);
+        cardWrapper.setVisibility(View.GONE);
         serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new DownloadServiceConnectionListener());
         serviceIntent = new Intent(actionBarActivity, MangaDownloadService.class);
         actionBarActivity.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -208,6 +227,10 @@ public class DownloadManagerFragment extends BaseFragment {
         imageProgressBar.setProgress(1);
         chaptersProgressBar.setMax(1);
         chaptersProgressBar.setProgress(1);
+        cardWrapper.setVisibility(View.GONE);
+        if (listView.getCount() <= 0) {
+            noActiveDownloadSign.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onChapterComplete(final Message message) {
@@ -230,8 +253,11 @@ public class DownloadManagerFragment extends BaseFragment {
     }
 
     private void onStatus(final Message message) {
+        cardWrapper.setVisibility(View.VISIBLE);
+        noActiveDownloadSign.setVisibility(View.GONE);
         Pair p = (Pair) message.obj;
         MangaDownloadService.MangaDownloadRequest request = (MangaDownloadService.MangaDownloadRequest) p.first;
+        currentRequest = request;
         List<MangaDownloadService.MangaDownloadRequest> requests = (List<MangaDownloadService.MangaDownloadRequest>) p.second;
 
         RequestsAdapter adapter = new RequestsAdapter(context, android.R.layout.simple_list_item_1, requests);
@@ -257,6 +283,9 @@ public class DownloadManagerFragment extends BaseFragment {
         chaptersProgressBar.setProgress(currentChapter);
         progressText = ++currentChapter + "/" + quantity;
         chaptersProgress.setText(progressText);
+
+
+
     }
 
     @Override
@@ -313,6 +342,7 @@ public class DownloadManagerFragment extends BaseFragment {
 
     private void showResumeBtn() {
         resumeButton.setVisibility(View.VISIBLE);
+        removeButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.INVISIBLE);
         restartButton.setVisibility(View.INVISIBLE);
         skipButton.setVisibility(View.INVISIBLE);
@@ -320,6 +350,7 @@ public class DownloadManagerFragment extends BaseFragment {
 
     private void showPauseBtn() {
         pauseButton.setVisibility(View.VISIBLE);
+        removeButton.setVisibility(View.VISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
         restartButton.setVisibility(View.INVISIBLE);
         skipButton.setVisibility(View.INVISIBLE);
@@ -330,6 +361,7 @@ public class DownloadManagerFragment extends BaseFragment {
         skipButton.setVisibility(View.VISIBLE);
         resumeButton.setVisibility(View.INVISIBLE);
         pauseButton.setVisibility(View.INVISIBLE);
+        removeButton.setVisibility(View.INVISIBLE);
     }
 
     private class RequestsAdapter extends BaseAdapter<Holder, MangaDownloadService.MangaDownloadRequest> {
