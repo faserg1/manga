@@ -216,6 +216,40 @@ public class KissmangaEngine implements RepositoryEngine {
             Element titleElement = document.getElementById("leftside").getElementsByClass("barContent").first().getElementsByClass("bigChar").first();
             Element parent = titleElement.parent();
             Element description = parent.child(6);
+
+            Element authors = parent.child(3);
+            StringBuilder lst = new StringBuilder();
+            Elements listElement = authors.getElementsByTag("a");
+            if (!listElement.isEmpty()) {
+                int i = 0;
+                for (Element links : listElement) {
+                    String txt = links.text();
+                    if (i > 0) {
+                        lst.append(", ");
+                    }
+                    lst.append(txt);
+                    i++;
+                }
+            }
+            manga.setAuthor(lst.toString());
+
+
+            Element genres = parent.child(2);
+            lst = new StringBuilder();
+            listElement = genres.getElementsByTag("a");
+            if (!listElement.isEmpty()) {
+                int i = 0;
+                for (Element links : listElement) {
+                    String txt = links.text();
+                    if (i > 0) {
+                        lst.append(", ");
+                    }
+                    lst.append(txt);
+                    i++;
+                }
+            }
+            manga.setGenres(lst.toString());
+
             manga.setDescription(description.text());
             manga.setTitle(titleElement.text());
             if (manga.getCoverUri() == null || manga.getCoverUri().length() <= 0) {
