@@ -198,6 +198,8 @@ public class MangaUpdateServiceNew extends Service {
             }
         } catch (RepositoryException e) {
             throw new UpdateException(e);
+        } catch (Exception e) {
+            throw new UpdateException(e);
         }
         return null;
     }

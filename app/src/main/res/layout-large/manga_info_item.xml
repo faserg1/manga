@@ -112,13 +112,12 @@
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:textSize="25sp"
-                                      android:text="Жанр:"/>
+                                      android:text="@string/info_item_genre"/>
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:layout_marginLeft="5dp"
                                       android:textStyle="bold"
-                                      android:text="Хентай, Сейнен, Пони"
                                       android:textSize="25sp"/>
 
                         </LinearLayout>
@@ -131,13 +130,12 @@
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:textSize="25sp"
-                                      android:text="Автор:"/>
+                                      android:text="@string/info_item_author"/>
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:layout_marginLeft="5dp"
                                       android:textStyle="bold"
-                                      android:text="Аллах"
                                       android:textSize="25sp"/>
 
                         </LinearLayout>

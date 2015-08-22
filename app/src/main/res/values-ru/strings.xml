@@ -91,4 +91,6 @@
     <string name="error_while_loading_chapter">Ошибка при загрузке главы. Проверьте интернет соединение.</string>
     <string name="search_nothing_found">По вашему запросу ничего не найдено</string>
     <string name="no_active_downloads">Нет активных загрузок</string>
+    <string name="info_item_genre">Жанр:</string>
+    <string name="info_item_author">Автор:</string>
 </resources>
