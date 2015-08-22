@@ -70,6 +70,14 @@
 
         </GridView>
 
+        <TextView
+            android:id="@+id/no_sources"
+            android:text="@string/no_added_sources"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
 </RelativeLayout>

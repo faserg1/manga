@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaQueryActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
+import com.danilov.supermanga.core.repository.ReadmangaEngine;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.util.Constants;
 
@@ -39,6 +40,7 @@ public class RepositoryPickerFragment extends BaseFragment {
     private View addRepositoryWrapper;
     private Button showAddForm;
     private Button addRepo;
+    private TextView noSources;
     private AutoCompleteTextView repositoryUrl;
 
     public static RepositoryPickerFragment newInstance() {
@@ -57,10 +59,22 @@ public class RepositoryPickerFragment extends BaseFragment {
         addRepositoryWrapper = findViewById(R.id.add_repository_wrapper);
         showAddForm = findViewById(R.id.show_add_form);
         addRepo = findViewById(R.id.add);
+        noSources = findViewById(R.id.no_sources);
         repositoryUrl = findViewById(R.id.repository_url);
 
         SharedPreferences sharedPreferences = getDefaultSharedPreferences();
         String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
+        boolean userMigrated = sharedPreferences.getBoolean("USER_MIGRATED", false);
+        if (!userMigrated) {
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            if (addedRepositoriesString.length() > 0) {
+                edit.putString("ADDED_REPOSITORIES", RepositoryEngine.Repository.READMANGA.toString() + "," + RepositoryEngine.Repository.MANGAREADERNET.toString() + "," + addedRepositoriesString).apply();
+                addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
+            }
+            edit.putBoolean("USER_MIGRATED", true).apply();
+        }
+
+
         String[] addedRepositoriesStringArray = addedRepositoriesString.split(",");
 
         repositories = RepositoryEngine.Repository.getBySettings(addedRepositoriesStringArray);
@@ -151,6 +165,7 @@ public class RepositoryPickerFragment extends BaseFragment {
                 }
             }
         });
+        noSources.setVisibility(repositories.length < 1 ? View.VISIBLE : View.GONE);
         repositoriesView.setAdapter(new RepoAdapter(this.getActivity(), R.layout.repository_item, repositories));
         super.onActivityCreated(savedInstanceState);
     }
@@ -163,6 +178,7 @@ public class RepositoryPickerFragment extends BaseFragment {
         String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
         String[] addedRepositoriesStringArray = addedRepositoriesString.split(",");
         repositories = RepositoryEngine.Repository.getBySettings(addedRepositoriesStringArray);
+        noSources.setVisibility(repositories.length < 1 ? View.VISIBLE : View.GONE);
         repositoriesView.setAdapter(new RepoAdapter(getActivity(), R.layout.repository_item, repositories));
     }
 
@@ -243,32 +259,26 @@ public class RepositoryPickerFragment extends BaseFragment {
             ViewHolder holder = null;
             TextView text;
             ImageView icon;
-            ImageView country;
             if (tag != null) {
                 holder = (ViewHolder) tag;
                 text = holder.text;
                 icon = holder.icon;
-                country = holder.country;
             } else {
                 holder = new ViewHolder();
                 text = (TextView) view.findViewById(R.id.repository_title);
                 icon = (ImageView) view.findViewById(R.id.repository_cover);
-                country = (ImageView) view.findViewById(R.id.country_image);
                 holder.text = text;
                 holder.icon = icon;
-                holder.country = country;
             }
             RepositoryEngine.Repository repository = objects[position];
             text.setText(repository.getName());
-            icon.setImageResource(repository.getIconId());
-            country.setImageResource(repository.getCountryIconId());
+            icon.setImageResource(repository.getCountryIconId());
             return view;
         }
 
         private class ViewHolder {
             public TextView text;
             public ImageView icon;
-            public ImageView country;
         }
 
     }

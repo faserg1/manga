@@ -64,26 +64,24 @@ public interface RepositoryEngine {
     //enum of names containing matched engines
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine(), "ReadManga", false, R.drawable.ic_readmanga, R.drawable.ic_russia),
-        ALLHENTAI(new AllHentaiEngine(), "AllHent", true, R.drawable.ic_allhentai, R.drawable.ic_russia),
-        ADULTMANGA(new AdultmangaEngine(), "AdultManga", true, R.drawable.ic_adultmanga, R.drawable.ic_russia),
-        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", false, R.drawable.ic_mangareadernet, R.drawable.ic_english),
-        KISSMANGA(new KissmangaEngine(), "KissManga", true, R.drawable.ic_mangareadernet, R.drawable.ic_english),
-        OFFLINE(new OfflineEngine(), "", false, 0, -1);
+        READMANGA(new ReadmangaEngine(), "ReadManga", true, R.drawable.ic_russia),
+        ALLHENTAI(new AllHentaiEngine(), "AllHent", true, R.drawable.ic_russia),
+        ADULTMANGA(new AdultmangaEngine(), "AdultManga", true, R.drawable.ic_russia),
+        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", true, R.drawable.ic_english),
+        KISSMANGA(new KissmangaEngine(), "KissManga", true, R.drawable.ic_english),
+        OFFLINE(new OfflineEngine(), "", false, -1);
 
         private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, KISSMANGA, ALLHENTAI, MANGAREADERNET};
 
         private RepositoryEngine engine;
         private String name;
-        private int iconId;
         private boolean isAdult;
         private int countryIconId;
 
-        Repository(final RepositoryEngine engine, final String name, final boolean isAdult, final int iconId, final int countryIconId) {
+        Repository(final RepositoryEngine engine, final String name, final boolean isAdult, final int countryIconId) {
             this.engine = engine;
             this.name = name;
             this.isAdult = isAdult;
-            this.iconId = iconId;
             this.countryIconId = countryIconId;
         }
 
@@ -93,10 +91,6 @@ public interface RepositoryEngine {
 
         public String getName() {
             return name;
-        }
-
-        public int getIconId() {
-            return iconId;
         }
 
         public static Repository[] getWithoutOffline() {

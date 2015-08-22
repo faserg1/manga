@@ -67,7 +67,7 @@
 
 
     <string name="banner_ad_unit_id">ca-app-pub-1133278580100525/6277438290</string>
-    <string name="add_source">Enter source\'s name</string>
+    <string name="add_source">Add source</string>
     <string name="popular_sources">Popular sources:</string>
     <string name="source_name">Source\'s name</string>
     <string name="source_not_supported">This source is not available</string>
@@ -93,4 +93,5 @@
     <string name="info_item_genre">Genre:</string>
     <string name="info_item_author">Author:</string>
     <string name="description">Description</string>
+    <string name="no_added_sources">You got no added sources</string>
 </resources>

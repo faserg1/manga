@@ -381,7 +381,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                     rateDialog = new RateDialog();
                     rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
                 } else {
-                    if (Constants.IS_MARKET_VERSION) {
+                    if (Constants.HAS_ADS) {
                         if (mInterstitialAd.isLoaded()) {
                             mInterstitialAd.show();
                         }
@@ -891,7 +891,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private InterstitialAd mInterstitialAd;
 
     private void adInit() {
-        if (!Constants.IS_MARKET_VERSION) {
+        if (!Constants.HAS_ADS) {
             return;
         }
         mInterstitialAd = new InterstitialAd(this);
@@ -906,7 +906,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void requestNewInterstitial() {
-        if (!Constants.IS_MARKET_VERSION) {
+        if (!Constants.HAS_ADS) {
             return;
         }
         AdRequest adRequest = new AdRequest.Builder()
