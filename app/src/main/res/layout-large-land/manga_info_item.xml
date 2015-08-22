@@ -27,9 +27,9 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:orientation="vertical"
-                  android:paddingBottom="5dp"
-                  android:paddingLeft="55dp"
-                  android:paddingRight="55dp"
+                  android:paddingBottom="@dimen/info_item_bottom_padding_land"
+                  android:paddingLeft="@dimen/info_item_side_padding_land"
+                  android:paddingRight="@dimen/info_item_side_padding_land"
                   android:clipChildren="false"
                   android:paddingTop="?attr/actionBarSize">
 
@@ -67,7 +67,7 @@
                           <TextView android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:id="@+id/manga_title"
-                                    android:textSize="45sp"
+                                    android:textSize="@dimen/info_item_title_text_size"
                                     android:fontFamily="sans-serif-light"
                                     android:singleLine="true"
                                     android:ellipsize="marquee"
@@ -83,58 +83,103 @@
                           android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
                           android:baselineAligned="false"
-                          android:orientation="vertical">
+                          android:weightSum="2"
+                          android:orientation="horizontal">
 
-                          <LinearLayout android:layout_width="fill_parent"
-                                        android:layout_height="wrap_content"
-                                        android:paddingLeft="5dp"
-                                        android:orientation="horizontal"
-                                        android:padding="10dp"
-                                        android:clickable="true"
-                                        android:background="@drawable/selectable_item_background">
+                          <LinearLayout
+                              android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:orientation="vertical">
 
-                              <TextView android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="20sp"
-                                        android:text="@string/sv_chapters"/>
+                              <LinearLayout android:layout_width="fill_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal">
 
-                              <TextView android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="5dp"
-                                        android:textStyle="bold"
-                                        android:textSize="20sp"
-                                        android:id="@+id/chapters_quantity"/>
+                                  <TextView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/info_attribute_title_size"
+                                            android:text="@string/sv_chapters"/>
+
+                                  <TextView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+                                            android:textStyle="bold"
+                                            android:textSize="@dimen/info_attribute_title_size"
+                                            android:id="@+id/chapters_quantity"/>
+
+                              </LinearLayout>
+
+                              <LinearLayout android:layout_width="fill_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:orientation="horizontal">
+
+                                  <TextView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/info_attribute_title_size"
+                                            android:text="@string/info_item_genre"/>
+
+                                  <TextView
+                                      android:id="@+id/genres"
+                                      android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="@dimen/info_attribute_title_size"/>
+
+                              </LinearLayout>
+
+                              <LinearLayout android:layout_width="fill_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:orientation="horizontal">
+
+                                  <TextView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textSize="@dimen/info_attribute_title_size"
+                                            android:text="@string/info_item_author"/>
+
+                                  <TextView
+                                      android:id="@+id/authors"
+                                      android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="@dimen/info_attribute_title_size"/>
+
+                              </LinearLayout>
+
 
                           </LinearLayout>
 
 
                           <LinearLayout android:layout_width="fill_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal">
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
 
 
                               <Button
-                                  android:layout_width="0dp"
+                                  android:layout_width="fill_parent"
                                   android:layout_height="wrap_content"
                                   android:gravity="center"
                                   android:padding="10dp"
-                                  android:layout_weight="0.5"
                                   android:clickable="true"
                                   android:id="@+id/download"
                                   android:text="@string/sv_download"
-                                  android:textSize="25sp"
+                                  android:textSize="@dimen/info_button_text_size"
                                   style="@style/Manga.ButtonCommon"/>
 
                               <Button
-                                  android:layout_width="0dp"
+                                  android:layout_width="fill_parent"
                                   android:layout_height="wrap_content"
                                   android:gravity="center"
                                   android:padding="10dp"
-                                  android:layout_weight="0.5"
                                   android:clickable="true"
                                   android:id="@+id/read_online"
                                   android:text="@string/sv_read_online"
-                                  android:textSize="25sp"
+                                  android:textSize="@dimen/info_button_text_size"
                                   style="@style/Manga.ButtonCommon"/>
 
                           </LinearLayout>
@@ -143,11 +188,22 @@
 
                       <LinearLayout
                           android:layout_width="fill_parent"
-                          android:layout_height="fill_parent">
+                          android:layout_height="fill_parent"
+                          android:layout_marginTop="15dp"
+                          android:orientation="vertical">
+
+
+                          <TextView android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/info_item_def_title_size"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-light"
+                                    android:singleLine="true"
+                                    android:text="@string/description"/>
 
                           <TextView android:layout_width="fill_parent"
                                     android:layout_height="fill_parent"
-                                    android:textSize="25sp"
+                                    android:textSize="@dimen/info_attribute_title_size"
                                     android:id="@+id/manga_description"/>
 
                       </LinearLayout>

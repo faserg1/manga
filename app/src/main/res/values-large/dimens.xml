@@ -27,4 +27,7 @@
     <dimen name="info_button_text_size">25sp</dimen>
     <dimen name="info_item_def_title_size">30sp</dimen>
 
+    <dimen name="info_item_side_padding_land">55dp</dimen>
+    <dimen name="info_item_bottom_padding_land">5dp</dimen>
+
 </resources>

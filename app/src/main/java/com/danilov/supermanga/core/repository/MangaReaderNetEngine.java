@@ -322,6 +322,40 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             Elements chapters = chaptersContainer.getElementsByTag("a");
             manga.setChaptersQuantity(chapters.size());
         }
+
+        Element mangaproperties = document.getElementById("mangaproperties");
+        if (mangaproperties != null) {
+            Elements table = mangaproperties.getElementsByTag("table");
+            if (!table.isEmpty()) {
+                Elements rows = table.first().getElementsByTag("tr");
+                if (rows.size() > 4) {
+                    Elements authorElements = rows.get(4).children();
+                    if (authorElements.size() > 1) {
+                        manga.setAuthor(authorElements.get(1).text());
+                    }
+                }
+                if (rows.size() > 7) {
+                    Elements genreElements = rows.get(7).children();
+                    if (genreElements.size() > 1) {
+                        Elements a = genreElements.get(1).getElementsByTag("a");
+                        StringBuilder lst = new StringBuilder();
+                        if (!a.isEmpty()) {
+                            int i = 0;
+                            for (Element links : a) {
+                                String txt = links.text();
+                                if (i > 0) {
+                                    lst.append(", ");
+                                }
+                                lst.append(txt);
+                                i++;
+                            }
+                        }
+                        manga.setGenres(lst.toString());
+                    }
+                }
+            }
+        }
+
         return true;
     }
 
