@@ -21,11 +21,13 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.MangaQueryActivity;
 import com.danilov.supermanga.core.adapter.FilterQueryAdapter;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
@@ -175,6 +177,8 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     private class QueryTask extends AsyncTask<String, Void, List<Manga>> {
 
+        private String error = null;
+
         @Override
         protected void onPreExecute() {
             queryActivity.showProgressBar();
@@ -185,13 +189,20 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
             if (params == null || params.length < 1) {
                 return null;
             }
-            return engine.queryRepository(params[0], filterQueryAdapter.getFilterValues());
+            try {
+                return engine.queryRepository(params[0], filterQueryAdapter.getFilterValues());
+            } catch (RepositoryException e) {
+                error = e.getMessage();
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(final List<Manga> foundManga) {
             queryActivity.hideProgressBar();
             if (foundManga == null) {
+                final Context context = MangaApplication.getContext();
+                Toast.makeText(context, context.getString(R.string.p_internet_error) + ": " + error, Toast.LENGTH_SHORT).show();
                 return;
             }
             queryActivity.showFoundMangaList(foundManga);

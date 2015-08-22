@@ -65,6 +65,7 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(historyDAO);
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
+        cacheDirectoryManager.trimCacheIfNeeded();
 
         AlarmReceiver.setUpdateAlarm(this);
 

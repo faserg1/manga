@@ -15,6 +15,7 @@ import com.danilov.supermanga.core.adapter.MangaListAdapter;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.ReadmangaEngine;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Constants;
 
 import java.util.List;
@@ -38,28 +39,7 @@ public class QueryTestActivity extends Activity implements View.OnClickListener,
     @Override
     //poka tak
     public void onClick(final View v) {
-        Thread t = new Thread() {
 
-            @Override
-            public void run() {
-                RepositoryEngine repositoryEngine = new ReadmangaEngine();
-                String q = query.getText().toString();
-                final List<Manga> mangaList = repositoryEngine.queryRepository(q, null);
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        ListView listView = (ListView) QueryTestActivity.this.findViewById(R.id.manga_list);
-                        adapter = new MangaListAdapter(QueryTestActivity.this, R.layout.manga_list_item, mangaList);
-                        listView.setAdapter(adapter);
-                        listView.setOnItemClickListener(QueryTestActivity.this);
-                    }
-
-                });
-            }
-
-        };
-        t.start();
     }
 
 

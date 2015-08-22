@@ -79,7 +79,7 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) {
+    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         if (httpBytesReader != null) {
@@ -92,9 +92,9 @@ public class ReadmangaEngine implements RepositoryEngine {
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseSearchResponse(Utils.toDocument(responseString));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                throw new RepositoryException("Failed to load: " + e.getMessage());
             } catch (HttpRequestException e) {
-                e.printStackTrace();
+                throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
         return mangaList;

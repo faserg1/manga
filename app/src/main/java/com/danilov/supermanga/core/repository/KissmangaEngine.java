@@ -97,7 +97,7 @@ public class KissmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) {
+    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
         List<Manga> mangaList = null;
         try {
             String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
@@ -135,11 +135,11 @@ public class KissmangaEngine implements RepositoryEngine {
                 mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new RepositoryException("Failed to load: " + e.getMessage());
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
+            throw new RepositoryException("Failed to load: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RepositoryException("Failed to load: " + e.getMessage());
         }
         return mangaList;
     }

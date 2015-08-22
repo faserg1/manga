@@ -39,7 +39,7 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) {
+    public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
         return null;
     }
 

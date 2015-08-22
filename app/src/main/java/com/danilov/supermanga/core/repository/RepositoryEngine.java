@@ -33,7 +33,7 @@ public interface RepositoryEngine {
      * @param query user input
      * @return list of mangas matching query
      */
-    List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues);
+    List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException;
 
     /**
      *
