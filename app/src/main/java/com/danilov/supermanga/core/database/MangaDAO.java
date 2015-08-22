@@ -23,7 +23,7 @@ public class MangaDAO {
     private final static String TAG = "MangaDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
 
-    private static final int DAOVersion = 1;
+    private static final int DAOVersion = 2;
     private static final String TABLE_NAME = "manga";
     private static final String DB_NAME = "manga.db";
 
@@ -38,6 +38,9 @@ public class MangaDAO {
     private static final String MANGA_INET_URI = "manga_inet_uri";
     private static final String MANGA_COVER_URI = "manga_cover_uri";
     private static final String IS_DOWNLOADED = "is_downloaded";
+
+    //version 2
+    private static final String MANGA_GENRES = "manga_genres";
 
     //LOCAL
     private static final String LOCAL_URI = "local_uri";
@@ -55,7 +58,7 @@ public class MangaDAO {
             }
         }
         String dbPath = dbPathFile + "/" + DB_NAME;
-        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler(), true, TABLE_NAME);
+        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new SharedUpgradeHandler(), true, TABLE_NAME);
     }
 
     public synchronized long addManga(final Manga manga) throws DatabaseAccessException {
@@ -69,6 +72,7 @@ public class MangaDAO {
         cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
         cv.put(MANGA_INET_URI, manga.getUri());
         cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
+        cv.put(MANGA_GENRES, manga.getGenres());
         cv.put(IS_FAVORITE, manga.isFavorite() ? 1 : 0);
 
         if (manga.isDownloaded()) {
@@ -272,6 +276,7 @@ public class MangaDAO {
             cv.put(MANGA_AUTHOR, manga.getAuthor());
             cv.put(MANGA_REPOSITORY, manga.getRepository().toString());
             cv.put(MANGA_INET_URI, manga.getUri());
+            cv.put(MANGA_GENRES, manga.getGenres());
             cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
             cv.put(IS_FAVORITE, manga.isFavorite() ? 1 : 0);
 
@@ -349,6 +354,7 @@ public class MangaDAO {
         int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
         int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
         int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
+        int genreIndex = cursor.getColumnIndex(MANGA_GENRES);
 
         int isDownloadedIndex = cursor.getColumnIndex(IS_DOWNLOADED);
         int localUriIndex = cursor.getColumnIndex(LOCAL_URI);
@@ -363,6 +369,7 @@ public class MangaDAO {
         RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
         String uri = cursor.getString(inetUriIndex);
         String coverUri = cursor.getString(coverUriIndex);
+        String genre = cursor.getString(genreIndex);
         int chaptersQuantity = cursor.getInt(chaptersQuantityIndex);
 
         Manga manga = null;
@@ -381,6 +388,7 @@ public class MangaDAO {
         manga.setAuthor(author);
         manga.setCoverUri(coverUri);
         manga.setFavorite(isFavorite);
+        manga.setGenres(genre);
         return manga;
     }
 
@@ -390,6 +398,30 @@ public class MangaDAO {
 
         @Override
         public void onUpgrade(final Database database, final int currentVersion) {
+            final List<String> sqls = new ArrayList<>();
+            switch (currentVersion) {
+                case 0:
+                    onNewDatabase(database);
+                    break;
+                case 1:
+                    sqls.add(DatabaseOptions.createAlterAdd(TABLE_NAME, MANGA_GENRES, DatabaseOptions.Type.TEXT));
+                default:
+                    onUpdate(database, sqls);
+                    break;
+            }
+        }
+
+        private void onUpdate(final Database database, final List<String> sqls) {
+            try {
+                for (String sql : sqls) {
+                    database.execSQL(sql);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "UpgradeHandler onUpgrade failed: " + e.getMessage());
+            }
+        }
+
+        private void onNewDatabase(final Database database) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
@@ -397,6 +429,7 @@ public class MangaDAO {
             builder.addColumn(MANGA_TITLE, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(MANGA_DESCRIPTION, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(MANGA_AUTHOR, DatabaseOptions.Type.TEXT, false, false);
+            builder.addColumn(MANGA_GENRES, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(MANGA_COVER_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(LOCAL_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(IS_FAVORITE, DatabaseOptions.Type.INT, false, false);
@@ -415,4 +448,19 @@ public class MangaDAO {
         }
 
     }
+
+    public static class SharedUpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
+
+        DatabaseHelper.DatabaseUpgradeHandler ownHandler = new UpgradeHandler();
+        DatabaseHelper.DatabaseUpgradeHandler udpatesDaoHandler = new UpdatesDAO.UpgradeHandler();
+
+
+
+        @Override
+        public void onUpgrade(final Database database, final int currentVersion) {
+            ownHandler.onUpgrade(database, currentVersion);
+            udpatesDaoHandler.onUpgrade(database, currentVersion);
+        }
+    }
+
 }

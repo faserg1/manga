@@ -351,7 +351,40 @@ public class AllHentaiEngine implements RepositoryEngine {
     private String altCoverClass = "nivo-imageLink";
 
     private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
-        Elements mangaDescriptionElements = document.getElementsByAttributeValue("itemprop", "description");
+        Elements tmp = document.getElementsByClass("leftContent");
+        if (tmp == null) {
+            return false;
+        }
+        Element baseElem = tmp.first();
+        if (baseElem == null) {
+            return false;
+        }
+
+        Elements elementList = baseElem.getElementsByClass("elementList");
+        int j = 0;
+        for (Element element : elementList) {
+            StringBuilder lst = new StringBuilder();
+            Elements listElement = element.getElementsByTag("a");
+            if (!listElement.isEmpty()) {
+                int i = 0;
+                for (Element links : listElement) {
+                    String txt = links.text();
+                    if (i > 0) {
+                        lst.append(", ");
+                    }
+                    lst.append(txt);
+                    i++;
+                }
+            }
+            if (j == 0) {
+                manga.setGenres(lst.toString());
+            } else if (j == 1) {
+                manga.setAuthor(lst.toString());
+            }
+            j++;
+        }
+
+        Elements mangaDescriptionElements = baseElem.getElementsByAttributeValue("itemprop", "description");
         Elements links = null;
         if (!mangaDescriptionElements.isEmpty()) {
             Element mangaDescription = mangaDescriptionElements.first();
@@ -362,7 +395,7 @@ public class AllHentaiEngine implements RepositoryEngine {
             String description = mangaDescription.text();
             manga.setDescription(description);
         }
-        Elements chaptersElements = document.select(".expandable .cTable");
+        Elements chaptersElements = baseElem.select(".expandable .cTable");
         int quantity = 0;
         if (chaptersElements.isEmpty()) {
             quantity = 0;
@@ -375,7 +408,7 @@ public class AllHentaiEngine implements RepositoryEngine {
         if (manga.getCoverUri() != null) {
             return true;
         }
-        Elements coverContainer = document.getElementsByClass("mangaDescPicture");
+        Elements coverContainer = baseElem.getElementsByClass("mangaDescPicture");
         String coverUri = null;
         if (coverContainer.size() >= 1) {
             Element cover = coverContainer.get(0);

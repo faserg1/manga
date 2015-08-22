@@ -45,6 +45,10 @@ public class DatabaseOptions {
         return columns;
     }
 
+    public static String createAlterAdd(final String tableName, final String columnName, final Type type) {
+        return new StringBuilder().append("alter table ").append(tableName).append(" ADD COLUMN ").append(columnName).append(" ").append(type.sql).toString();
+    }
+
     public String toSQLStatement() {
         StringBuilder sqlStatement = new StringBuilder();
         sqlStatement.append("create table ").append(tableName).append(" (");

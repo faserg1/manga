@@ -55,6 +55,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private TextView mangaDescriptionTextView = null;
     private TextView chaptersQuantityTextView = null;
     private TextView mangaTitle = null;
+    private TextView authors = null;
+    private TextView genres = null;
     private ImageView mangaCover = null;
 
     private View downloadButton;
@@ -107,6 +109,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         downloadButton = view.findViewById(R.id.download);
         readOnlineButton = view.findViewById(R.id.read_online);
         scrollViewParallax = findViewById(R.id.scrollView);
+        authors = findViewById(R.id.authors);
+        genres = findViewById(R.id.genres);
         downloadButton.setOnClickListener(this);
         readOnlineButton.setOnClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
@@ -288,6 +292,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 flipper.flip(2);
             }
             mangaDescriptionTextView.setText(mangaDescription);
+            authors.setText(manga.getAuthor());
+            genres.setText(manga.getGenres());
             chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
             enableButtons();
         } else {
@@ -391,6 +397,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                         enableButtons();
                         String mangaDescription = manga.getDescription();
                         mangaDescriptionTextView.setText(mangaDescription);
+                        authors.setText(manga.getAuthor());
+                        genres.setText(manga.getGenres());
                         chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
                         if (!hasCoverLoaded) {
                             String coverUrl = manga.getCoverUri();

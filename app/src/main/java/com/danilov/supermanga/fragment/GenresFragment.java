@@ -38,6 +38,8 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
 
     private List<RepositoryEngine.Genre> genres;
 
+    private boolean hasNoGenres = false;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.genres_fragment, container, false);
@@ -67,6 +69,8 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
         genres = engine.getGenres();
         if (genres.isEmpty()) {
             genres = new ArrayList<>();
+            hasNoGenres = true;
+            genresView.setClickable(false);
             genres.add(new RepositoryEngine.Genre(getString(R.string.sv_genre_search_not_supported)));
         }
         genresView.setAdapter(new GenresAdapter(context, -1, genres));
@@ -83,6 +87,9 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        if (hasNoGenres) {
+            return;
+        }
         RepositoryEngine.Genre genre = genres.get(i);
         QueryTask task = new QueryTask();
         task.execute(genre);

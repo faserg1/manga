@@ -25,6 +25,8 @@ public class Manga implements Parcelable {
 
     private boolean isFavorite;
 
+    private String genres;
+
     //TODO: add genre (strings) and type (MANGA, MANHWA)
 
     private RepositoryEngine.Repository repository;
@@ -81,6 +83,14 @@ public class Manga implements Parcelable {
 
     public void setCoverUri(final String coverUri) {
         this.coverUri = coverUri;
+    }
+
+    public String getGenres() {
+        return genres;
+    }
+
+    public void setGenres(final String genres) {
+        this.genres = genres;
     }
 
     public String getTitle() {
@@ -221,6 +231,7 @@ public class Manga implements Parcelable {
         repository = RepositoryEngine.Repository.valueOf(parcel.readString());
         id = parcel.readInt();
         isFavorite = parcel.readInt() == 1;
+        genres = parcel.readString();
     }
 
     @Override
@@ -239,6 +250,7 @@ public class Manga implements Parcelable {
         parcel.writeString(repository.toString());
         parcel.writeInt(id);
         parcel.writeInt(isFavorite ? 1 : 0);
+        parcel.writeString(genres);
     }
 
     public boolean isDownloaded() {

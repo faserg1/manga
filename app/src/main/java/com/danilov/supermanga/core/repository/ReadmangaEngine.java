@@ -358,7 +358,56 @@ public class ReadmangaEngine implements RepositoryEngine {
     private String altCoverClass = "nivo-imageLink";
 
     private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
-        Elements mangaDescriptionElements = document.getElementsByClass(descriptionElementClass);
+
+        Elements tmp = document.getElementsByClass("leftContent");
+        if (tmp == null) {
+            return false;
+        }
+        Element baseElem = tmp.first();
+        if (baseElem == null) {
+            return false;
+        }
+        Elements authorsElement = baseElem.getElementsByClass("elem_author");
+        if (!authorsElement.isEmpty()) {
+            StringBuilder authorList = new StringBuilder();
+            int i = 0;
+            for (Element element : authorsElement) {
+                Elements holder = element.getElementsByTag("a");
+                if (holder == null) {
+                    continue;
+                }
+                String author = holder.text();
+                if (i > 0) {
+                    authorList.append(", ");
+                }
+                authorList.append(author);
+                i++;
+            }
+            String authors = authorList.toString();
+            manga.setAuthor(authors);
+        }
+        Elements genresElement = baseElem.getElementsByClass("elem_genre");
+        if (!genresElement.isEmpty()) {
+            StringBuilder genreList = new StringBuilder();
+            int i = 0;
+            for (Element element : genresElement) {
+                Elements holder = element.getElementsByTag("a");
+                if (holder == null) {
+                    continue;
+                }
+                String genre = holder.text();
+                if (i > 0) {
+                    genreList.append(", ");
+                }
+                genreList.append(genre);
+                i++;
+            }
+            String genres = genreList.toString();
+            manga.setGenres(genres);
+        }
+
+
+        Elements mangaDescriptionElements = baseElem.getElementsByClass(descriptionElementClass);
         Elements links = null;
         if (!mangaDescriptionElements.isEmpty()) {
             Element mangaDescription = mangaDescriptionElements.first();
@@ -369,7 +418,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             String description = mangaDescription.text();
             manga.setDescription(description);
         }
-        Elements chaptersElements = document.getElementsByClass(chaptersElementClass);
+        Elements chaptersElements = baseElem.getElementsByClass(chaptersElementClass);
         int quantity = 0;
         if (chaptersElements.isEmpty()) {
             quantity = 0;
@@ -382,7 +431,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         if (manga.getCoverUri() != null) {
             return true;
         }
-        Elements coverContainer = document.getElementsByClass(coverClassName);
+        Elements coverContainer = baseElem.getElementsByClass(coverClassName);
         String coverUri = null;
         if (coverContainer.size() >= 1) {
             Element cover = coverContainer.get(0);

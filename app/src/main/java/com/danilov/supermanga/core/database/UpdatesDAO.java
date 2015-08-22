@@ -23,7 +23,7 @@ public class UpdatesDAO {
     private final static String TAG = "UpdatesDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
 
-    private static final int DAOVersion = 1;
+    private static final int DAOVersion = 2;
     private static final String TABLE_NAME = "updatesManga";
     private static final String DB_NAME = "manga.db";
     private static final String ID = "id";
@@ -44,7 +44,7 @@ public class UpdatesDAO {
             }
         }
         String dbPath = dbPathFile + "/" + DB_NAME;
-        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new UpgradeHandler(), true, TABLE_NAME);
+        databaseHelper = new DatabaseHelper(dbPath, DAOVersion, new MangaDAO.SharedUpgradeHandler(), true, TABLE_NAME);
     }
 
     /**
@@ -195,10 +195,21 @@ public class UpdatesDAO {
         }
     }
 
-    private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
+    public static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {
 
         @Override
         public void onUpgrade(final Database database, final int currentVersion) {
+            final List<String> sqls = new ArrayList<>();
+            switch (currentVersion) {
+                case 0:
+                    onNewDatabase(database);
+                    break;
+                case 1:
+                default:
+                    break;
+            }
+        }
+        private void onNewDatabase(final Database database) {
             DatabaseOptions.Builder builder = new DatabaseOptions.Builder();
             builder.setName(TABLE_NAME);
             builder.addColumn(ID, DatabaseOptions.Type.INT, true, true);
