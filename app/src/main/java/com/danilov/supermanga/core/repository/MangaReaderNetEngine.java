@@ -111,8 +111,8 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final Genre genre) {
-        return null;
+    public List<Manga> queryRepository(final Genre genre) throws RepositoryException {
+        return Collections.emptyList();
     }
 
     @Override

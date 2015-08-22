@@ -381,8 +381,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                     rateDialog = new RateDialog();
                     rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
                 } else {
-                    if (mInterstitialAd.isLoaded()) {
-                        mInterstitialAd.show();
+                    if (Constants.IS_MARKET_VERSION) {
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        }
                     }
                 }
             }
@@ -889,6 +891,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private InterstitialAd mInterstitialAd;
 
     private void adInit() {
+        if (!Constants.IS_MARKET_VERSION) {
+            return;
+        }
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
         mInterstitialAd.setAdListener(new AdListener() {
@@ -901,6 +906,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void requestNewInterstitial() {
+        if (!Constants.IS_MARKET_VERSION) {
+            return;
+        }
         AdRequest adRequest = new AdRequest.Builder()
 //                .addTestDevice(Utils.getDeviceId(this))
                 .build();

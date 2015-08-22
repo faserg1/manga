@@ -40,7 +40,7 @@ public interface RepositoryEngine {
      * @param genre user selected genre
      * @return list of mangas matching query
      */
-    List<Manga> queryRepository(final Genre genre);
+    List<Manga> queryRepository(final Genre genre) throws RepositoryException;
 
     /**
      * Getting info about manga (description and chapters)

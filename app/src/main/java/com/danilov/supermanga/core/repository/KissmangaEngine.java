@@ -185,7 +185,7 @@ public class KissmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final Genre genre) {
+    public List<Manga> queryRepository(final Genre genre) throws RepositoryException {
         return Collections.emptyList();
     }
 

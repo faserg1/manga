@@ -101,7 +101,7 @@ public class ReadmangaEngine implements RepositoryEngine {
     }
 
     @Override
-    public List<Manga> queryRepository(final Genre _genre) {
+    public List<Manga> queryRepository(final Genre _genre) throws RepositoryException {
         HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         ReadmangaGenre genre = (ReadmangaGenre) _genre;
@@ -112,7 +112,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseGenreSearchResponse(Utils.toDocument(responseString));
             } catch (HttpRequestException e) {
-                e.printStackTrace();
+                throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
         return mangaList;
