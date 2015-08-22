@@ -92,4 +92,5 @@
     <string name="no_active_downloads">No active downloads</string>
     <string name="info_item_genre">Genre:</string>
     <string name="info_item_author">Author:</string>
+    <string name="description">Description</string>
 </resources>

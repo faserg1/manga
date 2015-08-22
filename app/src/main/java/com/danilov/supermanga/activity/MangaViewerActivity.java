@@ -508,7 +508,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         int totalImages = strategy.getTotalImageNumber();
 
 
-        if (currentChapter <= totalChapters) {
+        if (currentChapter < totalChapters) {
             MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
             if (chapterAdapter == null) {
                 chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
@@ -521,7 +521,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
 
 
-        if (currentImage <= totalImages) {
+        if (currentImage < totalImages) {
             MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
             if (pageAdapter == null) {
                 pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);

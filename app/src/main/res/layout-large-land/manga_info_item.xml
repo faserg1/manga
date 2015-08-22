@@ -37,7 +37,7 @@
                   <RelativeLayout
                       android:id="@+id/header"
                       android:layout_width="fill_parent"
-                      android:layout_height="@dimen/info_parallax_image_height">
+                      android:layout_height="@dimen/info_parallax_land_image_height">
 
                       <ImageView
                           android:id="@+id/manga_cover"

@@ -25,127 +25,179 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:src="@drawable/loading"
                 android:id="@+id/manga_cover"
+                android:src="@drawable/loading"
                 android:scaleType="centerCrop"/>
 
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/body"
-            android:orientation="vertical"
             android:background="@android:color/white"
+            android:orientation="vertical"
             android:layout_below="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageView
                 android:src="@drawable/material_shadow"
-                android:layout_height="5dp"
                 android:layout_marginTop="-5dp"
+                android:layout_height="5dp"
                 android:layout_width="fill_parent"/>
 
             <LinearLayout
-                android:padding="10dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="15dp">
 
-                    <!--title-->
-                    <LinearLayout android:layout_width="fill_parent"
-                                  android:layout_height="wrap_content"
-                                  android:orientation="vertical"
-                                  android:layout_marginBottom="10dp">
+                <!--title-->
+                <LinearLayout android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical"
+                              android:layout_marginBottom="10dp">
 
-                        <TextView android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:id="@+id/manga_title"
-                                  android:textSize="25sp"
-                                  android:fontFamily="sans-serif-light"
-                                  android:singleLine="true"
-                                  android:ellipsize="marquee"
-                                  android:focusable="true"
-                                  android:text="Attack On Titan"
-                                  android:focusableInTouchMode="true"
-                                  android:marqueeRepeatLimit="marquee_forever"
-                                  android:scrollHorizontally="true"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:id="@+id/manga_title"
+                              android:textSize="@dimen/info_item_title_text_size"
+                              android:fontFamily="sans-serif-light"
+                              android:singleLine="true"
+                              android:ellipsize="marquee"
+                              android:focusable="true"
+                              android:focusableInTouchMode="true"
+                              android:marqueeRepeatLimit="marquee_forever"
+                              android:scrollHorizontally="true"/>
 
-                    </LinearLayout>
+                </LinearLayout>
 
-                    <!--cover and buttons-->
+                <!--cover and buttons-->
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:baselineAligned="false"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <LinearLayout android:layout_width="fill_parent"
                                       android:layout_height="wrap_content"
-                                      android:paddingLeft="5dp"
-                                      android:orientation="horizontal"
-                                      android:padding="10dp"
-                                      android:clickable="true"
-                                      android:background="@drawable/selectable_item_background">
+                                      android:orientation="horizontal">
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
-                                      android:textSize="15sp"
+                                      android:textSize="@dimen/info_attribute_title_size"
                                       android:text="@string/sv_chapters"/>
 
                             <TextView android:layout_width="wrap_content"
                                       android:layout_height="wrap_content"
                                       android:layout_marginLeft="5dp"
                                       android:textStyle="bold"
-                                      android:textSize="15sp"
+                                      android:textSize="@dimen/info_attribute_title_size"
                                       android:id="@+id/chapters_quantity"/>
 
                         </LinearLayout>
 
-
                         <LinearLayout android:layout_width="fill_parent"
                                       android:layout_height="wrap_content"
+                                      android:layout_marginTop="15dp"
                                       android:orientation="horizontal">
 
-                            <Button
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:padding="10dp"
-                                android:layout_weight="0.5"
-                                android:clickable="true"
-                                android:id="@+id/download"
-                                android:text="@string/sv_download"
-                                android:textSize="15sp"
-                                style="@style/Manga.ButtonCommon"/>
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:textSize="@dimen/info_attribute_title_size"
+                                      android:text="@string/info_item_genre"/>
 
-                            <Button
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:padding="10dp"
-                                android:layout_weight="0.5"
-                                android:clickable="true"
-                                android:id="@+id/read_online"
-                                android:text="@string/sv_read_online"
-                                android:textSize="15sp"
-                                style="@style/Manga.ButtonCommon"/>
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="@dimen/info_attribute_title_size"/>
 
                         </LinearLayout>
 
-                    </LinearLayout> <!--cover and buttons end-->
+                        <LinearLayout android:layout_width="fill_parent"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginTop="15dp"
+                                      android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent">
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:textSize="@dimen/info_attribute_title_size"
+                                      android:text="@string/info_item_author"/>
 
-                        <TextView android:layout_width="fill_parent"
-                                  android:layout_height="fill_parent"
-                                  android:textSize="15sp"
-                                  android:id="@+id/manga_description"/>
+                            <TextView android:layout_width="wrap_content"
+                                      android:layout_height="wrap_content"
+                                      android:layout_marginLeft="5dp"
+                                      android:textStyle="bold"
+                                      android:textSize="@dimen/info_attribute_title_size"/>
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
+                    <LinearLayout android:layout_width="0dp"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:orientation="vertical">
+
+
+                        <Button
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:clickable="true"
+                            android:id="@+id/download"
+                            android:text="@string/sv_download"
+                            android:textSize="@dimen/info_button_text_size"
+                            style="@style/Manga.ButtonCommon"/>
+
+                        <Button
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:clickable="true"
+                            android:id="@+id/read_online"
+                            android:text="@string/sv_read_online"
+                            android:textSize="@dimen/info_button_text_size"
+                            style="@style/Manga.ButtonCommon"/>
+
+                    </LinearLayout>
+
+                </LinearLayout> <!--cover and buttons end-->
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textSize="@dimen/info_item_def_title_size"
+                              android:textStyle="bold"
+                              android:fontFamily="sans-serif-light"
+                              android:singleLine="true"
+                              android:text="@string/description"/>
+
+                    <TextView android:layout_width="fill_parent"
+                              android:layout_height="fill_parent"
+                              android:textSize="@dimen/info_attribute_title_size"
+                              android:id="@+id/manga_description"/>
+
                 </LinearLayout>
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
