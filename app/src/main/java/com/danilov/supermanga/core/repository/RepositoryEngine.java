@@ -64,11 +64,11 @@ public interface RepositoryEngine {
     //enum of names containing matched engines
     public enum Repository {
 
-        READMANGA(new ReadmangaEngine(), "ReadManga", true, R.drawable.ic_russia),
-        ALLHENTAI(new AllHentaiEngine(), "AllHent", true, R.drawable.ic_russia),
-        ADULTMANGA(new AdultmangaEngine(), "AdultManga", true, R.drawable.ic_russia),
-        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader", true, R.drawable.ic_english),
-        KISSMANGA(new KissmangaEngine(), "KissManga", true, R.drawable.ic_english),
+        READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
+        ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
+        ADULTMANGA(new AdultmangaEngine(), "AdultManga (RU)", true, R.drawable.ic_russia),
+        MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader (EN)", true, R.drawable.ic_english),
+        KISSMANGA(new KissmangaEngine(), "KissManga (EN)", true, R.drawable.ic_english),
         OFFLINE(new OfflineEngine(), "", false, -1);
 
         private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, KISSMANGA, ALLHENTAI, MANGAREADERNET};
