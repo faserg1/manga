@@ -95,4 +95,5 @@
     <string name="info_item_author">Автор:</string>
     <string name="description">Описание</string>
     <string name="no_added_sources">У вас не добавлено ни одного источника</string>
+    <string name="happy_reading">Приятного чтения!</string>
 </resources>

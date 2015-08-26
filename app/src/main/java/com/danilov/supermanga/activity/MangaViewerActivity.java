@@ -365,6 +365,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 break;
         }
         hideProgress();
+        update(false);
     }
 
     @Override
@@ -838,6 +839,13 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                            break;
                        case 2:
                            slidingLayer.openLayer(true);
+                           slidingLayer.postDelayed(new Runnable() {
+                               @Override
+                               public void run() {
+                                   slidingLayer.closeLayer(true);
+                               }
+                           }, 1000);
+                           Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
                            showTutorial(-1);
                            settings.setTutorialViewerPassed(true);
                            settings.update(getApplicationContext());
