@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@android:id/text1"
-          android:layout_width="wrap_content"
-          android:textColor="@android:color/white"
-          android:layout_height="wrap_content"
-          android:textSize="17sp"
-          android:textAppearance="?attr/textAppearanceListItem"
-          android:gravity="center_vertical"
-          android:padding="10dp"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingLeft="5dp"
+              android:paddingRight="15dp">
+
+    <TextView android:id="@android:id/text1"
+              android:layout_width="wrap_content"
+              android:textColor="@android:color/white"
+              android:layout_height="wrap_content"
+              android:textSize="17sp"
+              android:textAppearance="?attr/textAppearanceListItem"
+              android:layout_alignParentLeft="true"
+              android:layout_alignParentTop="true"
+              android:layout_toLeftOf="@+id/drop_triangle"
+              android:padding="10dp"/>
+
+    <ImageView
+        android:id="@+id/drop_triangle"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@android:id/text1"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/dropdown_triangle"/>
+
+</RelativeLayout>

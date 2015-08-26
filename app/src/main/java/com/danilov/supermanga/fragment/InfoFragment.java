@@ -479,7 +479,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
                 HistoryElement historyElement = null;
                 try {
-                    historyElement = historyDAO.getHistoryByManga(manga, true);
+                    Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
+                    if (_manga != null) {
+                        historyElement = historyDAO.getHistoryByManga(_manga, true);
+                    }
                 } catch (DatabaseAccessException e) {
                 }
 

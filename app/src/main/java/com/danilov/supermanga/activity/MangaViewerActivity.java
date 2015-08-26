@@ -51,6 +51,7 @@ import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.MangaViewPager;
+import com.danilov.supermanga.core.view.SlidingLayer;
 import com.danilov.supermanga.core.view.SubsamplingScaleImageView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -94,6 +95,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private View drawerRightOffsetBottom;
     private View bottomBar;
 
+    private SlidingLayer slidingLayer;
+
     private StrategyDelegate strategy;
     private StrategyHolder strategyHolder;
     private Manga manga;
@@ -131,6 +134,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         this.chapterSpinner = findViewWithId(R.id.chapterPicker);
         this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
         this.nextChapter = findViewWithId(R.id.next_chapter);
+        this.slidingLayer = findViewWithId(R.id.selector);
         this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
         this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
         this.tutorials = findViewById(R.id.tutorials);
@@ -628,13 +632,15 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         public View getView(final int i, final View view, final ViewGroup viewGroup) {
             final Context context = getApplicationContext();
             TextView textView = null;
+            ViewGroup cvg = null;
             if (view != null) {
-                textView = (TextView) view;
+                cvg = (ViewGroup) view;
             } else {
-                textView = (TextView) View.inflate(context, R.layout.chapter_or_page_spinner_item_selected, null);
+                cvg = (ViewGroup) View.inflate(context, R.layout.chapter_or_page_spinner_item_selected, null);
             }
+            textView = (TextView) cvg.findViewById(android.R.id.text1);
             textView.setText("" + (i + 1 + first));
-            return textView;
+            return cvg;
         }
 
         @Override
@@ -831,6 +837,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                            showTutorial(2);
                            break;
                        case 2:
+                           slidingLayer.openLayer(true);
                            showTutorial(-1);
                            settings.setTutorialViewerPassed(true);
                            settings.update(getApplicationContext());

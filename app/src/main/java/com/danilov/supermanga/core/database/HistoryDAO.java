@@ -67,7 +67,7 @@ public class HistoryDAO {
      * @return
      * @throws DatabaseAccessException
      */
-    public HistoryElement getHistoryByManga(final Manga manga, final boolean isOnline) throws DatabaseAccessException {
+    public HistoryElement getHistoryByManga(@NonNull final Manga manga, final boolean isOnline) throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
