@@ -13,7 +13,7 @@ import com.danilov.supermanga.R;
  */
 public class BaseToolbarActivity extends ActionBarActivity {
 
-    private Toolbar toolbar;
+    protected Toolbar toolbar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

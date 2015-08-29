@@ -35,6 +35,7 @@
 
     <color name="light_gray">#ffd1d5dd</color>
     <color name="lighter_gray">#ffacb0b8</color>
+    <color name="dark_gray">#ff63676f</color>
 
     <color name="darkest_green">#ff5aa806</color>
     <color name="dark_green">#78CA06</color>

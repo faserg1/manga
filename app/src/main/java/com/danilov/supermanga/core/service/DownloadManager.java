@@ -31,7 +31,7 @@ public class DownloadManager {
 
     private DownloadProgressListener listener;
 
-    private Queue<Download> downloads = new ArrayDeque<Download>();
+    private ArrayDeque<Download> downloads = new ArrayDeque<Download>();
 
     //thread
     final Lock lock = new ReentrantLock();
@@ -91,6 +91,23 @@ public class DownloadManager {
         }
         return download;
     }
+
+    public Download startImportantDownload(final String uri, final String filePath, final Object tag) {
+        lock.lock();
+        Download download = null;
+        try {
+            download = pool.obtain();
+            download.setUri(uri);
+            download.setTag(tag);
+            download.setFilePath(filePath);
+            downloads.addFirst(download);
+            isWake.signalAll();
+        } finally {
+            lock.unlock();
+        }
+        return download;
+    }
+
 
     public Download obtain() {
         return pool.obtain();

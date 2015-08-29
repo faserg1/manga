@@ -3,10 +3,12 @@ package com.danilov.supermanga.core.util;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -25,6 +27,7 @@ import org.jsoup.nodes.Document;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
@@ -136,6 +139,23 @@ public class Utils {
 
         }
         return "";
+    }
+
+    private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
+
+    public static Typeface getTypeface(String assetPath) {
+        synchronized (typefaceCache) {
+            if (!typefaceCache.containsKey(assetPath)) {
+                try {
+                    Typeface t = Typeface.createFromAsset(MangaApplication.getContext().getAssets(), assetPath);
+                    typefaceCache.put(assetPath, t);
+                } catch (Exception e) {
+                    Log.e("Typefaces", "Could not get typeface '" + assetPath + "' because " + e.getMessage());
+                    return null;
+                }
+            }
+            return typefaceCache.get(assetPath);
+        }
     }
 
     public static final String md5(final String s) {

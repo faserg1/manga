@@ -42,4 +42,9 @@
 
     <color name="error_message_color">@color/red</color>
 
+    <color name="profile_text_toolbar_title">@android:color/white</color>
+    <color name="profile_text_category_title">@color/medium_dark_blue</color>
+    <color name="profile_text">@color/dark_gray</color>
+    <color name="profile_divider">@color/light_gray</color>
+
 </resources>

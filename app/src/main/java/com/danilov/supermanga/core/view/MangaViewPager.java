@@ -219,7 +219,7 @@ public class MangaViewPager extends CompatPager {
         String tag = path + Utils.getRandomString(15);
 
         imageBundleMap.put(tag, bundle);
-        downloadManager.startDownload(url, path, tag);
+        downloadManager.startImportantDownload(url, path, tag);
 
         downloadManager.setListener(downloadProgressListener);
     }

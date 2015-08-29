@@ -54,9 +54,7 @@
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="150dp"
-                    android:clickable="true"
-                    android:orientation="horizontal"
-                    android:background="@drawable/selectable_item_background_black_origin">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="fill_parent"
@@ -83,6 +81,12 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/profile_promise"/>
+
+                    <View
+                        android:id="@+id/profile_overlay_button"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/selectable_item_background_black_origin"/>
 
                 </RelativeLayout>
 
