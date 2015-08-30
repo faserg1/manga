@@ -94,6 +94,7 @@
         <service android:name="com.danilov.supermanga.core.service.MangaUpdateServiceNew" />
 
         <service android:name=".core.service.StartUpdateService" android:enabled="true"/>
+        <service android:name=".core.service.OnlineStorageProfileService" android:enabled="true"/>
 
         <receiver android:name=".core.receiver.AlarmReceiver"/>
 

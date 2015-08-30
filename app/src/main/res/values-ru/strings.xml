@@ -97,4 +97,14 @@
     <string name="no_added_sources">У вас не добавлено ни одного источника</string>
     <string name="happy_reading">Приятного чтения!</string>
     <string name="google_account_info_title">Google account</string>
+    <string name="just_now">Только что</string>
+    <string name="never">Никогда</string>
+    <string name="updated">Обновление:</string>
+    <string name="time_read">Time read</string>
+    <string name="username">Username</string>
+    <string name="mangas_complete">Mangas complete</string>
+    <string name="megabytes_downloaded">Megabytes downloaded</string>
+    <string name="additional">Дополнительно</string>
+    <string name="email">Email</string>
+    <string name="hours">час (-а, -ов)</string>
 </resources>

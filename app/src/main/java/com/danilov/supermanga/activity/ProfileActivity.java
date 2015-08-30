@@ -1,8 +1,16 @@
 package com.danilov.supermanga.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +24,13 @@ import android.widget.TextView;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
 import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
+import com.danilov.supermanga.core.service.OnlineStorageProfileService;
+import com.danilov.supermanga.core.service.ServiceConnectionListener;
+import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.UnderToolbarScrollView;
 import com.danilov.supermanga.core.view.ViewV16;
+import com.danilov.supermanga.core.widget.RelativeTimeTextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.software.shell.fab.ActionButton;
@@ -27,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Semyon on 28.08.2015.
@@ -41,8 +54,15 @@ public class ProfileActivity extends BaseToolbarActivity {
 
     private View googleSyncCard;
     private View googleSyncButton;
-    private TextView googleAccountTextView;
+    private RelativeTimeTextView googleAccountTextView;
 
+    private TextView userNameSmall;
+    private TextView email;
+    private TextView timeRead;
+    private TextView downloadPath;
+    private TextView mangasComplete;
+    private TextView megabytesDownloaded;
+    private SwitchCompat showBtnsSwitch;
 
 
     @Override
@@ -55,6 +75,14 @@ public class ProfileActivity extends BaseToolbarActivity {
         googleSyncCard = findViewWithId(R.id.google_sync_card);
         googleAccountTextView = findViewWithId(R.id.google_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
+
+        userNameSmall = findViewWithId(R.id.user_name_small);
+        email = findViewWithId(R.id.email);
+        timeRead = findViewWithId(R.id.time_read);
+        downloadPath = findViewWithId(R.id.download_path);
+        mangasComplete = findViewWithId(R.id.mangas_complete);
+        megabytesDownloaded = findViewWithId(R.id.megabytes_downloaded);
+        showBtnsSwitch = findViewWithId(R.id.show_btns_switch);
 
         final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
@@ -118,8 +146,9 @@ public class ProfileActivity extends BaseToolbarActivity {
         googleSyncCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                onlineStorageConnector = new GoogleDriveConnector(testListener);
-                onlineStorageConnector.init();
+                if (service != null) {
+                    service.connect();
+                }
             }
         });
         googleSyncButton.setOnClickListener(new View.OnClickListener() {
@@ -131,59 +160,132 @@ public class ProfileActivity extends BaseToolbarActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                onlineStorageConnector.createFile("Title", jsonObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback() {
-                    @Override
-                    public void onCommandSuccess() {
-                        int a = 0;
-                        a++;
-                    }
-
-                    @Override
-                    public void onCommandError(final String message) {
-                        if (message != null) {
-                            boolean empty = message.isEmpty();
-                        }
-                    }
-                });
+                if (service == null) {
+                    return;
+                }
+                service.sendDataViaGoogle();
             }
         });
-
+        init();
     }
 
-    private OnlineStorageConnector onlineStorageConnector = null;
 
-    private OnlineStorageConnector.StorageConnectorListener testListener = new OnlineStorageConnector.StorageConnectorListener() {
-
-
-
-        @Override
-        public void onStorageConnected(final OnlineStorageConnector connector) {
-            googleSyncButton.setVisibility(View.VISIBLE);
-            googleAccountTextView.setText(onlineStorageConnector.getAccountName());
+    private void init() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+        String googleProfileName = sharedPreferences.getString(Constants.Settings.GOOGLE_PROFILE_NAME, null);
+        if (googleProfileName == null) {
+            googleProfileName = "Нажмите, чтобы подключить";
+            googleAccountTextView.setPrefix(googleProfileName);
+            googleAccountTextView.setReferenceTime(RelativeTimeTextView.ONLY_PREFIX);
+        } else {
+            String prefix =  googleProfileName + " (" + getString(R.string.updated) + " ";
+            googleAccountTextView.setPrefix(prefix);
+            googleAccountTextView.setReferenceTime(lastUpdateTime);
+            googleAccountTextView.setSuffix(")");
         }
 
-        @Override
-        public void onStorageDisconnected(final OnlineStorageConnector connector) {
+        String userNameString = sharedPreferences.getString(Constants.Settings.USER_NAME, "");
+        String emailString = sharedPreferences.getString(Constants.Settings.EMAIL, "");
+        long timeReadLong = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0L);
+        String downloadPathString = sharedPreferences.getString(Constants.Settings.EMAIL, "");
+        int mangasCompleteInt = sharedPreferences.getInt(Constants.Settings.MANGA_FINISHED, 0);
+        long megabytesDownloadedLong = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0L);
+        boolean alwaysShowButtons = sharedPreferences.getBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
 
-        }
+        long hours = TimeUnit.HOURS.convert(timeReadLong, TimeUnit.MILLISECONDS);
 
+        userNameTextView.setText(userNameString);
+        userNameSmall.setText(userNameString);
+        email.setText(emailString);
+        timeRead.setText(+ hours + " " + getString(R.string.hours));
+        downloadPath.setText(downloadPathString);
+        mangasComplete.setText(mangasCompleteInt + "");
+        megabytesDownloaded.setText(megabytesDownloadedLong + "");
+        showBtnsSwitch.setChecked(alwaysShowButtons);
+    }
+
+    private ServiceConnection serviceConnection;
+    private OnlineStorageProfileService service;
+
+    private Handler handler = new Handler() {
         @Override
-        public void onConnectionFailed(final OnlineStorageConnector connector, final Object object) {
-            ConnectionResult connectionResult = (ConnectionResult) object;
-            if (!connectionResult.hasResolution()) {
-                // show the localized error dialog.
-                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), ProfileActivity.this, 0).show();
-                return;
+        public void handleMessage(final Message msg) {
+            switch (msg.what) {
+                case OnlineStorageProfileService.GOOGLE_CONNECTED:
+                    googleSyncButton.setVisibility(View.VISIBLE);
+                    if (service != null) {
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+                        String accountName = service.getGoogleConnector().getAccountName();
+                        String prefix =  accountName + " (" + getString(R.string.updated) + " ";
+                        googleAccountTextView.setPrefix(prefix);
+                        googleAccountTextView.setReferenceTime(lastUpdateTime);
+                        googleAccountTextView.setSuffix(")");
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(Constants.Settings.GOOGLE_PROFILE_NAME, accountName).apply();
+
+                    }
+                    break;
+                case OnlineStorageProfileService.GOOGLE_NEED_CONFIRMATION:
+                    ConnectionResult connectionResult = (ConnectionResult) msg.obj;
+                    if (!connectionResult.hasResolution()) {
+                        // show the localized error dialog.
+                        GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), ProfileActivity.this, 0).show();
+                        return;
+                    }
+
+                    try {
+                        connectionResult.startResolutionForResult(ProfileActivity.this, GOOGLE_AUTH_REQUEST_CODE);
+                    } catch (IntentSender.SendIntentException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case OnlineStorageProfileService.GOOGLE_SENT_SUCCESS:
+
+                    break;
             }
-
-            try {
-                connectionResult.startResolutionForResult(ProfileActivity.this, 1);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
         }
-
     };
+
+    private static final int GOOGLE_AUTH_REQUEST_CODE = 1;
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GOOGLE_AUTH_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                service.connect();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        serviceConnection = OnlineStorageProfileService.bindService(this, new ServiceConnectionListener<OnlineStorageProfileService>() {
+            @Override
+            public void onServiceConnected(final OnlineStorageProfileService service) {
+                ProfileActivity.this.service = service;
+                service.setServiceHandler(handler);
+            }
+
+            @Override
+            public void onServiceDisconnected(final OnlineStorageProfileService service) {
+
+            }
+        });
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (serviceConnection != null && service != null) {
+            unbindService(serviceConnection);
+            service = null;
+        }
+        super.onPause();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

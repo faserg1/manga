@@ -42,14 +42,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Username"
+                            android:text="@string/username"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/user_name_small"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="Danilov"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -78,7 +78,7 @@
                             android:text="@string/google_account_info_title"
                             android:textColor="@color/profile_text_category_title"/>
 
-                        <com.danilov.supermanga.core.view.CTextView
+                        <com.danilov.supermanga.core.widget.RelativeTimeTextView
                             android:id="@+id/google_account"
                             android:layout_below="@+id/google_account_title"
                             android:layout_alignParentLeft="true"
@@ -128,6 +128,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="25dp"
                 android:layout_below="@+id/info"
                 android:orientation="vertical">
 
@@ -145,14 +146,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Email"
+                            android:text="@string/email"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/email"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="samvimes@yandex.ru"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -173,14 +174,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Time read"
+                            android:text="@string/time_read"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/time_read"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="84 years 3 months"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -201,14 +202,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Prefers"
+                            android:text="@string/sv_download_path"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/download_path"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="Asses"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -229,14 +230,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Blah-blah"
+                            android:text="@string/mangas_complete"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/mangas_complete"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="Very useful info"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -257,14 +258,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Damns given"
+                            android:text="@string/megabytes_downloaded"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/megabytes_downloaded"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="0 damns given"
                             android:textColor="@color/profile_text"/>
 
                     </LinearLayout>
@@ -276,82 +277,38 @@
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:orientation="vertical">
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/show_btns_title"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Mangas complete"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:text="@string/additional"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:text="@string/sv_always_show_viewer_controls"
+                            android:layout_below="@+id/show_btns_title"
+                            android:layout_alignParentLeft="true"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="174"
                             android:textColor="@color/profile_text"/>
 
-                    </LinearLayout>
+                        <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/show_btns_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"/>
 
-                    <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Megabytes downloaded"
-                            android:textColor="@color/profile_text_category_title"/>
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:text="6700"
-                            android:textColor="@color/profile_text"/>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Rank"
-                            android:textColor="@color/profile_text_category_title"/>
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:text="Over 9000"
-                            android:textColor="@color/profile_text"/>
-
-                    </LinearLayout>
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -408,7 +365,6 @@
                 android:textSize="20sp"
                 android:layout_toRightOf="@+id/profile_image"
                 android:layout_toLeftOf="@+id/take_photo"
-                android:text="Semyon Danilov"
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:focusable="true"

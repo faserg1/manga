@@ -31,6 +31,26 @@ public class Constants {
     public static final String RATED = "RATED";
     public static final long VIEWER_SAVE_PERIOD = 60_000;
 
+    public static class Settings {
+
+        public static final String ONLINE_SETTINGS_FILENAME = "ONLINE_SETTINGS_FILENAME";
+        public static final String LAST_UPDATE_PROFILE_TIME = "LAST_UPDATE_PROFILE_TIME";
+        public static final String GOOGLE_PROFILE_NAME = "GOOGLE_PROFILE_NAME";
+
+
+        public static final String USER_NAME = "USER_NAME";
+        public static final String EMAIL = "EMAIL";
+        public static final String TIME_READ = "TIME_READ";
+        public static final String MANGA_DOWNLOAD_PATH = "MANGA_DOWNLOAD_PATH";
+        public static final String MANGA_FINISHED = "MANGA_FINISHED";
+        public static final String MEGABYTES_DOWNLOADED = "MEGABYTES_DOWNLOADED";
+        public static final String ALWAYS_SHOW_VIEWER_BUTTONS = "ALWAYS_SHOW_VIEWER_BUTTONS";
+        public static final String TUTORIAL_VIEWER_PASSED = "TUTORIAL_VIEWER_PASSED";
+
+        public static final String[] ALL_SETTINGS = {USER_NAME, EMAIL, TIME_READ, MANGA_DOWNLOAD_PATH, MANGA_FINISHED, MEGABYTES_DOWNLOADED, ALWAYS_SHOW_VIEWER_BUTTONS, TUTORIAL_VIEWER_PASSED};
+
+    }
+
     public static class ImageRestrictions {
 
         //если превышает, то не грузим заранее
