@@ -195,8 +195,10 @@
                         android:background="@color/profile_divider"/>
 
                     <LinearLayout
+                        android:id="@+id/download_path_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/selectable_item_background"
                         android:padding="10dp"
                         android:orientation="vertical">
 

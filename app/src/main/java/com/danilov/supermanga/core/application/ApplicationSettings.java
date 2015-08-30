@@ -148,7 +148,7 @@ public class ApplicationSettings {
         private long timeRead = 0;
         private String downloadPath = "";
         private int mangasComplete = 0;
-        private long megabytesDownloaded = 0;
+        private long bytesDownloaded = 0;
         private boolean alwaysShowButtons = false;
         private boolean tutorialViewerPassed = false;
 
@@ -168,7 +168,7 @@ public class ApplicationSettings {
             }
 
             mangasComplete = sharedPreferences.getInt(Constants.Settings.MANGA_FINISHED, 0);
-            megabytesDownloaded = sharedPreferences.getLong(Constants.Settings.MEGABYTES_DOWNLOADED, 0L);
+            bytesDownloaded = sharedPreferences.getLong(Constants.Settings.BYTES_DOWNLOADED, 0L);
             alwaysShowButtons = sharedPreferences.getBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
             tutorialViewerPassed = sharedPreferences.getBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, false);
         }
@@ -194,7 +194,7 @@ public class ApplicationSettings {
 
             editor.putLong(Constants.Settings.TIME_READ, timeRead);
             editor.putInt(Constants.Settings.MANGA_FINISHED, mangasComplete);
-            editor.putLong(Constants.Settings.MEGABYTES_DOWNLOADED, megabytesDownloaded);
+            editor.putLong(Constants.Settings.BYTES_DOWNLOADED, bytesDownloaded);
             editor.putBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, alwaysShowButtons);
             editor.putBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, tutorialViewerPassed);
             editor.apply();
@@ -240,12 +240,12 @@ public class ApplicationSettings {
             this.mangasComplete = mangasComplete;
         }
 
-        public long getMegabytesDownloaded() {
-            return megabytesDownloaded;
+        public long getBytesDownloaded() {
+            return bytesDownloaded;
         }
 
-        public void setMegabytesDownloaded(final long megabytesDownloaded) {
-            this.megabytesDownloaded = megabytesDownloaded;
+        public void setBytesDownloaded(final long bytesDownloaded) {
+            this.bytesDownloaded = bytesDownloaded;
         }
 
         public boolean isAlwaysShowButtons() {
@@ -263,6 +263,21 @@ public class ApplicationSettings {
         public void setTutorialViewerPassed(final boolean tutorialViewerPassed) {
             this.tutorialViewerPassed = tutorialViewerPassed;
         }
+
+        int hold = 0;
+        private static final int MBYTE = 1024 * 1024;
+
+        public void appendDownloadedSize(final long appended) {
+            hold += appended;
+            if (hold > MBYTE) {
+                bytesDownloaded += hold;
+                hold = 0;
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MangaApplication.getContext());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putLong(Constants.Settings.BYTES_DOWNLOADED, bytesDownloaded).apply();
+            }
+        }
+
     }
 
 }

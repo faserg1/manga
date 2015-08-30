@@ -24,13 +24,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageSwitcher;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.application.ApplicationSettings;
@@ -52,7 +50,6 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.MangaViewPager;
 import com.danilov.supermanga.core.view.SlidingLayer;
-import com.danilov.supermanga.core.view.SubsamplingScaleImageView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -783,16 +780,26 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private long startedReading;
+
     @Override
     protected void onPause() {
+        long delta = System.currentTimeMillis() - startedReading;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long timeRead = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putLong(Constants.Settings.TIME_READ, timeRead + delta).apply();
+
         strategy.onPause();
         if (!saved && strategy.isStrategyInitialized()) {
             save();
         }
         super.onPause();
     }
+
     @Override
     protected void onResume() {
+        startedReading = System.currentTimeMillis();
         super.onResume();
         strategy.onResume(this);
     }

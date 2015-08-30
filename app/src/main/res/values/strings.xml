@@ -98,7 +98,7 @@
     <string name="google_account_info_title">Google account</string>
     <string name="just_now">Just now</string>
     <string name="never">Never</string>
-    <string name="updated">Updated:</string>
+    <string name="sv_synchronized">Synchronized:</string>
     <string name="time_read">Time read</string>
     <string name="username">Username</string>
     <string name="mangas_complete">Mangas complete</string>
@@ -106,4 +106,7 @@
     <string name="additional">Additional</string>
     <string name="email">Email</string>
     <string name="hours">hour(-s)</string>
+    <string name="hrs">hrs</string>
+    <string name="min">min</string>
+    <string name="sec">sec</string>
 </resources>

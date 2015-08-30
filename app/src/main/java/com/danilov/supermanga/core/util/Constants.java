@@ -43,11 +43,11 @@ public class Constants {
         public static final String TIME_READ = "TIME_READ";
         public static final String MANGA_DOWNLOAD_PATH = "MANGA_DOWNLOAD_PATH";
         public static final String MANGA_FINISHED = "MANGA_FINISHED";
-        public static final String MEGABYTES_DOWNLOADED = "MEGABYTES_DOWNLOADED";
+        public static final String BYTES_DOWNLOADED = "BYTES_DOWNLOADED";
         public static final String ALWAYS_SHOW_VIEWER_BUTTONS = "ALWAYS_SHOW_VIEWER_BUTTONS";
         public static final String TUTORIAL_VIEWER_PASSED = "TUTORIAL_VIEWER_PASSED";
 
-        public static final String[] ALL_SETTINGS = {USER_NAME, EMAIL, TIME_READ, MANGA_DOWNLOAD_PATH, MANGA_FINISHED, MEGABYTES_DOWNLOADED, ALWAYS_SHOW_VIEWER_BUTTONS, TUTORIAL_VIEWER_PASSED};
+        public static final String[] ALL_SETTINGS = {USER_NAME, EMAIL, TIME_READ, MANGA_DOWNLOAD_PATH, MANGA_FINISHED, BYTES_DOWNLOADED, ALWAYS_SHOW_VIEWER_BUTTONS, TUTORIAL_VIEWER_PASSED};
 
     }
 

@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Created by Semyon on 30.08.2015.
@@ -88,10 +89,11 @@ public class OnlineStorageProfileService extends Service {
         final Context context = MangaApplication.getContext();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         JSONObject settingsObject = new JSONObject();
+        Map<String, ?> all = sharedPreferences.getAll();
         for (String fieldName : Constants.Settings.ALL_SETTINGS) {
-            String string = sharedPreferences.getString(fieldName, "");
+            Object o = all.get(fieldName);
             try {
-                settingsObject.put(fieldName, string);
+                settingsObject.put(fieldName, o);
             } catch (JSONException e) {
                 //e.printStackTrace();
             }

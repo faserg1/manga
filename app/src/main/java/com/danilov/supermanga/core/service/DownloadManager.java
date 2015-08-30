@@ -2,6 +2,8 @@ package com.danilov.supermanga.core.service;
 
 import android.util.Log;
 
+import com.danilov.supermanga.core.application.ApplicationSettings;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.interfaces.Pool;
 
 import java.io.InputStream;
@@ -22,6 +24,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DownloadManager {
 
     private final String TAG = "DownloadManager";
+
+    private ApplicationSettings.UserSettings userSettings = ApplicationSettings.get(MangaApplication.getContext()).getUserSettings();
 
     protected DownloadManagerThread thread = new DownloadManagerThread();
 
@@ -438,6 +442,7 @@ public class DownloadManager {
                 case COMPLETE:
                     if (listener != null) {
                         listener.onComplete(this);
+                        userSettings.appendDownloadedSize(size);
                         recycle();
                     }
                     break;
