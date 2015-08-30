@@ -28,9 +28,9 @@ public class SettingsFragment extends BaseFragment {
 
     private static final int FOLDER_PICKER_REQUEST = 1;
 
-    private EditText downloadPath;
-    private Button selectPath;
-    private CheckBox showControls;
+//    private EditText downloadPath;
+//    private Button selectPath;
+//    private CheckBox showControls;
     private Spinner mainPageSelector;
 
     private ApplicationSettings settings;
@@ -47,31 +47,31 @@ public class SettingsFragment extends BaseFragment {
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
-        downloadPath = findViewById(R.id.download_path);
+//        downloadPath = findViewById(R.id.download_path);
         settings = ApplicationSettings.get(getActivity());
-        showControls = findViewById(R.id.show_viewer_controls);
+//        showControls = findViewById(R.id.show_viewer_controls);
         mainPageSelector = findViewById(R.id.main_page_selector);
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
         final String path = userSettings.getDownloadPath();
 
-        downloadPath.setText(path);
-        selectPath = findViewById(R.id.select_folder);
-        selectPath.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                Intent intent = new Intent(getActivity(), FolderPickerActivity.class);
-                intent.putExtra(FolderPickerActivity.FOLDER_KEY, path);
-                startActivityForResult(intent, FOLDER_PICKER_REQUEST);
-            }
-        });
-        showControls.setChecked(userSettings.isAlwaysShowButtons());
+//        downloadPath.setText(path);
+//        selectPath = findViewById(R.id.select_folder);
+//        selectPath.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(final View view) {
+//                Intent intent = new Intent(getActivity(), FolderPickerActivity.class);
+//                intent.putExtra(FolderPickerActivity.FOLDER_KEY, path);
+//                startActivityForResult(intent, FOLDER_PICKER_REQUEST);
+//            }
+//        });
+        /*showControls.setChecked(userSettings.isAlwaysShowButtons());
         showControls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
                 userSettings.setAlwaysShowButtons(b);
                 settings.update(getActivity());
             }
-        });
+        });*/
         final MainPageAdapter adapter = new MainPageAdapter();
         mainPageSelector.setAdapter(adapter);
         mainPageSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -114,7 +114,7 @@ public class SettingsFragment extends BaseFragment {
                 final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
                 String path = data.getStringExtra(FolderPickerActivity.FOLDER_KEY);
                 userSettings.setDownloadPath(path);
-                downloadPath.setText(path);
+//                downloadPath.setText(path);
                 settings.update(getActivity());
                 break;
         }

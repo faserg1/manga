@@ -240,7 +240,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                 showBtnsSwitch.setChecked(isChecked);
                 userSettings.setAlwaysShowButtons(isChecked);
                 Context context = getApplicationContext();
-                ApplicationSettings.get(context).invalidate(context);
+                ApplicationSettings.get(context).update(context);
             }
         });
         showBtnsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -248,7 +248,7 @@ public class ProfileActivity extends BaseToolbarActivity {
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 userSettings.setAlwaysShowButtons(isChecked);
                 Context context = getApplicationContext();
-                ApplicationSettings.get(context).invalidate(context);
+                ApplicationSettings.get(context).update(context);
             }
         });
 
