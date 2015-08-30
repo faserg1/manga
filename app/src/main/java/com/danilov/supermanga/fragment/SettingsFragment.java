@@ -51,7 +51,8 @@ public class SettingsFragment extends BaseFragment {
         settings = ApplicationSettings.get(getActivity());
         showControls = findViewById(R.id.show_viewer_controls);
         mainPageSelector = findViewById(R.id.main_page_selector);
-        final String path = settings.getMangaDownloadBasePath();
+        final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+        final String path = userSettings.getDownloadPath();
 
         downloadPath.setText(path);
         selectPath = findViewById(R.id.select_folder);
@@ -63,11 +64,11 @@ public class SettingsFragment extends BaseFragment {
                 startActivityForResult(intent, FOLDER_PICKER_REQUEST);
             }
         });
-        showControls.setChecked(settings.isShowViewerButtonsAlways());
+        showControls.setChecked(userSettings.isAlwaysShowButtons());
         showControls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-                settings.setShowViewerButtonsAlways(b);
+                userSettings.setAlwaysShowButtons(b);
                 settings.update(getActivity());
             }
         });
@@ -110,8 +111,9 @@ public class SettingsFragment extends BaseFragment {
         }
         switch (requestCode) {
             case FOLDER_PICKER_REQUEST:
+                final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
                 String path = data.getStringExtra(FolderPickerActivity.FOLDER_KEY);
-                settings.setMangaDownloadBasePath(path);
+                userSettings.setDownloadPath(path);
                 downloadPath.setText(path);
                 settings.update(getActivity());
                 break;

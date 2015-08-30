@@ -1,27 +1,41 @@
 package com.danilov.supermanga.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.application.ApplicationSettings;
+import com.danilov.supermanga.core.application.MangaApplication;
+import com.danilov.supermanga.core.dialog.CustomDialog;
+import com.danilov.supermanga.core.dialog.RateDialog;
+import com.danilov.supermanga.core.notification.headsupold.remote.impl.RemoteButton;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
 import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.service.OnlineStorageProfileService;
@@ -53,7 +67,9 @@ public class ProfileActivity extends BaseToolbarActivity {
     private TextView userNameTextView;
 
     private View googleSyncCard;
+    private View userNameCard;
     private View googleSyncButton;
+    private View emailCard;
     private RelativeTimeTextView googleAccountTextView;
 
     private TextView userNameSmall;
@@ -73,6 +89,8 @@ public class ProfileActivity extends BaseToolbarActivity {
         takePhoto = findViewWithId(R.id.take_photo);
         userNameTextView = findViewWithId(R.id.user_name);
         googleSyncCard = findViewWithId(R.id.google_sync_card);
+        userNameCard = findViewWithId(R.id.user_name_card);
+        emailCard = findViewWithId(R.id.email_card);
         googleAccountTextView = findViewWithId(R.id.google_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
 
@@ -142,7 +160,6 @@ public class ProfileActivity extends BaseToolbarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fakeBarInner = findViewWithId(R.id.fake_bar_inner);
         scrollView = findViewWithId(R.id.scroll_view);
-
         googleSyncCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -166,11 +183,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                 service.sendDataViaGoogle();
             }
         });
-        init();
-    }
 
-
-    private void init() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
         String googleProfileName = sharedPreferences.getString(Constants.Settings.GOOGLE_PROFILE_NAME, null);
@@ -185,13 +198,20 @@ public class ProfileActivity extends BaseToolbarActivity {
             googleAccountTextView.setSuffix(")");
         }
 
-        String userNameString = sharedPreferences.getString(Constants.Settings.USER_NAME, "");
-        String emailString = sharedPreferences.getString(Constants.Settings.EMAIL, "");
-        long timeReadLong = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0L);
-        String downloadPathString = sharedPreferences.getString(Constants.Settings.EMAIL, "");
-        int mangasCompleteInt = sharedPreferences.getInt(Constants.Settings.MANGA_FINISHED, 0);
-        long megabytesDownloadedLong = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0L);
-        boolean alwaysShowButtons = sharedPreferences.getBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
+        init();
+    }
+
+
+    private void init() {
+        ApplicationSettings.UserSettings userSettings = ApplicationSettings.get(this).getUserSettings();
+
+        final String userNameString = userSettings.getUserName();
+        final String emailString = userSettings.getEmail();
+        long timeReadLong = userSettings.getTimeRead();
+        String downloadPathString = userSettings.getDownloadPath();
+        int mangasCompleteInt = userSettings.getMangasComplete();
+        long megabytesDownloadedLong = userSettings.getMegabytesDownloaded();
+        boolean alwaysShowButtons = userSettings.isAlwaysShowButtons();
 
         long hours = TimeUnit.HOURS.convert(timeReadLong, TimeUnit.MILLISECONDS);
 
@@ -203,6 +223,22 @@ public class ProfileActivity extends BaseToolbarActivity {
         mangasComplete.setText(mangasCompleteInt + "");
         megabytesDownloaded.setText(megabytesDownloadedLong + "");
         showBtnsSwitch.setChecked(alwaysShowButtons);
+
+
+        userNameCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.username), userNameString, Constants.Settings.USER_NAME);
+                dialogFragment.show(getSupportFragmentManager(), ValueDialogFragment.TAG);
+            }
+        });
+        emailCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.email), emailString, Constants.Settings.EMAIL);
+                dialogFragment.show(getSupportFragmentManager(), ValueDialogFragment.TAG);
+            }
+        });
     }
 
     private ServiceConnection serviceConnection;
@@ -302,6 +338,95 @@ public class ProfileActivity extends BaseToolbarActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    public static class ValueDialogFragment extends DialogFragment {
+
+        public static final String TAG = "ValueDialogFragment";
+
+        public static final String TITLE = "TITLE";
+        public static final String VALUE = "VALUE";
+        public static final String PARAMETER_NAME = "PARAMETER_NAME";
+
+        private String title = "";
+        private String value = "";
+        private String parameterName = "";
+
+        private EditText editText = null;
+
+        public ValueDialogFragment() {
+            super();
+        }
+
+        public static ValueDialogFragment createDialog(final String title, final String value, final String parameterName) {
+            ValueDialogFragment valueDialogFragment = new ValueDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(TITLE, title);
+            bundle.putString(VALUE, value);
+            bundle.putString(PARAMETER_NAME, parameterName);
+            valueDialogFragment.setArguments(bundle);
+            return valueDialogFragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+            Bundle b = getArguments();
+            if (savedInstanceState != null) {
+                b = savedInstanceState;
+            }
+
+            title = b.getString(TITLE);
+            value = b.getString(VALUE);
+            parameterName = b.getString(PARAMETER_NAME);
+
+            CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
+            builder.setPositiveButton(getString(R.string.sv_ok), new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+                    Context context = MangaApplication.getContext();
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                    preferences.edit().putString(parameterName, editText.getText().toString()).apply();
+                    ApplicationSettings.get(context).invalidate(context);
+                    ProfileActivity activity = (ProfileActivity) getActivity();
+                    if (activity != null) {
+                        activity.init();
+                    }
+                    dismiss();
+                }
+
+            });
+            builder.setNegativeButton(getString(R.string.sv_cancel), new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(final DialogInterface dialogInterface, final int i) {
+                    dismiss();
+                }
+
+            });
+            LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+            View contentView = layoutInflater.inflate(R.layout.dialog_enter_string, null);
+            editText = (EditText) contentView.findViewById(R.id.value);
+            editText.setText(value);
+            builder.setView(contentView);
+            builder.setTitle(title);
+            return builder.build();
+        }
+
+        @Override
+        public void onCreate(final Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
+        @Override
+        public void onSaveInstanceState(final Bundle outState) {
+            outState.putString(TITLE, title);
+            outState.putString(VALUE, editText.getText().toString());
+            outState.putString(PARAMETER_NAME, parameterName);
+            super.onSaveInstanceState(outState);
+        }
+
+
     }
 
 }

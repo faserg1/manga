@@ -381,7 +381,8 @@ public class IoUtils {
 
     public static String createPathForManga(final Manga manga, final Context context) {
         ApplicationSettings applicationSettings = ApplicationSettings.get(context);
-        String downloadPath = applicationSettings.getMangaDownloadBasePath();
+        ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
+        String downloadPath = userSettings.getDownloadPath();
         String title = manga.getTitle();
         Matcher matcher = normalNamePattern.matcher(title);
         title = "";

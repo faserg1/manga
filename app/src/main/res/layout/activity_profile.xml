@@ -26,17 +26,20 @@
                 android:id="@+id/info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:background="@android:color/white"
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/user_name_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
+                        android:background="@drawable/selectable_item_background"
                         android:orientation="vertical">
 
                         <com.danilov.supermanga.core.view.CTextView
@@ -55,8 +58,6 @@
                     </LinearLayout>
 
                     <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
@@ -74,6 +75,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@+id/google_sync_button"
                             android:layout_alignParentTop="true"
                             android:text="@string/google_account_info_title"
                             android:textColor="@color/profile_text_category_title"/>
@@ -82,6 +84,7 @@
                             android:id="@+id/google_account"
                             android:layout_below="@+id/google_account_title"
                             android:layout_alignParentLeft="true"
+                            android:layout_toLeftOf="@+id/google_sync_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
@@ -117,7 +120,7 @@
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="2dp"
                     android:src="@drawable/card_shadow"/>
 
             </LinearLayout>
@@ -126,21 +129,23 @@
                 android:id="@+id/additional"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="70dp"
                 android:layout_below="@+id/info"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:background="@android:color/white"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/email_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
+                        android:background="@drawable/selectable_item_background"
                         android:orientation="vertical">
 
                         <com.danilov.supermanga.core.view.CTextView
@@ -159,8 +164,6 @@
                     </LinearLayout>
 
                     <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
@@ -187,8 +190,6 @@
                     </LinearLayout>
 
                     <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
@@ -215,64 +216,6 @@
                     </LinearLayout>
 
                     <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/mangas_complete"
-                            android:textColor="@color/profile_text_category_title"/>
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:id="@+id/mangas_complete"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/megabytes_downloaded"
-                            android:textColor="@color/profile_text_category_title"/>
-
-                        <com.danilov.supermanga.core.view.CTextView
-                            android:id="@+id/megabytes_downloaded"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
@@ -310,11 +253,63 @@
 
                     </RelativeLayout>
 
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/profile_divider"/>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:orientation="vertical">
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mangas_complete"
+                            android:textColor="@color/profile_text_category_title"/>
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/mangas_complete"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:textColor="@color/profile_text"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/profile_divider"/>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:orientation="vertical">
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/megabytes_downloaded"
+                            android:textColor="@color/profile_text_category_title"/>
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/megabytes_downloaded"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:textColor="@color/profile_text"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="2dp"
                     android:src="@drawable/card_shadow"/>
 
             </LinearLayout>

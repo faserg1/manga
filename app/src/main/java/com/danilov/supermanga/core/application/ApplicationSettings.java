@@ -3,9 +3,11 @@ package com.danilov.supermanga.core.application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.danilov.supermanga.activity.MainActivity;
+import com.danilov.supermanga.core.util.Constants;
 
 import java.io.File;
 
@@ -31,21 +33,25 @@ public class ApplicationSettings {
 
     private String downloadPath;
 
-    private String mangaDownloadBasePath;
-
-    private boolean tutorialViewerPassed;
-
     private boolean tutorialMenuPassed;
 
     private boolean firstLaunch;
 
     private boolean viewerFullscreen;
 
-    private boolean showViewerButtonsAlways;
-
     private boolean isRTLMode;
 
     private String mainMenuItem;
+
+    private UserSettings userSettings;
+
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+
+    public void setUserSettings(final UserSettings userSettings) {
+        this.userSettings = userSettings;
+    }
 
     public boolean isRTLMode() {
         return isRTLMode;
@@ -69,22 +75,6 @@ public class ApplicationSettings {
 
     public void setDownloadPath(final String downloadPath) {
         this.downloadPath = downloadPath;
-    }
-
-    public String getMangaDownloadBasePath() {
-        return mangaDownloadBasePath;
-    }
-
-    public void setMangaDownloadBasePath(final String mangaDownloadBasePath) {
-        this.mangaDownloadBasePath = mangaDownloadBasePath;
-    }
-
-    public boolean isTutorialViewerPassed() {
-        return tutorialViewerPassed;
-    }
-
-    public void setTutorialViewerPassed(final boolean tutorialViewerPassed) {
-        this.tutorialViewerPassed = tutorialViewerPassed;
     }
 
     public boolean isTutorialMenuPassed() {
@@ -111,14 +101,6 @@ public class ApplicationSettings {
         this.viewerFullscreen = viewerFullscreen;
     }
 
-    public boolean isShowViewerButtonsAlways() {
-        return showViewerButtonsAlways;
-    }
-
-    public void setShowViewerButtonsAlways(final boolean showViewerButtonsAlways) {
-        this.showViewerButtonsAlways = showViewerButtonsAlways;
-    }
-
     public static ApplicationSettings get(final Context context) {
         if (instance == null) {
             instance = new ApplicationSettings(context);
@@ -133,45 +115,154 @@ public class ApplicationSettings {
     private void load(final Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         this.downloadPath = sharedPreferences.getString(DOWNLOAD_PATH_FIELD, "");
-        this.mangaDownloadBasePath = sharedPreferences.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
-        this.tutorialViewerPassed = sharedPreferences.getBoolean(TUTORIAL_VIEWER_PASSED_FIELD, false);
         this.tutorialMenuPassed = sharedPreferences.getBoolean(TUTORIAL_MENU_PASSED_FIELD, false);
         this.firstLaunch = sharedPreferences.getBoolean(FIRST_LAUNCH, true);
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
-        this.showViewerButtonsAlways = sharedPreferences.getBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, false);
         this.isRTLMode = sharedPreferences.getBoolean(IN_RTL_MODE_FIELD, false);
         this.mainMenuItem = sharedPreferences.getString(MAIN_MENU_ITEM_FIELD, MainActivity.MainMenuItem.SEARCH.toString());
-        if ("".equals(mangaDownloadBasePath)) {
-            loadMangaBasePath();
-        }
-
+        userSettings = new UserSettings();
+        userSettings.init(context);
     }
 
-    private void loadMangaBasePath() {
-        //TODO: checking state
-        File externalStorageDir = Environment.getExternalStorageDirectory();
-        //{SD_PATH}/Android/data/com.danilov.supermanga/download
-        File extStorageAppCachePath = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + PACKAGE_NAME + File.separator + "download");
-        mangaDownloadBasePath = extStorageAppCachePath.getPath();
-        File path = new File(mangaDownloadBasePath);
-        if (!path.mkdirs() && !path.exists()) {
-            Log.d(TAG, "Failure on creation of " + path.toString() + " path");
-        }
+    public void invalidate(final Context context) {
+        load(context);
     }
 
     public void update(final Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DOWNLOAD_PATH_FIELD, downloadPath);
-        editor.putString(MANGA_DOWNLOAD_BASE_PATH_FIELD, mangaDownloadBasePath);
-        editor.putBoolean(TUTORIAL_VIEWER_PASSED_FIELD, tutorialViewerPassed);
         editor.putBoolean(TUTORIAL_MENU_PASSED_FIELD, tutorialMenuPassed);
         editor.putBoolean(VIEWER_FULLSCREEN_FIELD, viewerFullscreen);
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
-        editor.putBoolean(SHOW_VIEWER_BTNS_ALWAYS_FIELD, showViewerButtonsAlways);
         editor.putBoolean(IN_RTL_MODE_FIELD, isRTLMode);
         editor.putString(MAIN_MENU_ITEM_FIELD, mainMenuItem);
         editor.apply();
+        userSettings.save();
+    }
+
+    public static class UserSettings {
+
+        private String userName = null;
+        private String email = "";
+        private long timeRead = 0;
+        private String downloadPath = "";
+        private int mangasComplete = 0;
+        private long megabytesDownloaded = 0;
+        private boolean alwaysShowButtons = false;
+        private boolean tutorialViewerPassed = false;
+
+        public void init(final Context context) {
+            SharedPreferences sp = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            userName = sharedPreferences.getString(Constants.Settings.USER_NAME, "");
+            email = sharedPreferences.getString(Constants.Settings.EMAIL, "");
+            timeRead = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0L);
+            downloadPath = sharedPreferences.getString(Constants.Settings.MANGA_DOWNLOAD_PATH, "");
+
+            if ("".equals(downloadPath)) {
+                downloadPath = sp.getString(MANGA_DOWNLOAD_BASE_PATH_FIELD, "");
+            }
+            if ("".equals(downloadPath)) {
+                loadMangaBasePath();
+            }
+
+            mangasComplete = sharedPreferences.getInt(Constants.Settings.MANGA_FINISHED, 0);
+            megabytesDownloaded = sharedPreferences.getLong(Constants.Settings.MEGABYTES_DOWNLOADED, 0L);
+            alwaysShowButtons = sharedPreferences.getBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
+            tutorialViewerPassed = sharedPreferences.getBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, false);
+        }
+
+        private void loadMangaBasePath() {
+            //TODO: checking state
+            File externalStorageDir = Environment.getExternalStorageDirectory();
+            //{SD_PATH}/Android/data/{PACKAGE_NAME}/download
+            File extStorageAppCachePath = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + PACKAGE_NAME + File.separator + "download");
+            downloadPath = extStorageAppCachePath.getPath();
+            File path = new File(downloadPath);
+            if (!path.mkdirs() && !path.exists()) {
+                Log.d(TAG, "Failure on creation of " + path.toString() + " path");
+            }
+        }
+
+        private void save() {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MangaApplication.getContext());
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(Constants.Settings.USER_NAME, userName);
+            editor.putString(Constants.Settings.EMAIL, email);
+            editor.putString(Constants.Settings.MANGA_DOWNLOAD_PATH, downloadPath);
+
+            editor.putLong(Constants.Settings.TIME_READ, timeRead);
+            editor.putInt(Constants.Settings.MANGA_FINISHED, mangasComplete);
+            editor.putLong(Constants.Settings.MEGABYTES_DOWNLOADED, megabytesDownloaded);
+            editor.putBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, alwaysShowButtons);
+            editor.putBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, tutorialViewerPassed);
+            editor.apply();
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(final String userName) {
+            this.userName = userName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(final String email) {
+            this.email = email;
+        }
+
+        public long getTimeRead() {
+            return timeRead;
+        }
+
+        public void setTimeRead(final long timeRead) {
+            this.timeRead = timeRead;
+        }
+
+        public String getDownloadPath() {
+            return downloadPath;
+        }
+
+        public void setDownloadPath(final String downloadPath) {
+            this.downloadPath = downloadPath;
+        }
+
+        public int getMangasComplete() {
+            return mangasComplete;
+        }
+
+        public void setMangasComplete(final int mangasComplete) {
+            this.mangasComplete = mangasComplete;
+        }
+
+        public long getMegabytesDownloaded() {
+            return megabytesDownloaded;
+        }
+
+        public void setMegabytesDownloaded(final long megabytesDownloaded) {
+            this.megabytesDownloaded = megabytesDownloaded;
+        }
+
+        public boolean isAlwaysShowButtons() {
+            return alwaysShowButtons;
+        }
+
+        public void setAlwaysShowButtons(final boolean alwaysShowButtons) {
+            this.alwaysShowButtons = alwaysShowButtons;
+        }
+
+        public boolean isTutorialViewerPassed() {
+            return tutorialViewerPassed;
+        }
+
+        public void setTutorialViewerPassed(final boolean tutorialViewerPassed) {
+            this.tutorialViewerPassed = tutorialViewerPassed;
+        }
     }
 
 }

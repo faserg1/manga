@@ -154,9 +154,12 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
         toggleFullscreen(true);
-        isTutorialPassed = settings.isTutorialViewerPassed();
+
+        final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+
+        isTutorialPassed = userSettings.isTutorialViewerPassed();
         showTutorial(isTutorialPassed ? -1 : 1);
-        this.showButtonsCheckbox.setChecked(settings.isShowViewerButtonsAlways());
+        this.showButtonsCheckbox.setChecked(userSettings.isAlwaysShowButtons());
         isRTL = settings.isRTLMode();
         this.rtlCheckbox.setChecked(isRTL);
         setReadingMode(isRTL);
@@ -201,7 +204,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         init(savedInstanceState);
         closeKeyboard();
         toggleNextChapterButton(false);
-        if (!settings.isShowViewerButtonsAlways()) {
+        if (!userSettings.isAlwaysShowButtons()) {
             hideBtns(HIDE_TIME_OFFSET);
         }
     }
@@ -740,7 +743,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 setReadingMode(isChecked);
                 break;
             case R.id.show_btns_checkbox:
-                settings.setShowViewerButtonsAlways(isChecked);
+                final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+                userSettings.setAlwaysShowButtons(isChecked);
                 settings.update(getApplicationContext());
                 if (isChecked) {
                     showBtns();
@@ -847,7 +851,8 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                            }, 1000);
                            Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
                            showTutorial(-1);
-                           settings.setTutorialViewerPassed(true);
+                           final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+                           userSettings.setTutorialViewerPassed(true);
                            settings.update(getApplicationContext());
                            hideBtns(HIDE_TIME_OFFSET);
                            break;

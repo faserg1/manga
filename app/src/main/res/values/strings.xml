@@ -105,5 +105,5 @@
     <string name="megabytes_downloaded">Megabytes downloaded</string>
     <string name="additional">Additional</string>
     <string name="email">Email</string>
-    <string name="hours">час (-а, -ов)</string>
+    <string name="hours">hour(-s)</string>
 </resources>
