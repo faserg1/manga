@@ -10,12 +10,20 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
+import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.UnderToolbarScrollView;
 import com.danilov.supermanga.core.view.ViewV16;
 import com.software.shell.fab.ActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 
 /**
  * Created by Semyon on 28.08.2015.
@@ -26,7 +34,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     private ActionButton takePhoto;
     private ViewGroup fakeBar;
     private ViewGroup fakeBarInner;
-    private MenuItem backButton;
+    private TextView userNameTextView;
 
 
 
@@ -36,6 +44,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         setContentView(R.layout.activity_profile);
         fakeBar = findViewWithId(R.id.fake_bar);
         takePhoto = findViewWithId(R.id.take_photo);
+        userNameTextView = findViewWithId(R.id.user_name);
 
         final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
@@ -47,6 +56,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                 takePhotoView.setPivotY(takePhoto.getHeight() / 2);
                 scrollView.setListener(new UnderToolbarScrollView.UnderToolbarScrollListener() {
 
+                    final int USER_NAME_MARGIN_BOTTOM = Utils.dpToPx(16);
                     final int MARGIN_TOP = Utils.dpToPx(58);
                     final int MARGIN_LEFT = Utils.dpToPx(48);
                     final int MAX_HEIGHT = fakeBar.getHeight();
@@ -66,6 +76,7 @@ public class ProfileActivity extends BaseToolbarActivity {
 
                         int curExtra = height - MIN_HEIGHT;
                         float percentage = (float) curExtra / EXTRA_HEIGHT;
+
                         takePhotoView.setScaleX(percentage);
                         takePhotoView.setScaleY(percentage);
                         int marginTop = (int) (percentage * MARGIN_TOP);
@@ -74,6 +85,13 @@ public class ProfileActivity extends BaseToolbarActivity {
                         fakeBarInnerParameters.topMargin = marginTop;
                         fakeBarInnerParameters.leftMargin = marginLeft;
                         fakeBarInner.setLayoutParams(fakeBarInnerParameters);
+
+
+                        RelativeLayout.LayoutParams userNameParams = (RelativeLayout.LayoutParams) userNameTextView.getLayoutParams();
+                        int marginBottom = (int) (percentage * USER_NAME_MARGIN_BOTTOM);
+                        userNameParams.bottomMargin = marginBottom;
+                        userNameTextView.setLayoutParams(userNameParams);
+
 
                         return 0;
                     }
@@ -86,7 +104,53 @@ public class ProfileActivity extends BaseToolbarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fakeBarInner = findViewWithId(R.id.fake_bar_inner);
         scrollView = findViewWithId(R.id.scroll_view);
+
+        onlineStorageConnector = new GoogleDriveConnector(testListener);
+
+
     }
+
+    private OnlineStorageConnector onlineStorageConnector = null;
+
+    private OnlineStorageConnector.StorageConnectorListener testListener = new OnlineStorageConnector.StorageConnectorListener() {
+
+
+
+        @Override
+        public void onStorageConnected(final OnlineStorageConnector connector) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("TEST", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            onlineStorageConnector.createFile("Title", jsonObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback() {
+                @Override
+                public void onCommandSuccess() {
+                    int a = 0;
+                    a++;
+                }
+
+                @Override
+                public void onCommandError(final String message) {
+                    if (message != null) {
+                        boolean empty = message.isEmpty();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onStorageDisconnected(final OnlineStorageConnector connector) {
+
+        }
+
+        @Override
+        public void onConnectionFailed(final OnlineStorageConnector connector) {
+
+        }
+
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
