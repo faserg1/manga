@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <application
         android:name="com.danilov.supermanga.core.application.MangaApplication"
@@ -90,10 +92,6 @@
 
         <service android:name="com.danilov.supermanga.core.service.MangaDownloadService" />
         <service android:name="com.danilov.supermanga.core.service.MangaUpdateServiceNew" />
-        <service
-            android:name="com.danilov.supermanga.core.service.MangaUpdateService"
-            android:exported="false" >
-        </service>
 
         <service android:name=".core.service.StartUpdateService" android:enabled="true"/>
 

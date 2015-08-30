@@ -1,8 +1,10 @@
 package com.danilov.supermanga.core.onlinestorage;
 
+import android.content.IntentSender;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
@@ -10,6 +12,8 @@ import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +40,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
 
     private GoogleApiClient googleApiClient;
     private boolean isClientAvailable = false;
+    private String accountName = "Account name not available";
 
 
     public GoogleDriveConnector(final StorageConnectorListener connectorListener) {
@@ -46,10 +51,20 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
     public void init() {
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Drive.API)
+                .addApi(Plus.API)
                 .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public String getAccountName() {
+        return accountName;
     }
 
     private class FileCreateCallback implements ResultCallback<DriveFolder.DriveFileResult> {
@@ -151,6 +166,11 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
 
     @Override
     public void onConnected(final Bundle bundle) {
+        accountName = Plus.AccountApi.getAccountName(googleApiClient);
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+        if (currentPerson != null) {
+            accountName = currentPerson.getDisplayName();
+        }
         isClientAvailable = true;
         connectorListener.onStorageConnected(this);
     }
@@ -164,7 +184,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
         isClientAvailable = false;
-        connectorListener.onConnectionFailed(this);
+        connectorListener.onConnectionFailed(this, connectionResult);
     }
 
 }

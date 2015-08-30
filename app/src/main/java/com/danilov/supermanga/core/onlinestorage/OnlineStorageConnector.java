@@ -20,6 +20,8 @@ public abstract class OnlineStorageConnector {
 
     public abstract void init();
 
+    public abstract String getAccountName();
+
     public abstract void createFile(String title, File file, MimeType mimeType, CommandCallback commandCallback);
 
     public abstract void createFile(String title, String text, MimeType mimeType, CommandCallback commandCallback);
@@ -30,7 +32,7 @@ public abstract class OnlineStorageConnector {
 
         public void onStorageDisconnected(final OnlineStorageConnector connector);
 
-        public void onConnectionFailed(final OnlineStorageConnector connector);
+        public void onConnectionFailed(final OnlineStorageConnector connector, final Object object);
 
     }
 

@@ -61,32 +61,63 @@
                         android:layout_height="1dp"
                         android:background="@color/profile_divider"/>
 
-                    <LinearLayout
+                    <RelativeLayout
+                        android:id="@+id/google_sync_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:background="@drawable/selectable_item_background">
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/google_account_title"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Google account"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:text="@string/google_account_info_title"
                             android:textColor="@color/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/google_account"
+                            android:layout_below="@+id/google_account_title"
+                            android:layout_alignParentLeft="true"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="samvimes826@gmail.com"
                             android:textColor="@color/profile_text"/>
 
-                    </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/google_sync_button"
+                            android:visibility="gone"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_alignTop="@+id/google_account_title"
+                            android:layout_alignBottom="@+id/google_account"
+                            android:gravity="center"
+                            android:background="@drawable/selectable_item_background"
+                            android:orientation="horizontal">
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:text="Синхронизировать"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:src="@drawable/ic_action_cloud"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1dp"
                     android:src="@drawable/card_shadow"/>
 
             </LinearLayout>
@@ -326,7 +357,7 @@
 
                 <ImageView
                     android:layout_width="fill_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1dp"
                     android:src="@drawable/card_shadow"/>
 
             </LinearLayout>

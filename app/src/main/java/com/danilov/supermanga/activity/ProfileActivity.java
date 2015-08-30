@@ -1,5 +1,6 @@
 package com.danilov.supermanga.activity;
 
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,8 @@ import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.UnderToolbarScrollView;
 import com.danilov.supermanga.core.view.ViewV16;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.software.shell.fab.ActionButton;
 
 import org.json.JSONException;
@@ -36,6 +39,10 @@ public class ProfileActivity extends BaseToolbarActivity {
     private ViewGroup fakeBarInner;
     private TextView userNameTextView;
 
+    private View googleSyncCard;
+    private View googleSyncButton;
+    private TextView googleAccountTextView;
+
 
 
     @Override
@@ -45,6 +52,9 @@ public class ProfileActivity extends BaseToolbarActivity {
         fakeBar = findViewWithId(R.id.fake_bar);
         takePhoto = findViewWithId(R.id.take_photo);
         userNameTextView = findViewWithId(R.id.user_name);
+        googleSyncCard = findViewWithId(R.id.google_sync_card);
+        googleAccountTextView = findViewWithId(R.id.google_account);
+        googleSyncButton = findViewWithId(R.id.google_sync_button);
 
         final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
@@ -105,8 +115,38 @@ public class ProfileActivity extends BaseToolbarActivity {
         fakeBarInner = findViewWithId(R.id.fake_bar_inner);
         scrollView = findViewWithId(R.id.scroll_view);
 
-        onlineStorageConnector = new GoogleDriveConnector(testListener);
+        googleSyncCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                onlineStorageConnector = new GoogleDriveConnector(testListener);
+                onlineStorageConnector.init();
+            }
+        });
+        googleSyncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("TEST", true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                onlineStorageConnector.createFile("Title", jsonObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback() {
+                    @Override
+                    public void onCommandSuccess() {
+                        int a = 0;
+                        a++;
+                    }
 
+                    @Override
+                    public void onCommandError(final String message) {
+                        if (message != null) {
+                            boolean empty = message.isEmpty();
+                        }
+                    }
+                });
+            }
+        });
 
     }
 
@@ -118,26 +158,8 @@ public class ProfileActivity extends BaseToolbarActivity {
 
         @Override
         public void onStorageConnected(final OnlineStorageConnector connector) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("TEST", true);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            onlineStorageConnector.createFile("Title", jsonObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback() {
-                @Override
-                public void onCommandSuccess() {
-                    int a = 0;
-                    a++;
-                }
-
-                @Override
-                public void onCommandError(final String message) {
-                    if (message != null) {
-                        boolean empty = message.isEmpty();
-                    }
-                }
-            });
+            googleSyncButton.setVisibility(View.VISIBLE);
+            googleAccountTextView.setText(onlineStorageConnector.getAccountName());
         }
 
         @Override
@@ -146,8 +168,19 @@ public class ProfileActivity extends BaseToolbarActivity {
         }
 
         @Override
-        public void onConnectionFailed(final OnlineStorageConnector connector) {
+        public void onConnectionFailed(final OnlineStorageConnector connector, final Object object) {
+            ConnectionResult connectionResult = (ConnectionResult) object;
+            if (!connectionResult.hasResolution()) {
+                // show the localized error dialog.
+                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), ProfileActivity.this, 0).show();
+                return;
+            }
 
+            try {
+                connectionResult.startResolutionForResult(ProfileActivity.this, 1);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
         }
 
     };
