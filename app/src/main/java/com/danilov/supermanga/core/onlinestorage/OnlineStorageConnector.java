@@ -22,9 +22,11 @@ public abstract class OnlineStorageConnector {
 
     public abstract String getAccountName();
 
-    public abstract void createFile(String title, File file, MimeType mimeType, CommandCallback commandCallback);
+    public abstract void createFile(final String title, final File file, final MimeType mimeType, final CommandCallback commandCallback);
 
-    public abstract void createFile(String title, String text, MimeType mimeType, CommandCallback commandCallback);
+    public abstract void createFile(final String title, final String text, final MimeType mimeType, final CommandCallback commandCallback);
+
+    public abstract void checkFileExist(final String title, final CommandCallback commandCallback);
 
     public static interface StorageConnectorListener {
 

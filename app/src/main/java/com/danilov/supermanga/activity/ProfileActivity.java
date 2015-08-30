@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     private View userNameCard;
     private View googleSyncButton;
     private View emailCard;
+    private View alwaysShowButtonsCard;
     private View downloadPathCard;
     private RelativeTimeTextView googleAccountTextView;
 
@@ -80,6 +82,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         googleSyncCard = findViewWithId(R.id.google_sync_card);
         userNameCard = findViewWithId(R.id.user_name_card);
         emailCard = findViewWithId(R.id.email_card);
+        alwaysShowButtonsCard = findViewWithId(R.id.always_show_buttons_card);
         downloadPathCard = findViewWithId(R.id.download_path_card);
         googleAccountTextView = findViewWithId(R.id.google_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
@@ -205,7 +208,7 @@ public class ProfileActivity extends BaseToolbarActivity {
 
 
     private void init() {
-        ApplicationSettings.UserSettings userSettings = ApplicationSettings.get(this).getUserSettings();
+        final ApplicationSettings.UserSettings userSettings = ApplicationSettings.get(this).getUserSettings();
 
         final String userNameString = userSettings.getUserName();
         final String emailString = userSettings.getEmail();
@@ -230,7 +233,24 @@ public class ProfileActivity extends BaseToolbarActivity {
         mangasComplete.setText(mangasCompleteInt + "");
         megabytesDownloaded.setText(megabytesDownloadedLong + "");
         showBtnsSwitch.setChecked(alwaysShowButtons);
-
+        alwaysShowButtonsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                boolean isChecked = !showBtnsSwitch.isChecked();
+                showBtnsSwitch.setChecked(isChecked);
+                userSettings.setAlwaysShowButtons(isChecked);
+                Context context = getApplicationContext();
+                ApplicationSettings.get(context).invalidate(context);
+            }
+        });
+        showBtnsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                userSettings.setAlwaysShowButtons(isChecked);
+                Context context = getApplicationContext();
+                ApplicationSettings.get(context).invalidate(context);
+            }
+        });
 
         userNameCard.setOnClickListener(new View.OnClickListener() {
             @Override

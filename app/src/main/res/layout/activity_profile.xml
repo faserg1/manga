@@ -223,9 +223,11 @@
                         android:background="@color/profile_divider"/>
 
                     <RelativeLayout
+                        android:id="@+id/always_show_buttons_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
+                        android:background="@drawable/selectable_item_background"
                         android:orientation="vertical">
 
                         <com.danilov.supermanga.core.view.CTextView

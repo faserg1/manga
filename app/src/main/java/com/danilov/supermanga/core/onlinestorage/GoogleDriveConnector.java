@@ -12,6 +12,9 @@ import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -162,6 +165,33 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
     @Override
     public void createFile(final String title, final String text, final MimeType mimeType, final CommandCallback commandCallback) {
         Drive.DriveApi.newDriveContents(googleApiClient).setResultCallback(new FileCreationRequestCallback(title, text, mimeType, commandCallback));
+    }
+
+    private class CheckFileCallback implements ResultCallback<DriveApi.MetadataBufferResult> {
+
+        private CommandCallback commandCallback;
+
+        private CheckFileCallback(final CommandCallback commandCallback) {
+            this.commandCallback = commandCallback;
+        }
+
+        @Override
+        public void onResult(DriveApi.MetadataBufferResult result) {
+            if (!result.getStatus().isSuccess()) {
+                commandCallback.onCommandError("Error while trying to create the file");
+                return;
+            }
+            commandCallback.onCommandSuccess();
+        }
+    }
+
+    @Override
+    public void checkFileExist(final String title, final CommandCallback commandCallback) {
+        Query query = new Query.Builder()
+                .addFilter(Filters.contains(SearchableField.TITLE, title))
+                .build();
+        Drive.DriveApi.query(googleApiClient, query)
+                .setResultCallback(new CheckFileCallback(commandCallback));
     }
 
     @Override

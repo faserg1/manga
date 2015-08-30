@@ -55,6 +55,8 @@ public class MainActivity extends BaseToolbarActivity {
 
     private View drawerMenu;
 
+    private TextView userNameTextView;
+
     private DrawerLayout castedDrawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
@@ -88,6 +90,7 @@ public class MainActivity extends BaseToolbarActivity {
 
         updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
         drawerLayout = findViewById(R.id.drawer_layout);
+        userNameTextView = findViewWithId(R.id.user_name);
         isLargeLandscape = findViewById(R.id.is_large) != null; //dealing with landscape pads
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerMenu = findViewWithId(R.id.drawer_menu);
@@ -145,6 +148,12 @@ public class MainActivity extends BaseToolbarActivity {
         applicationSettings.update(getApplicationContext());
         syncToggle();
         updateQuantity();
+
+        ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
+        String userName = userSettings.getUserName();
+        if (userName != null && !userName.isEmpty()) {
+            userNameTextView.setText(userName);
+        }
 
         if (!tutorialMenuPassed) {
             View fakeMenuOpenBtn = findViewById(R.id.fake_home);

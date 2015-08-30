@@ -74,11 +74,14 @@
                         app:border_color="#ffffff"/>
 
                     <TextView
+                        android:id="@+id/user_name"
                         android:layout_toRightOf="@+id/profile_image"
+                        android:layout_alignBottom="@+id/profile_image"
+                        android:layout_alignTop="@+id/profile_image"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginTop="15dp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/profile_promise"/>
 
