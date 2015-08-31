@@ -785,11 +785,11 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     protected void onPause() {
         long delta = System.currentTimeMillis() - startedReading;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        long timeRead = sharedPreferences.getLong(Constants.Settings.TIME_READ, 0);
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putLong(Constants.Settings.TIME_READ, timeRead + delta).apply();
-
+        ApplicationSettings applicationSettings = ApplicationSettings.get(this);
+        ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
+        long timeRead = userSettings.getTimeRead();
+        userSettings.setTimeRead(timeRead + delta);
+        applicationSettings.update(this);
         strategy.onPause();
         if (!saved && strategy.isStrategyInitialized()) {
             save();
