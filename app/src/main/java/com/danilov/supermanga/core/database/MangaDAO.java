@@ -25,7 +25,7 @@ public class MangaDAO {
 
     private static final int DAOVersion = 2;
     private static final String TABLE_NAME = "manga";
-    private static final String DB_NAME = "manga.db";
+    public static final String DB_NAME = "manga.db";
 
     //COMMON
     private static final String ID = "id";

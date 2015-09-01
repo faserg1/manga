@@ -9,7 +9,11 @@ import android.util.Log;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.util.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.util.Map;
 
 /**
  * Created by Semyon Danilov on 16.05.2014.

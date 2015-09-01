@@ -34,7 +34,7 @@ public class HistoryDAO {
 
     private static final int DAOVersion = 1;
     private static final String TABLE_NAME = "historyManga";
-    private static final String DB_NAME = "history.db";
+    public static final String DB_NAME = "history.db";
 
     private static final String ID = "id";
     private static final String MANGA_ID = "manga_id";

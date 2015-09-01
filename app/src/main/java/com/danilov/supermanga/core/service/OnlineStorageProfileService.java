@@ -22,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -34,6 +35,7 @@ public class OnlineStorageProfileService extends Service {
     public static final int GOOGLE_CONNECTED = 0;
     public static final int GOOGLE_NEED_CONFIRMATION = 1;
     public static final int GOOGLE_SENT_SUCCESS = 2;
+    public static final int GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK = 3;
 
     private Handler handler = null;
 
@@ -82,8 +84,142 @@ public class OnlineStorageProfileService extends Service {
     }
 
     public void sendDataViaGoogle() {
-        final Context context = MangaApplication.getContext();
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public void sync() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+            @Override
+            public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                if (onlineFile != null && lastSyncTime == -1) {
+                    download(onlineFile);
+                } else if (onlineFile != null && lastSyncTime != -1) {
+                    //заливаем на диск
+                    replaceCurrent(onlineFile);
+                } else if (onlineFile == null) {
+                    //диск пустой, заливаем файл
+                    createNew();
+                }
+
+            }
+
+            @Override
+            public void onCommandError(final String message) {
+
+            }
+        });
+    }
+
+    private class SyncUpCallback implements OnlineStorageConnector.CommandCallback<Boolean> {
+
+        @Override
+        public void onCommandSuccess(final Boolean object) {
+            final OnlineStorageConnector.CommandCallback<Boolean> fileSendCallback = new OnlineStorageConnector.CommandCallback<Boolean>() {
+                final int filesToSend = Constants.Settings.DB_FILES.length;
+                int sent = 0;
+                int callbacks = 0;
+                @Override
+                public synchronized void onCommandSuccess(final Boolean object) {
+                    if (object) {
+                        sent++;
+                    }
+                    callbacks++;
+                    check();
+                }
+
+                @Override
+                public synchronized void onCommandError(final String message) {
+                    callbacks++;
+                    check();
+                }
+
+                private void check() {
+                    if (callbacks == filesToSend) {
+                        if (sent != filesToSend) {
+
+                        } else {
+
+                        }
+                    }
+                }
+
+            };
+            for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
+                final String fileName = Constants.Settings.DB_FILES[i][0];
+                final String localFilePath = Constants.Settings.DB_FILES[i][1];
+                googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                    @Override
+                    public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                        if (onlineFile != null) {
+                            onlineFile.rewriteWith(new File(localFilePath), fileSendCallback);
+                        } else {
+                            googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.TEXT_PLAIN, fileSendCallback);
+                        }
+                    }
+
+                    @Override
+                    public void onCommandError(final String message) {
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onCommandError(final String message) {
+
+        }
+
+    }
+
+    public void replaceCurrent(final OnlineStorageConnector.OnlineFile onlineFile) {
+        onlineFile.rewriteWith(getSettingsJsonString(), new SyncUpCallback());
+    }
+
+    public void createNew() {
+        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, getSettingsJsonString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new SyncUpCallback());
+    }
+
+    public void download(final OnlineStorageConnector.OnlineFile onlineFile) {
+        onlineFile.download(new OnlineStorageConnector.CommandCallback<String>() {
+            @Override
+            public void onCommandSuccess(final String object) {
+
+
+                //TODO: нужно предложить пользователю два варианта - скачать файл или залить новый
+                //notifyHandler(GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK, onlineFile);
+
+                for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
+                    final String fileName = Constants.Settings.DB_FILES[i][0];
+                    final String localFilePath = Constants.Settings.DB_FILES[i][1];
+                    googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                        @Override
+                        public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                            if (onlineFile != null) {
+                                onlineFile.rewriteWith(new File(localFilePath), fileSendCallback);
+                            } else {
+                                googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.TEXT_PLAIN, fileSendCallback);
+                            }
+                        }
+
+                        @Override
+                        public void onCommandError(final String message) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCommandError(final String message) {
+
+            }
+        });
+    }
+
+    public String getSettingsJsonString() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final JSONObject settingsObject = new JSONObject();
         Map<String, ?> all = sharedPreferences.getAll();
         for (String fieldName : Constants.Settings.ALL_SETTINGS) {
@@ -94,31 +230,7 @@ public class OnlineStorageProfileService extends Service {
                 //e.printStackTrace();
             }
         }
-        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, settingsObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback<Void>() {
-            @Override
-            public void onCommandSuccess(final Void nothing) {
-                sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, System.currentTimeMillis()).apply();
-                notifyHandler(GOOGLE_SENT_SUCCESS, null);
-                googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
-                    @Override
-                    public void onCommandSuccess(final OnlineStorageConnector.OnlineFile object) {
-                        if (object != null) {
-                            object.saveOnDisk(settingsObject.toString());
-                        }
-                    }
-
-                    @Override
-                    public void onCommandError(final String message) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCommandError(final String message) {
-
-            }
-        });
+        return settingsObject.toString();
     }
 
     private OnlineStorageConnector.StorageConnectorListener googleConnectorListener = new OnlineStorageConnector.StorageConnectorListener() {

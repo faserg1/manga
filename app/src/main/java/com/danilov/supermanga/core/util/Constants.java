@@ -1,6 +1,13 @@
 package com.danilov.supermanga.core.util;
 
 import android.app.AlarmManager;
+import android.os.Environment;
+
+import com.danilov.supermanga.core.application.ApplicationSettings;
+import com.danilov.supermanga.core.database.HistoryDAO;
+import com.danilov.supermanga.core.database.MangaDAO;
+
+import java.io.File;
 
 /**
  * Created by Semyon Danilov on 16.05.2014.
@@ -33,7 +40,19 @@ public class Constants {
 
     public static class Settings {
 
-        public static final String ONLINE_SETTINGS_FILENAME = "ONLINE_SETTINGS_FILENAME";
+        public static final String MANGA_DB_PATH;
+        public static final String HISTORY_DB_PATH;
+        static {
+            File externalStorageDir = Environment.getExternalStorageDirectory();
+            //{SD_PATH}/Android/data/com.danilov.manga/download
+            File dbPathFile = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + ApplicationSettings.PACKAGE_NAME + File.separator + "db");
+            MANGA_DB_PATH = dbPathFile + File.separator + MangaDAO.DB_NAME;
+            HISTORY_DB_PATH = dbPathFile + File.separator + HistoryDAO.DB_NAME;
+        }
+
+        public static final String[][] DB_FILES = {{MangaDAO.DB_NAME, MANGA_DB_PATH}, {HistoryDAO.DB_NAME, HISTORY_DB_PATH}};
+
+        public static final String ONLINE_SETTINGS_FILENAME = "settings.json";
         public static final String LAST_UPDATE_PROFILE_TIME = "LAST_UPDATE_PROFILE_TIME";
         public static final String GOOGLE_PROFILE_NAME = "GOOGLE_PROFILE_NAME";
 

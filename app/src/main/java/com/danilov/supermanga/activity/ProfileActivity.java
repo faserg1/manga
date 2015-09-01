@@ -296,7 +296,7 @@ public class ProfileActivity extends BaseToolbarActivity {
 
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Constants.Settings.GOOGLE_PROFILE_NAME, accountName).apply();
-
+                        service.sync();
                     }
                     break;
                 case OnlineStorageProfileService.GOOGLE_NEED_CONFIRMATION:
