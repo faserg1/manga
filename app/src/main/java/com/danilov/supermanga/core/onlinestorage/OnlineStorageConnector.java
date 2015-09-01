@@ -22,11 +22,11 @@ public abstract class OnlineStorageConnector {
 
     public abstract String getAccountName();
 
-    public abstract void createFile(final String title, final File file, final MimeType mimeType, final CommandCallback commandCallback);
+    public abstract void createFile(final String title, final File file, final MimeType mimeType, final CommandCallback<Void> commandCallback);
 
-    public abstract void createFile(final String title, final String text, final MimeType mimeType, final CommandCallback commandCallback);
+    public abstract void createFile(final String title, final String text, final MimeType mimeType, final CommandCallback<Void> commandCallback);
 
-    public abstract void checkFileExist(final String title, final CommandCallback commandCallback);
+    public abstract void getExistingFile(final String title, final CommandCallback<OnlineFile> commandCallback);
 
     public static interface StorageConnectorListener {
 
@@ -38,9 +38,9 @@ public abstract class OnlineStorageConnector {
 
     }
 
-    public static interface CommandCallback {
+    public static interface CommandCallback<T> {
 
-        public void onCommandSuccess();
+        public void onCommandSuccess(final T object);
 
         public void onCommandError(final String message);
 
@@ -59,6 +59,15 @@ public abstract class OnlineStorageConnector {
         public String getData() {
             return data;
         }
+    }
+
+    public static interface OnlineFile {
+
+        String getName();
+
+        void saveOnDisk(File file);
+
+        void saveOnDisk(String contents);
     }
 
 }

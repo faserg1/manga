@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.view.View;
 
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
@@ -20,12 +18,10 @@ import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Logger;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -88,7 +84,7 @@ public class OnlineStorageProfileService extends Service {
     public void sendDataViaGoogle() {
         final Context context = MangaApplication.getContext();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        JSONObject settingsObject = new JSONObject();
+        final JSONObject settingsObject = new JSONObject();
         Map<String, ?> all = sharedPreferences.getAll();
         for (String fieldName : Constants.Settings.ALL_SETTINGS) {
             Object o = all.get(fieldName);
@@ -98,11 +94,24 @@ public class OnlineStorageProfileService extends Service {
                 //e.printStackTrace();
             }
         }
-        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, settingsObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback() {
+        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, settingsObject.toString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new OnlineStorageConnector.CommandCallback<Void>() {
             @Override
-            public void onCommandSuccess() {
+            public void onCommandSuccess(final Void nothing) {
                 sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, System.currentTimeMillis()).apply();
                 notifyHandler(GOOGLE_SENT_SUCCESS, null);
+                googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                    @Override
+                    public void onCommandSuccess(final OnlineStorageConnector.OnlineFile object) {
+                        if (object != null) {
+                            object.saveOnDisk(settingsObject.toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCommandError(final String message) {
+
+                    }
+                });
             }
 
             @Override
