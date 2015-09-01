@@ -93,7 +93,7 @@ public class OnlineStorageProfileService extends Service {
             @Override
             public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
                 if (onlineFile != null && lastSyncTime == -1) {
-                    download(onlineFile);
+                    download(onlineFile); //TODO: не сохраняется JSON, не обновляется время синхронизации. Добавить версию файла на "сервак"
                 } else if (onlineFile != null && lastSyncTime != -1) {
                     //заливаем на диск
                     replaceCurrent(onlineFile);
