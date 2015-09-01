@@ -319,7 +319,7 @@ public class KissmangaEngine implements RepositoryEngine {
         LinesSearchInputStream inputStream = null;
         try {
             HttpStreamModel model = httpStreamReader.fromUri(uri);
-            inputStream = new LinesSearchInputStream(model.stream, "var lstImages = new Array();", " var lstImagesLoaded = new Array();");
+            inputStream = new LinesSearchInputStream(model.stream, "var lstImages = new Array();", "var lstImagesLoaded = new Array();");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
