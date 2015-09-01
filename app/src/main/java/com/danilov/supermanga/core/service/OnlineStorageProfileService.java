@@ -190,6 +190,37 @@ public class OnlineStorageProfileService extends Service {
                 //TODO: нужно предложить пользователю два варианта - скачать файл или залить новый
                 //notifyHandler(GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK, onlineFile);
 
+                final OnlineStorageConnector.CommandCallback<Boolean> fileDownloadCallback = new OnlineStorageConnector.CommandCallback<Boolean>() {
+                    final int filesToSend = Constants.Settings.DB_FILES.length;
+                    int sent = 0;
+                    int callbacks = 0;
+                    @Override
+                    public synchronized void onCommandSuccess(final Boolean object) {
+                        if (object) {
+                            sent++;
+                        }
+                        callbacks++;
+                        check();
+                    }
+
+                    @Override
+                    public synchronized void onCommandError(final String message) {
+                        callbacks++;
+                        check();
+                    }
+
+                    private void check() {
+                        if (callbacks == filesToSend) {
+                            if (sent != filesToSend) {
+
+                            } else {
+
+                            }
+                        }
+                    }
+
+                };
+
                 for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
                     final String fileName = Constants.Settings.DB_FILES[i][0];
                     final String localFilePath = Constants.Settings.DB_FILES[i][1];
@@ -197,9 +228,9 @@ public class OnlineStorageProfileService extends Service {
                         @Override
                         public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
                             if (onlineFile != null) {
-                                onlineFile.rewriteWith(new File(localFilePath), fileSendCallback);
+                                onlineFile.download(localFilePath, fileDownloadCallback);
                             } else {
-                                googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.TEXT_PLAIN, fileSendCallback);
+                                fileDownloadCallback.onCommandSuccess(true);
                             }
                         }
 
