@@ -439,7 +439,7 @@ public class MangaDownloadService extends Service {
 
                 Manga localManga = mangaDAO.updateFromDownloadService(_local, manga.getChaptersQuantity());
                 if (localManga != null) {
-                    mangaPath = ((LocalManga)localManga).getLocalUri();
+                    mangaPath = ((LocalManga) localManga).getLocalUri();
                     coverUri = mangaPath + "/cover";
                 }
             } catch (DatabaseAccessException e) {

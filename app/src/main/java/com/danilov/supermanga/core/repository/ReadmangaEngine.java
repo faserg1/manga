@@ -171,7 +171,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         LinesSearchInputStream inputStream = null;
         try {
             HttpStreamModel model = httpStreamReader.fromUri(uri);
-            inputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
+            inputStream = new LinesSearchInputStream(model.stream, "rm_h.init([", "], 0, false)");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
@@ -197,14 +197,20 @@ public class ReadmangaEngine implements RepositoryEngine {
         return imageUrls;
     }
 
-    private final Pattern urlPattern = Pattern.compile("url:\"(.*?)\"");
+    private final Pattern arrayItemPattern = Pattern.compile("\\[('.*?'),('.*?'),('.*?'),.*?,.*?],");
 
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
-        Matcher matcher = urlPattern.matcher(str);
         List<String> urls = new ArrayList<String>();
+        final String newStr = str + ","; //savant
+        Matcher matcher = arrayItemPattern.matcher(newStr);
         while (matcher.find()) {
-            String url = matcher.group(1);
+
+            String base = matcher.group(2).replace("'", "");
+            String fldr = matcher.group(1).replace("'", "");
+            String pic = matcher.group(3).replace("'", "");
+
+            String url = base + fldr + pic;
             if (!url.contains("http")) {
                 url = baseUri + url;
             }

@@ -45,9 +45,9 @@ public class AdultmangaEngine implements RepositoryEngine {
     private static final String TAG = "AdultmangaEngine";
 
 //  ADULT
-    private String baseSearchUri = "http://adultmanga.ru/search?q=";
-    private String baseSuggestionUri = "http://adultmanga.ru/search/suggestion?query=";
-    public static final String baseUri = "http://adultmanga.ru";
+    private String baseSearchUri = "http://mintmanga.com/search?q=";
+    private String baseSuggestionUri = "http://mintmanga.com/search/suggestion?query=";
+    public static final String baseUri = "http://mintmanga.com";
 
     @Override
     public String getLanguage() {
@@ -173,7 +173,7 @@ public class AdultmangaEngine implements RepositoryEngine {
         LinesSearchInputStream inputStream = null;
         try {
             HttpStreamModel model = httpStreamReader.fromUri(uri);
-            inputStream = new LinesSearchInputStream(model.stream, "pictures = [", "];");
+            inputStream = new LinesSearchInputStream(model.stream, "rm_h.init([", "], 0, false)");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
@@ -199,14 +199,20 @@ public class AdultmangaEngine implements RepositoryEngine {
         return imageUrls;
     }
 
-    private final Pattern urlPattern = Pattern.compile("url:\"(.*?)\"");
+    private final Pattern arrayItemPattern = Pattern.compile("\\[('.*?'),('.*?'),('.*?'),.*?,.*?],");
 
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
-        Matcher matcher = urlPattern.matcher(str);
         List<String> urls = new ArrayList<String>();
+        final String newStr = str + ","; //savant
+        Matcher matcher = arrayItemPattern.matcher(newStr);
         while (matcher.find()) {
-            String url = matcher.group(1);
+
+            String base = matcher.group(2).replace("'", "");
+            String fldr = matcher.group(1).replace("'", "");
+            String pic = matcher.group(3).replace("'", "");
+
+            String url = base + fldr + pic;
             if (!url.contains("http")) {
                 url = baseUri + url;
             }

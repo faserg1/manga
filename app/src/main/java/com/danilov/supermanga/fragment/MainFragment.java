@@ -279,6 +279,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             Manga manga = item.first;
             final UpdatesElement element = item.second;
             holder.title.setText(manga.getTitle());
+            holder.repository.setText(manga.getRepository().getName());
 
             boolean hasError = failedMangas.contains(manga.getId());
 
@@ -318,6 +319,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         private ProgressBar progressBar;
         public ImageButton okBtn;
         public TextView title;
+        public TextView repository;
         public TextView quantityNew;
         public TextView failed;
 
@@ -325,6 +327,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             super(v);
             okBtn = (ImageButton) v.findViewById(R.id.ok_btn);
             title = (TextView) v.findViewById(R.id.title);
+            repository = (TextView) v.findViewById(R.id.repository);
             quantityNew = (TextView) v.findViewById(R.id.quantity_new);
             failed = (TextView) v.findViewById(R.id.failed);
             progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);

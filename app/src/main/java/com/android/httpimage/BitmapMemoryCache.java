@@ -29,7 +29,6 @@ public class BitmapMemoryCache implements BitmapCache {
             @Override
             protected void entryRemoved(final boolean evicted, final String key, Bitmap oldValue, final Bitmap newValue) {
                 if (oldValue != null) {
-                    oldValue.recycle();
                     oldValue = null;
                 }
             }
@@ -64,8 +63,12 @@ public class BitmapMemoryCache implements BitmapCache {
         if (this.exists(key)) {
             return;
         }
-        if (cacheSize <= this.cache.size()  + (BitmapUtils.getBitmapSize(data) / 1024)) {
-            return;
+        int bitmapSize = (BitmapUtils.getBitmapSize(data) / 1024);
+        if (cacheSize <= this.cache.size()  + bitmapSize) {
+            if (bitmapSize > cacheSize) {
+                return;
+            }
+            this.cache.trimToSize(cacheSize - bitmapSize);
         }
         this.cache.put(key, data);
     }

@@ -159,12 +159,14 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
             }
             ACRA.getErrorReporter().putCustomData("Crashed_file_name", file.getName());
         }
-        List<File> files = new ArrayList<>(filesArray.length);
+        List<File> files = new ArrayList<>(filesArray != null ? filesArray.length : 0);
         if (!file.equals(baseFolder)) {
             files.add(threeDotsFile);
         }
-        for (File f : filesArray) {
-            files.add(f);
+        if (filesArray != null) {
+            for (File f : filesArray) {
+                files.add(f);
+            }
         }
         return files;
     }

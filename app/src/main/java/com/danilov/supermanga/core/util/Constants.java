@@ -15,7 +15,7 @@ import java.io.File;
 public class Constants {
 
     public static final boolean IS_MARKET_VERSION = false;
-    public static final boolean HAS_ADS = true;
+    public static final boolean HAS_ADS = false;
 
     public static final long FILE_CACHE_THRESHOLD = IoUtils.convertMbToBytes(25);
     public static final long FILE_CACHE_TRIM_AMOUNT = IoUtils.convertMbToBytes(15);
