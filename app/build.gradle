@@ -28,7 +28,7 @@ dependencies {
     compile 'rapid.decoder:png-decoder:0.3.0'
     compile 'com.github.shell-software:fab:1.0.5'
     compile 'de.hdodenhof:circleimageview:1.2.2'
-    compile 'com.google.android.gms:play-services-ads:7.8.0'
+//    compile 'com.google.android.gms:play-services-ads:7.8.0'
     //google drive api
     compile 'com.google.android.gms:play-services-identity:7.8.0'
     compile 'com.google.android.gms:play-services-base:7.8.0'

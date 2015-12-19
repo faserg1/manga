@@ -50,9 +50,9 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.MangaViewPager;
 import com.danilov.supermanga.core.view.SlidingLayer;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.AdListener;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -387,9 +387,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                     rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
                 } else {
                     if (Constants.HAS_ADS) {
-                        if (mInterstitialAd.isLoaded()) {
-                            mInterstitialAd.show();
-                        }
+//                        if (mInterstitialAd.isLoaded()) {
+//                            mInterstitialAd.show();
+//                        }
                     }
                 }
             }
@@ -915,31 +915,31 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     //ad routine
 
-    private InterstitialAd mInterstitialAd;
+//    private InterstitialAd mInterstitialAd;
 
     private void adInit() {
         if (!Constants.HAS_ADS) {
             return;
         }
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                requestNewInterstitial();
-            }
-        });
-        requestNewInterstitial();
+//        mInterstitialAd = new InterstitialAd(this);
+//        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
+//        mInterstitialAd.setAdListener(new AdListener() {
+//            @Override
+//            public void onAdClosed() {
+//                requestNewInterstitial();
+//            }
+//        });
+//        requestNewInterstitial();
     }
 
     private void requestNewInterstitial() {
         if (!Constants.HAS_ADS) {
             return;
         }
-        AdRequest adRequest = new AdRequest.Builder()
+//        AdRequest adRequest = new AdRequest.Builder()
 //                .addTestDevice(Utils.getDeviceId(this))
-                .build();
-        mInterstitialAd.loadAd(adRequest);
+//                .build();
+//        mInterstitialAd.loadAd(adRequest);
     }
 
 
