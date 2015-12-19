@@ -34,5 +34,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-base:7.8.0'
     compile 'com.google.android.gms:play-services-drive:7.8.0'
     compile 'com.google.android.gms:play-services-plus:7.8.0'
+    compile 'org.mozilla:rhino:1.7R4'
     compile files('libs/acra-4.5.0.jar')
 }

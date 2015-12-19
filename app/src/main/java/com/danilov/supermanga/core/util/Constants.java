@@ -20,7 +20,7 @@ public class Constants {
     public static final long FILE_CACHE_THRESHOLD = IoUtils.convertMbToBytes(25);
     public static final long FILE_CACHE_TRIM_AMOUNT = IoUtils.convertMbToBytes(15);
 
-    public static final String USER_AGENT_STRING = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 YaBrowser/15.4.2272.3716 Safari/537.36";
+    public static final String USER_AGENT_STRING = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 YaBrowser/15.10.2454.3865 Safari/537.36";
 
     public static final String MANGA_PARCEL_KEY = "MPK";
     public static final String MANGA_CHAPTERS_DIFFERENCE = "MCD";

@@ -1,5 +1,6 @@
 package com.danilov.supermanga.core.repository;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
@@ -20,9 +21,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
@@ -32,7 +33,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -45,12 +48,13 @@ import java.util.regex.Pattern;
 /**
  * Created by Semyon on 03.06.2015.
  */
-public class KissmangaEngine implements RepositoryEngine {
+public class KissmangaEngine extends CloudFlareBypassEngine {
 
     private static final String TAG = "KissmangaEngine";
 
     private final String baseSearchUri = "http://kissmanga.com/Search/Manga?keyword=";
     public static final String baseUri = "http://kissmanga.com";
+    public static final String domain = "kissmanga.com";
     public static final String baseSuggestUri = "http://kissmanga.com/Search/SearchSuggest";
 
     @Override
@@ -64,13 +68,12 @@ public class KissmangaEngine implements RepositoryEngine {
     public List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException {
         List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
-            DefaultHttpClient httpClient = new ExtendedHttpClient();
             HttpPost request = new HttpPost(baseSuggestUri);
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
             nameValuePairs.add(new BasicNameValuePair("keyword", query));
             nameValuePairs.add(new BasicNameValuePair("type", "Manga"));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            HttpResponse response = httpClient.execute(request);
+            HttpResponse response = loadPage(request);
             byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
             String responseString = IoUtils.convertBytesToString(result);
 
@@ -104,7 +107,6 @@ public class KissmangaEngine implements RepositoryEngine {
             for (Filter.FilterValue filterValue : filterValues) {
                 uri = filterValue.apply(uri);
             }
-            DefaultHttpClient httpClient = new ExtendedHttpClient();
             HttpPost request = new HttpPost(uri);
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
@@ -112,7 +114,7 @@ public class KissmangaEngine implements RepositoryEngine {
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             HttpContext context = new BasicHttpContext();
-            HttpResponse response = httpClient.execute(request, context);
+            HttpResponse response = loadPage(request, context);
 
             HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(
                     ExecutionContext.HTTP_REQUEST);
@@ -191,24 +193,21 @@ public class KissmangaEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
-        if (httpBytesReader != null) {
-            String uri = baseUri + manga.getUri();
-            byte[] response = null;
-            try {
-                response = httpBytesReader.fromUri(uri);
-            } catch (HttpRequestException e) {
-                if (e.getMessage() != null) {
-                    Log.d(TAG, e.getMessage());
-                } else {
-                    Log.d(TAG, "Failed to load manga description");
-                }
-                throw new RepositoryException(e.getMessage());
-            }
-            String responseString = IoUtils.convertBytesToString(response);
+        String uri = baseUri + manga.getUri();
+        try {
+            HttpGet request = new HttpGet(uri);
+            HttpResponse response = loadPage(request);
+            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+            String responseString = IoUtils.convertBytesToString(result);
             return parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
+        } catch (IOException e) {
+            if (e.getMessage() != null) {
+                Log.d(TAG, e.getMessage());
+            } else {
+                Log.d(TAG, "Failed to load manga description");
+            }
+            throw new RepositoryException(e.getMessage());
         }
-        return false;
     }
 
     private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
@@ -269,22 +268,24 @@ public class KissmangaEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
-        if (httpBytesReader != null) {
-            String uri = baseUri + manga.getUri();
-            byte[] response = null;
-            try {
-                response = httpBytesReader.fromUri(uri);
-            } catch (HttpRequestException e) {
-                Log.d(TAG, e.getMessage());
-                throw new RepositoryException(e.getMessage());
-            }
-            String responseString = IoUtils.convertBytesToString(response);
+        String uri = baseUri + manga.getUri();
+        try {
+            HttpGet request = new HttpGet(uri);
+            HttpResponse response = loadPage(request);
+            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+            String responseString = IoUtils.convertBytesToString(result);
             List<MangaChapter> chapters = parseMangaChaptersResponse(Utils.toDocument(responseString));
             if (chapters != null) {
                 manga.setChapters(chapters);
                 return true;
             }
+        } catch (IOException e) {
+            if (e.getMessage() != null) {
+                Log.d(TAG, e.getMessage());
+            } else {
+                Log.d(TAG, "Failed to load manga description");
+            }
+            throw new RepositoryException(e.getMessage());
         }
         return false;
     }
@@ -313,13 +314,18 @@ public class KissmangaEngine implements RepositoryEngine {
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String uri = baseUri + chapter.getUri();
-        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
         byte[] bytes = new byte[1024];
         List<String> imageUrls = null;
         LinesSearchInputStream inputStream = null;
         try {
-            HttpStreamModel model = httpStreamReader.fromUri(uri);
-            inputStream = new LinesSearchInputStream(model.stream, "var lstImages = new Array();", "var lstImagesLoaded = new Array();");
+
+            HttpGet request = new HttpGet(uri);
+            HttpResponse response = loadPage(request);
+            byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+            String responseString = IoUtils.convertBytesToString(result);
+            InputStream stringStream = new ByteArrayInputStream(responseString.getBytes());
+
+            inputStream = new LinesSearchInputStream(stringStream, "var lstImages = new Array();", "var lstImagesLoaded = new Array();");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
@@ -328,9 +334,6 @@ public class KissmangaEngine implements RepositoryEngine {
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = extractUrls(str);
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
-            throw new RepositoryException(e.getMessage());
-        } catch (HttpRequestException e) {
             Log.d(TAG, e.getMessage());
             throw new RepositoryException(e.getMessage());
         } finally {
@@ -381,4 +384,9 @@ public class KissmangaEngine implements RepositoryEngine {
         return Collections.emptyList();
     }
 
+    @Override
+    @NonNull
+    public String getDomain() {
+        return domain;
+    }
 }
