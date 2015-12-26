@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.http;
 
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 
 import com.danilov.supermanga.core.util.IoUtils;
 
@@ -24,15 +25,19 @@ public class HttpBytesReader {
     }
 
     public byte[] fromUri(String uri) throws HttpRequestException {
-        return this.fromUri(uri, null);
+        return this.fromUri(uri, null, null);
     }
 
-    public byte[] fromUri(String uri, Header[] customHeaders) throws HttpRequestException {
-        return this.fromUri(uri, customHeaders, null, null);
+    public byte[] fromUri(String uri, @Nullable final RequestPreprocessor preprocessor) throws HttpRequestException {
+        return this.fromUri(uri, preprocessor, null);
     }
 
-    public byte[] fromUri(String uri, Header[] customHeaders, IProgressChangeListener listener, ICancelled task) throws HttpRequestException {
-        HttpStreamModel streamModel = this.mHttpStreamReader.fromUri(uri, customHeaders, listener, task);
+    public byte[] fromUri(String uri, @Nullable final RequestPreprocessor preprocessor, Header[] customHeaders) throws HttpRequestException {
+        return this.fromUri(uri, preprocessor, customHeaders, null, null);
+    }
+
+    public byte[] fromUri(String uri, @Nullable final RequestPreprocessor preprocessor, Header[] customHeaders, IProgressChangeListener listener, ICancelled task) throws HttpRequestException {
+        HttpStreamModel streamModel = this.mHttpStreamReader.fromUri(uri, preprocessor, customHeaders, listener, task);
 
         try {
             byte[] result = this.convertStreamToBytes(streamModel.stream);

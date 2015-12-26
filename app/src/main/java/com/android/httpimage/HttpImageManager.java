@@ -368,7 +368,7 @@ public class HttpImageManager {
                             log.append("; going to network");
                             // we go to network
                             HttpImageManager.this.mNetworkResourceLoader.removeIfModifiedForUri(request.getUri().toString());
-                            data = HttpImageManager.this.mNetworkResourceLoader.fromUri(request.getUri().toString());
+                            data = HttpImageManager.this.mNetworkResourceLoader.fromUri(request.getUri().toString(), request.preprocessor);
 
                             // load it into memory
                             if (request.getNewSize() != 0) {

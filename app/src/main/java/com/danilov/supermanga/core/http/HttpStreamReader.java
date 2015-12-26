@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.http;
 
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.util.IoUtils;
@@ -31,14 +32,14 @@ public class HttpStreamReader {
     }
 
     public HttpStreamModel fromUri(String uri) throws HttpRequestException {
-        return this.fromUri(uri, null);
+        return this.fromUri(uri, null, null);
     }
 
-    public HttpStreamModel fromUri(String uri, Header[] customHeaders) throws HttpRequestException {
-        return this.fromUri(uri, customHeaders, null, null);
+    public HttpStreamModel fromUri(String uri, @Nullable final RequestPreprocessor preprocessor, Header[] customHeaders) throws HttpRequestException {
+        return this.fromUri(uri, preprocessor, customHeaders, null, null);
     }
 
-    public HttpStreamModel fromUri(String uri, Header[] customHeaders, IProgressChangeListener listener, ICancelled task) throws HttpRequestException {
+    public HttpStreamModel fromUri(String uri, @Nullable final RequestPreprocessor preprocessor, Header[] customHeaders, IProgressChangeListener listener, ICancelled task) throws HttpRequestException {
         HttpGet request = null;
         HttpResponse response = null;
         InputStream stream = null;
@@ -46,7 +47,7 @@ public class HttpStreamReader {
 
         try {
             request = this.createRequest(uri, customHeaders);
-            response = this.getResponse(request);
+            response = this.getResponse(request, preprocessor);
 
             StatusLine status = response.getStatusLine();
             if (status.getStatusCode() == 304) {
@@ -112,7 +113,7 @@ public class HttpStreamReader {
         }
     }
 
-    private HttpResponse getResponse(HttpGet request) throws HttpRequestException {
+    private HttpResponse getResponse(HttpGet request, @Nullable final RequestPreprocessor preprocessor) throws HttpRequestException {
         HttpResponse response = null;
         Exception responseException = null;
 
@@ -120,6 +121,9 @@ public class HttpStreamReader {
         for (int i = 0; i < 3; i++) {
             try {
                 //this.mHttpClient.getCookieStore().addCookie(new BasicClientCookie("key", Math.random() + ""));
+                if (preprocessor != null) {
+                    preprocessor.process(mHttpClient);
+                }
                 response = this.mHttpClient.execute(request);
 
                 if (response.getStatusLine().getStatusCode() == 200) {
