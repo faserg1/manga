@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.strategy;
 
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.interfaces.MangaShowStrategy;
@@ -28,6 +29,8 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
     private int currentImageNumber = 0;
     private int currentChapter;
     private int totalImages = 0;
+
+    @Nullable
     private List<String> uris = null;
 
     private StrategyDelegate.MangaShowListener listener;
@@ -49,6 +52,9 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public void showImage(final int i) {
+        if (uris == null) {
+            return;
+        }
         if (i >= uris.size() || i < 0) {
             return;
         }
@@ -132,6 +138,9 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     @Override
     public void next() {
+        if (uris == null) {
+            return;
+        }
         if (currentImageNumber + 1 >= uris.size()) {
             showChapter(currentChapter + 1, true);
             return;

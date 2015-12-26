@@ -121,6 +121,9 @@ public class RepositoryPickerFragment extends BaseFragment {
         repositoryUrl.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
+                if (view.getWindowVisibility() != View.VISIBLE) {
+                    return;
+                }
                 if(hasFocus){
                     repositoryUrl.showDropDown();
                 }
