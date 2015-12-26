@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.danilov.supermanga.core.http.AsyncDrawable;
 import com.danilov.supermanga.core.http.HttpBitmapReader;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.util.BitmapUtils;
 
 import java.math.BigInteger;
@@ -93,6 +94,7 @@ public class HttpImageManager {
         private boolean isCancelled = false;
         private int newSize;
         public boolean isHandled = false;
+        private RequestPreprocessor preprocessor;
 
         @Override
         public String toString() {
@@ -104,42 +106,17 @@ public class HttpImageManager {
 
         private static Queue<LoadRequest> pool = new ArrayDeque<LoadRequest>();
 
-        public static LoadRequest obtain(final Uri uri) {
+        public static LoadRequest obtain(final Uri uri, final ImageView imageView, final RequestPreprocessor preprocessor, final int newSize) {
             LoadRequest r = null;
             if (!pool.isEmpty()) {
                 r = pool.remove();
                 r.mUri = uri;
-                r.mHashedUri = r.computeHashedName(uri.toString());
-                r.mListener = null;
-            } else {
-                r = new LoadRequest(uri);
-            }
-            return r;
-        }
-
-        public static LoadRequest obtain(final Uri uri, final OnLoadResponseListener l) {
-            LoadRequest r = null;
-            if (!pool.isEmpty()) {
-                r = pool.remove();
-                r.mUri = uri;
-                r.mListener = l;
-                r.mHashedUri = r.computeHashedName(uri.toString());
-            } else {
-                r = new LoadRequest(uri, l);
-            }
-            return r;
-        }
-
-        public static LoadRequest obtain(final Uri uri, final ImageView imageView, final int newSize) {
-            LoadRequest r = null;
-            if (!pool.isEmpty()) {
-                r = pool.remove();
-                r.mUri = uri;
+                r.preprocessor = preprocessor;
                 r.mHashedUri = r.computeHashedName(uri.toString()) + newSize;
                 r.imageView = imageView;
                 r.newSize = newSize;
             } else {
-                r = new LoadRequest(uri, imageView, newSize);
+                r = new LoadRequest(uri, imageView, preprocessor, newSize);
                 Log.d(TAG, "Creating new loadrequest, pool is empty");
             }
             r.mListener = r.new LoadListener();
@@ -156,10 +133,10 @@ public class HttpImageManager {
         }
 
         private LoadRequest(final Uri uri) {
-            this(uri, (OnLoadResponseListener) null);
+            this(uri, (OnLoadResponseListener) null, null);
         }
 
-        public LoadRequest(final Uri uri, final OnLoadResponseListener l) {
+        public LoadRequest(final Uri uri, final OnLoadResponseListener l, final RequestPreprocessor preprocessor) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -167,9 +144,10 @@ public class HttpImageManager {
             this.mUri = uri;
             this.mHashedUri = this.computeHashedName(uri.toString());
             this.mListener = l;
+            this.preprocessor = preprocessor;
         }
 
-        public LoadRequest(final Uri uri, final OnLoadResponseListener l, final int newSize) {
+        public LoadRequest(final Uri uri, final OnLoadResponseListener l, final RequestPreprocessor preprocessor, final int newSize) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -178,10 +156,11 @@ public class HttpImageManager {
             this.newSize = newSize;
             this.mHashedUri = this.computeHashedName(uri.toString());
             this.mListener = l;
+            this.preprocessor = preprocessor;
         }
 
 
-        public LoadRequest(final Uri uri, final ImageView imageView, final int newSize) {
+        public LoadRequest(final Uri uri, final ImageView imageView, final RequestPreprocessor preprocessor, final int newSize) {
             if (uri == null) {
                 throw new NullPointerException("uri must not be null");
             }
@@ -190,6 +169,7 @@ public class HttpImageManager {
             this.newSize = newSize;
             this.mHashedUri = this.computeHashedName(uri.toString()) + newSize;
             this.imageView = imageView;
+            this.preprocessor = preprocessor;
         }
 
         class LoadListener implements OnLoadResponseListener {

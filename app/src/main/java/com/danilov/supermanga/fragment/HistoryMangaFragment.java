@@ -194,7 +194,7 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
             } else {
                 holder.isOnline.setVisibility(View.VISIBLE);
                 Uri coverUri = Uri.parse(manga.getCoverUri());
-                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, sizeOfImage);
+                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage);
                 Bitmap bitmap = httpImageManager.loadImage(request);
                 if (bitmap != null) {
                     holder.mangaCover.setImageBitmap(bitmap);

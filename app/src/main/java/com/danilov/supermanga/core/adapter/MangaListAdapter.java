@@ -79,7 +79,7 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         if (manga.getCoverUri() != null) {
             //TODO: временный хак! Потом заблочить добавление в избранное если нет картинки (или придумать что-то ещё)
             Uri coverUri = Uri.parse(manga.getCoverUri());
-            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, sizeOfImage);
+            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, viewBag.coverView, manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage);
             Bitmap bitmap = httpImageManager.loadImage(request);
             if (bitmap != null) {
                 viewBag.coverView.setImageBitmap(bitmap);

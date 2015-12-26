@@ -292,7 +292,7 @@ public class MangaDownloadService extends Service {
         helper.buildNotification(manga);
 
         Uri coverUri = Uri.parse(manga.getCoverUri());
-        HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, helper.getIconView(), 110);
+        HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, helper.getIconView(), manga.getRepository().getEngine().getRequestPreprocessor(), 110);
         Bitmap bitmap = httpImageManager.loadImage(request);
         if (bitmap != null) {
             helper.setIcon(bitmap);
