@@ -7,6 +7,7 @@ import com.danilov.supermanga.core.http.HttpRequestException;
 import com.danilov.supermanga.core.http.HttpStreamModel;
 import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.http.LinesSearchInputStream;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
@@ -700,6 +701,11 @@ public class AllHentaiEngine implements RepositoryEngine {
     @Override
     public List<Genre> getGenres() {
         return genres;
+    }
+
+    @Override
+    public RequestPreprocessor getRequestPreprocessor() {
+        return null;
     }
 
 }

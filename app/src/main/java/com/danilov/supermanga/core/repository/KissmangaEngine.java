@@ -3,27 +3,26 @@ package com.danilov.supermanga.core.repository;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.danilov.supermanga.core.http.ExtendedHttpClient;
-import com.danilov.supermanga.core.http.HttpBytesReader;
-import com.danilov.supermanga.core.http.HttpRequestException;
-import com.danilov.supermanga.core.http.HttpStreamModel;
-import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.http.LinesSearchInputStream;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
+import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
-import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
@@ -37,11 +36,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -127,7 +134,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             String responseString = IoUtils.convertBytesToString(result);
 
             if (currentUrl.contains("kissmanga.com/Manga")) {
-                Manga manga = new Manga("", currentUrl, Repository.KISSMANGA);
+                Manga manga = new Manga("", currentUrl.replace(baseUri, ""), Repository.KISSMANGA);
                 parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
                 if (!"".equals(manga.getTitle())) {
                     mangaList = new ArrayList<>(1);
@@ -385,8 +392,95 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
     }
 
     @Override
+    public RequestPreprocessor getRequestPreprocessor() {
+        return preprocessor;
+    }
+
+    @Override
     @NonNull
     public String getDomain() {
         return domain;
     }
+
+    @NonNull
+    @Override
+    public String getEmptyRequestURL() {
+        return baseUri;
+    }
+
+    private RequestPreprocessor preprocessor = new RequestPreprocessor() {
+
+        private final Lock cookieLock = new ReentrantLock();
+        private final Lock cookieHandlerLock = new ReentrantLock();
+        private volatile CookieStore cookieStore;
+
+        private boolean cookieHandlerSet = false;
+
+        @Override
+        public HttpURLConnection process(@NonNull final URL url) throws IOException {
+            CookieStore cookieStore = loadCookies();
+            if (cookieStore != null) {
+                if (!cookieHandlerSet) {
+                    try {
+                        cookieHandlerLock.lock();
+                        setCookieHandler(cookieStore);
+                        cookieHandlerSet = true;
+                    } finally {
+                        cookieHandlerLock.unlock();
+                    }
+                }
+            }
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("User-Agent", Constants.USER_AGENT_STRING);
+            return connection;
+        }
+
+        @Override
+        public void process(@NonNull final DefaultHttpClient httpClient) {
+            CookieStore cookieStore = loadCookies();
+            if (cookieStore != null) {
+                httpClient.setCookieStore(cookieStore);
+            }
+        }
+
+        private CookieStore loadCookies() {
+            if (cookieStore == null) {
+                try {
+                    cookieLock.lock();
+                    cookieStore = getCookieStore();
+                    if (cookieStore == null) {
+                        try {
+                            emptyRequest();
+                            cookieStore = getCookieStore();
+                        } catch (IOException e) {
+                            //ну а что мы можем сделать, если куки нет
+                        }
+                    }
+                } finally {
+                    cookieLock.unlock();
+                }
+            }
+            return cookieStore;
+        }
+
+        private void setCookieHandler(final CookieStore cookieStore) {
+            List<Cookie> cookies = cookieStore.getCookies();
+
+            CookieManager cookieManager = new CookieManager();
+            CookieHandler.setDefault(cookieManager);
+
+            java.net.CookieStore hucCS = cookieManager.getCookieStore();
+
+            for (Cookie cookie : cookies) {
+                HttpCookie httpCookie = new HttpCookie(cookie.getName(), cookie.getValue());
+                httpCookie.setDomain(cookie.getDomain());
+                httpCookie.setPath("/");
+                httpCookie.setVersion(0);
+
+                hucCS.add(URI.create(cookie.getDomain()), httpCookie);
+            }
+        }
+
+    };
+
 }

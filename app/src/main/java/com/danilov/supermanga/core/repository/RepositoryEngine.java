@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
@@ -57,9 +58,11 @@ public interface RepositoryEngine {
 
     String getBaseUri();
 
-    public List<FilterGroup> getFilters();
+    List<FilterGroup> getFilters();
 
-    public List<Genre> getGenres();
+    List<Genre> getGenres();
+
+    RequestPreprocessor getRequestPreprocessor();
 
     //enum of names containing matched engines
     public enum Repository {

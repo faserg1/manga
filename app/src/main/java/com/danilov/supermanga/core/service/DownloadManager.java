@@ -1,9 +1,11 @@
 package com.danilov.supermanga.core.service;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.interfaces.Pool;
 
 import java.io.InputStream;
@@ -76,11 +78,11 @@ public class DownloadManager {
 
     //executing only one download at a time
     //on complete start another download
-    public Download startDownload(final String uri, final String filePath) {
-        return startDownload(uri, filePath, null);
+    public Download startDownload(final String uri, final String filePath, @Nullable final RequestPreprocessor requestPreprocessor) {
+        return startDownload(uri, filePath, requestPreprocessor, null);
     }
 
-    public Download  startDownload(final String uri, final String filePath, final Object tag) {
+    public Download startDownload(final String uri, final String filePath, @Nullable final RequestPreprocessor requestPreprocessor, final Object tag) {
         lock.lock();
         Download download = null;
         try {
@@ -88,6 +90,7 @@ public class DownloadManager {
             download.setUri(uri);
             download.setTag(tag);
             download.setFilePath(filePath);
+            download.setPreprocessor(requestPreprocessor);
             downloads.add(download);
             isWake.signalAll();
         } finally {
@@ -96,7 +99,7 @@ public class DownloadManager {
         return download;
     }
 
-    public Download startImportantDownload(final String uri, final String filePath, final Object tag) {
+    public Download startImportantDownload(final String uri, final String filePath, @Nullable final RequestPreprocessor requestPreprocessor, final Object tag) {
         lock.lock();
         Download download = null;
         try {
@@ -104,6 +107,7 @@ public class DownloadManager {
             download.setUri(uri);
             download.setTag(tag);
             download.setFilePath(filePath);
+            download.setPreprocessor(requestPreprocessor);
             downloads.addFirst(download);
             isWake.signalAll();
         } finally {
@@ -240,6 +244,9 @@ public class DownloadManager {
         private int downloaded = 0;
         private DownloadStatus status = DownloadStatus.DOWNLOADING;
 
+        @Nullable
+        private RequestPreprocessor preprocessor;
+
         public Download() {
         }
 
@@ -265,6 +272,10 @@ public class DownloadManager {
             this.filePath = filePath;
         }
 
+        public void setPreprocessor(@Nullable final RequestPreprocessor requestPreprocessor) {
+            this.preprocessor = requestPreprocessor;
+        }
+
         private void clear() {
             this.uri = null;
             this.filePath = null;
@@ -272,6 +283,7 @@ public class DownloadManager {
             this.tag = null;
             this.downloaded = 0;
             this.status = DownloadStatus.DOWNLOADING;
+            this.preprocessor = null;
         }
 
         @Override
@@ -303,8 +315,13 @@ public class DownloadManager {
             try {
                 // Open connection to URL.
                 URL url = new URL(uri);
-                HttpURLConnection connection =
-                        (HttpURLConnection) url.openConnection();
+                HttpURLConnection connection;
+
+                if (preprocessor != null) {
+                    connection = preprocessor.process(url);
+                } else {
+                    connection = (HttpURLConnection) url.openConnection();
+                }
 
                 // Specify what portion of file to download.
                 connection.setRequestProperty("Range",

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.MangaDAO;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
@@ -234,6 +235,11 @@ public class OfflineEngine implements RepositoryEngine {
 
     @Override
     public List<Genre> getGenres() {
+        return null;
+    }
+
+    @Override
+    public RequestPreprocessor getRequestPreprocessor() {
         return null;
     }
 

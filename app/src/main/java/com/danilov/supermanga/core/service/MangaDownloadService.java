@@ -455,7 +455,7 @@ public class MangaDownloadService extends Service {
             int currentImageQuantity = urls.size();
             if (!new File(coverUri).exists()) {
                 if (manga.getCoverUri() != null) {
-                    downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover");
+                    downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover", engine.getRequestPreprocessor());
                     currentImageQuantity++;
                 }
             }
@@ -463,7 +463,7 @@ public class MangaDownloadService extends Service {
             currentRequest.setCurrentImageQuantity(currentImageQuantity);
             sendStatus();
             for (String url : urls) {
-                downloadManager.startDownload(url, chapterPath + i + ".png", currentRequest);
+                downloadManager.startDownload(url, chapterPath + i + ".png", engine.getRequestPreprocessor(), currentRequest);
                 i++;
             }
         }

@@ -1,5 +1,6 @@
 package com.danilov.supermanga.core.interfaces;
 
+import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.strategy.ShowMangaException;
 import com.danilov.supermanga.core.strategy.StrategyDelegate;
 import com.danilov.supermanga.core.view.CompatPager;
@@ -53,5 +54,7 @@ public interface MangaShowStrategy extends CompatPager.OnPageChangeListener {
         LAST_DOWNLOADED,
         NOT_DOWNLOADED
     }
+
+    RepositoryEngine getEngine();
 
 }

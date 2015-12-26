@@ -225,6 +225,11 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
     }
 
     @Override
+    public RepositoryEngine getEngine() {
+        return manga.getRepository().getEngine();
+    }
+
+    @Override
     public int getCurrentImageNumber() {
         return currentImageNumber;
     }

@@ -16,6 +16,7 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.adapter.ExtendedPagerAdapter;
 import com.danilov.supermanga.core.cache.CacheDirectoryManager;
 import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
+import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.service.DownloadManager;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -41,6 +42,7 @@ public class MangaViewPager extends CompatPager {
     private List<String> uris = null;
     private boolean isOnline = false;
     private Handler handler = new Handler();
+    private RepositoryEngine engine;
 
 
     private List<CompatPager.OnPageChangeListener> listeners = new LinkedList<>();
@@ -110,6 +112,10 @@ public class MangaViewPager extends CompatPager {
         adapter = new Adapter(getContext(), uris);
         adapter.subscribeToPageChangeEvent(this);
         setAdapter(adapter);
+    }
+
+    public void setEngine(final RepositoryEngine engine) {
+        this.engine = engine;
     }
 
     @Override
@@ -219,7 +225,7 @@ public class MangaViewPager extends CompatPager {
         String tag = path + Utils.getRandomString(15);
 
         imageBundleMap.put(tag, bundle);
-        downloadManager.startImportantDownload(url, path, tag);
+        downloadManager.startImportantDownload(url, path, engine.getRequestPreprocessor(), tag);
 
         downloadManager.setListener(downloadProgressListener);
     }

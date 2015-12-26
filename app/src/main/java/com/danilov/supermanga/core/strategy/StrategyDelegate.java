@@ -48,6 +48,7 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
 
         List<String> chapterUris = strategy.getChapterUris();
         if (chapterUris != null) {
+            mangaViewPager.setEngine(strategy.getEngine());
             mangaViewPager.setUris(chapterUris);
         }
 
@@ -157,6 +158,7 @@ public class StrategyDelegate implements CompatPager.OnPageChangeListener {
                         if (result == MangaShowStrategy.Result.SUCCESS || result == MangaShowStrategy.Result.LAST_DOWNLOADED) {
                             List<String> chapterUris = strategy.getChapterUris();
                             if (chapterUris != null) {
+                                mangaViewPager.setEngine(strategy.getEngine());
                                 mangaViewPager.setUris(chapterUris);
                             }
                         }

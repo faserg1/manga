@@ -7,6 +7,7 @@ import com.danilov.supermanga.core.http.HttpRequestException;
 import com.danilov.supermanga.core.http.HttpStreamModel;
 import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.http.LinesSearchInputStream;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
@@ -173,7 +174,7 @@ public class AdultmangaEngine implements RepositoryEngine {
         LinesSearchInputStream inputStream = null;
         try {
             HttpStreamModel model = httpStreamReader.fromUri(uri);
-            inputStream = new LinesSearchInputStream(model.stream, "rm_h.init([", "], 0, false)");
+            inputStream = new LinesSearchInputStream(model.stream, "rm_h.init( [", "], 0, false)");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
@@ -199,7 +200,7 @@ public class AdultmangaEngine implements RepositoryEngine {
         return imageUrls;
     }
 
-    private final Pattern arrayItemPattern = Pattern.compile("\\[('.*?'),('.*?'),('.*?'),.*?,.*?],");
+    private final Pattern arrayItemPattern = Pattern.compile("\\[('.*?'),('.*?'),(\".*?\"),.*?,.*?],");
 
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
@@ -210,7 +211,7 @@ public class AdultmangaEngine implements RepositoryEngine {
 
             String base = matcher.group(2).replace("'", "");
             String fldr = matcher.group(1).replace("'", "");
-            String pic = matcher.group(3).replace("'", "");
+            String pic = matcher.group(3).replace("\"", "");
 
             String url = base + fldr + pic;
             if (!url.contains("http")) {
@@ -668,6 +669,11 @@ public class AdultmangaEngine implements RepositoryEngine {
     @Override
     public List<Genre> getGenres() {
         return genres;
+    }
+
+    @Override
+    public RequestPreprocessor getRequestPreprocessor() {
+        return null;
     }
 
 }

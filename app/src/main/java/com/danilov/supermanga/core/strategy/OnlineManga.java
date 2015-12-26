@@ -245,4 +245,9 @@ public class OnlineManga implements MangaShowStrategy, CompatPager.OnPageChangeL
 
     }
 
+    @Override
+    public RepositoryEngine getEngine() {
+        return manga.getRepository().getEngine();
+    }
+
 }

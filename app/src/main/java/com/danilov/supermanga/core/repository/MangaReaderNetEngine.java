@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpRequestException;
+import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
@@ -472,6 +473,11 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     @Override
     public List<Genre> getGenres() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public RequestPreprocessor getRequestPreprocessor() {
+        return null;
     }
 
 }
