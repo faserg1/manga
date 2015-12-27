@@ -169,6 +169,7 @@ public class OnlineStorageProfileService extends Service {
                 googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
                     @Override
                     public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                        //TODO: remove and uncomment
                         googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.SQLITE, fileSendCallback);
 //                        if (onlineFile != null) {
 //                            onlineFile.rewriteWith(new File(localFilePath), fileSendCallback);

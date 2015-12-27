@@ -323,10 +323,13 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
                         FileOutputStream fileOutputStream = new FileOutputStream(path, false);
                         byte[] buffer = new byte[1024];
                         int bytesRead;
+                        int totalBytes = 0;
                         while((bytesRead = inputStream.read(buffer, 0, buffer.length)) != -1) {
                             fileOutputStream.write(buffer, 0, bytesRead);
                             fileOutputStream.flush();
+                            totalBytes += bytesRead;
                         }
+                        boolean a = totalBytes != 0;
                         commandCallback.onCommandSuccess(true);
                         fileOutputStream.flush();
                         fileOutputStream.close();
