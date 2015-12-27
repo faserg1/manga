@@ -91,19 +91,43 @@
                             android:textColor="@color/profile_text"/>
 
                         <LinearLayout
-                            android:id="@+id/google_sync_button"
                             android:visibility="gone"
+                            android:id="@+id/google_sync_button"
                             android:layout_alignParentRight="true"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:layout_alignTop="@+id/google_account_title"
-                            android:layout_alignBottom="@+id/google_account"
                             android:gravity="center"
                             android:background="@drawable/selectable_item_background"
                             android:orientation="horizontal">
 
                             <com.danilov.supermanga.core.view.CTextView
                                 android:text="Синхронизировать"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:src="@drawable/ic_action_cloud"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:visibility="gone"
+                            android:id="@+id/google_download_button"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:layout_alignLeft="@+id/google_sync_button"
+                            android:layout_below="@+id/google_sync_button"
+                            android:layout_alignParentBottom="true"
+                            android:gravity="center"
+                            android:background="@drawable/selectable_item_background"
+                            android:orientation="horizontal">
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:text="Загрузить"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
 

@@ -1,7 +1,9 @@
 package com.danilov.supermanga.core.onlinestorage;
 
+import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,8 +25,10 @@ import com.google.android.gms.plus.model.people.Person;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -38,6 +42,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -77,24 +82,6 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
         return accountName;
     }
 
-    private class FileCreateCallback implements ResultCallback<DriveFolder.DriveFileResult> {
-
-        private CommandCallback<Boolean> commandCallback;
-
-        private FileCreateCallback(final CommandCallback<Boolean> commandCallback) {
-            this.commandCallback = commandCallback;
-        }
-
-        @Override
-        public void onResult(DriveFolder.DriveFileResult result) {
-            if (!result.getStatus().isSuccess()) {
-                commandCallback.onCommandError("Error while trying to create the file");
-                return;
-            }
-            commandCallback.onCommandSuccess(true);
-        }
-    }
-
     private class FileCreationRequestCallback implements ResultCallback<DriveApi.DriveContentsResult> {
 
         private CommandCallback<Boolean> commandCallback;
@@ -127,27 +114,37 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
                 @Override
                 public void run() {
                     final DriveContents driveContents = result.getDriveContents();
-                    OutputStream outputStream = driveContents.getOutputStream();
-                    Writer writer = new OutputStreamWriter(outputStream);
-                    Reader inputStreamReader = null;
+                    FileOutputStream fileOutputStream = new FileOutputStream(driveContents.getParcelFileDescriptor().getFileDescriptor());
+
+                    InputStream inputStream = null;
+
                     if (file != null) {
                         try {
-                            inputStreamReader = new BufferedReader(new FileReader(file));
+                            inputStream = new FileInputStream(file);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        inputStreamReader = new StringReader(text);
+                        inputStream = new ByteArrayInputStream(text.getBytes());
                     }
-                    if (inputStreamReader == null) {
+                    if (inputStream == null) {
                         return;
                     }
                     try {
-                        char[] buffer = new char[512];
+                        byte[] buffer = new byte[1024];
                         int bytesRead;
-                        while((bytesRead = inputStreamReader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, bytesRead);
+                        int totalBytes = 0;
+
+                        while((bytesRead = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                            fileOutputStream.write(buffer, 0, bytesRead);
+                            fileOutputStream.flush();
+                            totalBytes += bytesRead;
                         }
+                        Log.e("GOOGLE", "Bytes written: " + totalBytes);
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+
+                        inputStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -155,9 +152,15 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
                             .setTitle(fileTitle)
                             .setMimeType(mimeType.getData())
                             .build();
-                    Drive.DriveApi.getAppFolder(googleApiClient)
-                            .createFile(googleApiClient, changeSet, result.getDriveContents())
-                            .setResultCallback(new FileCreateCallback(commandCallback));
+                    DriveFolder.DriveFileResult fileResult = Drive.DriveApi.getRootFolder(googleApiClient)
+                            .createFile(googleApiClient, changeSet, driveContents).await();
+
+                    if (!fileResult.getStatus().isSuccess()) {
+                        commandCallback.onCommandError("Error while trying to create the file");
+                        return;
+                    }
+                    Drive.DriveApi.requestSync(googleApiClient).await();
+                    commandCallback.onCommandSuccess(true);
                 }
             });
         }
@@ -241,12 +244,11 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Reader inputStreamReader = null;
                     if (file != null) {
                         try {
-                            inputStreamReader = new BufferedReader(new FileReader(file));
+                            InputStream inputStream = new FileInputStream(file);
                             try {
-                                boolean b = rewriteInternal(inputStreamReader);
+                                boolean b = rewriteInternal(inputStream);
                                 commandCallback.onCommandSuccess(b);
                             } catch (Exception e) {
                                 commandCallback.onCommandError(e.getMessage());
@@ -264,9 +266,9 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    Reader inputStreamReader = new StringReader(contents);
+                    InputStream inputStream = new ByteArrayInputStream(contents.getBytes());
                     try {
-                        boolean b = rewriteInternal(inputStreamReader);
+                        boolean b = rewriteInternal(inputStream);
                         commandCallback.onCommandSuccess(b);
                     } catch (Exception e) {
                         commandCallback.onCommandError(e.getMessage());
@@ -276,7 +278,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
             });
         }
 
-        private boolean rewriteInternal(final Reader inputStreamReader) {
+        private boolean rewriteInternal(final InputStream inputStream) {
             DriveApi.DriveContentsResult driveContentsResult = driveFile.open(googleApiClient, DriveFile.MODE_READ_WRITE, null).await();
             if (!driveContentsResult.getStatus().isSuccess()) {
                 return false;
@@ -287,12 +289,17 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
             FileOutputStream fileOutputStream = new FileOutputStream(fileDescriptor);
             try {
                 fileOutputStream.getChannel().truncate(0);
-                Writer writer = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
-                char[] buffer = new char[512];
+                byte[] buffer = new byte[1024];
                 int bytesRead;
-                while((bytesRead = inputStreamReader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, bytesRead);
+                while((bytesRead = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                    fileOutputStream.flush();
                 }
+//                fileOutputStream.write("".getBytes());
+                fileOutputStream.flush();
+                fileOutputStream.close();
+
+                inputStream.close();
                 Status await = driveContents.commit(googleApiClient, null).await();
                 return await.isSuccess();
             } catch (IOException e) {
@@ -312,21 +319,18 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
                     }
                     DriveContents driveContents = driveContentsResult.getDriveContents();
                     InputStream inputStream = driveContents.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(inputStreamReader);
                     try {
-                        FileWriter fileWriter = new FileWriter(path, false);
-                        BufferedWriter writer = new BufferedWriter(fileWriter);
-                        char[] buffer = new char[512];
+                        FileOutputStream fileOutputStream = new FileOutputStream(path, false);
+                        byte[] buffer = new byte[1024];
                         int bytesRead;
-                        while((bytesRead = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, bytesRead);
+                        while((bytesRead = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                            fileOutputStream.write(buffer, 0, bytesRead);
+                            fileOutputStream.flush();
                         }
                         commandCallback.onCommandSuccess(true);
-                        writer.close();
-                        reader.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        inputStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -346,21 +350,18 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
                     }
                     DriveContents driveContents = driveContentsResult.getDriveContents();
                     InputStream inputStream = driveContents.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(inputStreamReader);
                     try {
                         StringWriter stringWriter = new StringWriter();
                         BufferedWriter writer = new BufferedWriter(stringWriter);
-                        char[] buffer = new char[512];
+                        byte[] buffer = new byte[1024];
                         int bytesRead;
-                        while((bytesRead = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, bytesRead);
+                        while((bytesRead = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                            writer.write(new String(buffer, 0, bytesRead), 0, bytesRead);
+                            writer.flush();
                         }
                         commandCallback.onCommandSuccess(stringWriter.toString());
                         writer.close();
-                        reader.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        inputStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

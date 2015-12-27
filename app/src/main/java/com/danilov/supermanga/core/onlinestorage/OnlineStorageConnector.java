@@ -48,7 +48,8 @@ public abstract class OnlineStorageConnector {
 
     public enum MimeType {
 
-        TEXT_PLAIN("text/plain");
+        TEXT_PLAIN("text/plain"),
+        SQLITE("application/x-sqlite3");
 
         private String data;
 

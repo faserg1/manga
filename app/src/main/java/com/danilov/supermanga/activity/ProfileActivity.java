@@ -58,6 +58,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     private View googleSyncCard;
     private View userNameCard;
     private View googleSyncButton;
+    private View googleDownloadButton;
     private View emailCard;
     private View alwaysShowButtonsCard;
     private View downloadPathCard;
@@ -86,6 +87,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         downloadPathCard = findViewWithId(R.id.download_path_card);
         googleAccountTextView = findViewWithId(R.id.google_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
+        googleDownloadButton = findViewWithId(R.id.google_download_button);
 
         userNameSmall = findViewWithId(R.id.user_name_small);
         email = findViewWithId(R.id.email);
@@ -164,16 +166,19 @@ public class ProfileActivity extends BaseToolbarActivity {
         googleSyncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("TEST", true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 if (service == null) {
                     return;
                 }
-                service.sendDataViaGoogle();
+                service.save();
+            }
+        });
+        googleDownloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (service == null) {
+                    return;
+                }
+                service.download();
             }
         });
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -285,6 +290,7 @@ public class ProfileActivity extends BaseToolbarActivity {
             switch (msg.what) {
                 case OnlineStorageProfileService.GOOGLE_CONNECTED:
                     googleSyncButton.setVisibility(View.VISIBLE);
+                    googleDownloadButton.setVisibility(View.VISIBLE);
                     if (service != null) {
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
@@ -296,7 +302,6 @@ public class ProfileActivity extends BaseToolbarActivity {
 
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Constants.Settings.GOOGLE_PROFILE_NAME, accountName).apply();
-                        service.sync();
                     }
                     break;
                 case OnlineStorageProfileService.GOOGLE_NEED_CONFIRMATION:
