@@ -29,6 +29,7 @@ import com.danilov.supermanga.core.util.DrawerStub;
 import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.fragment.AddLocalMangaFragment;
 import com.danilov.supermanga.fragment.DownloadManagerFragment;
 import com.danilov.supermanga.fragment.DownloadedMangaFragment;
 import com.danilov.supermanga.fragment.FavoritesFragment;
@@ -269,7 +270,7 @@ public class MainActivity extends BaseToolbarActivity {
         }
     }
 
-    public static enum MainMenuItem {
+    public enum MainMenuItem {
 
         UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
         SEARCH(R.drawable.ic_action_search_black, R.string.menu_search),
@@ -386,7 +387,7 @@ public class MainActivity extends BaseToolbarActivity {
         isOnMainFragment = false;
     }
 
-    private void showDownloadedMangaFragment() {
+    public void showDownloadedMangaFragment() {
         Fragment fragment = DownloadedMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -436,6 +437,18 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showHistoryFragment() {
         Fragment fragment = HistoryMangaFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+    }
+
+    public void showAddLocalMangaFragment() {
+        Fragment fragment = AddLocalMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)

@@ -109,4 +109,5 @@
     <string name="hrs">hrs</string>
     <string name="min">min</string>
     <string name="sec">sec</string>
+    <string name="sv_add">Add local manga</string>
 </resources>

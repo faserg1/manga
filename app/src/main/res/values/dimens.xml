@@ -38,4 +38,6 @@
     <dimen name="info_item_side_padding_land">10dp</dimen>
     <dimen name="info_item_bottom_padding_land">5dp</dimen>
 
+    <dimen name="padding_classic">16dp</dimen>
+
 </resources>

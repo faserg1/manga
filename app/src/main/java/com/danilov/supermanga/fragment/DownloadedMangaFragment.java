@@ -19,6 +19,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
 import com.danilov.supermanga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.supermanga.core.adapter.PopupButtonClickListener;
@@ -66,6 +67,12 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.manga_downloaded_fragment, container, false);
         return view;
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -285,4 +292,20 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
         super.onDestroy();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.downloaded_manga_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_local_manga:
+                MainActivity activity = (MainActivity) getActivity();
+                activity.showAddLocalMangaFragment();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
