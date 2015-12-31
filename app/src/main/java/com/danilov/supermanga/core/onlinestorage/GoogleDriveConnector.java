@@ -182,6 +182,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                Drive.DriveApi.requestSync(googleApiClient).await();
                 Query query = new Query.Builder()
                         .addFilter(Filters.contains(SearchableField.TITLE, title))
                         .build();
@@ -279,6 +280,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
         }
 
         private boolean rewriteInternal(final InputStream inputStream) {
+            Drive.DriveApi.requestSync(googleApiClient).await();
             DriveApi.DriveContentsResult driveContentsResult = driveFile.open(googleApiClient, DriveFile.MODE_READ_WRITE, null).await();
             if (!driveContentsResult.getStatus().isSuccess()) {
                 return false;

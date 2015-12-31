@@ -320,12 +320,17 @@ public class ProfileActivity extends BaseToolbarActivity {
                     break;
                 case OnlineStorageProfileService.GOOGLE_SENT_SUCCESS:
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+
+                    long lastUpdateTime = System.currentTimeMillis();
+                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, lastUpdateTime).apply();
                     String accountName = service.getGoogleConnector().getAccountName();
                     String prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
                     googleAccountTextView.setPrefix(prefix);
                     googleAccountTextView.setReferenceTime(lastUpdateTime);
                     googleAccountTextView.setSuffix(")");
+                    break;
+                case OnlineStorageProfileService.GOOGLE_DOWNLOADED:
+                    init();
                     break;
             }
         }

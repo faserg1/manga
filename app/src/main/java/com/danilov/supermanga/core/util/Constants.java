@@ -50,15 +50,14 @@ public class Constants {
             HISTORY_DB_PATH = dbPathFile + File.separator + HistoryDAO.DB_NAME;
         }
 
-        public static final String[][] DB_FILES = {{MangaDAO.DB_NAME, MANGA_DB_PATH},
-                {HistoryDAO.DB_NAME, HISTORY_DB_PATH},
-                {MangaDAO.DB_NAME + "-journal", MANGA_DB_PATH + "-journal"},
-                {HistoryDAO.DB_NAME + "-journal", HISTORY_DB_PATH + "-journal"}};
+        public static final String[][] DB_FILES = {{MangaDAO.DB_NAME + "_new", MANGA_DB_PATH},
+                {HistoryDAO.DB_NAME + "_new", HISTORY_DB_PATH},
+                {MangaDAO.DB_NAME + "_new" + "-journal", MANGA_DB_PATH + "-journal"},
+                {HistoryDAO.DB_NAME + "_new" + "-journal", HISTORY_DB_PATH + "-journal"}};
 
         public static final String ONLINE_SETTINGS_FILENAME = "settings.json";
         public static final String LAST_UPDATE_PROFILE_TIME = "LAST_UPDATE_PROFILE_TIME";
         public static final String GOOGLE_PROFILE_NAME = "GOOGLE_PROFILE_NAME";
-
 
         public static final String USER_NAME = "USER_NAME";
         public static final String EMAIL = "EMAIL";
