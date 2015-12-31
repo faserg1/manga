@@ -5,6 +5,11 @@
                 android:layout_height="match_parent"
                 android:padding="10dp">
 
+    <!--<com.danilov.supermanga.core.view.TopCropImageView-->
+        <!--android:scaleType="matrix"-->
+        <!--android:src="@drawable/updates_newyear_bg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
     <TextView
         android:id="@+id/useful_info"
