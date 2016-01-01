@@ -184,7 +184,7 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
             public void run() {
                 Drive.DriveApi.requestSync(googleApiClient).await();
                 Query query = new Query.Builder()
-                        .addFilter(Filters.contains(SearchableField.TITLE, title))
+                        .addFilter(Filters.eq(SearchableField.TITLE, title))
                         .build();
                 DriveApi.MetadataBufferResult result = Drive.DriveApi.query(googleApiClient, query).await();
                 if (!result.getStatus().isSuccess()) {
