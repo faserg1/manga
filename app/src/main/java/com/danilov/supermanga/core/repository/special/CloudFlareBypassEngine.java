@@ -1,9 +1,10 @@
-package com.danilov.supermanga.core.repository;
+package com.danilov.supermanga.core.repository.special;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
+import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.util.IoUtils;
 
 import org.apache.http.Header;

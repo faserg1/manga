@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.danilov.supermanga.core.application.MangaApplication;
@@ -32,6 +33,11 @@ public class OfflineEngine implements RepositoryEngine {
     @Override
     public String getLanguage() {
         return null;
+    }
+
+    @Override
+    public boolean requiresAuth() {
+        return false;
     }
 
     @Override
@@ -228,11 +234,13 @@ public class OfflineEngine implements RepositoryEngine {
         return null;
     }
 
+    @NonNull
     @Override
     public List<FilterGroup> getFilters() {
         return null;
     }
 
+    @NonNull
     @Override
     public List<Genre> getGenres() {
         return null;

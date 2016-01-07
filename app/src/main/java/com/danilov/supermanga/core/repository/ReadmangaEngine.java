@@ -1,5 +1,6 @@
 package com.danilov.supermanga.core.repository;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.danilov.supermanga.core.http.HttpBytesReader;
@@ -52,6 +53,11 @@ public class ReadmangaEngine implements RepositoryEngine {
     @Override
     public String getLanguage() {
         return "Русский";
+    }
+
+    @Override
+    public boolean requiresAuth() {
+        return false;
     }
 
     @Override
@@ -576,6 +582,7 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     }
 
+    @NonNull
     @Override
     public List<FilterGroup> getFilters() {
         return filterGroups;
@@ -647,6 +654,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         }
     }
 
+    @NonNull
     @Override
     public List<Genre> getGenres() {
         return genres;

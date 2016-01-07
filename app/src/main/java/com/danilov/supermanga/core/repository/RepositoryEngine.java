@@ -1,5 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
+import android.support.annotation.NonNull;
+
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
@@ -21,6 +23,12 @@ public interface RepositoryEngine {
      * @return
      */
     String getLanguage();
+
+    /**
+     * Does the engine requires authorization
+     * @return
+     */
+    boolean requiresAuth();
 
     /**
      * Search for suggestions
@@ -58,8 +66,10 @@ public interface RepositoryEngine {
 
     String getBaseUri();
 
+    @NonNull
     List<FilterGroup> getFilters();
 
+    @NonNull
     List<Genre> getGenres();
 
     RequestPreprocessor getRequestPreprocessor();
@@ -70,11 +80,12 @@ public interface RepositoryEngine {
         READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
         ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
         ADULTMANGA(new AdultmangaEngine(), "AdultManga (RU)", true, R.drawable.ic_russia),
+        MANGACHAN(new MangachanEngine(), "MangaChan (RU)", true, R.drawable.ic_russia),
         MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader (EN)", true, R.drawable.ic_english),
         KISSMANGA(new KissmangaEngine(), "KissManga (EN)", true, R.drawable.ic_english),
         OFFLINE(new OfflineEngine(), "", false, -1);
 
-        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, KISSMANGA, ALLHENTAI, MANGAREADERNET};
+        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, MANGACHAN, KISSMANGA, ALLHENTAI, MANGAREADERNET};
 
         private RepositoryEngine engine;
         private String name;

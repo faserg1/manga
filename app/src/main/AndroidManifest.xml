@@ -1,118 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.danilov.supermanga"
-    android:versionCode="14"
-    android:versionName="1.30" >
+<manifest package="com.danilov.supermanga"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionCode="15"
+          android:versionName="1.31">
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="19"/>
 
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="true"
-        android:xlargeScreens="true" />
+        android:xlargeScreens="true"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
+
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
-        android:name="com.danilov.supermanga.core.application.MangaApplication"
+        android:name=".core.application.MangaApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/Manga" >
-
-        <meta-data android:name="com.google.android.gms.version"
-                   android:value="@integer/google_play_services_version" />
+        android:theme="@style/Manga">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
 
         <activity
-            android:name="com.danilov.supermanga.activity.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-
+        <activity android:name=".activity.ProfileActivity"/>
         <activity
-            android:name="com.danilov.supermanga.activity.ProfileActivity"/>
-
+            android:name=".MyActivity"
+            android:label="@string/app_name"/>
         <activity
-            android:name="com.danilov.supermanga.MyActivity"
-            android:label="@string/app_name" />
-        <activity
-            android:name="com.danilov.supermanga.test.TouchImageViewActivityTest"
-            android:label="@string/app_name" >
+            android:name=".test.TouchImageViewActivityTest"
+            android:label="@string/app_name">
         </activity>
         <activity
-            android:name="com.danilov.supermanga.test.QueryTestActivity"
-            android:label="Query Engine Test" />
-        <activity android:name="com.danilov.supermanga.activity.MangaInfoActivity"
+            android:name=".test.QueryTestActivity"
+            android:label="Query Engine Test"/>
+        <activity
+            android:name=".activity.MangaInfoActivity"
             android:theme="@style/MangaTransparent"/>
-        <activity android:name="com.danilov.supermanga.activity.SingleFragmentActivity" />
+        <activity android:name=".activity.SingleFragmentActivity"/>
         <activity
-            android:name="com.danilov.supermanga.test.LocalMangaActivity"
-            android:label="Local Manga Activity" />
+            android:name=".test.LocalMangaActivity"
+            android:label="Local Manga Activity"/>
         <activity
-            android:name="com.danilov.supermanga.activity.DownloadsActivity"
-            android:label="DownloadsActivity" />
-        <activity android:name="com.danilov.supermanga.test.LocalImageActivity" />
+            android:name=".activity.DownloadsActivity"
+            android:label="DownloadsActivity"/>
+        <activity android:name=".test.LocalImageActivity"/>
         <activity
-            android:name="com.danilov.supermanga.activity.MangaQueryActivity"
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
-            android:name="com.danilov.supermanga.activity.FolderPickerActivity" >
+            android:name=".activity.MangaQueryActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".activity.FolderPickerActivity">
         </activity>
-
-        <activity android:name="com.danilov.supermanga.activity.MangaViewerActivity" />
+        <activity android:name=".activity.MangaViewerActivity"/>
         <activity
-            android:name="com.danilov.supermanga.activity.HistoryActivity"
-            android:label="History" />
+            android:name=".activity.HistoryActivity"
+            android:label="History"/>
         <activity
-            android:name="com.danilov.supermanga.core.notification.headsupold.HeadsUpNotification$HeadsUpActivity"
+            android:name=".core.notification.headsupold.HeadsUpNotification$HeadsUpActivity"
             android:label="Notification"
-            android:theme="@style/Theme.CustomPanel" />
+            android:theme="@style/Theme.CustomPanel"/>
 
-        <!--ad activity-->
-        <activity android:name="com.google.android.gms.ads.AdActivity"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-                  android:theme="@android:style/Theme.Translucent" />
+        <!-- ad activity -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent"/>
 
-        <service android:name="com.danilov.supermanga.core.service.MangaDownloadService" />
-        <service android:name="com.danilov.supermanga.core.service.MangaUpdateServiceNew" />
-
-        <service android:name=".core.service.StartUpdateService" android:enabled="true"/>
-        <service android:name=".core.service.OnlineStorageProfileService" android:enabled="true"/>
+        <service android:name=".core.service.MangaDownloadService"/>
+        <service android:name=".core.service.MangaUpdateServiceNew"/>
+        <service
+            android:name=".core.service.StartUpdateService"
+            android:enabled="true"/>
+        <service
+            android:name=".core.service.OnlineStorageProfileService"
+            android:enabled="true"/>
 
         <receiver android:name=".core.receiver.AlarmReceiver"/>
-
-        <receiver android:name=".core.receiver.WIFIConnectionReceiver" android:enabled="true">
+        <receiver
+            android:name=".core.receiver.WIFIConnectionReceiver"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
-
-        <receiver android:enabled="false" android:name=".core.receiver.BootReceiver">
+        <receiver
+            android:name=".core.receiver.BootReceiver"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
+        <activity android:name=".activity.RepositoryLoginActivity">
+        </activity>
     </application>
 
 </manifest>

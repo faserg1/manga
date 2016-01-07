@@ -1,5 +1,7 @@
 package com.danilov.supermanga.core.application;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -66,6 +68,10 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
         cacheDirectoryManager.trimCacheIfNeeded();
+
+//        AccountManager accountManager = AccountManager.get(this);
+//        Account[] accounts = accountManager.getAccounts();
+//        int length = accounts.length;
 
         AlarmReceiver.setUpdateAlarm(this);
 

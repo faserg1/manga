@@ -8,6 +8,7 @@ import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
+import com.danilov.supermanga.core.repository.special.CloudFlareBypassEngine;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.Utils;
@@ -67,6 +68,11 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
     @Override
     public String getLanguage() {
         return "English";
+    }
+
+    @Override
+    public boolean requiresAuth() {
+        return false;
     }
 
     private String suggestionPattern = "a href=\"(.*?)\">(.*?)<\\/a>";
@@ -381,11 +387,13 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         return null;
     }
 
+    @NonNull
     @Override
     public List<FilterGroup> getFilters() {
         return Collections.emptyList();
     }
 
+    @NonNull
     @Override
     public List<Genre> getGenres() {
         return Collections.emptyList();

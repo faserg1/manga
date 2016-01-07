@@ -26,6 +26,7 @@ import com.danilov.supermanga.core.adapter.PopupButtonClickListener;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.widget.RepositoryLoginView;
 import com.danilov.supermanga.core.widget.SlidingTabLayout;
 import com.danilov.supermanga.fragment.FiltersFragment;
 import com.danilov.supermanga.fragment.GenresFragment;
@@ -66,6 +67,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private TextView nothingFoundView;
 
+    private RepositoryLoginView loginView;
+
     private boolean pagerShown = true;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         }
         setContentView(R.layout.manga_query_activity);
 
+        loginView = findViewWithId(R.id.login_view);
         nothingFoundView = findViewWithId(R.id.nothing_found);
         searchResultsView = findViewWithId(R.id.search_results);
         repositoryTitleTextView = findViewWithId(R.id.repository_title);
@@ -96,6 +100,13 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         repositoryTitleTextView.setVisibility(View.GONE);
         actionBar.setDisplayHomeAsUpEnabled(true);
         setupTabs(actionBar);
+
+        if (engine.requiresAuth()) {
+            loginView.setOnClickListener(this);
+            loginView.setOnLoginButtonClickListener(this);
+            loginView.setNeeded(true);
+        }
+
     }
 
     private void setupTabs(final ActionBar actionBar) {
@@ -139,7 +150,16 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     @Override
     public void onClick(final View v) {
+        switch (v.getId()) {
+            case R.id.login_button:
+            case R.id.login_view:
+                String repoString = repository.toString();
+                Intent intent = new Intent(this, RepositoryLoginActivity.class);
+                intent.putExtra(Constants.REPOSITORY_KEY, repoString);
+                startActivity(intent);
+                break;
 
+        }
     }
 
     public void showProgressBar() {
