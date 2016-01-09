@@ -7,6 +7,9 @@ import android.util.Log;
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpRequestException;
+import com.danilov.supermanga.core.http.HttpStreamModel;
+import com.danilov.supermanga.core.http.HttpStreamReader;
+import com.danilov.supermanga.core.http.LinesSearchInputStream;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
@@ -251,7 +254,51 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
-        return null;
+        String uri = chapter.getUri();
+        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
+        byte[] bytes = new byte[1024];
+        List<String> imageUrls = null;
+        LinesSearchInputStream inputStream = null;
+        try {
+            HttpStreamModel model = httpStreamReader.fromUri(uri);
+            inputStream = new LinesSearchInputStream(model.stream, "\"fullimg\":[", ",]");
+            int status = LinesSearchInputStream.SEARCHING;
+            while (status == LinesSearchInputStream.SEARCHING) {
+                status = inputStream.read(bytes);
+            }
+            bytes = inputStream.getResult();
+            String str = IoUtils.convertBytesToString(bytes);
+            imageUrls = extractUrls(str);
+        } catch (IOException e) {
+            Log.d(TAG, e.getMessage());
+            throw new RepositoryException(e.getMessage());
+        } catch (HttpRequestException e) {
+            Log.d(TAG, e.getMessage());
+            throw new RepositoryException(e.getMessage());
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+        }
+        return imageUrls;
+    }
+
+    private final Pattern arrayItemPattern = Pattern.compile("\"(.*?)\"");
+
+    private List<String> extractUrls(final String str) {
+        Log.d(TAG, "a: " + str);
+        List<String> urls = new ArrayList<String>();
+        final String newStr = str + ","; //savant
+        Matcher matcher = arrayItemPattern.matcher(newStr);
+        while (matcher.find()) {
+            String url = matcher.group(1);
+            urls.add(url);
+        }
+        return urls;
     }
 
     @Override
