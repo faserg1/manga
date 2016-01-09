@@ -12,6 +12,7 @@ import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.special.AuthorizableEngine;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
+import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -22,6 +23,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -38,7 +42,9 @@ import java.util.regex.Pattern;
  */
 public class MangachanEngine implements RepositoryEngine {
 
+    private String baseUri = "http://mangachan.ru/";
     private String baseSuggestionUri = "http://mangachan.ru/engine/ajax/search.php";
+    private String baseSearchUri = "http://mangachan.ru/?do=search&subaction=search&story=";
 
     @Override
     public String getLanguage() {
@@ -86,7 +92,46 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
-        return null;
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        List<Manga> mangaList = null;
+        if (httpBytesReader != null) {
+            try {
+                String uri = baseSearchUri + URLEncoder.encode(query, Charset.forName(HTTP.UTF_8).name());
+                uri += "&genre=";
+                for (Filter.FilterValue filterValue : filterValues) {
+                    uri = filterValue.apply(uri);
+                }
+                uri += "&order=2";
+                byte[] response = httpBytesReader.fromUri(uri);
+                String responseString = IoUtils.convertBytesToString(response);
+                mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
+            } catch (UnsupportedEncodingException e) {
+                throw new RepositoryException("Failed to load: " + e.getMessage());
+            } catch (HttpRequestException e) {
+                throw new RepositoryException("Failed to load: " + e.getMessage());
+            }
+        }
+        return mangaList;
+    }
+
+    private List<Manga> parseMangaSearchResponse(final Document document) {
+        Elements mangaResults = document.select("#dle-content .content_row");
+
+        List<Manga> mangas = new ArrayList<>();
+        for (Element mangaResult : mangaResults) {
+            Element nameElement = mangaResult.select(".manga_row1 h2").get(0);
+            String title = nameElement.text();
+            String url = nameElement.child(0).attr("href");
+
+            Element backgroundHolder = mangaResult.getElementsByClass("manga_images").get(0);
+            String imageUrl = baseUri + backgroundHolder.getElementsByTag("img").attr("src");
+
+            Manga manga = new Manga(title, url, Repository.MANGACHAN);
+            manga.setCoverUri(imageUrl);
+            mangas.add(manga);
+        }
+
+        return mangas;
     }
 
     @Override
