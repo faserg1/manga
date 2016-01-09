@@ -46,6 +46,7 @@ public class MangaApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
         File mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
         CacheDirectoryManagerImpl cacheDirectoryManager = new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), ApplicationSettings.PACKAGE_NAME);

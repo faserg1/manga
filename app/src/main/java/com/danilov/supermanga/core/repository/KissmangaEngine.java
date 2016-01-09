@@ -82,7 +82,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
             HttpPost request = new HttpPost(baseSuggestUri);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
             nameValuePairs.add(new BasicNameValuePair("keyword", query));
             nameValuePairs.add(new BasicNameValuePair("type", "Manga"));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));

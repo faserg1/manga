@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
@@ -72,10 +73,11 @@ public interface RepositoryEngine {
     @NonNull
     List<Genre> getGenres();
 
+    @Nullable
     RequestPreprocessor getRequestPreprocessor();
 
     //enum of names containing matched engines
-    public enum Repository {
+    enum Repository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
         ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
