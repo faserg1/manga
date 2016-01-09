@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
 import com.danilov.supermanga.core.http.HttpBytesReader;
@@ -41,6 +42,8 @@ import java.util.regex.Pattern;
  * Created by Semyon on 07.01.2016.
  */
 public class MangachanEngine implements RepositoryEngine {
+
+    private static final String TAG = "MangachanEngine";
 
     private String baseUri = "http://mangachan.ru/";
     private String baseSuggestionUri = "http://mangachan.ru/engine/ajax/search.php";
@@ -141,7 +144,57 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        if (httpBytesReader != null) {
+            String uri = manga.getUri();
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+                throw new RepositoryException(e.getMessage());
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            return parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
+        }
         return false;
+    }
+
+    private boolean parseMangaDescriptionResponse(final Manga manga, final Document document) {
+        String description = document.getElementById("description").text();
+        manga.setDescription(description);
+
+        if (manga.getCoverUri() == null || manga.getCoverUri().length() <= 0) {
+            Element img = document.getElementById("cover");
+            manga.setCoverUri(baseUri + img.attr("src"));
+        }
+
+        Element mangaDescriptionBlock = document.getElementsByClass("mangatitle").first().child(0);
+
+        String chaptersQuantityString = mangaDescriptionBlock.child(4).select("b").text();
+        try {
+            int idx = chaptersQuantityString.indexOf(' ');
+            if (idx != -1) {
+                chaptersQuantityString = chaptersQuantityString.substring(0, idx);
+            }
+            Integer chaptersQuantity = Integer.valueOf(chaptersQuantityString);
+            manga.setChaptersQuantity(chaptersQuantity);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Failed to parse number: " + e.getMessage());
+            return false;
+        }
+
+        Element genresElement = mangaDescriptionBlock.child(5).getElementsByClass("item2").first();
+        manga.setGenres(genresElement.text());
+
+        Element authorsList = mangaDescriptionBlock.child(2).getElementsByClass("item2").first();
+        manga.setAuthor(genresElement.text());
+
+        return true;
     }
 
     @Override
