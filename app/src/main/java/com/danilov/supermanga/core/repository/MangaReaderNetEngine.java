@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.http.HttpBytesReader;
@@ -483,6 +484,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public RequestPreprocessor getRequestPreprocessor() {
         return null;

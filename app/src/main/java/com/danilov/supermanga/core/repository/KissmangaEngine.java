@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.http.LinesSearchInputStream;
@@ -296,7 +297,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             if (e.getMessage() != null) {
                 Log.d(TAG, e.getMessage());
             } else {
-                Log.d(TAG, "Failed to load manga description");
+                Log.d(TAG, "Failed to load manga chapters");
             }
             throw new RepositoryException(e.getMessage());
         }
@@ -399,6 +400,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public RequestPreprocessor getRequestPreprocessor() {
         return preprocessor;

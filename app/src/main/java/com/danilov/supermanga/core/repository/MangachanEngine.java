@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
@@ -192,14 +193,60 @@ public class MangachanEngine implements RepositoryEngine {
         manga.setGenres(genresElement.text());
 
         Element authorsList = mangaDescriptionBlock.child(2).getElementsByClass("item2").first();
-        manga.setAuthor(genresElement.text());
+        manga.setAuthor(authorsList.text());
 
         return true;
     }
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
+        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
+        if (httpBytesReader != null) {
+            String uri = manga.getUri();
+            byte[] response = null;
+            try {
+                response = httpBytesReader.fromUri(uri);
+            } catch (HttpRequestException e) {
+                if (e.getMessage() != null) {
+                    Log.d(TAG, e.getMessage());
+                } else {
+                    Log.d(TAG, "Failed to load manga description");
+                }
+                throw new RepositoryException(e.getMessage());
+            }
+            String responseString = IoUtils.convertBytesToString(response);
+            List<MangaChapter> chapters = parseMangaChaptersResponse(manga, Utils.toDocument(responseString));
+            manga.setChapters(chapters);
+            return true;
+        }
         return false;
+    }
+
+    private List<MangaChapter> parseMangaChaptersResponse(final Manga manga, final Document document) {
+        Elements chaptersTables = document.getElementsByClass("table_cha");
+
+        List<Element> elements = new ArrayList<>();
+
+        for (Element element : chaptersTables) {
+            Elements chaptersElements = element.getElementsByTag("a");
+            for (Element chapterElement : chaptersElements) {
+                elements.add(chapterElement);
+            }
+        }
+
+        List<MangaChapter> chapters = new ArrayList<MangaChapter>(elements.size());
+
+        Collections.reverse(elements);
+        int number = 0;
+        for (Element chapterElement : elements) {
+            String link = baseUri + chapterElement.attr("href");
+            String title = chapterElement.text();
+            MangaChapter chapter = new MangaChapter(title, number, link);
+            chapters.add(chapter);
+            number++;
+        }
+        manga.setChaptersQuantity(chapters.size());
+        return chapters;
     }
 
     @Override
@@ -209,12 +256,12 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public String getBaseSearchUri() {
-        return null;
+        return baseSearchUri;
     }
 
     @Override
     public String getBaseUri() {
-        return null;
+        return baseUri;
     }
 
     @NonNull
@@ -229,6 +276,7 @@ public class MangachanEngine implements RepositoryEngine {
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public RequestPreprocessor getRequestPreprocessor() {
         return null;
