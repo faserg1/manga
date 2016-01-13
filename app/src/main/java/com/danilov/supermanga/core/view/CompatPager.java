@@ -26,17 +26,17 @@ public class CompatPager extends RTLSupportPager {
     public static class SimpleOnPageChangeListener implements OnPageChangeListener {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            // This space for rent
+            // FOR SALE
         }
 
         @Override
         public void onPageSelected(int position) {
-            // This space for rent
+            // FOR SALE
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            // This space for rent
+            // ЗДЕСЬ МОГЛА БЫТЬ ВАША РЕКЛАМА
         }
     }
 

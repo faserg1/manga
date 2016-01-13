@@ -2,6 +2,7 @@ package com.danilov.supermanga.core.view;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +22,9 @@ import com.danilov.supermanga.core.service.DownloadManager;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.core.view.library.TiledBitmapDrawable;
+import com.diegocarloslima.byakugallery.lib.TileBitmapDrawable;
+import com.diegocarloslima.byakugallery.lib.TouchImageView;
 
 import java.io.File;
 import java.util.HashMap;
@@ -33,6 +37,100 @@ import java.util.Map;
  */
 public class MangaViewPager extends CompatPager {
 
+    private interface ImageWrapper {
+
+        void setImageFile(final String fileName);
+
+        void setMaxScale(final float maxScale);
+
+        void setVisibility(final int visibility);
+
+        void reset();
+
+        boolean isLargePicture();
+
+        void setShouldDrawLarge(boolean shouldDrawLarge);
+
+    }
+
+    private class SSIV implements ImageWrapper {
+
+        private SubsamplingScaleImageView iv;
+
+        public SSIV(final SubsamplingScaleImageView iv) {
+            this.iv = iv;
+        }
+
+        @Override
+        public void setImageFile(final String fileName) {
+            iv.setImageFile(fileName);
+        }
+
+        @Override
+        public void setMaxScale(final float maxScale) {
+            iv.setMaxScale(maxScale);
+        }
+
+        @Override
+        public void setVisibility(final int visibility) {
+            iv.setVisibility(visibility);
+        }
+
+        @Override
+        public void reset() {
+            iv.reset();
+        }
+
+        @Override
+        public boolean isLargePicture() {
+            return iv.isLargePicture();
+        }
+
+        @Override
+        public void setShouldDrawLarge(final boolean shouldDrawLarge) {
+            iv.setShouldDrawLarge(shouldDrawLarge);
+        }
+    }
+
+    private class Byaku implements ImageWrapper {
+
+        private TouchImageView touchImageView;
+
+        public Byaku(final TouchImageView touchImageView) {
+            this.touchImageView = touchImageView;
+        }
+
+        @Override
+        public void setImageFile(final String fileName) {
+            TiledBitmapDrawable.attachTiledBitmapDrawable(touchImageView, fileName, null, null);
+        }
+
+        @Override
+        public void setMaxScale(final float maxScale) {
+            touchImageView.setMaxScale(maxScale);
+        }
+
+        @Override
+        public void setVisibility(final int visibility) {
+            touchImageView.setVisibility(visibility);
+        }
+
+        @Override
+        public void reset() {
+
+        }
+
+        @Override
+        public boolean isLargePicture() {
+            return true;
+        }
+
+        @Override
+        public void setShouldDrawLarge(final boolean shouldDrawLarge) {
+
+        }
+
+    }
 
     private DownloadManager downloadManager = new DownloadManager();
     private Adapter adapter = null;
@@ -150,7 +248,7 @@ public class MangaViewPager extends CompatPager {
 
     private class Adapter extends ExtendedPagerAdapter<String> {
 
-        private Map<Integer, SubsamplingScaleImageView> views = new HashMap<>();
+        private Map<Integer, ImageWrapper> views = new HashMap<>();
 
         public Adapter(final Context context, final List<String> models) {
             super(context, models);
@@ -164,9 +262,15 @@ public class MangaViewPager extends CompatPager {
         protected View createView(final int position) {
             String url = getItem(position);
 
-            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
+            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page_byaku, MangaViewPager.this, false);
 
-            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) v.findViewById(R.id.imageView);
+            View imageViewHolder = v.findViewById(R.id.imageView);
+            ImageWrapper imageView = null;
+            if (imageViewHolder instanceof SubsamplingScaleImageView) {
+                imageView = new SSIV((SubsamplingScaleImageView) imageViewHolder);
+            } else if (imageViewHolder instanceof TouchImageView) {
+                imageView = new Byaku((TouchImageView) imageViewHolder);
+            }
             imageView.setMaxScale(4);
             TextView progressView = (TextView) v.findViewById(R.id.progress);
             Button restart = (Button) v.findViewById(R.id.restart);
@@ -178,30 +282,33 @@ public class MangaViewPager extends CompatPager {
 
         @Override
         protected void onViewUnselected(final int position, final View view) {
-//            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
-//            imageView.reset();
-            for (Map.Entry<Integer, SubsamplingScaleImageView> entry : views.entrySet()) {
+            for (Map.Entry<Integer, ImageWrapper> entry : views.entrySet()) {
                 int pos = entry.getKey();
                 if (Math.abs(position - pos) > 1) {
                     entry.getValue().reset();
                 }
             }
-            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view.findViewById(R.id.imageView);
-            if (imageView.isLargePicture()) {
-                imageView.reset();
+
+            ImageWrapper imageView = views.get(position);
+            if (imageView != null) {
+                if (imageView.isLargePicture()) {
+                    imageView.reset();
+                }
+                imageView.setShouldDrawLarge(false);
             }
-            imageView.setShouldDrawLarge(false);
         }
 
         @Override
         protected void onViewSelected(final int position, final View view) {
-            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view.findViewById(R.id.imageView);
-            imageView.setShouldDrawLarge(true);
+            ImageWrapper imageView = views.get(position);
+            if (imageView != null) {
+                imageView.setShouldDrawLarge(true);
+            }
         }
     }
 
 
-    public void loadImage(final String url, final SubsamplingScaleImageView imageView, final TextView textView, final Button button) {
+    public void loadImage(final String url, final ImageWrapper imageView, final TextView textView, final Button button) {
         if (!isOnline) {
             imageView.setImageFile(url);
             textView.setVisibility(View.GONE);
@@ -233,7 +340,7 @@ public class MangaViewPager extends CompatPager {
     private class ImageBundle {
 
         TextView tv;
-        SubsamplingScaleImageView iv;
+        ImageWrapper iv;
         Button restart;
         String path;
         String donePath;
@@ -303,7 +410,7 @@ public class MangaViewPager extends CompatPager {
             }
 
             final String url = download.getUri();
-            final SubsamplingScaleImageView iv = imageBundle.iv;
+            final ImageWrapper iv = imageBundle.iv;
             final TextView tv = imageBundle.tv;
             final Button button = imageBundle.restart;
 
