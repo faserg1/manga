@@ -1845,6 +1845,7 @@ public class RTLSupportPager extends ViewGroup {
 
         switch (action) {
             case MotionEvent.ACTION_MOVE: {
+                Log.e("ASDF", "sdsdsd");
                 /*
                  * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
                  * whether the user has moved far enough from his original down touch.
@@ -1873,7 +1874,7 @@ public class RTLSupportPager extends ViewGroup {
                     // Nested view has scrollable area under this point. Let it be handled there.
                     mLastMotionX = x;
                     mLastMotionY = y;
-                    mIsUnableToDrag = true;
+//                    mIsUnableToDrag = true;
                     return false;
                 }
                 if (xDiff > mTouchSlop && xDiff * 0.5f > yDiff) {

@@ -23,8 +23,7 @@ import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.library.TiledBitmapDrawable;
-import com.diegocarloslima.byakugallery.lib.TileBitmapDrawable;
-import com.diegocarloslima.byakugallery.lib.TouchImageView;
+import com.danilov.supermanga.core.view.library.TouchImageView;
 
 import java.io.File;
 import java.util.HashMap;
