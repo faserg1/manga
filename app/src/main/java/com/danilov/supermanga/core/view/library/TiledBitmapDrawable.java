@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -38,6 +39,7 @@ public class TiledBitmapDrawable extends Drawable {
     private static final int TILE_SIZE_DENSITY_HIGH = 256;
     private static final int TILE_SIZE_DEFAULT = 128;
     private static final Object sBitmapCacheLock = new Object();
+    private static final Object sBitmapDecoderLock = new Object();
     // Instance ids are used to identify a cache hit for a specific instance of TiledBitmapDrawable on the shared BitmapLruCache
     private static final AtomicInteger sInstanceIds = new AtomicInteger(1);
     // A shared cache is used between instances to minimize OutOfMemoryError
@@ -272,6 +274,72 @@ public class TiledBitmapDrawable extends Drawable {
         public void onEndInitialization();
     }
 
+    public void reset() {
+        synchronized (sBitmapCacheLock) {
+
+            final ImageView parentView = mParentView.get();
+            if (parentView == null) {
+                return;
+            }
+
+            final int parentViewWidth = parentView.getWidth();
+            final int parentViewHeight = parentView.getHeight();
+            mMatrix = parentView.getImageMatrix();
+
+            mMatrix.getValues(mMatrixValues);
+            final float translationX = mMatrixValues[Matrix.MTRANS_X];
+            final float translationY = mMatrixValues[Matrix.MTRANS_Y];
+            final float scale = mMatrixValues[Matrix.MSCALE_X];
+
+            // If the matrix values have changed, the decode queue must be cleared in order to avoid decoding unused tiles
+            if (translationX != mLastMatrixValues[Matrix.MTRANS_X] || translationY != mLastMatrixValues[Matrix.MTRANS_Y] || scale != mLastMatrixValues[Matrix.MSCALE_X]) {
+                mDecodeQueue.clear();
+            }
+
+            mLastMatrixValues = Arrays.copyOf(mMatrixValues, mMatrixValues.length);
+
+            // The scale required to display the whole Bitmap inside the ImageView. It will be the minimum allowed scale value
+            final float minScale = Math.min(parentViewWidth / (float) mIntrinsicWidth, parentViewHeight / (float) mIntrinsicHeight);
+
+            // The number of allowed levels for this Bitmap. Each subsequent level is half size of the previous one
+            final int levelCount = Math.max(1, MathUtils.ceilLog2(mIntrinsicWidth / (mIntrinsicWidth * minScale)));
+
+            // sampleSize = 2 ^ currentLevel
+            final int currentLevel = MathUtils.clamp(MathUtils.floorLog2(1 / scale), 0, levelCount - 1);
+            final int sampleSize = 1 << currentLevel;
+
+            final int currentTileSize = mTileSize * sampleSize;
+            final int horizontalTiles = (int) Math.ceil(mIntrinsicWidth / (float) currentTileSize);
+            final int verticalTiles = (int) Math.ceil(mIntrinsicHeight / (float) currentTileSize);
+
+            final int visibleAreaLeft = Math.max(0, (int) (-translationX / scale));
+            final int visibleAreaTop = Math.max(0, (int) (-translationY / scale));
+            final int visibleAreaRight = Math.min(mIntrinsicWidth, Math.round((-translationX + parentViewWidth) / scale));
+            final int visibleAreaBottom = Math.min(mIntrinsicHeight, Math.round((-translationY + parentViewHeight) / scale));
+            mVisibleAreaRect.set(visibleAreaLeft, visibleAreaTop, visibleAreaRight, visibleAreaBottom);
+
+            for (int i = 0; i < horizontalTiles; i++) {
+                for (int j = 0; j < verticalTiles; j++) {
+
+                    final int tileLeft = i * currentTileSize;
+                    final int tileTop = j * currentTileSize;
+                    final int tileRight = (i + 1) * currentTileSize <= mIntrinsicWidth ? (i + 1) * currentTileSize : mIntrinsicWidth;
+                    final int tileBottom = (j + 1) * currentTileSize <= mIntrinsicHeight ? (j + 1) * currentTileSize : mIntrinsicHeight;
+                    mTileRect.set(tileLeft, tileTop, tileRight, tileBottom);
+
+                    if (Rect.intersects(mVisibleAreaRect, mTileRect)) {
+
+                        final Tile tile = new Tile(mInstanceId, mTileRect, i, j, currentLevel);
+                        Bitmap remove = sBitmapCache.remove(tile.getKey());
+                        if (remove != null) {
+                            remove.recycle();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static final class Tile {
 
         private final int mInstanceId;
@@ -352,7 +420,6 @@ public class TiledBitmapDrawable extends Drawable {
         @Override
         protected TiledBitmapDrawable doInBackground(Object... params) {
             BitmapRegionDecoder decoder = null;
-
             try {
                 if (params[0] instanceof String) {
                     decoder = BitmapRegionDecoder.newInstance((String) params[0], false);
@@ -370,43 +437,47 @@ public class TiledBitmapDrawable extends Drawable {
             wm.getDefaultDisplay().getMetrics(metrics);
 
             final float minScale = Math.min(metrics.widthPixels / (float) decoder.getWidth(), metrics.heightPixels / (float) decoder.getHeight());
-            final int levelCount = Math.max(1, MathUtils.ceilLog2(decoder.getWidth() / (decoder.getWidth() * minScale)));
+//            final int levelCount = Math.max(1, MathUtils.ceilLog2(decoder.getWidth() / (decoder.getWidth() * minScale)));
+            final int levelCount = 4;
 
             final Rect screenNailRect = new Rect(0, 0, decoder.getWidth(), decoder.getHeight());
 
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inPreferQualityOverSpeed = true;
+
             options.inSampleSize = (1 << (levelCount - 1));
-
-            Bitmap screenNail = null;
+            TiledBitmapDrawable drawable = null;
             try {
-                Bitmap bitmap = decoder.decodeRegion(screenNailRect, options);
+                Bitmap screenNail = null;
+                try {
+                    Bitmap bitmap = decoder.decodeRegion(screenNailRect, options);
 
-                if (bitmap == null) {
-                    //вах, дорогой, где байтики потерял, почему не задекодил
-                    //вай вай вай давай другой декодер дам
-                    //лучше!
-                    String fName = (String) params[0];
-                    BitmapLoader myBitmapLoader = BitmapDecoder.from(fName, false).useBuiltInDecoder(true).config(Bitmap.Config.ARGB_8888);
-                    myBitmapLoader.region(screenNailRect);
-                    bitmap = myBitmapLoader.scaleBy((float) (1.0f / options.inSampleSize)).decode();
-                }
-                if (bitmap != null) {
-                    screenNail = Bitmap.createScaledBitmap(bitmap, Math.round(decoder.getWidth() * minScale), Math.round(decoder.getHeight() * minScale), true);
-                    if (!bitmap.equals(screenNail)) {
-                        bitmap.recycle();
+                    if (bitmap == null) {
+                        //вах, дорогой, где байтики потерял, почему не задекодил
+                        //вай вай вай давай другой декодер дам
+                        //лучше!
+                        String fName = (String) params[0];
+                        BitmapLoader myBitmapLoader = BitmapDecoder.from(fName, false).useBuiltInDecoder(true).config(Bitmap.Config.ARGB_8888);
+                        myBitmapLoader.region(screenNailRect);
+                        bitmap = myBitmapLoader.scaleBy((float) (1.0f / options.inSampleSize)).decode();
                     }
+                    if (bitmap != null) {
+                        screenNail = Bitmap.createScaledBitmap(bitmap, Math.round(decoder.getWidth() * minScale), Math.round(decoder.getHeight() * minScale), true);
+                        if (!bitmap.equals(screenNail)) {
+                            bitmap.recycle();
+                        }
+                    }
+
+                } catch (OutOfMemoryError e) {
+                    // We're under memory pressure. Let's try again with a smaller size
+                    options.inSampleSize <<= 1;
+                    screenNail = decoder.decodeRegion(screenNailRect, options);
                 }
-
-            } catch (OutOfMemoryError e) {
-                // We're under memory pressure. Let's try again with a smaller size
-                options.inSampleSize <<= 1;
-                screenNail = decoder.decodeRegion(screenNailRect, options);
+                drawable = new TiledBitmapDrawable(mImageView, decoder, screenNail);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
-
-            TiledBitmapDrawable drawable = new TiledBitmapDrawable(mImageView, decoder, screenNail);
-
             return drawable;
         }
 
@@ -461,6 +532,20 @@ public class TiledBitmapDrawable extends Drawable {
                 options.inPreferQualityOverSpeed = true;
                 options.inSampleSize = (1 << tile.mLevel);
 
+                long freeSize = 0L;
+                long totalSize = 0L;
+                long usedSize = -1L;
+                try {
+                    Runtime info = Runtime.getRuntime();
+                    freeSize = info.freeMemory();
+                    totalSize = info.totalMemory();
+                    usedSize = totalSize - freeSize;
+                    if ((freeSize / 1024 / 1024) < 2) {
+                        Thread.sleep(300);
+                    }
+                } catch (Exception e) {
+                }
+
                 Bitmap bitmap = null;
                 synchronized (mDecoder) {
                     try {
@@ -485,5 +570,6 @@ public class TiledBitmapDrawable extends Drawable {
             interrupt();
         }
     }
+
 }
 

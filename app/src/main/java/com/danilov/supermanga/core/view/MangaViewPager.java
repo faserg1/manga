@@ -95,12 +95,15 @@ public class MangaViewPager extends CompatPager {
 
         private TouchImageView touchImageView;
 
+        private String fileName;
+
         public Byaku(final TouchImageView touchImageView) {
             this.touchImageView = touchImageView;
         }
 
         @Override
         public void setImageFile(final String fileName) {
+            this.fileName = fileName;
             TiledBitmapDrawable.attachTiledBitmapDrawable(touchImageView, fileName, null, null);
         }
 
@@ -116,7 +119,7 @@ public class MangaViewPager extends CompatPager {
 
         @Override
         public void reset() {
-
+            touchImageView.reset();
         }
 
         @Override
@@ -126,7 +129,11 @@ public class MangaViewPager extends CompatPager {
 
         @Override
         public void setShouldDrawLarge(final boolean shouldDrawLarge) {
-
+            if (shouldDrawLarge) {
+                TiledBitmapDrawable.attachTiledBitmapDrawable(touchImageView, fileName, null, null);
+            } else {
+                touchImageView.setImageDrawable(null);
+            }
         }
 
     }
@@ -261,7 +268,7 @@ public class MangaViewPager extends CompatPager {
         protected View createView(final int position) {
             String url = getItem(position);
 
-            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page_byaku, MangaViewPager.this, false);
+            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
 
             View imageViewHolder = v.findViewById(R.id.imageView);
             ImageWrapper imageView = null;

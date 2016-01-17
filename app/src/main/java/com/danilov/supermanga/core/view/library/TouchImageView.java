@@ -322,13 +322,9 @@ public class TouchImageView extends ImageView {
         final float[] values = new float[9];
         mMatrix.getValues(values);
 
-
-
-        final float currentDrawableWidth = mDrawableIntrinsicWidth * minScale;
-        final float currentDrawableHeight = mDrawableIntrinsicHeight * minScale;
-        final float dx = computeTranslation(getMeasuredWidth(), currentDrawableWidth, mTranslationX, -(mDrawableIntrinsicWidth * mMaxScale));
-//        final float dy = computeTranslation(getMeasuredHeight(), currentDrawableHeight, mTranslationY, -distanceY);
-        mMatrix.postTranslate(dx, 0);
+        final float freeSpaceHorizontal = (getMeasuredWidth() - (mDrawableIntrinsicWidth * minScale)) / 2F;
+        final float freeSpaceVertical = (getMeasuredHeight() - (mDrawableIntrinsicHeight * minScale)) / 2F;
+        mMatrix.postTranslate(freeSpaceHorizontal, freeSpaceVertical);
 
         invalidate();
     }
@@ -437,6 +433,13 @@ public class TouchImageView extends ImageView {
         }
 
         return delta;
+    }
+
+    public void reset() {
+        Drawable drawable = getDrawable();
+        if (drawable instanceof TiledBitmapDrawable) {
+            ((TiledBitmapDrawable) drawable).reset();
+        }
     }
 
     private class FlingAnimation extends Animation {

@@ -7,6 +7,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
@@ -84,6 +85,15 @@ public class MangaApplication extends Application {
 
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+        final Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(final Thread thread, final Throwable ex) {
+                Log.e("JOPA", ex.getMessage());
+                ex.printStackTrace();
+                defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
+            }
+        });
     }
 
 
