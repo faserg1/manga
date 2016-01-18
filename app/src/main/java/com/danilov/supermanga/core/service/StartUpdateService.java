@@ -53,6 +53,7 @@ public class StartUpdateService extends Service {
     private void startUpdate() {
         if (service != null) {
             onServiceBinded();
+            return;
         }
         serviceConnection = new MangaUpdateServiceNew.MUpdateServiceNewConnection(new ServiceConnectionListener<MangaUpdateServiceNew>() {
             @Override

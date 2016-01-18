@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 
@@ -28,14 +29,17 @@ import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.LocalManga;
+import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.core.view.helper.MangaFilter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,6 +61,7 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
 
     private DownloadedMangaAdapter adapter = null;
     private GridView gridView = null;
+    private EditText filterEditText = null;
     private ActionMode actionMode;
 
     public static DownloadedMangaFragment newInstance() {
@@ -81,7 +86,14 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
         localImageManager = ServiceContainer.getService(LocalImageManager.class);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        gridView = (GridView) view.findViewById(R.id.grid_view);
+        gridView = findViewById(R.id.grid_view);
+        filterEditText = findViewById(R.id.filter);
+        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                filterEditText.setText("");
+            }
+        });
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
         gridView.setOnItemLongClickListener(this);
@@ -97,19 +109,24 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
             public void run() {
                 boolean _success = true;
                 String _error = null;
+                List<LocalManga> _manga = null;
                 try {
-                    List<LocalManga> localMangas = mangaDAO.getAllDownloaded();
-                    adapter = new DownloadedMangaAdapter(context, localMangas, DownloadedMangaFragment.this);
+                    _manga = mangaDAO.getAllDownloaded();
                 } catch (DatabaseAccessException e) {
+                    _manga = Collections.EMPTY_LIST;
                     _success = false;
                     _error = e.getMessage();
                     Log.e(TAG, "Failed to get downloaded manga: " + _error);
                 }
+                final List<LocalManga> localMangas = _manga;
                 final boolean success = _success;
                 final String error = _error;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        MangaFilter mangaFilter = new MangaFilter(filterEditText, localMangas);
+                        adapter = new DownloadedMangaAdapter(context, localMangas, mangaFilter, DownloadedMangaFragment.this);
+                        mangaFilter.setAdapterAccessor(adapter.createAccessor());
                         downloadedProgressBar.setVisibility(View.INVISIBLE);
                         if (success) {
                             gridView.setAdapter(adapter);
@@ -132,7 +149,7 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
             updateActionMode(actionMode);
             return;
         }
-        LocalManga manga = adapter.getMangas().get(position);
+        LocalManga manga = adapter.getItem(position);
 
         HistoryElement historyElement = null;
         try {
@@ -211,7 +228,7 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
         final PopupMenu popup = new PopupMenu(getActivity(), popupButton);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.downloaded_manga_item_menu, popup.getMenu());
-        final LocalManga manga = adapter.getMangas().get(listPosition);
+        final LocalManga manga = adapter.getItem(listPosition);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override

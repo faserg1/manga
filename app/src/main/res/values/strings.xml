@@ -109,4 +109,6 @@
     <string name="min">min</string>
     <string name="sec">sec</string>
     <string name="sv_add">Add local manga</string>
+    <string name="hint_filter_edittext">Поиск...</string>
+    <string name="text_clear_filter">Очистить</string>
 </resources>

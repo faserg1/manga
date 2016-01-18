@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.model.LocalManga;
+import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.ServiceContainer;
+import com.danilov.supermanga.core.view.helper.MangaFilter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,8 +24,6 @@ import java.util.List;
  * Created by Semyon on 26.10.2014.
  */
 public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
-
-    private List<LocalManga> mangas = null;
 
     private LocalImageManager localImageManager = ServiceContainer.getService(LocalImageManager.class);
 
@@ -35,24 +35,17 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
     private PopupButtonClickListener popupButtonClickListener;
 
-    @Override
-    public int getCount() {
-        return mangas.size();
-    }
+    private MangaFilter filter;
 
-    public DownloadedMangaAdapter(final Context context, final List<LocalManga> mangas, final PopupButtonClickListener listener) {
+    public DownloadedMangaAdapter(final Context context, final List<LocalManga> mangas, final MangaFilter filter, final PopupButtonClickListener listener) {
         super(context, 0, mangas);
-        this.mangas = mangas;
+        this.filter = filter;
         isPosSelected = new boolean[mangas.size()];
         for (int i = 0; i < mangas.size(); i++) {
             isPosSelected[i] = false;
         }
         this.popupButtonClickListener = listener;
         sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.grid_item_height);
-    }
-
-    public List<LocalManga> getMangas() {
-        return mangas;
     }
 
     @Override
@@ -84,7 +77,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
                 }
             });
         }
-        LocalManga manga = mangas.get(position);
+        LocalManga manga = getItem(position);
         holder.mangaTitle.setText(manga.getTitle());
         String mangaUri = manga.getLocalUri();
         Bitmap bitmap = localImageManager.loadBitmap(holder.mangaCover, mangaUri + "/cover", sizeOfImage);
@@ -124,7 +117,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
     }
 
     public void deselectAll() {
-        for (int i = 0; i < mangas.size(); i++) {
+        for (int i = 0; i < getCount(); i++) {
             isPosSelected[i] = false;
         }
         notifyDataSetChanged();
@@ -132,9 +125,9 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
     public List<LocalManga> getSelectedManga() {
         List<LocalManga> selected = new LinkedList<LocalManga>();
-        for (int i = 0; i < mangas.size(); i++) {
+        for (int i = 0; i < getCount(); i++) {
             if (isPosSelected[i]) {
-                selected.add(mangas.get(i));
+                selected.add(getItem(i));
             }
         }
         return selected;
@@ -142,7 +135,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
     public int getSelectedQuantity() {
         int selected = 0;
-        for (int i = 0; i < mangas.size(); i++) {
+        for (int i = 0; i < getCount(); i++) {
             if (isPosSelected[i]) {
                 selected++;
             }
@@ -157,6 +150,34 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
         public ImageButton popupButton;
         public View selector;
 
+    }
+
+    @Override
+    public MangaFilter getFilter() {
+        return filter;
+    }
+
+    public MangaFilter.BaseAdapterAccessor createAccessor() {
+        return new MangaFilter.BaseAdapterAccessor() {
+
+            @Override
+            public void notifyDataSetInvalidated() {
+                DownloadedMangaAdapter.this.notifyDataSetInvalidated();
+            }
+
+            @Override
+            public void notifyDataSetChanged(final List<Manga> mangaList) {
+                DownloadedMangaAdapter.this.clear();
+                for (Manga manga : mangaList) {
+                    DownloadedMangaAdapter.this.add((LocalManga) manga);
+                }
+                isPosSelected = new boolean[mangaList.size()];
+                for (int i = 0; i < mangaList.size(); i++) {
+                    isPosSelected[i] = false;
+                }
+            }
+
+        };
     }
 
 }

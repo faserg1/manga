@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,7 +31,9 @@ import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.core.view.helper.MangaFilter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +45,6 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     private boolean isInMultiChoice = false;
 
-    private View view;
     private ProgressBar downloadedProgressBar;
 
     private LocalImageManager localImageManager = null;
@@ -52,6 +56,7 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     private FavoritesAdapter adapter = null;
     private GridView gridView = null;
+    private EditText filterEditText = null;
 
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
@@ -59,7 +64,7 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.manga_downloaded_fragment, container, false);
+        view = inflater.inflate(R.layout.manga_favorites_fragment, container, false);
         return view;
     }
 
@@ -70,7 +75,14 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        gridView = (GridView) view.findViewById(R.id.grid_view);
+        gridView = findViewById(R.id.grid_view);
+        filterEditText = findViewById(R.id.filter);
+        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                filterEditText.setText("");
+            }
+        });
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
         gridView.setOnItemLongClickListener(this);
@@ -86,19 +98,24 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
             public void run() {
                 boolean _success = true;
                 String _error = null;
+                List<Manga> _mangas = null;
                 try {
-                    List<Manga> mangas = mangaDAO.getFavorite();
-                    adapter = new FavoritesAdapter(context, 0, mangas);
+                    _mangas = mangaDAO.getFavorite();
                 } catch (DatabaseAccessException e) {
+                    _mangas = Collections.EMPTY_LIST;
                     _success = false;
                     _error = e.getMessage();
                     Log.e(TAG, "Failed to get favorite manga: " + _error);
                 }
+                final List<Manga> mangas = _mangas;
                 final boolean success = _success;
                 final String error = _error;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        MangaFilter filter = new MangaFilter(filterEditText, mangas);
+                        adapter = new FavoritesAdapter(context, 0, mangas, filter);
+                        filter.setAdapterAccessor(filter.new AdapterAccessor(adapter));
                         downloadedProgressBar.setVisibility(View.INVISIBLE);
                         if (success) {
                             gridView.setAdapter(adapter);
@@ -115,12 +132,13 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
     }
 
 
+
+
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Manga manga = adapter.getItem(i);
 
         Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
-
 
         ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
         int[] onScreenLocation = new int[2];
@@ -145,16 +163,17 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
 
     private class FavoritesAdapter extends BaseAdapter<Holder, Manga> {
 
-        private List<Manga> mangas = null;
+        private MangaFilter filter;
 
-        public FavoritesAdapter(final Context context, final int resource, final List<Manga> objects) {
+        public FavoritesAdapter(final Context context, final int resource, final List<Manga> objects,
+                                final MangaFilter filter) {
             super(context, resource, objects);
-            mangas = objects;
+            this.filter = filter;
         }
 
         @Override
         public void onBindViewHolder(final Holder holder, final int position) {
-            Manga manga = mangas.get(position);
+            Manga manga = getItem(position);
             holder.title.setText(manga.getTitle());
 
             if (manga.isDownloaded()) {
@@ -181,17 +200,14 @@ public class FavoritesFragment extends BaseFragment implements AdapterView.OnIte
         }
 
         @Override
-        public int getCount() {
-            if (mangas == null) {
-                return 0;
-            }
-            return mangas.size();
-        }
-
-        @Override
         public Holder onCreateViewHolder(final ViewGroup viewGroup, final int position) {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.favorites_grid_item, viewGroup, false);
             return new Holder(v);
+        }
+
+        @Override
+        public Filter getFilter() {
+            return filter;
         }
 
     }
