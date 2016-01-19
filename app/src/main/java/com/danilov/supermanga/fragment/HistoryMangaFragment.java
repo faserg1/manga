@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class HistoryMangaFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class HistoryMangaFragment extends BaseFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private static final String TAG = "HistoryMangaFragment";
 
@@ -73,6 +74,7 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);
         gridView.setOnItemClickListener(this);
+        gridView.setOnItemLongClickListener(this);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
     }
 
@@ -136,6 +138,29 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
         startActivity(intent);
     }
 
+    @Override
+    public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        Manga manga = adapter.getItem(position).getManga();
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
+
+        ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
+        int[] onScreenLocation = new int[2];
+        iv.getLocationOnScreen(onScreenLocation);
+
+        intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
+        intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
+        intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, iv.getWidth());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, iv.getHeight());
+
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        startActivity(intent);
+
+        getActivity().overridePendingTransition(0, 0);
+        return true;
+    }
+
 
     private class HistoryMangaAdapter extends ArrayAdapter<HistoryElement> {
 
@@ -193,11 +218,13 @@ public class HistoryMangaFragment extends BaseFragment implements AdapterView.On
                 }
             } else {
                 holder.isOnline.setVisibility(View.VISIBLE);
-                Uri coverUri = Uri.parse(manga.getCoverUri());
-                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage);
-                Bitmap bitmap = httpImageManager.loadImage(request);
-                if (bitmap != null) {
-                    holder.mangaCover.setImageBitmap(bitmap);
+                if (manga.getCoverUri() != null) {
+                    Uri coverUri = Uri.parse(manga.getCoverUri());
+                    HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaCover, manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage);
+                    Bitmap bitmap = httpImageManager.loadImage(request);
+                    if (bitmap != null) {
+                        holder.mangaCover.setImageBitmap(bitmap);
+                    }
                 }
             }
             return view;

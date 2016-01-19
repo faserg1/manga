@@ -257,11 +257,15 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
             public void run() {
                 boolean _success = true;
                 String _error = null;
+                Log.e(TAG, "A");
                 for (LocalManga localManga : mangas) {
                     IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
+                    Log.e(TAG, "B");
                     try {
                         historyDAO.deleteManga(localManga, false);
+                        Log.e(TAG, "C");
                         mangaDAO.setDownloaded(localManga, false);
+                        Log.e(TAG, "D");
                     } catch (DatabaseAccessException e) {
                         _success = false;
                         _error = e.getMessage();
@@ -272,21 +276,27 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e(TAG, "WW");
                             if (success) {
                                 loadDownloadedManga();
+                                Log.e(TAG, "XX");
                             } else {
                                 String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
                                 Utils.showToast(getActivity(), formedError + error);
+                                Log.e(TAG, "YY");
                             }
                         }
                     });
                     if (!success) {
+                        Log.e(TAG, "E");
                         break;
                     }
                 }
+                Log.e(TAG, "F");
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.e(TAG, "ZZ");
                         progressDialog.dismiss();
                     }
                 });

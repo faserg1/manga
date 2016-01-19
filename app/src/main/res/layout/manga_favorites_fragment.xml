@@ -7,28 +7,29 @@
                 android:orientation="vertical">
 
     <LinearLayout
-        android:weightSum="1"
         android:id="@+id/filter_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
+        android:weightSum="1">
 
         <EditText
             android:id="@+id/filter"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
+            android:layout_weight="1"
             android:hint="@string/hint_filter_edittext"
             android:textColor="@color/dialog_text"
             android:textSize="22sp"/>
 
         <Button
             android:id="@+id/clear"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
             android:text="@string/text_clear_filter"/>
 
     </LinearLayout>
