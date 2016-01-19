@@ -250,7 +250,7 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
     private DialogFragment progressDialog = null;
 
     private void deleteManga(final List<LocalManga> mangas) {
-        progressDialog = Utils.easyDialogProgress(getFragmentManager(), "Deleting", "Deleting manga");
+//        progressDialog = Utils.easyDialogProgress(getFragmentManager(), "Deleting", "Deleting manga");
         Thread thread = new Thread() {
 
             @Override
@@ -259,7 +259,6 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
                 String _error = null;
                 Log.e(TAG, "A");
                 for (LocalManga localManga : mangas) {
-                    IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
                     Log.e(TAG, "B");
                     try {
                         historyDAO.deleteManga(localManga, false);
@@ -292,12 +291,15 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
                         break;
                     }
                 }
+                for (LocalManga localManga : mangas) {
+                    IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
+                }
                 Log.e(TAG, "F");
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.e(TAG, "ZZ");
-                        progressDialog.dismiss();
+//                        progressDialog.dismiss();
                     }
                 });
             }
