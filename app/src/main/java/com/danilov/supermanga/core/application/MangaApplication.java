@@ -22,6 +22,9 @@ import com.danilov.supermanga.core.http.HttpBitmapReader;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.receiver.AlarmReceiver;
+import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
+import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -94,6 +97,16 @@ public class MangaApplication extends Application {
                 defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
             }
         });
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    (new JSTestEngine("qqq", "qqq")).getSuggestions("testing");
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
 
