@@ -385,7 +385,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
 
     @Override
     public String getBaseUri() {
-        return null;
+        return baseUri;
     }
 
     @NonNull
