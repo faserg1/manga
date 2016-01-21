@@ -308,6 +308,12 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        handler.startHandling();
+    }
+
+    @Override
     public void onSaveInstanceState(final Bundle outState) {
         handler.stopHandling();
         super.onSaveInstanceState(outState);

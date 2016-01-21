@@ -12,46 +12,10 @@
         android:layout_height="fill_parent"
         android:background="@drawable/grid_item_background">
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-            <!--android:text="@string/sv_download_path"-->
-            <!--android:textColor="@color/text_view_normal"/>-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-
-            <!--<EditText-->
-                <!--android:id="@+id/download_path"-->
-                <!--android:inputType="none"-->
-                <!--android:editable="false"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textColor="@color/text_view_normal"-->
-                <!--android:singleLine="true"-->
-                <!--android:lines="1"-->
-                <!--android:maxLines="1"-->
-                <!--android:scrollHorizontally="true"-->
-                <!--android:ellipsize="none"/>-->
-
-            <!--<Button-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/sv_select"-->
-                <!--android:id="@+id/select_folder"/>-->
-
-        <!--</LinearLayout>-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_main_page"
             android:textColor="@color/text_view_normal"/>
@@ -62,6 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             style="@style/Manga.Spinner"/>
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Остальные настройки ищите в профиле"
+            android:textColor="@color/blue"/>
 
 
         <!--<CheckBox-->

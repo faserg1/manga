@@ -34,6 +34,10 @@ public class SafeHandler {
         isHandling = false;
     }
 
+    public void startHandling() {
+        isHandling = true;
+    }
+
     public boolean sendMessage(final Message message) {
         return isHandling && handler.sendMessage(message);
     }
