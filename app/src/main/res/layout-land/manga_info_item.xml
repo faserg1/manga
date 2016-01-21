@@ -76,6 +76,12 @@
                               android:marqueeRepeatLimit="marquee_forever"
                               android:scrollHorizontally="true"/>
 
+                    <TextView
+                        android:id="@+id/repository_link"
+                        android:textColor="@color/link_color"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
                 </LinearLayout>
 
                 <!--cover and buttons-->

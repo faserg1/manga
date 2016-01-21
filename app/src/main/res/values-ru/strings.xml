@@ -113,4 +113,5 @@
     <string name="sv_add">Добавить локальную мангу</string>
     <string name="hint_filter_edittext">Поиск...</string>
     <string name="text_clear_filter">Очистить</string>
+    <string name="open_in_repo">Открыть на %1$s</string>
 </resources>

@@ -55,6 +55,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private TextView mangaDescriptionTextView = null;
     private TextView chaptersQuantityTextView = null;
     private TextView mangaTitle = null;
+    private TextView repositoryLink = null;
     private TextView authors = null;
     private TextView genres = null;
     private ImageView mangaCover = null;
@@ -105,6 +106,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         mangaDescriptionTextView = (TextView) view.findViewById(R.id.manga_description);
         chaptersQuantityTextView = (TextView) view.findViewById(R.id.chapters_quantity);
         mangaTitle = (TextView) view.findViewById(R.id.manga_title);
+        repositoryLink = (TextView) view.findViewById(R.id.repository_link);
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
         downloadButton = view.findViewById(R.id.download);
         readOnlineButton = view.findViewById(R.id.read_online);
@@ -113,6 +115,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         genres = findViewById(R.id.genres);
         downloadButton.setOnClickListener(this);
         readOnlineButton.setOnClickListener(this);
+        repositoryLink.setOnClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         addToFavorites = view.findViewById(R.id.add_to_favorites);
@@ -286,6 +289,11 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             }
         }
         mangaTitle.setText(manga.getTitle());
+
+        String repoName = manga.getRepository().getName();
+        String openWith = String.format(activity.getString(R.string.open_in_repo), repoName);
+        repositoryLink.setText(openWith);
+
         String mangaDescription = manga.getDescription();
         if (mangaDescription != null) {
             if (manga.isFavorite()) {
@@ -473,6 +481,9 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             case R.id.remove_from_favorites:
                 removeFromFavorites();
                 break;
+            case R.id.repository_link:
+                openInBrowser();
+                break;
             case R.id.read_online:
                 intent = new Intent(activity, MangaViewerActivity.class);
 
@@ -496,6 +507,17 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
         }
+    }
+
+    private void openInBrowser() {
+        String repoUri = manga.getRepository().getEngine().getBaseUri();
+        String uri = manga.getUri();
+        if (!uri.contains(repoUri)) {
+            uri = repoUri + uri;
+        }
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(uri));
+        startActivity(i);
     }
 
     private void addToFavorites() {
