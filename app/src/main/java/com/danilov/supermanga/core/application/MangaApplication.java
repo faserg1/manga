@@ -97,16 +97,6 @@ public class MangaApplication extends Application {
                 defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
             }
         });
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    (new JSTestEngine("qqq", "qqq")).getSuggestions("testing");
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
     }
 
 

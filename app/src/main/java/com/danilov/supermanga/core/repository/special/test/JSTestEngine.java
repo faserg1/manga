@@ -1,7 +1,12 @@
 package com.danilov.supermanga.core.repository.special.test;
 
+import android.content.Context;
+
 import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -10,13 +15,21 @@ import java.io.StringReader;
  */
 public class JSTestEngine extends JavaScriptEngine {
 
-    public JSTestEngine(final String name, final String filePath) {
+    private Context context;
+
+    public JSTestEngine(final Context context, final String name, final String filePath) {
         super(name, filePath);
+        this.context = context;
     }
+
 
     @Override
     public Reader getScript() {
-        return new StringReader("function loge(a,b){helper.loge(a,b)}function logi(a,b){helper.logi(a,b)}function getSuggestions(a){loge(MTAG,\"loge Started\"),logi(MTAG,a),helper.loadPage(\"yandex.ru\"),loge(MTAG,a),logi(MTAG,\"logi Finished\");var b={title:\"First suggestion\",link:\"http://yandex.ru\"},c={title:\"Second suggestion\",link:\"http://google.com\"};return[b,c]}var MTAG=\"MyFirstJSEngine\";");
+        try {
+            return new BufferedReader(new InputStreamReader(context.getAssets().open("testjs/mangafox.js")));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override

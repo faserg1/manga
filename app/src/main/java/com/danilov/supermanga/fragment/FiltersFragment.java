@@ -32,6 +32,7 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.util.Constants;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
             String repositoryString = getArguments().getString(Constants.REPOSITORY_KEY);
             repository = RepositoryEngine.Repository.valueOf(repositoryString);
             engine = repository.getEngine();
+            /*TODO: remove*/ engine = new JSTestEngine(getActivity(), "", "");
         } else {
             //why I do not use getString with default value? Because it's API 12 :(
             String repositoryString = savedInstanceState.getString(Constants.REPOSITORY_KEY);

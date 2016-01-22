@@ -76,8 +76,13 @@ public interface RepositoryEngine {
     @Nullable
     RequestPreprocessor getRequestPreprocessor();
 
+//    public interface Repository {
+//
+//    }
+
     //enum of names containing matched engines
     enum Repository {
+//    enum DefaultRepository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
         ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
