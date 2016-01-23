@@ -12,10 +12,14 @@ import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.IoUtils;
+import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.mozilla.javascript.ConsString;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -40,7 +44,7 @@ import java.util.List;
  *
  * Судя по всему придётся сделать отдельный интерфейс Repository
  * а текущий enum Repository нужно будет переименовать в DefaultRepository
- *
+ * todo: добавить Repository в конструктор
  */
 public abstract class JavaScriptEngine implements RepositoryEngine {
 
@@ -74,6 +78,10 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             }
         }
 
+        public DocHelper parseDoc(final String content) {
+            return new DocHelper(content);
+        }
+
         public void loge(final String tag, final String error) {
             Log.e(tag, error);
         }
@@ -82,6 +90,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         }
 
     }
+
 
     private class JSB {
 
@@ -148,17 +157,8 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 throw new RepositoryException("Every item of array must be JS an object");
             }
             NativeObject nativeObject = (NativeObject) object;
-            Object mangaTitleJSString = nativeObject.get("mangaTitle");
-            if (mangaTitleJSString == null) {
-                throw new RepositoryException("Manga title must be provided in suggestion object");
-            }
-            String mangaTitle = mangaTitleJSString.toString();
-            Object mangaUrlJSString = nativeObject.get("mangaUrl");
-            if (mangaUrlJSString == null) {
-                throw new RepositoryException("Manga URL must be provided in suggestion object");
-            }
-            String mangaUrl = mangaUrlJSString.toString();
-
+            String mangaTitle = getString(nativeObject, "mangaTitle");
+            String mangaUrl = getString(nativeObject, "mangaUrl");
             MangaSuggestion mangaSuggestion = new MangaSuggestion(mangaTitle, mangaUrl, Repository.MANGACHAN);
             mangaSuggestions.add(mangaSuggestion);
         }
@@ -168,7 +168,35 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
-        return null;
+        List<Manga> mangaList = Collections.emptyList();
+        final JSB jsb = initJSContext();
+        final Scriptable scope = jsb.scope;
+        final Context context = jsb.context;
+        Function queryRepositoryFn = (Function) scope.get("queryRepository", scope);
+        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{query});
+        if (callResult == null) {
+            return mangaList;
+        }
+        if (!(callResult instanceof NativeArray)) {
+            throw new RepositoryException("Function queryRepository must return an array of objects");
+        }
+        NativeArray result = (NativeArray) callResult;
+        mangaList = new ArrayList<>(result.size());
+
+        for (Object object : result) {
+            if (!(object instanceof NativeObject)) {
+                throw new RepositoryException("Every item of array must be JS an object");
+            }
+            NativeObject nativeObject = (NativeObject) object;
+            String mangaTitle = getString(nativeObject, "mangaTitle");
+            String mangaUrl = getString(nativeObject, "mangaUrl");
+            String mangaCoverUrl = getString(nativeObject, "mangaCover");
+            Manga manga = new Manga(mangaTitle, mangaUrl, Repository.MANGACHAN);
+            manga.setCoverUri(mangaCoverUrl);
+            mangaList.add(manga);
+        }
+
+        return mangaList;
     }
 
     @Override
@@ -178,7 +206,30 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
-        return false;
+        final JSB jsb = initJSContext();
+        final Scriptable scope = jsb.scope;
+        final Context context = jsb.context;
+        Function queryRepositoryFn = (Function) scope.get("queryForMangaDescription", scope);
+        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        if (callResult == null) {
+            return false;
+        }
+        if (!(callResult instanceof NativeObject)) {
+            throw new RepositoryException("Function queryForMangaDescription must return an object");
+        }
+        NativeObject nativeObject = (NativeObject) callResult;
+
+        String mangaDescription = getString(nativeObject, "mangaDescription");
+        String mangaAuthor = getString(nativeObject, "mangaAuthor");
+        String mangaGenres = getString(nativeObject, "mangaGenres");
+        Integer chaptersQuantity = getInteger(nativeObject, "chaptersQuantity");
+
+        manga.setDescription(mangaDescription);
+        manga.setGenres(mangaGenres);
+        manga.setAuthor(mangaAuthor);
+        manga.setChaptersQuantity(chaptersQuantity);
+
+        return true;
     }
 
     @Override
@@ -218,4 +269,104 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
     public RequestPreprocessor getRequestPreprocessor() {
         return null;
     }
+
+    private static String getString(final NativeObject object, final String name) throws RepositoryException {
+        Object obj = object.get(name);
+        if (obj == null || (!(obj instanceof CharSequence))) {
+            throw new RepositoryException("Object must contain string value '" + name + "'");
+        }
+        return obj.toString();
+    }
+
+    private static Integer getInteger(final NativeObject object, final String name) throws RepositoryException {
+        Object obj = object.get(name);
+        if (obj == null) {
+            throw new RepositoryException("Object must contain number value '" + name + "'");
+        }
+
+        if (obj instanceof CharSequence) {
+            String num = obj.toString();
+            try {
+                return Integer.parseInt(num);
+            } catch (NumberFormatException e) {
+                throw new RepositoryException("Object must contain number value '" + name + "': " + e.getMessage());
+            }
+        }
+
+        if (obj instanceof Number) {
+            return ((Number) obj).intValue();
+        }
+        throw new RepositoryException("Object must contain number value '" + name + "'");
+    }
+
+
+    public static class DocHelper {
+
+        private Document document;
+
+        public DocHelper(final Document document) {
+            this.document = document;
+        }
+
+        public DocHelper(final String content) {
+            this.document = Utils.toDocument(content);
+
+        }
+
+        public ElementsHelper select(final String cssQuery) {
+            return new ElementsHelper(this.document.select(cssQuery));
+        }
+
+    }
+
+    public static class ElementsHelper {
+
+        private Elements elements;
+
+        public ElementsHelper(final Elements elements) {
+            this.elements = elements;
+        }
+
+        public ElementsHelper select(final String cssQuery) {
+            return new ElementsHelper(this.elements.select(cssQuery));
+        }
+
+        public ElementsHelper get(final int i) {
+            return new ElementsHelper(wrapElement(this.elements.get(i)));
+        }
+
+        public String text() {
+            return this.elements.text();
+        }
+
+        public String attr(final String attr) {
+            return this.elements.attr(attr);
+        }
+
+        public int size() {
+            return this.elements.size();
+        }
+
+        public int childrenSize() {
+            if (this.elements.size() == 1) {
+                return elements.get(0).childNodeSize();
+            }
+            return 0;
+        }
+
+        public ElementsHelper getChild(final int i) {
+            if (this.elements.size() == 1) {
+                return new ElementsHelper(wrapElement(elements.get(0).child(i)));
+            }
+            return null;
+        }
+
+        private static Elements wrapElement(final Element element) {
+            ArrayList<Element> singleElementList = new ArrayList<>(1);
+            singleElementList.add(element);
+            return new Elements(singleElementList);
+        }
+
+    }
+
 }
