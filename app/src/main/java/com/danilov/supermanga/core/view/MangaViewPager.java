@@ -82,7 +82,8 @@ public class MangaViewPager extends CompatPager {
 
         @Override
         public boolean isLargePicture() {
-            return iv.isLargePicture();
+//            return iv.isLargePicture();
+            return true;
         }
 
         @Override

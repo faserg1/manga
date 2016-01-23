@@ -159,7 +159,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
         for (Object object : result) {
             if (!(object instanceof NativeObject)) {
-                throw new RepositoryException("Every item of array must be JS an object");
+                throw new RepositoryException("Every item of array must be an object");
             }
             NativeObject nativeObject = (NativeObject) object;
             String mangaTitle = getString(nativeObject, "mangaTitle");
@@ -190,7 +190,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
         for (Object object : result) {
             if (!(object instanceof NativeObject)) {
-                throw new RepositoryException("Every item of array must be JS an object");
+                throw new RepositoryException("Every item of array must be an object");
             }
             NativeObject nativeObject = (NativeObject) object;
             String mangaTitle = getString(nativeObject, "mangaTitle");
@@ -239,12 +239,61 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        return false;
+        final JSB jsb = initJSContext();
+        final Scriptable scope = jsb.scope;
+        final Context context = jsb.context;
+        Function queryRepositoryFn = (Function) scope.get("queryForChapters", scope);
+        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        if (callResult == null) {
+            return false;
+        }
+
+        if (!(callResult instanceof NativeArray)) {
+            throw new RepositoryException("Function queryRepository must return an array of objects");
+        }
+        NativeArray result = (NativeArray) callResult;
+        List<MangaChapter> mangaChapters = new ArrayList<>(result.size());
+        int i = 0;
+        for (Object object : result) {
+            if (!(object instanceof NativeObject)) {
+                throw new RepositoryException("Every item of array must be an object");
+            }
+            NativeObject nativeObject = (NativeObject) object;
+            String chapterTitle = getString(nativeObject, "chapterTitle");
+            String chapterUrl = getString(nativeObject, "chapterUrl");
+
+            MangaChapter mangaChapter = new MangaChapter(chapterTitle, i, chapterUrl);
+            mangaChapters.add(mangaChapter);
+            i++;
+        }
+        manga.setChaptersQuantity(mangaChapters.size());
+        manga.setChapters(mangaChapters);
+        return true;
     }
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
-        return null;
+        final JSB jsb = initJSContext();
+        final Scriptable scope = jsb.scope;
+        final Context context = jsb.context;
+        Function queryRepositoryFn = (Function) scope.get("getChapterImages", scope);
+        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{chapter.getUri()});
+        if (callResult == null) {
+            return null;
+        }
+
+        if (!(callResult instanceof NativeArray)) {
+            throw new RepositoryException("Function getChapterImages must return an array of strings");
+        }
+        NativeArray result = (NativeArray) callResult;
+        List<String> chapterImages = new ArrayList<>(result.size());
+        for (Object object : result) {
+            if (!(object instanceof CharSequence)) {
+                throw new RepositoryException("Every item of array must be a string");
+            }
+            chapterImages.add(object.toString());
+        }
+        return chapterImages;
     }
 
     @Override
@@ -357,6 +406,13 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 return elements.get(0).childNodeSize();
             }
             return 0;
+        }
+
+        public ElementsHelper parent() {
+            if (this.elements.size() == 1) {
+                return new ElementsHelper(wrapElement(elements.get(0).parent()));
+            }
+            return null;
         }
 
         public ElementsHelper getChild(final int i) {
