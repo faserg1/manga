@@ -164,7 +164,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             NativeObject nativeObject = (NativeObject) object;
             String mangaTitle = getString(nativeObject, "mangaTitle");
             String mangaUrl = getString(nativeObject, "mangaUrl");
-            MangaSuggestion mangaSuggestion = new MangaSuggestion(mangaTitle, mangaUrl, DefaultRepository.MANGACHAN);
+            MangaSuggestion mangaSuggestion = new MangaSuggestion(mangaTitle, mangaUrl, repository);
             mangaSuggestions.add(mangaSuggestion);
         }
 
@@ -196,7 +196,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             String mangaTitle = getString(nativeObject, "mangaTitle");
             String mangaUrl = getString(nativeObject, "mangaUrl");
             String mangaCoverUrl = getString(nativeObject, "mangaCover");
-            Manga manga = new Manga(mangaTitle, mangaUrl, DefaultRepository.MANGACHAN);
+            Manga manga = new Manga(mangaTitle, mangaUrl, repository);
             manga.setCoverUri(mangaCoverUrl);
             mangaList.add(manga);
         }

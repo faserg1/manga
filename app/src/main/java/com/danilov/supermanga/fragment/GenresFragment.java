@@ -19,7 +19,9 @@ import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,7 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
 
     private GridView genresView;
 
-    private RepositoryEngine.DefaultRepository repository;
+    private RepositoryEngine.Repository repository;
 
     private RepositoryEngine engine = null;
 
@@ -53,7 +55,10 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             String repositoryString = getArguments().getString(Constants.REPOSITORY_KEY);
-            repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+
+            RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+            repository = repositoryHolder.valueOf(repositoryString);
+
             engine = repository.getEngine();
         } else {
             //why I do not use getString with default value? Because it's API 12 :(
@@ -61,7 +66,8 @@ public class GenresFragment extends BaseFragment implements AdapterView.OnItemCl
             if (repositoryString == null) {
                 repository = RepositoryEngine.DefaultRepository.READMANGA;
             } else {
-                repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+                RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+                repository = repositoryHolder.valueOf(repositoryString);
             }
             engine = repository.getEngine();
         }

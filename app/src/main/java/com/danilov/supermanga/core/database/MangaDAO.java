@@ -10,6 +10,8 @@ import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -115,7 +117,7 @@ public class MangaDAO {
         return mangaList;
     }
 
-    public synchronized Manga getByLinkAndRepository(final String inetUri, final RepositoryEngine.DefaultRepository repository) throws DatabaseAccessException {
+    public synchronized Manga getByLinkAndRepository(final String inetUri, final RepositoryEngine.Repository repository) throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {inetUri, repository.toString()};
@@ -366,7 +368,11 @@ public class MangaDAO {
         String title = cursor.getString(titleIndex);
         String author = cursor.getString(authorIndex);
         String description = cursor.getString(descriptionIndex);
-        RepositoryEngine.DefaultRepository repository = RepositoryEngine.DefaultRepository.valueOf(cursor.getString(repositoryIndex));
+
+
+        RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+        RepositoryEngine.Repository repository = repositoryHolder.valueOf(cursor.getString(repositoryIndex));
+
         String uri = cursor.getString(inetUriIndex);
         String coverUri = cursor.getString(coverUriIndex);
         String genre = cursor.getString(genreIndex);

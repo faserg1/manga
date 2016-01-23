@@ -68,8 +68,8 @@ function __getChapters(doc) {
 }
 
 function queryForMangaDescription(mangaUrl) {
-    var doc = $.parseDoc($.get(url));
-    var description = doc.select(".summary.less").text();
+    var doc = $.parseDoc($.get(mangaUrl));
+    var description = doc.select(".summary").text();
     var titleBlocks = doc.select("#title > table td");
     var mangaAuthor = titleBlocks.get(1).text();
     var genres = titleBlocks.get(3).text();
@@ -88,7 +88,7 @@ function queryMangaForChaptersPROP() {
     var chapters = __getChapters(doc);
     for (var i = 0; i < chapters.size(); i++) {
         var chapter = chapters.get(i);
-        var chapter.text();
+        var chapterTitle = chapter.text();
     }
 }
 

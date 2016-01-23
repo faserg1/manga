@@ -32,8 +32,10 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,7 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     private SearchView searchView;
 
-    private RepositoryEngine.DefaultRepository repository;
+    private RepositoryEngine.Repository repository;
 
     private RepositoryEngine engine = null;
 
@@ -75,16 +77,19 @@ public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemC
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             String repositoryString = getArguments().getString(Constants.REPOSITORY_KEY);
-            repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+
+            RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+            repository = repositoryHolder.valueOf(repositoryString);
+
             engine = repository.getEngine();
-            /*TODO: remove*/ engine = new JSTestEngine(getActivity(), "", "");
         } else {
             //why I do not use getString with default value? Because it's API 12 :(
             String repositoryString = savedInstanceState.getString(Constants.REPOSITORY_KEY);
             if (repositoryString == null) {
                 repository = RepositoryEngine.DefaultRepository.READMANGA;
             } else {
-                repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+                RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+                repository = repositoryHolder.valueOf(repositoryString);
             }
             engine = repository.getEngine();
         }

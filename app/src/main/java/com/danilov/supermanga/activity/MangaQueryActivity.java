@@ -25,7 +25,9 @@ import com.danilov.supermanga.core.adapter.MangaListAdapter;
 import com.danilov.supermanga.core.adapter.PopupButtonClickListener;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.widget.RepositoryLoginView;
 import com.danilov.supermanga.core.widget.SlidingTabLayout;
 import com.danilov.supermanga.fragment.FiltersFragment;
@@ -47,7 +49,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     private GridView searchResultsView;
 
 
-    private RepositoryEngine.DefaultRepository repository;
+    private RepositoryEngine.Repository repository;
 
     private RepositoryEngine engine = null;
 
@@ -75,7 +77,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             String repositoryString = getIntent().getStringExtra(Constants.REPOSITORY_KEY);
-            repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+            RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+            repository = repositoryHolder.valueOf(repositoryString);
             engine = repository.getEngine();
         } else {
             //why I do not use getString with default value? Because it's API 12 :(
@@ -83,7 +86,8 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
             if (repositoryString == null) {
                 repository = RepositoryEngine.DefaultRepository.READMANGA;
             } else {
-                repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
+                RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+                repository = repositoryHolder.valueOf(repositoryString);
             }
             engine = repository.getEngine();
         }

@@ -5,6 +5,8 @@ import android.os.Environment;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -304,7 +306,8 @@ public class DownloadsDumpService {
 
         int id = jsonObject.getInt(ID);
 
-        RepositoryEngine.DefaultRepository repository = RepositoryEngine.DefaultRepository.valueOf(jsonObject.getString(REPOSITORY));
+        RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+        RepositoryEngine.Repository repository = repositoryHolder.valueOf(jsonObject.getString(REPOSITORY));
 
         String title = jsonObject.getString(TITLE);
 

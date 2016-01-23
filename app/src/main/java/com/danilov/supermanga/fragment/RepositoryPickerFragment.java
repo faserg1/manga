@@ -21,7 +21,9 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaQueryActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,7 @@ import java.util.List;
  */
 public class RepositoryPickerFragment extends BaseFragment {
 
-    private RepositoryEngine.DefaultRepository[] repositories;
+    private RepositoryEngine.Repository[] repositories;
     private GridView repositoriesView;
 
     private View addRepositoryWrapper;
@@ -74,12 +76,14 @@ public class RepositoryPickerFragment extends BaseFragment {
 
         String[] addedRepositoriesStringArray = addedRepositoriesString.split(",");
 
-        repositories = RepositoryEngine.DefaultRepository.getBySettings(addedRepositoriesStringArray);
+        RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+//        repositories = RepositoryEngine.DefaultRepository.getBySettings(addedRepositoriesStringArray);
+        repositories = repositoryHolder.getRepositories();;
         repositoriesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-                RepositoryEngine.DefaultRepository repository = repositories[position];
+                RepositoryEngine.Repository repository = repositories[position];
                 String repoString = repository.toString();
                 Intent intent = new Intent(getActivity(), MangaQueryActivity.class);
                 intent.putExtra(Constants.REPOSITORY_KEY, repoString);
@@ -88,10 +92,12 @@ public class RepositoryPickerFragment extends BaseFragment {
 
         });
 
-        RepositoryEngine.DefaultRepository[] _repositories = RepositoryEngine.DefaultRepository.getNotAdded(addedRepositoriesStringArray);
+
+        RepositoryEngine.Repository[] _repositories = RepositoryEngine.DefaultRepository.getNotAdded(addedRepositoriesStringArray);
+
         final List<String> names = new ArrayList<>();
         names.add(getString(R.string.popular_sources));
-        for (RepositoryEngine.DefaultRepository repository : _repositories) {
+        for (RepositoryEngine.Repository repository : _repositories) {
             names.add(repository.getName());
         }
         RepoSuggestAdapter adapter = new RepoSuggestAdapter(applicationContext, R.layout.repository_dropdown_item, names);
@@ -230,9 +236,9 @@ public class RepositoryPickerFragment extends BaseFragment {
         }
     }
 
-    private class RepoAdapter extends ArrayAdapter<RepositoryEngine.DefaultRepository> {
+    private class RepoAdapter extends ArrayAdapter<RepositoryEngine.Repository> {
 
-        private RepositoryEngine.DefaultRepository[] objects;
+        private RepositoryEngine.Repository[] objects;
         private int resourceId;
         private Context context;
 
@@ -241,7 +247,7 @@ public class RepositoryPickerFragment extends BaseFragment {
             return objects.length;
         }
 
-        public RepoAdapter(final Context context, final int resource, final RepositoryEngine.DefaultRepository[] objects) {
+        public RepoAdapter(final Context context, final int resource, final RepositoryEngine.Repository[] objects) {
             super(context, resource, objects);
             this.objects = objects;
             this.resourceId = resource;
@@ -270,7 +276,7 @@ public class RepositoryPickerFragment extends BaseFragment {
                 holder.text = text;
                 holder.icon = icon;
             }
-            RepositoryEngine.DefaultRepository repository = objects[position];
+            RepositoryEngine.Repository repository = objects[position];
             text.setText(repository.getName());
             icon.setImageResource(repository.getCountryIconId());
             return view;

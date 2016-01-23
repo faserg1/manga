@@ -11,9 +11,9 @@ public class MangaSuggestion {
 
     private String title;
 
-    private RepositoryEngine.DefaultRepository repository;
+    private RepositoryEngine.Repository repository;
 
-    public MangaSuggestion(final String title, final String url, final RepositoryEngine.DefaultRepository repository) {
+    public MangaSuggestion(final String title, final String url, final RepositoryEngine.Repository repository) {
         this.title = title;
         this.url = url;
         this.repository = repository;
@@ -35,7 +35,7 @@ public class MangaSuggestion {
         this.title = title;
     }
 
-    public RepositoryEngine.DefaultRepository getRepository() {
+    public RepositoryEngine.Repository getRepository() {
         return repository;
     }
 

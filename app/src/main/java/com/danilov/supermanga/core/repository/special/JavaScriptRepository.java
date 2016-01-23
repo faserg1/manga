@@ -37,4 +37,8 @@ public class JavaScriptRepository implements RepositoryEngine.Repository {
         return javaScriptEngine;
     }
 
+    @Override
+    public String toString() {
+        return repoName;
+    }
 }

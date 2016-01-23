@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.util.Pair;
+import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.List;
 
@@ -27,11 +29,11 @@ public class Manga implements Parcelable {
 
     private String genres;
 
-    //TODO: add genre (strings) and type (MANGA, MANHWA)
+    //TODO: add type (MANGA OR MANHWA)
 
-    private RepositoryEngine.DefaultRepository repository;
+    private RepositoryEngine.Repository repository;
 
-    public Manga(final String title, final String uri, final RepositoryEngine.DefaultRepository repository) {
+    public Manga(final String title, final String uri, final RepositoryEngine.Repository repository) {
         this.title = title;
         this.uri = uri;
         this.repository = repository;
@@ -201,7 +203,7 @@ public class Manga implements Parcelable {
         return chapters.get(pos);
     }
 
-    public RepositoryEngine.DefaultRepository getRepository() {
+    public RepositoryEngine.Repository getRepository() {
         return repository;
     }
 
@@ -228,7 +230,10 @@ public class Manga implements Parcelable {
         coverUri = parcel.readString();
         description = parcel.readString();
         chaptersQuantity = parcel.readInt();
-        repository = RepositoryEngine.DefaultRepository.valueOf(parcel.readString());
+
+        RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
+        repository = repositoryHolder.valueOf(parcel.readString());
+
         id = parcel.readInt();
         isFavorite = parcel.readInt() == 1;
         genres = parcel.readString();

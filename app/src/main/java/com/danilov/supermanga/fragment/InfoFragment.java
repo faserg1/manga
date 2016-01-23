@@ -512,8 +512,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private void openInBrowser() {
         String repoUri = manga.getRepository().getEngine().getBaseUri();
         String uri = manga.getUri();
-        if (!uri.contains(repoUri)) {
-            uri = repoUri + uri;
+        if (repoUri != null) { //for js engines
+            if (!uri.contains(repoUri)) {
+                uri = repoUri + uri;
+            }
         }
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(uri));

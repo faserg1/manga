@@ -23,6 +23,7 @@ import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.receiver.AlarmReceiver;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
 import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.service.LocalImageManager;
@@ -73,6 +74,10 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
         cacheDirectoryManager.trimCacheIfNeeded();
+
+        RepositoryHolder repositoryHolder = new RepositoryHolder();
+        repositoryHolder.init();
+        ServiceContainer.addService(repositoryHolder);
 
 //        AccountManager accountManager = AccountManager.get(this);
 //        Account[] accounts = accountManager.getAccounts();
