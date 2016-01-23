@@ -38,9 +38,6 @@ import java.util.List;
 /**
  * Created by Semyon on 21.01.2016.
  *
- * Судя по всему придётся сделать отдельный интерфейс Repository
- * а текущий enum Repository нужно будет переименовать в DefaultRepository
- * todo: добавить Repository в конструктор
  */
 public abstract class JavaScriptEngine implements RepositoryEngine {
 
