@@ -175,7 +175,7 @@ function getChapterImages(chapterLink) {
     var imagesSize = select.childrenSize();
     var links = [];
     for (var i = 1; i < imagesSize; i++) {
-        var imagePageLink = chapterLink + i + ".html"
+        var imagePageLink = chapterLink + i + ".html";
         var imageDoc = $.parseDoc($.get(imagePageLink));
         var link = imageDoc.select("#image").attr("src");
         links.push(link);
