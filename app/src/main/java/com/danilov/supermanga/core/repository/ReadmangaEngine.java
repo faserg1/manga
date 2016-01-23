@@ -257,7 +257,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                         continue;
                     }
                     String link = data.getString(linkElementName);
-                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.READMANGA);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, DefaultRepository.READMANGA);
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
@@ -312,7 +312,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                     coverUri = coverUri.replace("_p.png", ".png");
                 }
             }
-            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.READMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
@@ -362,7 +362,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                     coverUri = coverUri.replace("_p.png", ".png");
                 }
             }
-            Manga manga = new Manga(mangaName, uri, Repository.READMANGA);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.READMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }

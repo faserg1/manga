@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,13 +95,13 @@ public class AddLocalMangaFragment extends BaseFragment implements View.OnClickL
         String title = mangaTitle.getText().toString();
         String description = mangaDescription.getText().toString();
         String mangaPath = this.mangaPath.getText().toString();
-        LocalManga localManga = new LocalManga(title, mangaPath, RepositoryEngine.Repository.OFFLINE);
+        LocalManga localManga = new LocalManga(title, mangaPath, RepositoryEngine.DefaultRepository.OFFLINE);
         localManga.setLocalUri(mangaPath);
         localManga.setDescription(description);
         localManga.setAuthor("");
         localManga.setGenres("");
         localManga.setFavorite(true);
-        OfflineEngine engine = (OfflineEngine) RepositoryEngine.Repository.OFFLINE.getEngine();
+        OfflineEngine engine = (OfflineEngine) RepositoryEngine.DefaultRepository.OFFLINE.getEngine();
         boolean success = false;
         try {
             success = engine.queryForChapters(localManga);

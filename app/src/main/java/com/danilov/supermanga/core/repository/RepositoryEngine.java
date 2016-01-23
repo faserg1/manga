@@ -76,13 +76,18 @@ public interface RepositoryEngine {
     @Nullable
     RequestPreprocessor getRequestPreprocessor();
 
-//    public interface Repository {
-//
-//    }
+    interface Repository {
+
+        int getCountryIconId();
+
+        String getName();
+
+        RepositoryEngine getEngine();
+
+    }
 
     //enum of names containing matched engines
-    enum Repository {
-//    enum DefaultRepository {
+    enum DefaultRepository implements Repository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
         ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
@@ -92,45 +97,52 @@ public interface RepositoryEngine {
         KISSMANGA(new KissmangaEngine(), "KissManga (EN)", true, R.drawable.ic_english),
         OFFLINE(new OfflineEngine(), "", false, -1);
 
-        private static Repository[] withoutOffline = {READMANGA, ADULTMANGA, MANGACHAN, KISSMANGA, ALLHENTAI, MANGAREADERNET};
+        private static DefaultRepository[] withoutOffline = {READMANGA, ADULTMANGA, MANGACHAN, KISSMANGA, ALLHENTAI, MANGAREADERNET};
 
         private RepositoryEngine engine;
         private String name;
         private boolean isAdult;
         private int countryIconId;
 
-        Repository(final RepositoryEngine engine, final String name, final boolean isAdult, final int countryIconId) {
+        DefaultRepository(final RepositoryEngine engine, final String name, final boolean isAdult, final int countryIconId) {
             this.engine = engine;
             this.name = name;
             this.isAdult = isAdult;
             this.countryIconId = countryIconId;
         }
 
+        @Override
         public int getCountryIconId() {
             return countryIconId;
         }
 
+        @Override
         public String getName() {
             return name;
         }
 
-        public static Repository[] getWithoutOffline() {
+        @Override
+        public RepositoryEngine getEngine() {
+            return engine;
+        }
+
+        public static DefaultRepository[] getWithoutOffline() {
             return withoutOffline;
         }
 
-        public static Repository[] getWithoutAdult() {
-            List<Repository> repositories = new LinkedList<>();
-            for (Repository repository : withoutOffline) {
+        public static DefaultRepository[] getWithoutAdult() {
+            List<DefaultRepository> repositories = new LinkedList<>();
+            for (DefaultRepository repository : withoutOffline) {
                 if (!repository.isAdult) {
                     repositories.add(repository);
                 }
             }
-            return repositories.toArray(new Repository[repositories.size()]);
+            return repositories.toArray(new DefaultRepository[repositories.size()]);
         }
 
-        public static Repository[] getBySettings(final String[] names) {
-            List<Repository> repositories = new LinkedList<>();
-            for (Repository repository : withoutOffline) {
+        public static DefaultRepository[] getBySettings(final String[] names) {
+            List<DefaultRepository> repositories = new LinkedList<>();
+            for (DefaultRepository repository : withoutOffline) {
                 if (!repository.isAdult) {
                     repositories.add(repository);
                     continue;
@@ -142,12 +154,12 @@ public interface RepositoryEngine {
                     }
                 }
             }
-            return repositories.toArray(new Repository[repositories.size()]);
+            return repositories.toArray(new DefaultRepository[repositories.size()]);
         }
 
-        public static Repository[] getNotAdded(final String[] names) {
-            List<Repository> repositories = new LinkedList<>();
-            for (Repository repository : withoutOffline) {
+        public static DefaultRepository[] getNotAdded(final String[] names) {
+            List<DefaultRepository> repositories = new LinkedList<>();
+            for (DefaultRepository repository : withoutOffline) {
                 if (!repository.isAdult) {
                     continue;
                 }
@@ -161,11 +173,7 @@ public interface RepositoryEngine {
                     repositories.add(repository);
                 }
             }
-            return repositories.toArray(new Repository[repositories.size()]);
-        }
-
-        public RepositoryEngine getEngine() {
-            return engine;
+            return repositories.toArray(new DefaultRepository[repositories.size()]);
         }
 
     }

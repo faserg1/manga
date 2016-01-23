@@ -9,7 +9,6 @@ import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Pair;
 import com.danilov.supermanga.core.view.CompatPager;
-import com.danilov.supermanga.core.view.MangaViewPager;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     private LocalManga manga;
 
-    private RepositoryEngine engine = RepositoryEngine.Repository.OFFLINE.getEngine();
+    private RepositoryEngine engine = RepositoryEngine.DefaultRepository.OFFLINE.getEngine();
 
     private List<String> uris = null;
 

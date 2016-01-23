@@ -29,9 +29,9 @@ public class Manga implements Parcelable {
 
     //TODO: add genre (strings) and type (MANGA, MANHWA)
 
-    private RepositoryEngine.Repository repository;
+    private RepositoryEngine.DefaultRepository repository;
 
-    public Manga(final String title, final String uri, final RepositoryEngine.Repository repository) {
+    public Manga(final String title, final String uri, final RepositoryEngine.DefaultRepository repository) {
         this.title = title;
         this.uri = uri;
         this.repository = repository;
@@ -201,7 +201,7 @@ public class Manga implements Parcelable {
         return chapters.get(pos);
     }
 
-    public RepositoryEngine.Repository getRepository() {
+    public RepositoryEngine.DefaultRepository getRepository() {
         return repository;
     }
 
@@ -228,7 +228,7 @@ public class Manga implements Parcelable {
         coverUri = parcel.readString();
         description = parcel.readString();
         chaptersQuantity = parcel.readInt();
-        repository = RepositoryEngine.Repository.valueOf(parcel.readString());
+        repository = RepositoryEngine.DefaultRepository.valueOf(parcel.readString());
         id = parcel.readInt();
         isFavorite = parcel.readInt() == 1;
         genres = parcel.readString();

@@ -20,13 +20,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.mozilla.javascript.ConsString;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
-import org.mozilla.javascript.FunctionObject;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -34,7 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,10 +46,19 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
     private String name;
     private String filePath;
+    private Repository repository;
 
     public JavaScriptEngine(final String name, final String filePath) {
         this.name = name;
         this.filePath = filePath;
+    }
+
+    public void setRepository(final Repository repository) {
+        this.repository = repository;
+    }
+
+    public Repository getRepository() {
+        return repository;
     }
 
     public static class UsefulObject {
@@ -159,7 +164,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             NativeObject nativeObject = (NativeObject) object;
             String mangaTitle = getString(nativeObject, "mangaTitle");
             String mangaUrl = getString(nativeObject, "mangaUrl");
-            MangaSuggestion mangaSuggestion = new MangaSuggestion(mangaTitle, mangaUrl, Repository.MANGACHAN);
+            MangaSuggestion mangaSuggestion = new MangaSuggestion(mangaTitle, mangaUrl, DefaultRepository.MANGACHAN);
             mangaSuggestions.add(mangaSuggestion);
         }
 
@@ -191,7 +196,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             String mangaTitle = getString(nativeObject, "mangaTitle");
             String mangaUrl = getString(nativeObject, "mangaUrl");
             String mangaCoverUrl = getString(nativeObject, "mangaCover");
-            Manga manga = new Manga(mangaTitle, mangaUrl, Repository.MANGACHAN);
+            Manga manga = new Manga(mangaTitle, mangaUrl, DefaultRepository.MANGACHAN);
             manga.setCoverUri(mangaCoverUrl);
             mangaList.add(manga);
         }

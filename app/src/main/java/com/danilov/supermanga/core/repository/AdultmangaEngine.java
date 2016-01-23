@@ -259,7 +259,7 @@ public class AdultmangaEngine implements RepositoryEngine {
                         continue;
                     }
                     String link = data.getString(linkElementName);
-                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.ADULTMANGA);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, DefaultRepository.ADULTMANGA);
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
@@ -314,7 +314,7 @@ public class AdultmangaEngine implements RepositoryEngine {
                     coverUri = coverUri.replace("_p.png", ".png");
                 }
             }
-            Manga manga = new Manga(mangaName, uri, Repository.ADULTMANGA);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.ADULTMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }
@@ -364,7 +364,7 @@ public class AdultmangaEngine implements RepositoryEngine {
                     coverUri = coverUri.replace("_p.png", ".png");
                 }
             }
-            Manga manga = new Manga(mangaName, uri, Repository.ADULTMANGA);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.ADULTMANGA);
             manga.setCoverUri(coverUri);
             mangaList.add(manga);
         }

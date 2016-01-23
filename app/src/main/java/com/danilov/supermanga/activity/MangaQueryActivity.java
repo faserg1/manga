@@ -47,7 +47,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
     private GridView searchResultsView;
 
 
-    private RepositoryEngine.Repository repository;
+    private RepositoryEngine.DefaultRepository repository;
 
     private RepositoryEngine engine = null;
 
@@ -75,15 +75,15 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             String repositoryString = getIntent().getStringExtra(Constants.REPOSITORY_KEY);
-            repository = RepositoryEngine.Repository.valueOf(repositoryString);
+            repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
             engine = repository.getEngine();
         } else {
             //why I do not use getString with default value? Because it's API 12 :(
             String repositoryString = savedInstanceState.getString(Constants.REPOSITORY_KEY);
             if (repositoryString == null) {
-                repository = RepositoryEngine.Repository.READMANGA;
+                repository = RepositoryEngine.DefaultRepository.READMANGA;
             } else {
-                repository = RepositoryEngine.Repository.valueOf(repositoryString);
+                repository = RepositoryEngine.DefaultRepository.valueOf(repositoryString);
             }
             engine = repository.getEngine();
         }

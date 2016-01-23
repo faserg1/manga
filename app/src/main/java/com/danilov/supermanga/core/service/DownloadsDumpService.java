@@ -304,7 +304,7 @@ public class DownloadsDumpService {
 
         int id = jsonObject.getInt(ID);
 
-        RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(jsonObject.getString(REPOSITORY));
+        RepositoryEngine.DefaultRepository repository = RepositoryEngine.DefaultRepository.valueOf(jsonObject.getString(REPOSITORY));
 
         String title = jsonObject.getString(TITLE);
 

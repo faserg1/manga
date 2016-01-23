@@ -100,7 +100,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
                     link = link.substring(idx + 4);
                 }
                 String title = m.group(2);
-                MangaSuggestion suggestion = new MangaSuggestion(title, link, Repository.KISSMANGA);
+                MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.KISSMANGA);
                 mangaSuggestions.add(suggestion);
             }
         } catch (UnsupportedEncodingException e) {
@@ -141,7 +141,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             String responseString = IoUtils.convertBytesToString(result);
 
             if (currentUrl.contains("kissmanga.com/Manga")) {
-                Manga manga = new Manga("", currentUrl.replace(baseUri, ""), Repository.KISSMANGA);
+                Manga manga = new Manga("", currentUrl.replace(baseUri, ""), DefaultRepository.KISSMANGA);
                 parseMangaDescriptionResponse(manga, Utils.toDocument(responseString));
                 if (!"".equals(manga.getTitle())) {
                     mangaList = new ArrayList<>(1);
@@ -191,7 +191,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
                 if (matcher.find()) {
                     coverUri = matcher.group(1);
                 }
-                Manga manga = new Manga(title, url, Repository.KISSMANGA);
+                Manga manga = new Manga(title, url, DefaultRepository.KISSMANGA);
                 manga.setCoverUri(coverUri);
                 mangas.add(manga);
             }

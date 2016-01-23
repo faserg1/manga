@@ -86,7 +86,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
                 if (content.length > 5) {
                     String title = content[0];
                     String link = content[4];
-                    MangaSuggestion suggestion = new MangaSuggestion(title, link, Repository.MANGAREADERNET);
+                    MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.MANGAREADERNET);
                     mangaSuggestions.add(suggestion);
                 }
             }
@@ -286,7 +286,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             String style = backgroundHolder.attr("style");
             String imageUrl = style.replace("background-image:url('", "").replace("')", "");
 
-            Manga manga = new Manga(title, url, Repository.MANGAREADERNET);
+            Manga manga = new Manga(title, url, DefaultRepository.MANGAREADERNET);
             manga.setCoverUri(imageUrl);
             mangas.add(manga);
         }

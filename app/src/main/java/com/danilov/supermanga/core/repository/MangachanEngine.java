@@ -14,7 +14,6 @@ import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
-import com.danilov.supermanga.core.repository.special.AuthorizableEngine;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
@@ -25,7 +24,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.jsoup.nodes.Document;
@@ -84,7 +82,7 @@ public class MangachanEngine implements RepositoryEngine {
             while (m.find()) {
                 String link = m.group(1);
                 String title = m.group(2);
-                MangaSuggestion suggestion = new MangaSuggestion(title, link, Repository.MANGACHAN);
+                MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.MANGACHAN);
                 mangaSuggestions.add(suggestion);
             }
         } catch (UnsupportedEncodingException e) {
@@ -133,7 +131,7 @@ public class MangachanEngine implements RepositoryEngine {
             Element backgroundHolder = mangaResult.getElementsByClass("manga_images").get(0);
             String imageUrl = baseUri + backgroundHolder.getElementsByTag("img").attr("src");
 
-            Manga manga = new Manga(title, url, Repository.MANGACHAN);
+            Manga manga = new Manga(title, url, DefaultRepository.MANGACHAN);
             manga.setCoverUri(imageUrl);
             mangas.add(manga);
         }

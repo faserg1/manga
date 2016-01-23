@@ -241,7 +241,7 @@ public class AllHentaiEngine implements RepositoryEngine {
                 }
                 try {
                     String link = suggestion.getString(linkElementName);
-                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, Repository.ALLHENTAI);
+                    MangaSuggestion mangaSuggestion = new MangaSuggestion(value, link, DefaultRepository.ALLHENTAI);
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
@@ -275,7 +275,7 @@ public class AllHentaiEngine implements RepositoryEngine {
             String uri = mangaLink.attr("href");
             mangaLink.getElementsByTag("sup").remove();
             String mangaName = String.valueOf(mangaLink.text());
-            Manga manga = new Manga(mangaName, uri, Repository.ALLHENTAI);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.ALLHENTAI);
             if (parent.children().size() > 1) {
                 Element screenElement = parent.getElementsByClass(mangaCoverClass).get(0);
                 String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;
@@ -299,7 +299,7 @@ public class AllHentaiEngine implements RepositoryEngine {
             String uri = mangaLink.attr("href");
             mangaLink.getElementsByTag("sup").remove();
             String mangaName = String.valueOf(mangaLink.text());
-            Manga manga = new Manga(mangaName, uri, Repository.ALLHENTAI);
+            Manga manga = new Manga(mangaName, uri, DefaultRepository.ALLHENTAI);
             if (parent.children().size() > 1) {
                 Element screenElement = parent.getElementsByClass(mangaCoverClass).first();
                 String coverUri = screenElement != null ? screenElement.attr(mangaCoverLinkAttrName) : null;

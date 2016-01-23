@@ -13,7 +13,7 @@ public class LocalManga extends Manga {
 
     private String localUri;
 
-    public LocalManga(final String title, final String uri, final RepositoryEngine.Repository repository) {
+    public LocalManga(final String title, final String uri, final RepositoryEngine.DefaultRepository repository) {
         super(title, uri, repository);
     }
 

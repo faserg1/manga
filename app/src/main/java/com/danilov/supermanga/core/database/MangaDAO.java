@@ -115,7 +115,7 @@ public class MangaDAO {
         return mangaList;
     }
 
-    public synchronized Manga getByLinkAndRepository(final String inetUri, final RepositoryEngine.Repository repository) throws DatabaseAccessException {
+    public synchronized Manga getByLinkAndRepository(final String inetUri, final RepositoryEngine.DefaultRepository repository) throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {inetUri, repository.toString()};
@@ -366,7 +366,7 @@ public class MangaDAO {
         String title = cursor.getString(titleIndex);
         String author = cursor.getString(authorIndex);
         String description = cursor.getString(descriptionIndex);
-        RepositoryEngine.Repository repository = RepositoryEngine.Repository.valueOf(cursor.getString(repositoryIndex));
+        RepositoryEngine.DefaultRepository repository = RepositoryEngine.DefaultRepository.valueOf(cursor.getString(repositoryIndex));
         String uri = cursor.getString(inetUriIndex);
         String coverUri = cursor.getString(coverUriIndex);
         String genre = cursor.getString(genreIndex);

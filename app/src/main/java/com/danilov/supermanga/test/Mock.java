@@ -20,13 +20,13 @@ import java.util.List;
 public class Mock {
 
     public static Manga getMockManga() {
-        return new Manga("Midori no Hibi", "/midori_s_days", RepositoryEngine.Repository.READMANGA);
+        return new Manga("Midori no Hibi", "/midori_s_days", RepositoryEngine.DefaultRepository.READMANGA);
     }
 
     public static Manga getOfflineMockManga() {
         File sdPath = Environment.getExternalStorageDirectory();
         String s = sdPath.getPath() + "/manga/download/fairytail";
-        Manga manga = new Manga("Fairy tail", s, RepositoryEngine.Repository.OFFLINE);
+        Manga manga = new Manga("Fairy tail", s, RepositoryEngine.DefaultRepository.OFFLINE);
         MangaChapter c1 = new MangaChapter("Uno", 0, s + "/0");
         MangaChapter c2 = new MangaChapter("Dos", 1, s + "/1");
         List<MangaChapter> chapters = new ArrayList<MangaChapter>();
@@ -40,7 +40,7 @@ public class Mock {
 
     public static Pair<Manga, UpdatesElement> getMockUpdate(final Context context) {
         UpdatesElement updatesElement = new UpdatesElement();
-        Manga manga = new Manga(context.getString(R.string.p_manga_new_chapters), "", RepositoryEngine.Repository.OFFLINE);
+        Manga manga = new Manga(context.getString(R.string.p_manga_new_chapters), "", RepositoryEngine.DefaultRepository.OFFLINE);
         updatesElement.setManga(manga);
         updatesElement.setDifference(25);
         return new Pair<>(manga, updatesElement);
