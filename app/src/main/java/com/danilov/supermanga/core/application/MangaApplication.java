@@ -24,7 +24,9 @@ import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.receiver.AlarmReceiver;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
+import com.danilov.supermanga.core.repository.special.JSCrud;
 import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
+import com.danilov.supermanga.core.repository.special.JavaScriptRepository;
 import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
@@ -37,6 +39,7 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.Collection;
 
 /**
  * Created by Semyon Danilov on 02.08.2014.
@@ -65,6 +68,7 @@ public class MangaApplication extends Application {
         HistoryDAO historyDAO = new HistoryDAO();
         UpdatesDAO updatesDAO = new UpdatesDAO();
         MangaDAO mangaDAO = new MangaDAO();
+        JSCrud jsCrud = new JSCrud();
         ServiceContainer.addService(cacheDirectoryManager);
         ServiceContainer.addService(httpBytesReader);
         ServiceContainer.addService(httpStreamReader);
@@ -73,11 +77,20 @@ public class MangaApplication extends Application {
         ServiceContainer.addService(historyDAO);
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
+        ServiceContainer.addService(jsCrud);
         cacheDirectoryManager.trimCacheIfNeeded();
 
         RepositoryHolder repositoryHolder = new RepositoryHolder();
         repositoryHolder.init();
         ServiceContainer.addService(repositoryHolder);
+        ///TEST
+        JavaScriptRepository repository = jsCrud.create(new JavaScriptRepository("/mnt/sdcard/mangafox.js", "MangaFOX"));
+        Collection<JavaScriptRepository> resultSet = jsCrud.select(jsCrud.getByNameSelector("MangaFOX"));
+        if (repository != null && resultSet != null) {
+
+        }
+        ///TEST
+
 
 //        AccountManager accountManager = AccountManager.get(this);
 //        Account[] accounts = accountManager.getAccounts();
@@ -97,7 +110,7 @@ public class MangaApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(final Thread thread, final Throwable ex) {
-                Log.e("JOPA", ex.getMessage());
+                Log.e("MangaFAIL", ex.getMessage());
                 ex.printStackTrace();
                 defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
             }

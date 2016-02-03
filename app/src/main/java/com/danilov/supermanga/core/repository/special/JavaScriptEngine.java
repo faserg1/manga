@@ -76,7 +76,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 return responseString;
             } catch (IOException e) {
                 loge(JavaTag, e.getMessage());
-                return "-1";
+                return "null";
             }
         }
 
@@ -120,18 +120,11 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         Context rhino = Context.enter();
         rhino.setOptimizationLevel(-1);
         Scriptable scope = rhino.initStandardObjects(); // инициализируем пространство исполнения
-
-//        try {
-//            rhino.evaluateReader(scope, new FileReader(filePath), name, 1, null);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         try {
             rhino.evaluateReader(scope, getScript(), name, 1, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         Object usefulJSObject = Context.javaToJS(new UsefulObject(), scope);
         ScriptableObject.putConstProperty(scope, "$", usefulJSObject);
         return new JSB(rhino, scope);
