@@ -95,4 +95,13 @@ public class JSCrud extends SimpleCrud<JavaScriptRepository> {
         };
     }
 
+    public Selector getAllSelector() {
+        return new Selector() {
+            @Override
+            public String formatQuery() {
+                return "SELECT * from " + getTableName() + ";";
+            }
+        };
+    }
+
 }

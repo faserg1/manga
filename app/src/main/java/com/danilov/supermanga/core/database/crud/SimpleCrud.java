@@ -64,7 +64,6 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
             //FIXME: THROW EXCEPTION
             return null;
         }
-        HashMap<String, MetaModel.Column> columns = getMetaModel().getColumns();
         ContentValues cv = objToCV(t, false);
         long id = database.insertOrThrow(getTableName(), null, cv);
         if (id == -1) {
@@ -98,7 +97,6 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
             //FIXME: THROW EXCEPTION
             return null;
         }
-        HashMap<String, MetaModel.Column> columns = getMetaModel().getColumns();
         ContentValues cv = objToCV(t, true);
         String selection = ID_NAME + " = ?";
         String[] selectionArgs = new String[] {"" + t.getId()};
@@ -171,7 +169,7 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
         Class<?> aClass = object.getClass();
         String getterName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
         try {
-            Method declaredMethod = aClass.getDeclaredMethod("get" + getterName, null);
+            Method declaredMethod = aClass.getDeclaredMethod("get" + getterName);
             return declaredMethod.invoke(object);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();

@@ -83,14 +83,6 @@ public class MangaApplication extends Application {
         RepositoryHolder repositoryHolder = new RepositoryHolder();
         repositoryHolder.init();
         ServiceContainer.addService(repositoryHolder);
-        ///TEST
-        JavaScriptRepository repository = jsCrud.create(new JavaScriptRepository("/mnt/sdcard/mangafox.js", "MangaFOX"));
-        Collection<JavaScriptRepository> resultSet = jsCrud.select(jsCrud.getByNameSelector("MangaFOX"));
-        if (repository != null && resultSet != null) {
-
-        }
-        ///TEST
-
 
 //        AccountManager accountManager = AccountManager.get(this);
 //        Account[] accounts = accountManager.getAccounts();

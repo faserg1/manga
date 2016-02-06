@@ -29,6 +29,7 @@ import com.danilov.supermanga.core.util.DrawerStub;
 import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.fragment.AddJSRepositoryFragment;
 import com.danilov.supermanga.fragment.AddLocalMangaFragment;
 import com.danilov.supermanga.fragment.DownloadManagerFragment;
 import com.danilov.supermanga.fragment.DownloadedMangaFragment;
@@ -375,7 +376,19 @@ public class MainActivity extends BaseToolbarActivity {
         }
     }
 
-    private void showRepositoryPickerFragment() {
+    @Override
+    public void onBackPressed() {
+        if (castedDrawerLayout.isDrawerOpen(drawerMenu)) {
+            castedDrawerLayout.closeDrawer(drawerMenu);
+            if (drawerToggle != null) {
+                drawerToggle.syncState();
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void showRepositoryPickerFragment() {
         RepositoryPickerFragment fragment = RepositoryPickerFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -385,6 +398,7 @@ public class MainActivity extends BaseToolbarActivity {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = false;
+        syncToggle();
     }
 
     public void showDownloadedMangaFragment() {
@@ -397,6 +411,7 @@ public class MainActivity extends BaseToolbarActivity {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = false;
+        syncToggle();
     }
 
     private void showFavoriteMangaFragment() {
@@ -457,6 +472,20 @@ public class MainActivity extends BaseToolbarActivity {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = false;
+        syncToggle();
+    }
+
+    public void showAddJSRepositoryFragment() {
+        Fragment fragment = AddJSRepositoryFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+        syncToggle();
     }
 
     private void showMainFragment() {

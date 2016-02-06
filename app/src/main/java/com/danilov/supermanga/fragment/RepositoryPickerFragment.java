@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaQueryActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
@@ -36,12 +40,6 @@ public class RepositoryPickerFragment extends BaseFragment {
     private RepositoryEngine.Repository[] repositories;
     private GridView repositoriesView;
 
-    private View addRepositoryWrapper;
-    private Button showAddForm;
-    private Button addRepo;
-    private TextView noSources;
-    private AutoCompleteTextView repositoryUrl;
-
     public static RepositoryPickerFragment newInstance() {
         return new RepositoryPickerFragment();
     }
@@ -53,13 +51,14 @@ public class RepositoryPickerFragment extends BaseFragment {
     }
 
     @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         repositoriesView = findViewById(R.id.repositories);
-        addRepositoryWrapper = findViewById(R.id.add_repository_wrapper);
-        showAddForm = findViewById(R.id.show_add_form);
-        addRepo = findViewById(R.id.add);
-        noSources = findViewById(R.id.no_sources);
-        repositoryUrl = findViewById(R.id.repository_url);
 
         SharedPreferences sharedPreferences = getDefaultSharedPreferences();
         String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
@@ -101,106 +100,9 @@ public class RepositoryPickerFragment extends BaseFragment {
             names.add(repository.getName());
         }
         RepoSuggestAdapter adapter = new RepoSuggestAdapter(applicationContext, R.layout.repository_dropdown_item, names);
-        repositoryUrl.setAdapter(adapter);
-        repositoryUrl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                repositoryUrl.showDropDown();
-            }
-        });
-        repositoryUrl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-                String selected = (String) adapterView.getItemAtPosition(i);
-                int pos = names.indexOf(selected);
-                if (pos == 0) {
-                    repositoryUrl.showDropDown();
-                    return;
-                } else {
-                    repositoryUrl.setText(selected);
-                }
-            }
-        });
-        repositoryUrl.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (view.getWindowVisibility() != View.VISIBLE) {
-                    return;
-                }
-                if(hasFocus){
-                    repositoryUrl.showDropDown();
-                }
-            }
-        });
-
-        showAddForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                showAddForm();
-            }
-        });
-        addRepo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                String userInput = repositoryUrl.getText().toString();
-                if (userInput != null && !userInput.isEmpty()) {
-                    userInput = userInput.toLowerCase();
-                    for (RepositoryEngine.DefaultRepository repository : RepositoryEngine.DefaultRepository.getWithoutOffline()) {
-                        String repoName = repository.getName().toLowerCase();
-                        if (userInput.contains(repoName)) {
-                            SharedPreferences sharedPreferences = getDefaultSharedPreferences();
-                            String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
-                            if (addedRepositoriesString.contains(repository.toString())) {
-                                Toast.makeText(applicationContext, getString(R.string.source_already_added), Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                            if (addedRepositoriesString.length() == 0) {
-                                addedRepositoriesString += repository.toString();
-                            } else {
-                                addedRepositoriesString += "," + repository.toString();
-                            }
-                            sharedPreferences.edit().putString("ADDED_REPOSITORIES", addedRepositoriesString).apply();
-                            update();
-                            hideAddForm();
-                            return;
-                        }
-                    }
-                    Toast.makeText(applicationContext, getString(R.string.source_not_supported), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(applicationContext, getString(R.string.add_source), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        noSources.setVisibility(repositories.length < 1 ? View.VISIBLE : View.GONE);
         repositoriesView.setAdapter(new RepoAdapter(this.getActivity(), R.layout.repository_item, repositories));
         super.onActivityCreated(savedInstanceState);
     }
-
-    private long ANIM_DURATION = 300l;
-    private long WAIT_DURATION = 1200l;
-
-    private void update() {
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences();
-        String addedRepositoriesString = sharedPreferences.getString("ADDED_REPOSITORIES", "");
-        String[] addedRepositoriesStringArray = addedRepositoriesString.split(",");
-        repositories = RepositoryEngine.DefaultRepository.getBySettings(addedRepositoriesStringArray);
-        noSources.setVisibility(repositories.length < 1 ? View.VISIBLE : View.GONE);
-        repositoriesView.setAdapter(new RepoAdapter(getActivity(), R.layout.repository_item, repositories));
-    }
-
-    private void showAddForm() {
-        showAddForm.setVisibility(View.GONE);
-        addRepositoryWrapper.setVisibility(View.VISIBLE);
-    }
-
-    private void hideAddForm() {
-        showAddForm.setVisibility(View.VISIBLE);
-        addRepositoryWrapper.setVisibility(View.GONE);
-        repositoryUrl.setText("");
-        InputMethodManager imm = (InputMethodManager) applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(repositoryUrl.getWindowToken(), 0);
-    }
-
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -287,6 +189,23 @@ public class RepositoryPickerFragment extends BaseFragment {
             public ImageView icon;
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.downloaded_manga_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_local_manga:
+                MainActivity activity = (MainActivity) getActivity();
+                activity.showAddJSRepositoryFragment();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

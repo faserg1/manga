@@ -72,12 +72,12 @@ public class DrawerStub extends DrawerLayout {
 
     @Override
     public boolean isDrawerOpen(final int drawerGravity) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isDrawerOpen(final View drawer) {
-        return true;
+        return false;
     }
 
     @Override

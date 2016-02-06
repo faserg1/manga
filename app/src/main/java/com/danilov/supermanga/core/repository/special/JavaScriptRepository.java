@@ -31,13 +31,23 @@ public class JavaScriptRepository extends Model implements RepositoryEngine.Repo
     }
 
     private void init() {
-        javaScriptEngine = new JSTestEngine(MangaApplication.getContext(), repoName, filePath);
+        javaScriptEngine = new JavaScriptEngine(repoName, filePath) {
+            @Override
+            public String getLanguage() {
+                return "";
+            }
+
+            @Override
+            public boolean requiresAuth() {
+                return false;
+            }
+        };
         javaScriptEngine.setRepository(this);
     }
 
     @Override
     public int getCountryIconId() {
-        return R.drawable.ic_russia;
+        return R.drawable.ic_js;
     }
 
     @Override

@@ -74,6 +74,8 @@
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".activity.FolderPickerActivity">
         </activity>
+        <activity android:name=".activity.FilePickerActivity">
+        </activity>
         <activity android:name=".activity.MangaViewerActivity"/>
         <activity
             android:name=".activity.HistoryActivity"

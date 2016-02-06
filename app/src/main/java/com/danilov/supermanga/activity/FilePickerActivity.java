@@ -27,9 +27,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FolderPickerActivity extends BaseToolbarActivity implements AdapterView.OnItemClickListener {
+public class FilePickerActivity extends BaseToolbarActivity implements AdapterView.OnItemClickListener {
 
     public static final String FOLDER_KEY = "FOLDER_KEY";
+    public static final String FILE_KEY = "FILE_KEY";
 
     private File curFolder;
 
@@ -57,76 +58,45 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         }
 
         List<StorageUtils.StorageInfo> storages = StorageUtils.getStorageList();
-//        List<StorageHelper.StorageVolume> storages = StorageHelper.getStorages(true);
-
         parents = new ArrayList<>(storages.size());
         baseFolders = new ArrayList<>(storages.size());
-//        for (StorageUtils.StorageInfo storageInfo : storages) {
-//            if (!storageInfo.readonly) {
-//                SDFile file = new SDFile(storageInfo.path);
-//                file.setDisplayName("sdcard" + file.getName());
-//                baseFolders.add(file);
-//                parents.add(file.getParentFile());
-//            }
-//        }
-
         File file = new File("/mnt/");
         baseFolders.add(file);
         parents.add(file.getParentFile());
-
-//        for (StorageHelper.StorageVolume storageVolume: storages) {
-//            SDFile file = new SDFile(storageVolume.file.toURI());
-//            file.setDisplayName("sdcard_" + file.getName());
-//            baseFolders.add(file);
-//            parents.add(file.getParentFile());
-//        }
-
         adapter = new FolderAdapter(getApplicationContext(), R.layout.folder_layout, getFiles(curFolder));
         foldersView.setOnItemClickListener(this);
         foldersView.setAdapter(adapter);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_folder_picker, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.ok) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        List<File> files = adapter.getFileList();
+        File file = files.get(i);
+        if (file.isFile()) {
             Intent intent = new Intent();
             if (curFolder == baseFolder) {
                 setResult(RESULT_CANCELED, intent);
             } else {
-                intent.putExtra(FOLDER_KEY, curFolder.getPath());
+                intent.putExtra(FILE_KEY, file.getPath());
                 setResult(RESULT_OK, intent);
             }
             finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        List<File> files = adapter.getFileList();
-        File file = files.get(i);
-        if (file == threeDotsFile) { //no mistake, threeDots is the one and only!
-            curFolder = curFolder.getParentFile();
-            for (File parentFile : parents) {
-                if (curFolder.equals(parentFile)) {
-                    curFolder = baseFolder;
-                    break;
-                }
-            }
         } else {
-            curFolder = file;
+            if (file == threeDotsFile) { //no mistake, threeDots is the one and only!
+                curFolder = curFolder.getParentFile();
+                for (File parentFile : parents) {
+                    if (curFolder.equals(parentFile)) {
+                        curFolder = baseFolder;
+                        break;
+                    }
+                }
+            } else {
+                curFolder = file;
+            }
+            files.clear();
+            files.addAll(getFiles(curFolder));
+            adapter.notifyDataSetChanged();
         }
-        files.clear();
-        files.addAll(getFiles(curFolder));
-        adapter.notifyDataSetChanged();
     }
 
     private List<File> getBaseFolders() {
@@ -145,10 +115,16 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
         File[] filesArray = file.listFiles(new FileFilter() {
 
             @Override
-            public boolean accept(final java.io.File file) {
+            public boolean accept(final File file) {
                 return file.isDirectory();
             }
 
+        });
+        File[] justFiles = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File file) {
+                return file.isFile();
+            }
         });
         if (filesArray == null) {
             ACRA.getErrorReporter().putCustomData("Crashed_file_path", file.getPath());
@@ -169,10 +145,15 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
                 files.add(f);
             }
         }
+        if (justFiles != null) {
+            for (File f : justFiles) {
+                files.add(f);
+            }
+        }
         return files;
     }
 
-    public class FolderAdapter extends BaseAdapter<FolderPickerActivity.FolderAdapter.Holder, File> {
+    public class FolderAdapter extends BaseAdapter<FilePickerActivity.Holder, File> {
 
         private List<File> fileList = null;
         private int resource;
@@ -209,28 +190,28 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
             return new Holder(v);
         }
 
-        public class Holder extends BaseAdapter.BaseHolder {
+    }
 
-            public TextView title;
-            public ImageView fileIsFolder;
-            public ImageView fileIsFile;
+    public class Holder extends BaseAdapter.BaseHolder {
 
-            protected Holder(final View view) {
-                super(view);
-                this.title = findViewById(R.id.folderName);
-                this.fileIsFolder = findViewById(R.id.is_folder);
-                this.fileIsFile = findViewById(R.id.is_file);
-            }
+        public TextView title;
+        public ImageView fileIsFolder;
+        public ImageView fileIsFile;
 
+        protected Holder(final View view) {
+            super(view);
+            this.title = findViewById(R.id.folderName);
+            this.fileIsFolder = findViewById(R.id.is_folder);
+            this.fileIsFile = findViewById(R.id.is_file);
         }
 
     }
 
-    private class SDFile extends java.io.File {
+    private class SDFile extends File {
 
         private String displayName;
 
-        public SDFile(final java.io.File dir, final String name) {
+        public SDFile(final File dir, final String name) {
             super(dir, name);
         }
 
