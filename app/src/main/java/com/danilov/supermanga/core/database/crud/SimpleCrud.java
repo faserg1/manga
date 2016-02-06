@@ -59,53 +59,71 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
     public T create(final T t) {
         Database database = null;
         try {
-            database = databaseHelper.openWritable();
-        } catch (DatabaseAccessException e) {
-            //FIXME: THROW EXCEPTION
-            return null;
+            try {
+                database = databaseHelper.openWritable();
+            } catch (DatabaseAccessException e) {
+                //FIXME: THROW EXCEPTION
+                return null;
+            }
+            ContentValues cv = objToCV(t, false);
+            long id = database.insertOrThrow(getTableName(), null, cv);
+            if (id == -1) {
+                //FIXME: THROW EXCEPTION
+                return null;
+            }
+            t.setId(id);
+            return t;
+        } finally {
+            if (database != null) {
+                database.close();
+            }
         }
-        ContentValues cv = objToCV(t, false);
-        long id = database.insertOrThrow(getTableName(), null, cv);
-        if (id == -1) {
-            //FIXME: THROW EXCEPTION
-            return null;
-        }
-        t.setId(id);
-        return t;
     }
 
     @Override
     public void delete(final T t) {
         Database database = null;
         try {
-            database = databaseHelper.openWritable();
-        } catch (DatabaseAccessException e) {
-            //FIXME: THROW EXCEPTION
-            return;
+            try {
+                database = databaseHelper.openWritable();
+            } catch (DatabaseAccessException e) {
+                //FIXME: THROW EXCEPTION
+                return;
+            }
+            String selection = ID_NAME + " = ?";
+            String[] selectionArgs = new String[] {"" + t.getId()};
+            database.delete(getTableName(), selection, selectionArgs);
+        } finally {
+            if (database != null) {
+                database.close();
+            }
         }
-        String selection = ID_NAME + " = ?";
-        String[] selectionArgs = new String[] {"" + t.getId()};
-        database.delete(getTableName(), selection, selectionArgs);
     }
 
     @Override
     public T update(final T t) {
         Database database = null;
         try {
-            database = databaseHelper.openWritable();
-        } catch (DatabaseAccessException e) {
-            //FIXME: THROW EXCEPTION
-            return null;
+            try {
+                database = databaseHelper.openWritable();
+            } catch (DatabaseAccessException e) {
+                //FIXME: THROW EXCEPTION
+                return null;
+            }
+            ContentValues cv = objToCV(t, true);
+            String selection = ID_NAME + " = ?";
+            String[] selectionArgs = new String[] {"" + t.getId()};
+            long rowsAffected = database.update(getTableName(), cv, selection, selectionArgs);
+            if (rowsAffected == 0) {
+                //FIXME: THROW EXCEPTION
+                return null;
+            }
+            return t;
+        } finally {
+            if (database != null) {
+                database.close();
+            }
         }
-        ContentValues cv = objToCV(t, true);
-        String selection = ID_NAME + " = ?";
-        String[] selectionArgs = new String[] {"" + t.getId()};
-        long rowsAffected = database.update(getTableName(), cv, selection, selectionArgs);
-        if (rowsAffected == 0) {
-            //FIXME: THROW EXCEPTION
-            return null;
-        }
-        return t;
     }
 
     @NonNull
@@ -113,23 +131,30 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
     public Collection<T> select(final Selector selector) {
         Database database = null;
         try {
-            database = databaseHelper.openWritable();
-        } catch (DatabaseAccessException e) {
-            //FIXME: THROW EXCEPTION
-            return Collections.emptyList();
+            try {
+                database = databaseHelper.openWritable();
+            } catch (DatabaseAccessException e) {
+                //FIXME: THROW EXCEPTION
+                return Collections.emptyList();
+            }
+            Cursor cursor = database.rawQuery(selector.formatQuery(), null);
+            ResultSet resultSet = new ResultSet(cursor, getMetaModel());
+            if (!resultSet.moveToFirst()) {
+                return Collections.emptyList();
+            }
+            List<T> res = new ArrayList<>();
+            do {
+                T value = create();
+                value.load(resultSet);
+                res.add(value);
+            } while (resultSet.moveToNext());
+            database.close();
+            return res;
+        } finally {
+            if (database != null) {
+                database.close();
+            }
         }
-        Cursor cursor = database.rawQuery(selector.formatQuery(), null);
-        ResultSet resultSet = new ResultSet(cursor, getMetaModel());
-        if (!resultSet.moveToFirst()) {
-            return Collections.emptyList();
-        }
-        List<T> res = new ArrayList<>();
-        do {
-            T value = create();
-            value.load(resultSet);
-            res.add(value);
-        } while (resultSet.moveToNext());
-        return res;
     }
 
     public ContentValues objToCV(final T t, final boolean withId) {

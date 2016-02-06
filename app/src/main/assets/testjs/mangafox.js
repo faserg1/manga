@@ -106,21 +106,23 @@ function queryRepository(query) {
 }
 
 function __getChapters(doc) {
-    return doc.select("#chapters div .title");
+    return doc.select("#chapters div .tips");
 }
 
 /**
  * Получение объекта с информацией о манге
  * Объект должен содержать 'mangaDescription', 'mangaAuthor',
- * 'mangaGenres' и 'chaptersQuantity'
+ * 'mangaGenres', 'mangaCover' и 'chaptersQuantity'
  * т.е. описание манги (строка), автор или авторы через запятую (строка),
- * жанры через запятую (строка) и количество глав манги (целое число)
+ * жанры через запятую (строка), адрес картинки с обложкой манги (строка)
+ * и количество глав манги (целое число)
  * @param mangaUrl страница с мангой
  * @return информация о манге
  */
 function queryForMangaDescription(mangaUrl) {
     var doc = $.parseDoc($.get(mangaUrl));
     var description = doc.select(".summary").text();
+    var coverUrl = doc.select(".cover img").attr("src");
     var titleBlocks = doc.select("#title > table td");
     var mangaAuthor = titleBlocks.get(1).text();
     var genres = titleBlocks.get(3).text();
@@ -131,6 +133,7 @@ function queryForMangaDescription(mangaUrl) {
         mangaDescription: description,
         mangaAuthor: mangaAuthor,
         mangaGenres: genres,
+        mangaCover: coverUrl,
         chaptersQuantity: chaptersQuantity
     };
 }
@@ -148,11 +151,16 @@ function queryForChapters(mangaUrl) {
     var chaptersArray = [];
     for (var i = 0; i < chapters.size(); i++) {
         var chapterTitle = chapters.get(i);
+        var chapterUrl = chapterTitle.attr("href");
         var parent = chapterTitle.parent();
-        var chapterUrl = parent.getChild(0).attr("href");
-        var chapterTitle = chapterTitle.text();
+        var sz = parent.childrenSize();
+        var chapterTitleText = "";
+        if (sz > 1) {
+            chapterTitleText += parent.getChild(1).text() + " ";
+        }
+        chapterTitleText += chapterTitle.text();
         chaptersArray.push({
-            chapterTitle: chapterTitle,
+            chapterTitle: chapterTitleText,
             chapterUrl: chapterUrl
         });
     }

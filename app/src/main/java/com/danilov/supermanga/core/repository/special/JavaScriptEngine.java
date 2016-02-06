@@ -17,6 +17,7 @@ import com.danilov.supermanga.core.util.Utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -70,7 +71,8 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         public String get(final String url) {
             HttpClient httpClient = new ExtendedHttpClient();
             try {
-                HttpResponse response = httpClient.execute(new HttpGet(url));
+                final String newUrl = url.replace(" ", "%20");
+                HttpResponse response = httpClient.execute(new HttpGet(newUrl));
                 byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
                 String responseString = IoUtils.convertBytesToString(result);
                 return responseString;
@@ -217,7 +219,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         String mangaDescription = getString(nativeObject, "mangaDescription");
         String mangaAuthor = getString(nativeObject, "mangaAuthor");
         String mangaGenres = getString(nativeObject, "mangaGenres");
+        String mangaCover = getString(nativeObject, "mangaCover");
         Integer chaptersQuantity = getInteger(nativeObject, "chaptersQuantity");
+
+        if (manga.getCoverUri() == null || manga.getCoverUri().isEmpty()) {
+            manga.setCoverUri(mangaCover);
+        }
 
         manga.setDescription(mangaDescription);
         manga.setGenres(mangaGenres);
@@ -393,7 +400,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
 
         public int childrenSize() {
             if (this.elements.size() == 1) {
-                return elements.get(0).childNodeSize();
+                return elements.get(0).children().size();
             }
             return 0;
         }
