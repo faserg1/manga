@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="21"
-          android:versionName="1.37">
+          android:versionCode="22"
+          android:versionName="1.38">
 
     <uses-sdk
         android:minSdkVersion="10"

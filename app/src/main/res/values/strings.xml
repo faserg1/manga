@@ -112,4 +112,5 @@
     <string name="hint_filter_edittext">Поиск…</string>
     <string name="text_clear_filter">Очистить</string>
     <string name="open_in_repo">Open on %1$s</string>
+    <string name="application_version_settings_title">Версия приложения</string>
 </resources>

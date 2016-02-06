@@ -46,7 +46,7 @@
                 android:paddingLeft="10dp"
                 android:layout_weight="0.6">
 
-            <TextView
+            <com.danilov.supermanga.core.view.CTextView
                     android:id="@+id/repository_title"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"

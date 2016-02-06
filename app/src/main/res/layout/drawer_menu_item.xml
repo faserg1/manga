@@ -17,7 +17,7 @@
             android:layout_centerVertical="true"
             android:contentDescription="@string/app_name" />
 
-    <TextView
+    <com.danilov.supermanga.core.view.CTextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
             android:textColor="@color/black_unselected_white_selected"
             android:textSize="16sp"/>
 
-    <TextView
+    <com.danilov.supermanga.core.view.CTextView
         android:id="@+id/quantity_new"
         android:visibility="gone"
         android:layout_marginLeft="10dp"

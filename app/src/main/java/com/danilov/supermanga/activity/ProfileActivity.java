@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,6 +72,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     private TextView downloadPath;
     private TextView mangasComplete;
     private TextView megabytesDownloaded;
+    private TextView appVersion;
     private SwitchCompat showBtnsSwitch;
 
 
@@ -89,6 +92,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         googleSyncButton = findViewWithId(R.id.google_sync_button);
         googleDownloadButton = findViewWithId(R.id.google_download_button);
 
+        appVersion = findViewWithId(R.id.app_version);
         userNameSmall = findViewWithId(R.id.user_name_small);
         email = findViewWithId(R.id.email);
         timeRead = findViewWithId(R.id.time_read);
@@ -230,6 +234,15 @@ public class ProfileActivity extends BaseToolbarActivity {
         long minutes = secondsDelta / 60;
         long secs = secondsDelta - (minutes * 60);
 
+        PackageManager manager = getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(getPackageName(), 0);
+            int versionCode = info.versionCode;
+            String versionName = info.versionName;
+            appVersion.setText(new StringBuilder().append(versionName).append(" (").append(versionCode).append(")").toString());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         userNameTextView.setText(userNameString);
         userNameSmall.setText(userNameString);
         email.setText(emailString);
