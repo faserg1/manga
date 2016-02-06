@@ -73,7 +73,7 @@
                         app:border_width="2dp"
                         app:border_color="#ffffff"/>
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:id="@+id/user_name"
                         android:layout_toRightOf="@+id/profile_image"
                         android:layout_alignBottom="@+id/profile_image"
