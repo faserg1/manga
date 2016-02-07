@@ -107,7 +107,9 @@ public class MangaDAO {
             do {
                 Manga manga = null;
                 manga = resolve(cursor);
-                mangaList.add(manga);
+                if (manga != null) {
+                    mangaList.add(manga);
+                }
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
@@ -148,7 +150,9 @@ public class MangaDAO {
             do {
                 Manga manga = null;
                 manga = resolve(cursor);
-                mangaList.add((LocalManga) manga);
+                if (manga != null) {
+                    mangaList.add((LocalManga) manga);
+                }
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
@@ -171,7 +175,9 @@ public class MangaDAO {
             do {
                 Manga manga = null;
                 manga = resolve(cursor);
-                mangaList.add(manga);
+                if (manga != null) {
+                    mangaList.add(manga);
+                }
             } while (cursor.moveToNext());
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
@@ -372,6 +378,9 @@ public class MangaDAO {
 
         RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
         RepositoryEngine.Repository repository = repositoryHolder.valueOf(cursor.getString(repositoryIndex));
+        if (repository == null) {
+            return null;
+        }
 
         String uri = cursor.getString(inetUriIndex);
         String coverUri = cursor.getString(coverUriIndex);

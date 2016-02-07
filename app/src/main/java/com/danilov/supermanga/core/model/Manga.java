@@ -252,6 +252,10 @@ public class Manga implements Parcelable {
         parcel.writeString(coverUri);
         parcel.writeString(description);
         parcel.writeInt(chaptersQuantity);
+        if (repository == null) {
+            int a = 0;
+            a++;
+        }
         parcel.writeString(repository.toString());
         parcel.writeInt(id);
         parcel.writeInt(isFavorite ? 1 : 0);

@@ -8,7 +8,6 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,31 +15,42 @@ import java.util.List;
  */
 public class RepositoryHolder {
 
-    private List<RepositoryEngine.Repository> repositoryList = new ArrayList<>();
+    private List<RepositoryEngine.Repository> allRepos = new ArrayList<>();
+    private List<RepositoryEngine.Repository> withoutOffline = new ArrayList<>();
 
     public void init() {
-        repositoryList.clear();
-        RepositoryEngine.DefaultRepository[] values = RepositoryEngine.DefaultRepository.getWithoutOffline();
+        withoutOffline.clear();
+        allRepos.clear();
+        RepositoryEngine.DefaultRepository[] values = RepositoryEngine.DefaultRepository.values();
         for (RepositoryEngine.DefaultRepository repository : values) {
-            repositoryList.add(repository);
+            if (repository != RepositoryEngine.DefaultRepository.OFFLINE) {
+                withoutOffline.add(repository);
+            }
+            allRepos.add(repository);
         }
         JSCrud jsCrud = ServiceContainer.getService(JSCrud.class);
         Collection<JavaScriptRepository> resultSet = jsCrud.select(jsCrud.getAllSelector());
-        repositoryList.addAll(resultSet);
+        withoutOffline.addAll(resultSet);
+        allRepos.addAll(resultSet);
     }
 
     @Nullable
     public RepositoryEngine.Repository valueOf(final String name) {
-        for (RepositoryEngine.Repository repository : repositoryList) {
+        RepositoryEngine.Repository result = null;
+        for (RepositoryEngine.Repository repository : allRepos) {
             if (repository.toString().equals(name)) {
-                return repository;
+                result = repository;
             }
         }
-        return null;
+        if (result == null) {
+            int a = 0;
+            a++;
+        }
+        return result;
     }
 
     public RepositoryEngine.Repository[] getRepositories() {
-        return repositoryList.toArray(new RepositoryEngine.Repository[repositoryList.size()]);
+        return withoutOffline.toArray(new RepositoryEngine.Repository[withoutOffline.size()]);
     }
 
 }
