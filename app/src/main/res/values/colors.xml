@@ -20,6 +20,8 @@
     <color name="viewer_spinner_default_color">#ff5287cb</color>
     <color name="viewer_spinner_pressed_color">#ff5ca6f4</color>
     <color name="red">#ff0000</color>
+    <color name="medium_dark_red_semi_transparent">#afff000d</color>
+    <color name="medium_dark_red">#ff000d</color>
 
     <color name="darkest_blue">#ff133c78</color>
     <color name="dark_blue">#0055b8</color>

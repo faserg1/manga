@@ -39,6 +39,8 @@
     <color name="spinner_dark_disabled">@android:color/black</color>
 
     <color name="selected_color">@color/medium_dark_blue_semi_transparent</color>
+    <color name="love_selected_color">@color/medium_dark_red_semi_transparent</color>
+    <color name="love_ripple_color">@color/medium_dark_red</color>
 
     <color name="error_message_color">@color/red</color>
 
