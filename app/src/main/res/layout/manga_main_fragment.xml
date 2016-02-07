@@ -3,7 +3,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:padding="10dp">
 
     <!--<com.danilov.supermanga.core.view.TopCropImageView-->
@@ -11,23 +10,6 @@
         <!--android:src="@drawable/updates_newyear_bg"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"/>-->
-
-    <com.danilov.supermanga.core.widget.ToggleImageButton
-        android:id="@+id/test"
-        android:src="@drawable/button_love"
-        app:checked_icon="@drawable/button_love"
-        app:unchecked_icon="@drawable/button_love"
-        android:background="@drawable/selectable_love_background"
-        android:layout_width="60dp"
-        android:layout_height="60dp"/>
-
-    <ImageButton
-        android:layout_alignTop="@+id/test"
-        android:layout_toRightOf="@+id/test"
-        android:src="@drawable/button_download_icon"
-        android:background="@drawable/selectable_normal_background"
-        android:layout_width="60dp"
-        android:layout_height="60dp"/>
 
     <TextView
         android:id="@+id/useful_info"
