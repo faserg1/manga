@@ -70,12 +70,6 @@
                               android:marqueeRepeatLimit="marquee_forever"
                               android:scrollHorizontally="true"/>
 
-                    <com.danilov.supermanga.core.view.CTextView
-                        android:id="@+id/repository_link"
-                        android:textColor="@color/link_color"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-
                 </LinearLayout>
 
                 <!--cover and buttons-->
@@ -156,6 +150,7 @@
 
 
                     <com.danilov.supermanga.core.widget.ToggleImageButton
+                        android:id="@+id/toggle_favorite"
                         android:src="@drawable/button_love"
                         android:background="@drawable/selectable_love_background"
                         android:layout_width="60dp"
@@ -169,14 +164,15 @@
                         android:layout_height="60dp"/>
 
                     <ImageButton
-                        android:src="@drawable/button_chapters_icon"
+                        android:id="@+id/read_online"
+                        android:src="@drawable/button_online_icon"
                         android:background="@drawable/selectable_normal_background"
                         android:layout_width="60dp"
                         android:layout_height="60dp"/>
 
                     <ImageButton
-                        android:id="@+id/read_online"
-                        android:src="@drawable/button_online_icon"
+                        android:id="@+id/repository_link"
+                        android:src="@drawable/button_open_in_browser"
                         android:background="@drawable/selectable_normal_background"
                         android:layout_width="60dp"
                         android:layout_height="60dp"/>
@@ -222,7 +218,7 @@
             app:button_colorPressed="@color/btn_fab_disabled_pressed"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
-            android:id="@+id/add_to_favorites"/>
+            android:id="@+id/add_to_tracking"/>
 
         <com.software.shell.fab.ActionButton
             android:layout_width="wrap_content"
@@ -235,7 +231,7 @@
             app:button_colorPressed="@color/btn_fab_enabled_pressed"
             android:layout_alignBottom="@id/header"
             android:layout_marginBottom="-32dp"
-            android:id="@+id/remove_from_favorites"/>
+            android:id="@+id/remove_from_tracking"/>
 
     </RelativeLayout>
 

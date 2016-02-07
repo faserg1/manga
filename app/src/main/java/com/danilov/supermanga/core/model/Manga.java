@@ -27,6 +27,8 @@ public class Manga implements Parcelable {
 
     private boolean isFavorite;
 
+    private boolean isTracking;
+
     private String genres;
 
     //TODO: add type (MANGA OR MANHWA)
@@ -125,6 +127,14 @@ public class Manga implements Parcelable {
 
     public void setFavorite(final boolean isFavorite) {
         this.isFavorite = isFavorite;
+    }
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public void setTracking(final boolean isTracking) {
+        this.isTracking = isTracking;
     }
 
     /**
@@ -236,6 +246,7 @@ public class Manga implements Parcelable {
 
         id = parcel.readInt();
         isFavorite = parcel.readInt() == 1;
+        isTracking = parcel.readInt() == 1;
         genres = parcel.readString();
     }
 
@@ -252,13 +263,10 @@ public class Manga implements Parcelable {
         parcel.writeString(coverUri);
         parcel.writeString(description);
         parcel.writeInt(chaptersQuantity);
-        if (repository == null) {
-            int a = 0;
-            a++;
-        }
         parcel.writeString(repository.toString());
         parcel.writeInt(id);
         parcel.writeInt(isFavorite ? 1 : 0);
+        parcel.writeInt(isTracking ? 1 : 0);
         parcel.writeString(genres);
     }
 

@@ -13,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
@@ -35,11 +38,12 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.ScrollViewParallax;
 import com.danilov.supermanga.core.view.ViewV16;
+import com.danilov.supermanga.core.widget.ToggleImageButton;
 
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class InfoFragment extends BaseFragment implements View.OnClickListener {
+public class InfoFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
 
     private final String TAG = "InfoFragment";
 
@@ -55,7 +59,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private TextView mangaDescriptionTextView = null;
     private TextView chaptersQuantityTextView = null;
     private TextView mangaTitle = null;
-    private TextView repositoryLink = null;
+    private ImageButton repositoryLink = null;
     private TextView authors = null;
     private TextView genres = null;
     private ImageView mangaCover = null;
@@ -63,8 +67,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private View downloadButton;
     private View readOnlineButton;
 
-    private View addToFavorites;
-    private View removeFromFavorites;
+    private View addToTracking;
+    private View removeFromTracking;
+
+    private ToggleImageButton toggleFavorite;
 
     private MangaDAO mangaDAO = null;
 
@@ -79,6 +85,12 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
     private int top;
     private int width;
     private int height;
+    private boolean shown = false;
+    private float widthScale;
+    private float heightScale;
+    private int leftDelta;
+    private int topDelta;
+    private boolean isDetached = false;
 
     public static InfoFragment newInstance(final Manga manga, final int left, final int top, final int width, final int height) {
         InfoFragment infoFragment = new InfoFragment();
@@ -96,8 +108,6 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         return view;
     }
 
-    private boolean shown = false;
-
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -106,7 +116,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         mangaDescriptionTextView = (TextView) view.findViewById(R.id.manga_description);
         chaptersQuantityTextView = (TextView) view.findViewById(R.id.chapters_quantity);
         mangaTitle = (TextView) view.findViewById(R.id.manga_title);
-        repositoryLink = (TextView) view.findViewById(R.id.repository_link);
+        repositoryLink = findViewById(R.id.repository_link);
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
         downloadButton = view.findViewById(R.id.download);
         readOnlineButton = view.findViewById(R.id.read_online);
@@ -114,17 +124,23 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         authors = findViewById(R.id.authors);
         genres = findViewById(R.id.genres);
         downloadButton.setOnClickListener(this);
+        downloadButton.setOnLongClickListener(this);
         readOnlineButton.setOnClickListener(this);
+        readOnlineButton.setOnLongClickListener(this);
         repositoryLink.setOnClickListener(this);
+        repositoryLink.setOnLongClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         httpImageManager = ServiceContainer.getService(HttpImageManager.class);
-        addToFavorites = view.findViewById(R.id.add_to_favorites);
-        removeFromFavorites = view.findViewById(R.id.remove_from_favorites);
+        addToTracking = view.findViewById(R.id.add_to_tracking);
+        removeFromTracking = view.findViewById(R.id.remove_from_tracking);
+        toggleFavorite = findViewById(R.id.toggle_favorite);
+        toggleFavorite.setOnCheckedChangeListener(this);
+        toggleFavorite.setOnLongClickListener(this);
 
-        addToFavorites.setOnClickListener(this);
-        removeFromFavorites.setOnClickListener(this);
+        addToTracking.setOnClickListener(this);
+        removeFromTracking.setOnClickListener(this);
 
-        flipper = new OverXFlipper(addToFavorites, removeFromFavorites, 300);
+        flipper = new OverXFlipper(addToTracking, removeFromTracking, 300);
         disableButtons();
         if (savedInstanceState == null) {
             Intent i = activity.getIntent();
@@ -164,18 +180,13 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         shown = true;
     }
 
-    private float widthScale;
-    private float heightScale;
-    private int leftDelta;
-    private int topDelta;
-
     private void runAnim() {
 
         final long duration = (long) (ANIM_DURATION);
 
         final ViewV16 mangaCover = ViewV16.wrap(this.mangaCover);
-        final ViewV16 addToFavorites = ViewV16.wrap(this.addToFavorites);
-        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromFavorites);
+        final ViewV16 addToFavorites = ViewV16.wrap(this.addToTracking);
+        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromTracking);
 
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
@@ -231,8 +242,8 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         final long duration = (long) (ANIM_DURATION);
 
         final ViewV16 mangaCover = ViewV16.wrap(this.mangaCover);
-        final ViewV16 addToFavorites = ViewV16.wrap(this.addToFavorites);
-        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromFavorites);
+        final ViewV16 addToFavorites = ViewV16.wrap(this.addToTracking);
+        final ViewV16 removeFromFavorites = ViewV16.wrap(this.removeFromTracking);
         final ViewV16 body = ViewV16.wrap(findViewById(R.id.body));
 
         mangaCover.animate().cancel();
@@ -290,14 +301,13 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         }
         mangaTitle.setText(manga.getTitle());
 
-        String repoName = manga.getRepository().getName();
-        String openWith = String.format(activity.getString(R.string.open_in_repo), repoName);
-        repositoryLink.setText(openWith);
-
         String mangaDescription = manga.getDescription();
         if (mangaDescription != null) {
-            if (manga.isFavorite()) {
+            if (manga.isTracking()) {
                 flipper.flip(2);
+            }
+            if (manga.isFavorite()) {
+                toggleFavorite.setIsChecked(true);
             }
             mangaDescriptionTextView.setText(mangaDescription);
             authors.setText(manga.getAuthor());
@@ -312,8 +322,6 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
-    private boolean isDetached = false;
-
     @Override
     public void onDetach() {
         isDetached = true;
@@ -325,10 +333,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         downloadButton.setClickable(true);
         readOnlineButton.setEnabled(true);
         readOnlineButton.setClickable(true);
-        addToFavorites.setEnabled(true);
-        addToFavorites.setClickable(true);
-        removeFromFavorites.setEnabled(true);
-        removeFromFavorites.setClickable(true);
+        addToTracking.setEnabled(true);
+        addToTracking.setClickable(true);
+        removeFromTracking.setEnabled(true);
+        removeFromTracking.setClickable(true);
     }
 
     private void disableButtons() {
@@ -336,10 +344,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
         downloadButton.setClickable(false);
         readOnlineButton.setEnabled(false);
         readOnlineButton.setClickable(false);
-        addToFavorites.setEnabled(false);
-        addToFavorites.setClickable(false);
-        removeFromFavorites.setEnabled(false);
-        removeFromFavorites.setClickable(false);
+        addToTracking.setEnabled(false);
+        addToTracking.setClickable(false);
+        removeFromTracking.setEnabled(false);
+        removeFromTracking.setClickable(false);
     }
 
     @Override
@@ -359,6 +367,129 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
             refreshable.startRefresh();
         } else {
             refreshable.stopRefresh();
+        }
+    }
+
+    private void setCover(final Bitmap bmp) {
+        mangaCover.setImageBitmap(bmp);
+        ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
+        if (bigView != null) {
+            blur(bmp, bigView);
+        }
+    }
+
+    private void blur(Bitmap bkg, ImageView view) {
+        view.setImageBitmap(BitmapUtils.blur(bkg, 5));
+    }
+
+    @Override
+    public void onClick(final View v) {
+        Intent intent = null;
+        switch (v.getId()) {
+            case R.id.download:
+                activity.showChaptersFragment();
+                break;
+            case R.id.add_to_tracking:
+                addToTracking();
+                break;
+            case R.id.remove_from_tracking:
+                removeFromTracking();
+                break;
+            case R.id.repository_link:
+                openInBrowser();
+                break;
+            case R.id.read_online:
+                intent = new Intent(activity, MangaViewerActivity.class);
+
+                HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+                HistoryElement historyElement = null;
+                try {
+                    Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
+                    if (_manga != null) {
+                        historyElement = historyDAO.getHistoryByManga(_manga, true);
+                    }
+                } catch (DatabaseAccessException e) {
+                }
+
+                if (historyElement != null) {
+                    intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
+                    intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
+                }
+
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                startActivity(intent);
+                break;
+
+        }
+    }
+
+    @Override
+    public boolean onLongClick(final View v) {
+        switch (v.getId()) {
+            case R.id.download:
+                Toast.makeText(getActivity(), "Скачать", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toggle_favorite:
+                Toast.makeText(getActivity(), "Добавить в любимое", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.repository_link:
+                String repoName = manga.getRepository().getName();
+                String openWith = String.format(activity.getString(R.string.open_in_repo), repoName);
+                Toast.makeText(getActivity(), openWith, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.read_online:
+                Toast.makeText(getActivity(), "Читать онлайн", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
+
+    private void openInBrowser() {
+        String repoUri = manga.getRepository().getEngine().getBaseUri();
+        String uri = manga.getUri();
+        if (repoUri != null) { //for js engines
+            if (!uri.contains(repoUri)) {
+                uri = repoUri + uri;
+            }
+        }
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(uri));
+        startActivity(i);
+    }
+
+    private void addToTracking() {
+        flipper.flip();
+        try {
+            manga.setTracking(true);
+            mangaDAO.setTracking(manga, true);
+        } catch (DatabaseAccessException e) {
+            Context context = getActivity();
+            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
+            Utils.showToast(context, message);
+        }
+    }
+
+    private void removeFromTracking() {
+        flipper.flip();
+        try {
+            manga.setTracking(false);
+            mangaDAO.setTracking(manga, false);
+        } catch (DatabaseAccessException e) {
+            Context context = getActivity();
+            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
+            Utils.showToast(context, message);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+        try {
+            manga.setFavorite(isChecked);
+            mangaDAO.setFavorite(manga, isChecked);
+        } catch (DatabaseAccessException e) {
+            Context context = getActivity();
+            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
+            Utils.showToast(context, message);
         }
     }
 
@@ -386,6 +517,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                 if (_manga != null) {
                     manga.setId(_manga.getId());
                     manga.setFavorite(_manga.isFavorite());
+                    manga.setTracking(_manga.isTracking());
                 }
             } catch (DatabaseAccessException e) {
                 error = e.getMessage();
@@ -399,8 +531,11 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
                         return;
                     }
                     if (loaded) {
-                        if (manga.isFavorite()) {
+                        if (manga.isTracking()) {
                             flipper.flip(2);
+                        }
+                        if (manga.isFavorite()) {
+                            toggleFavorite.setIsChecked(true);
                         }
                         enableButtons();
                         String mangaDescription = manga.getDescription();
@@ -454,96 +589,6 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener {
 
         }
 
-    }
-
-    private void setCover(final Bitmap bmp) {
-        mangaCover.setImageBitmap(bmp);
-        ImageView bigView = (ImageView) view.findViewById(R.id.very_big);
-        if (bigView != null) {
-            blur(bmp, bigView);
-        }
-    }
-
-    private void blur(Bitmap bkg, ImageView view) {
-        view.setImageBitmap(BitmapUtils.blur(bkg, 5));
-    }
-
-    @Override
-    public void onClick(final View v) {
-        Intent intent = null;
-        switch (v.getId()) {
-            case R.id.download:
-                activity.showChaptersFragment();
-                break;
-            case R.id.add_to_favorites:
-                addToFavorites();
-                break;
-            case R.id.remove_from_favorites:
-                removeFromFavorites();
-                break;
-            case R.id.repository_link:
-                openInBrowser();
-                break;
-            case R.id.read_online:
-                intent = new Intent(activity, MangaViewerActivity.class);
-
-                HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
-                HistoryElement historyElement = null;
-                try {
-                    Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
-                    if (_manga != null) {
-                        historyElement = historyDAO.getHistoryByManga(_manga, true);
-                    }
-                } catch (DatabaseAccessException e) {
-                }
-
-                if (historyElement != null) {
-                    intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
-                    intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
-                }
-
-                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-                startActivity(intent);
-                break;
-
-        }
-    }
-
-    private void openInBrowser() {
-        String repoUri = manga.getRepository().getEngine().getBaseUri();
-        String uri = manga.getUri();
-        if (repoUri != null) { //for js engines
-            if (!uri.contains(repoUri)) {
-                uri = repoUri + uri;
-            }
-        }
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(uri));
-        startActivity(i);
-    }
-
-    private void addToFavorites() {
-        flipper.flip();
-        try {
-            manga.setFavorite(true);
-            mangaDAO.setFavorite(manga, true);
-        } catch (DatabaseAccessException e) {
-            Context context = getActivity();
-            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
-            Utils.showToast(context, message);
-        }
-    }
-
-    private void removeFromFavorites() {
-        flipper.flip();
-        try {
-            manga.setFavorite(false);
-            mangaDAO.setFavorite(manga, false);
-        } catch (DatabaseAccessException e) {
-            Context context = getActivity();
-            String message = Utils.errorMessage(context, e.getMessage(), R.string.p_internet_error);
-            Utils.showToast(context, message);
-        }
     }
 
 }

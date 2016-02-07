@@ -25,7 +25,7 @@ public class MangaDAO {
     private final static String TAG = "MangaDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
 
-    private static final int DAOVersion = 2;
+    private static final int DAOVersion = 3;
     private static final String TABLE_NAME = "manga";
     public static final String DB_NAME = "manga.db";
 
@@ -37,6 +37,7 @@ public class MangaDAO {
     private static final String MANGA_REPOSITORY = "manga_repository";
     private static final String MANGA_AUTHOR = "manga_author";
     private static final String IS_FAVORITE = "is_favorite";
+    private static final String IS_TRACKING = "is_tracking";
     private static final String MANGA_INET_URI = "manga_inet_uri";
     private static final String MANGA_COVER_URI = "manga_cover_uri";
     private static final String IS_DOWNLOADED = "is_downloaded";
@@ -76,6 +77,7 @@ public class MangaDAO {
         cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
         cv.put(MANGA_GENRES, manga.getGenres());
         cv.put(IS_FAVORITE, manga.isFavorite() ? 1 : 0);
+        cv.put(IS_TRACKING, manga.isTracking() ? 1 : 0);
 
         if (manga.isDownloaded()) {
             //its local manga
@@ -256,7 +258,6 @@ public class MangaDAO {
                 cv.put(IS_DOWNLOADED, 1);
                 cv.put(LOCAL_URI, localManga.getLocalUri());
                 cv.put(MANGA_COVER_URI, localManga.getCoverUri());
-                cv.put(IS_FAVORITE, 1);
                 String selection = ID + " = ?";
                 String id = String.valueOf(_manga.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
@@ -287,6 +288,7 @@ public class MangaDAO {
             cv.put(MANGA_GENRES, manga.getGenres());
             cv.put(CHAPTERS_QUANTITY, manga.getChaptersQuantity());
             cv.put(IS_FAVORITE, manga.isFavorite() ? 1 : 0);
+            cv.put(IS_TRACKING, manga.isTracking() ? 1 : 0);
 
             if (manga.isDownloaded()) {
                 //its local manga
@@ -314,6 +316,29 @@ public class MangaDAO {
             try {
                 ContentValues cv = new ContentValues();
                 cv.put(IS_FAVORITE, isFavorite ? 1 : 0);
+                String selection = ID + " = ?";
+                String id = String.valueOf(_manga.getId());
+                db.update(TABLE_NAME, cv, selection, new String[] {id});
+            } catch (Exception e) {
+                throw new DatabaseAccessException(e.getMessage());
+            } finally {
+                db.close();
+            }
+            return _manga;
+        } else {
+            addManga(manga);
+        }
+        return null;
+    }
+
+    public synchronized Manga setTracking(final Manga manga, final boolean isTracking) throws DatabaseAccessException {
+        Manga _manga = null;
+        _manga = getByLinkAndRepository(manga.getUri(), manga.getRepository());
+        if (_manga != null) {
+            Database db = databaseHelper.openWritable();
+            try {
+                ContentValues cv = new ContentValues();
+                cv.put(IS_TRACKING, isTracking ? 1 : 0);
                 String selection = ID + " = ?";
                 String id = String.valueOf(_manga.getId());
                 db.update(TABLE_NAME, cv, selection, new String[] {id});
@@ -360,6 +385,7 @@ public class MangaDAO {
         int repositoryIndex = cursor.getColumnIndex(MANGA_REPOSITORY);
         int authorIndex = cursor.getColumnIndex(MANGA_AUTHOR);
         int isFavoriteIndex = cursor.getColumnIndex(IS_FAVORITE);
+        int isTrackingIndex = cursor.getColumnIndex(IS_TRACKING);
         int inetUriIndex = cursor.getColumnIndex(MANGA_INET_URI);
         int coverUriIndex = cursor.getColumnIndex(MANGA_COVER_URI);
         int genreIndex = cursor.getColumnIndex(MANGA_GENRES);
@@ -369,6 +395,7 @@ public class MangaDAO {
 
         boolean isDownloaded = cursor.getInt(isDownloadedIndex) == 1;
         boolean isFavorite = cursor.getInt(isFavoriteIndex) == 1;
+        boolean isTracking = cursor.getInt(isTrackingIndex) == 1;
 
         int id = cursor.getInt(idIndex);
         String title = cursor.getString(titleIndex);
@@ -403,6 +430,7 @@ public class MangaDAO {
         manga.setAuthor(author);
         manga.setCoverUri(coverUri);
         manga.setFavorite(isFavorite);
+        manga.setTracking(isTracking);
         manga.setGenres(genre);
         return manga;
     }
@@ -420,6 +448,8 @@ public class MangaDAO {
                     break;
                 case 1:
                     sqls.add(DatabaseOptions.createAlterAdd(TABLE_NAME, MANGA_GENRES, DatabaseOptions.Type.TEXT));
+                case 2:
+                    sqls.add(DatabaseOptions.createAlterAdd(TABLE_NAME, IS_TRACKING, DatabaseOptions.Type.INT));
                 default:
                     onUpdate(database, sqls);
                     break;
@@ -448,6 +478,7 @@ public class MangaDAO {
             builder.addColumn(MANGA_COVER_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(LOCAL_URI, DatabaseOptions.Type.TEXT, false, false);
             builder.addColumn(IS_FAVORITE, DatabaseOptions.Type.INT, false, false);
+            builder.addColumn(IS_TRACKING, DatabaseOptions.Type.INT, false, false);
             builder.addColumn(IS_DOWNLOADED, DatabaseOptions.Type.INT, false, false, constraint);
             builder.addColumn(MANGA_REPOSITORY, DatabaseOptions.Type.TEXT, false, false, constraint);
             builder.addColumn(MANGA_INET_URI, DatabaseOptions.Type.TEXT, false, false, constraint);
