@@ -31,6 +31,7 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.fragment.AddJSRepositoryFragment;
 import com.danilov.supermanga.fragment.AddLocalMangaFragment;
+import com.danilov.supermanga.fragment.BaseFragment;
 import com.danilov.supermanga.fragment.DownloadManagerFragment;
 import com.danilov.supermanga.fragment.DownloadedMangaFragment;
 import com.danilov.supermanga.fragment.FavoritesFragment;
@@ -75,6 +76,8 @@ public class MainActivity extends BaseToolbarActivity {
     private DrawerListAdapter adapter;
 
     private boolean firstLaunch = true;
+
+    private BaseFragment currentFragment = null;
 
 
     @Override
@@ -254,6 +257,11 @@ public class MainActivity extends BaseToolbarActivity {
                 if (castedDrawerLayout.isDrawerOpen(drawerMenu)) {
                     castedDrawerLayout.closeDrawer(drawerMenu);
                 } else {
+                    if (currentFragment != null) {
+                        if (currentFragment.onBackPressed()) {
+                            return true;
+                        }
+                    }
                     castedDrawerLayout.openDrawer(drawerMenu);
                 }
                 if (drawerToggle != null) {
@@ -277,7 +285,7 @@ public class MainActivity extends BaseToolbarActivity {
         UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
         SEARCH(R.drawable.ic_action_search_black, R.string.menu_search),
         HISTORY(R.drawable.ic_action_time, R.string.menu_history),
-        FAVORITE(R.drawable.button_love_checked_icon, R.string.menu_favorite),
+        FAVORITE(R.drawable.button_love_checked_icon, R.string.menu_love),
         LOCAL(R.drawable.ic_action_downloads, R.string.menu_local),
         DOWNLOAD_MANAGER(R.drawable.ic_download_manager, R.string.menu_download),
         SETTINGS(R.drawable.ic_action_settings, R.string.menu_settings);
@@ -385,15 +393,20 @@ public class MainActivity extends BaseToolbarActivity {
                 drawerToggle.syncState();
             }
         } else {
+            if (currentFragment != null) {
+                if (currentFragment.onBackPressed()) {
+                    return;
+                }
+            }
             super.onBackPressed();
         }
     }
 
     public void showRepositoryPickerFragment() {
-        RepositoryPickerFragment fragment = RepositoryPickerFragment.newInstance();
+        currentFragment = RepositoryPickerFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -403,10 +416,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     public void showDownloadedMangaFragment() {
-        Fragment fragment = DownloadedMangaFragment.newInstance();
+        currentFragment = DownloadedMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -416,10 +429,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void showFavoriteMangaFragment() {
-        Fragment fragment = FavoritesFragment.newInstance();
+        currentFragment = FavoritesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -428,10 +441,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void showDownloadManagerFragment() {
-        Fragment fragment = DownloadManagerFragment.newInstance();
+        currentFragment = DownloadManagerFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -440,10 +453,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void showSettingsFragment() {
-        Fragment fragment = SettingsFragment.newInstance();
+        currentFragment = SettingsFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -452,10 +465,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void showHistoryFragment() {
-        Fragment fragment = HistoryMangaFragment.newInstance();
+        currentFragment = HistoryMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -464,10 +477,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     public void showAddLocalMangaFragment() {
-        Fragment fragment = AddLocalMangaFragment.newInstance();
+        currentFragment = AddLocalMangaFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -477,10 +490,10 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     public void showAddJSRepositoryFragment() {
-        Fragment fragment = AddJSRepositoryFragment.newInstance();
+        currentFragment = AddJSRepositoryFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
@@ -490,23 +503,22 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     public void showTrackingFragment() {
-        Fragment fragment = TrackingFragment.newInstance();
+        currentFragment = TrackingFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(false);
         }
         isOnMainFragment = false;
-        syncToggle();
     }
 
-    private void showMainFragment() {
-        Fragment fragment = MainFragment.newInstance(firstLaunch);
+    public void showMainFragment() {
+        currentFragment = MainFragment.newInstance(firstLaunch);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
+                .replace(R.id.content_frame, currentFragment)
                 .commit();
         if (drawerToggle != null) {
             drawerToggle.setDrawerIndicatorEnabled(true);

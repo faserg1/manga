@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
@@ -207,6 +208,13 @@ public class TrackingFragment extends BaseFragment implements AdapterView.OnItem
             return filter;
         }
 
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.showMainFragment();
+        return true;
     }
 
     private static class Holder extends BaseAdapter.BaseHolder {

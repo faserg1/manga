@@ -35,6 +35,11 @@
             android:text="Остальные настройки ищите в профиле"
             android:textColor="@color/blue"/>
 
+        <Button
+            android:id="@+id/transfer"
+            android:text="Скопировать Любимое -> Читаемое"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <!--<CheckBox-->
             <!--android:id="@+id/show_viewer_controls"-->

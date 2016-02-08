@@ -15,11 +15,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.FolderPickerActivity;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.application.ApplicationSettings;
+import com.danilov.supermanga.core.database.DatabaseAccessException;
+import com.danilov.supermanga.core.database.MangaDAO;
+import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.util.ServiceContainer;
+
+import java.util.List;
 
 /**
  * Created by Semyon on 23.02.2015.
@@ -53,7 +60,39 @@ public class SettingsFragment extends BaseFragment {
         mainPageSelector = findViewById(R.id.main_page_selector);
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
         final String path = userSettings.getDownloadPath();
-
+        final Activity activity = getActivity(); //hack
+        findViewById(R.id.transfer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+                Thread t = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            List<Manga> favorite = mangaDAO.getFavorite();
+                            for (Manga manga : favorite) {
+                                manga.setTracking(true);
+                                mangaDAO.setTracking(manga, true);
+                            }
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(activity, "Готово!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } catch (DatabaseAccessException e) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(activity, "Ошибка при переносе, пишите разработчику", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                };
+                t.start();
+            }
+        });
 //        downloadPath.setText(path);
 //        selectPath = findViewById(R.id.select_folder);
 //        selectPath.setOnClickListener(new View.OnClickListener() {
