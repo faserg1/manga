@@ -6,33 +6,126 @@
                 android:padding="10dp">
 
     <!--<com.danilov.supermanga.core.view.TopCropImageView-->
-        <!--android:scaleType="matrix"-->
-        <!--android:src="@drawable/updates_newyear_bg"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
+    <!--android:scaleType="matrix"-->
+    <!--android:src="@drawable/updates_newyear_bg"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
 
     <TextView
         android:id="@+id/useful_info"
-        android:text="@string/p_useful_main_fragment"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/sv_update"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/useful_info"
-        android:id="@+id/update"/>
+        android:text="@string/p_useful_main_fragment"/>
 
-    <GridView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:layout_alignParentBottom="true"
-              android:id="@+id/updates"
-              android:numColumns="1"
-              android:listSelector="#00000000"
-              android:cacheColorHint="@android:color/transparent"
-              android:layout_below="@+id/update">
+    <!--card-->
+    <LinearLayout
+        android:id="@+id/tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/useful_info"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="2.5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/updates_item_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/update"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/selectable_normal_background"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/sv_update"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/card_shadow"
+                android:src="@drawable/card_shadow"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="2.5dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/updates_item_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/selectable_normal_background"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_action_important_black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Читаемое"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/card_shadow"
+                android:src="@drawable/card_shadow"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <GridView
+        android:id="@+id/updates"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/tabs"
+        android:cacheColorHint="@android:color/transparent"
+        android:listSelector="#00000000"
+        android:numColumns="1">
 
     </GridView>
 

@@ -189,6 +189,31 @@ public class MangaDAO {
         return mangaList;
     }
 
+    @NonNull
+    public synchronized List<Manga> getTracking() throws DatabaseAccessException {
+        Database db = databaseHelper.openWritable();
+        String selection = IS_TRACKING + " = 1";
+        List<Manga> mangaList = new ArrayList<Manga>();
+        try {
+            Cursor cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
+            if (!cursor.moveToFirst()) {
+                return new ArrayList<Manga>(0);
+            }
+            do {
+                Manga manga = null;
+                manga = resolve(cursor);
+                if (manga != null) {
+                    mangaList.add(manga);
+                }
+            } while (cursor.moveToNext());
+        } catch (Exception e) {
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+        return mangaList;
+    }
+
     public synchronized Manga getById(final int id) throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";

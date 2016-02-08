@@ -45,7 +45,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
 
-    private Button update;
+    private View update;
     private GridView updatesView;
     private List<Pair<Manga,UpdatesElement>> updates = new ArrayList<Pair<Manga,UpdatesElement>>();
 
@@ -120,7 +120,7 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
             public void onClick(final View view) {
                 try {
                     activity.changeUpdatesQuantity(updates.size());
-                    List<Manga> mangaList = mangaDAO.getFavorite();
+                    List<Manga> mangaList = mangaDAO.getTracking();
                     if (mangaList.isEmpty()) {
                         return;
                     }

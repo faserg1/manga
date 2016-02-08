@@ -80,7 +80,7 @@ public class StartUpdateService extends Service {
                 final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
                 List<Manga> favorite = null;
                 try {
-                    favorite = mangaDAO.getFavorite();
+                    favorite = mangaDAO.getTracking();
                 } catch (DatabaseAccessException e) {
                     LOGGER.e("Failed to get favorite manga: " + e.getMessage(), e);
                 }
