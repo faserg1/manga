@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +86,15 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(final Bundle savedInstanceState) {
         updatesView = findViewById(R.id.updates);
         update = findViewById(R.id.update);
+
+        findViewById(R.id.show_tracking).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.showTrackingFragment();
+            }
+        });
+
         List<UpdatesElement> _updates = null;
         try {
             _updates = updatesDAO.getAllUpdates();

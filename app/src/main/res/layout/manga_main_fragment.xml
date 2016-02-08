@@ -85,6 +85,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/show_tracking"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/selectable_normal_background"

@@ -38,6 +38,7 @@ import com.danilov.supermanga.fragment.HistoryMangaFragment;
 import com.danilov.supermanga.fragment.MainFragment;
 import com.danilov.supermanga.fragment.RepositoryPickerFragment;
 import com.danilov.supermanga.fragment.SettingsFragment;
+import com.danilov.supermanga.fragment.TrackingFragment;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -477,6 +478,19 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showAddJSRepositoryFragment() {
         Fragment fragment = AddJSRepositoryFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+        }
+        isOnMainFragment = false;
+        syncToggle();
+    }
+
+    public void showTrackingFragment() {
+        Fragment fragment = TrackingFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
