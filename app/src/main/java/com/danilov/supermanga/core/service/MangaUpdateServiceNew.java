@@ -36,7 +36,6 @@ public class MangaUpdateServiceNew extends Service {
     private static final Logger LOGGER = new Logger(MangaUpdateServiceNew.class);
 
 //    private static final String TAG = "MangaUpdateServiceNew";
-    private static final String EXTRA_MANGA_LIST = "mangas";
 
     public static final int UPDATING_LIST = 0;
     public static final int MANGA_UPDATE_FINISHED = 1;
@@ -62,24 +61,17 @@ public class MangaUpdateServiceNew extends Service {
         }
     }
 
-    public static void startUpdateList(Context context, final List<? extends Manga> mangas) {
+    public static void startUpdateList(Context context) {
         Intent intent = new Intent(context, MangaUpdateServiceNew.class);
-        ArrayList<Manga> mangasArrayList = Utils.listToArrayList(mangas);
-        intent.putParcelableArrayListExtra(EXTRA_MANGA_LIST, mangasArrayList);
         context.startService(intent);
     }
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         if (intent != null) {
-            List<Manga> mangas = intent.getParcelableArrayListExtra(EXTRA_MANGA_LIST);
-            if (mangas != null) {
-                mangas = Collections.synchronizedList(mangas);
-                if (updateThread == null) {
-                    updateThread = new UpdateThread(mangas);
-                    updateThread.start();
-                    notifyHandlers(UPDATE_STARTED, getCurrentUpdating());
-                }
+            if (updateThread == null) {
+                updateThread = new UpdateThread();
+                updateThread.start();
             }
         }
         return START_STICKY;
@@ -89,17 +81,31 @@ public class MangaUpdateServiceNew extends Service {
 
         private List<Pair<Manga, UpdatesElement>> mangas = null;
 
-        private UpdateThread(final List<Manga> mangas) {
-            this.mangas = new ArrayList<>();
-            for (Manga m : mangas) {
-                this.mangas.add(new Pair<Manga, UpdatesElement>(m, null));
-            }
+        private UpdateThread() {
         }
 
         @Override
         public void run() {
             UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
             MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+
+            try {
+                List<Manga> mangas  = Collections.synchronizedList(mangaDAO.getTracking());
+                if (mangas.isEmpty()) {
+                    return;
+                }
+
+                this.mangas = new ArrayList<>();
+                for (Manga m : mangas) {
+                    this.mangas.add(new Pair<Manga, UpdatesElement>(m, null));
+                }
+            } catch (DatabaseAccessException e) {
+                LOGGER.e("Failed to get tracking: " + e.getMessage(), e);
+                updateThread = null;
+                return;
+            }
+
+            notifyHandlers(UPDATE_STARTED, getCurrentUpdating());
 
             int updatesCount = 0;
 

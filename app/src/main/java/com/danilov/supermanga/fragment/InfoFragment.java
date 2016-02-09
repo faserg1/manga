@@ -203,11 +203,15 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
         final ViewV16 body = ViewV16.wrap(findViewById(R.id.body));
         body.setAlpha(0);
         body.setTranslationY(200);
+
+        final MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
+
         body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0).withEndAction(new Runnable() {
             @Override
             public void run() {
                 addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(1).scaleX(1);
                 removeFromFavorites.animate().scaleY(1).scaleX(1);
+                infoActivity.toggleOverlayBackground(true);
             }
         });
 
@@ -236,9 +240,14 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
         }
     }
 
+    private boolean backAccepted = false;
+
     @Override
     public boolean onBackPressed() {
-
+        if (backAccepted) {
+            return true;
+        }
+        backAccepted = true;
         final long duration = (long) (ANIM_DURATION);
 
         final ViewV16 mangaCover = ViewV16.wrap(this.mangaCover);
@@ -254,10 +263,15 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
         mangaCover.setPivotX(0);
         mangaCover.setPivotY(0);
 
+        final MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
+
         addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(new Runnable() {
             @Override
             public void run() {
                 body.animate().setDuration(ANIM_DURATION).alpha(0).translationY(200);
+
+                infoActivity.toggleOverlayBackground(false);
+
                 final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
                 if (bigView != null) {
                     bigView.animate().setDuration(ANIM_DURATION).alpha(0);

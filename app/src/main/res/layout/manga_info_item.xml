@@ -151,29 +151,29 @@
 
                     <com.danilov.supermanga.core.widget.ToggleImageButton
                         android:id="@+id/toggle_favorite"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/info_item_image_button_size"
+                        android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_love_background"
                         android:src="@drawable/button_love"/>
 
                     <ImageButton
                         android:id="@+id/download"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/info_item_image_button_size"
+                        android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
                         android:src="@drawable/button_download_icon"/>
 
                     <ImageButton
                         android:id="@+id/read_online"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/info_item_image_button_size"
+                        android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
                         android:src="@drawable/button_online_icon"/>
 
                     <ImageButton
                         android:id="@+id/repository_link"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="@dimen/info_item_image_button_size"
+                        android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
                         android:src="@drawable/button_open_in_browser"/>
 

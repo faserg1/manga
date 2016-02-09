@@ -31,4 +31,6 @@
     <dimen name="info_item_side_padding_land">55dp</dimen>
     <dimen name="info_item_bottom_padding_land">5dp</dimen>
 
+    <dimen name="info_item_image_button_size">100dp</dimen>
+
 </resources>

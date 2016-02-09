@@ -74,21 +74,7 @@ public class StartUpdateService extends Service {
     }
 
     private void onServiceBinded() {
-        new Thread() {
-            @Override
-            public void run() {
-                final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-                List<Manga> favorite = null;
-                try {
-                    favorite = mangaDAO.getTracking();
-                } catch (DatabaseAccessException e) {
-                    LOGGER.e("Failed to get favorite manga: " + e.getMessage(), e);
-                }
-                if (favorite != null) {
-                    MangaUpdateServiceNew.startUpdateList(StartUpdateService.this, favorite);
-                }
-            }
-        }.start();
+        MangaUpdateServiceNew.startUpdateList(StartUpdateService.this);
     }
 
     @Override

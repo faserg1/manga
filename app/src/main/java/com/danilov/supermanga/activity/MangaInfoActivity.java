@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.danilov.supermanga.R;
@@ -36,6 +37,8 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
     private RelativeLayout frame;
 
+    private View overlayBackground;
+
     private InfoFragment infoFragment;
     private ChaptersFragment chaptersFragment;
 
@@ -51,6 +54,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         setSupportActionBar(toolbar);
 
         frame = (RelativeLayout) findViewById(R.id.frame);
+        overlayBackground = findViewById(R.id.overlay_background);
         if (savedInstanceState == null) {
             top = getIntent().getIntExtra(EXTRA_TOP, 0);
             left = getIntent().getIntExtra(EXTRA_LEFT, 0);
@@ -150,6 +154,10 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
             refreshSign.stopAnimation();
             refreshSign.hide();
         }
+    }
+
+    public void toggleOverlayBackground(final boolean enable) {
+        overlayBackground.setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 
     @Override

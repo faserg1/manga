@@ -23,7 +23,7 @@ public class UpdatesDAO {
     private final static String TAG = "UpdatesDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
 
-    private static final int DAOVersion = 2;
+    private static final int DAOVersion = 3;
     private static final String TABLE_NAME = "updatesManga";
     private static final String DB_NAME = "manga.db";
     private static final String ID = "id";

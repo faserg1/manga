@@ -128,16 +128,8 @@ public class MainFragment extends BaseFragment implements AdapterView.OnItemClic
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                try {
-                    activity.changeUpdatesQuantity(updates.size());
-                    List<Manga> mangaList = mangaDAO.getTracking();
-                    if (mangaList.isEmpty()) {
-                        return;
-                    }
-                    MangaUpdateServiceNew.startUpdateList(getActivity(), mangaList);
-                } catch (DatabaseAccessException e) {
-                    e.printStackTrace();
-                }
+                activity.changeUpdatesQuantity(updates.size());
+                MangaUpdateServiceNew.startUpdateList(getActivity());
             }
         });
 
