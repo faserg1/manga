@@ -70,6 +70,12 @@
                               android:marqueeRepeatLimit="marquee_forever"
                               android:scrollHorizontally="true"/>
 
+                    <com.danilov.supermanga.core.view.CTextView
+                        android:id="@+id/repository_title"
+                        android:textColor="@color/link_color"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
                 </LinearLayout>
 
                 <!--cover and buttons-->

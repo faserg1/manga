@@ -62,6 +62,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
     private ImageButton repositoryLink = null;
     private TextView authors = null;
     private TextView genres = null;
+    private TextView repositoryTitle = null;
     private ImageView mangaCover = null;
 
     private View downloadButton;
@@ -123,6 +124,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
         scrollViewParallax = findViewById(R.id.scrollView);
         authors = findViewById(R.id.authors);
         genres = findViewById(R.id.genres);
+        repositoryTitle = findViewById(R.id.repository_title);
         downloadButton.setOnClickListener(this);
         downloadButton.setOnLongClickListener(this);
         readOnlineButton.setOnClickListener(this);
@@ -314,6 +316,10 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
             }
         }
         mangaTitle.setText(manga.getTitle());
+
+
+        String repoName = manga.getRepository().getName();
+        repositoryTitle.setText(repoName);
 
         String mangaDescription = manga.getDescription();
         if (mangaDescription != null) {

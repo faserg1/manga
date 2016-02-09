@@ -46,7 +46,7 @@ public class MangaUpdateServiceNew extends Service {
     private boolean hasError = false;
     private UpdateThread updateThread = null;
 
-    private List<Handler> handlers = new ArrayList<>();
+    private final List<Handler> handlers = new ArrayList<>();
 
     public void addHandler(final Handler handler) {
         synchronized (handlers) {
@@ -77,6 +77,8 @@ public class MangaUpdateServiceNew extends Service {
         return START_STICKY;
     }
 
+    private volatile boolean updating = false;
+
     private class UpdateThread extends Thread {
 
         private List<Pair<Manga, UpdatesElement>> mangas = null;
@@ -99,9 +101,11 @@ public class MangaUpdateServiceNew extends Service {
                 for (Manga m : mangas) {
                     this.mangas.add(new Pair<Manga, UpdatesElement>(m, null));
                 }
+                updating = true;
             } catch (DatabaseAccessException e) {
                 LOGGER.e("Failed to get tracking: " + e.getMessage(), e);
                 updateThread = null;
+                updating = false;
                 return;
             }
 
@@ -156,13 +160,14 @@ public class MangaUpdateServiceNew extends Service {
                 }
             }
             notifyHandlers(UPDATE_FINISHED, updatesCount);
+            updating = false;
             updateThread = null;
         }
 
     }
 
     private void sendStatus() {
-        if (updateThread != null) {
+        if (updateThread != null && updating) {
             notifyHandlers(UPDATING_LIST,  getCurrentUpdating());
         }
     }
