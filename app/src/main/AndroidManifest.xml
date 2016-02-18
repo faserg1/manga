@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="27"
-          android:versionName="1.38.11">
+          android:versionCode="31"
+          android:versionName="1.38.15.olddecoder">
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -85,11 +85,11 @@
             android:label="Notification"
             android:theme="@style/Theme.CustomPanel"/>
 
-        <!-- ad activity -->
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent"/>
+        <!--&lt;!&ndash; ad activity &ndash;&gt;-->
+        <!--<activity-->
+            <!--android:name="com.google.android.gms.ads.AdActivity"-->
+            <!--android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"-->
+            <!--android:theme="@android:style/Theme.Translucent"/>-->
 
         <service android:name=".core.service.MangaDownloadService"/>
         <service android:name=".core.service.MangaUpdateServiceNew"/>

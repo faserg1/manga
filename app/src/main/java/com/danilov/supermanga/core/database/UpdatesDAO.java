@@ -57,8 +57,9 @@ public class UpdatesDAO {
         String selection = MANGA_ID + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId()};
         UpdatesElement element = null;
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
             if (!cursor.moveToFirst()) {
                 return null;
             }
@@ -76,20 +77,31 @@ public class UpdatesDAO {
             element.setTimestamp(new Date(timestamp));
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            db.close();
         }
         return element;
     }
 
     public int getUpdatesQuantity() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.rawQuery("select count(*) from " + TABLE_NAME, null);
+            cursor = db.rawQuery("select count(*) from " + TABLE_NAME, null);
             if (!cursor.moveToFirst()) {
                 return 0;
             }
             return cursor.getInt(0);
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            db.close();
         }
     }
 
@@ -97,8 +109,9 @@ public class UpdatesDAO {
         Database db = databaseHelper.openWritable();
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
         List<UpdatesElement> mangaList = null;
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return null;
             }
@@ -123,6 +136,9 @@ public class UpdatesDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return mangaList;
