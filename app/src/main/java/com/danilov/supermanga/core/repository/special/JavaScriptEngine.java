@@ -68,7 +68,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
          * @param url URL of a page
          * @return
          */
-        public String get(final String url) {
+        public String get(final String url) throws JSHttpException {
             HttpClient httpClient = new ExtendedHttpClient();
             try {
                 final String newUrl = url.replace(" ", "%20");
@@ -78,7 +78,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 return responseString;
             } catch (IOException e) {
                 loge(JavaTag, e.getMessage());
-                return "null";
+                throw new JSHttpException("Failed to load url " + url + ": " + e.getMessage(), e);
             }
         }
 
@@ -139,7 +139,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function getSuggestionsFn = (Function) scope.get("getSuggestions", scope);
-        Object callResult = getSuggestionsFn.call(context, scope, scope, new Object[]{query});
+        Object callResult;
+        try {
+            callResult = jsHttp(getSuggestionsFn.call(context, scope, scope, new Object[]{query}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return mangaSuggestions;
         }
@@ -170,7 +175,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryRepository", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{query});
+        Object callResult;
+        try {
+            callResult = jsHttp(queryRepositoryFn.call(context, scope, scope, new Object[]{query}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return mangaList;
         }
@@ -207,7 +217,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryForMangaDescription", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        Object callResult;
+        try {
+            callResult = jsHttp(queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return false;
         }
@@ -240,7 +255,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryForChapters", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        Object callResult;
+        try {
+            callResult = jsHttp(queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return false;
         }
@@ -274,7 +294,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("getChapterImages", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{chapter.getUri()});
+        Object callResult;
+        try {
+            callResult = jsHttp(queryRepositoryFn.call(context, scope, scope, new Object[]{chapter.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return null;
         }
@@ -425,6 +450,29 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             return new Elements(singleElementList);
         }
 
+    }
+
+    private static class JSHttpException extends Exception {
+
+        public JSHttpException() {
+        }
+
+        public JSHttpException(final String detailMessage) {
+            super(detailMessage);
+        }
+
+        public JSHttpException(final String detailMessage, final Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+        public JSHttpException(final Throwable throwable) {
+            super(throwable);
+        }
+
+    }
+
+    public <T> T jsHttp(final T t) throws JSHttpException {
+        return t;
     }
 
 }
