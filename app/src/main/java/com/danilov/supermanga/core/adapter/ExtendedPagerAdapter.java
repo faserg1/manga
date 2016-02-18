@@ -96,10 +96,12 @@ public abstract class ExtendedPagerAdapter<T> extends PagerAdapter {
     protected void onViewUnselected(int position, View view) {
     }
 
+    protected abstract void onNotCreatedViewSelected(final int posistion);
+
     private void notifyPositionChange(int position) {
         if (this.mViews[position] == null) {
             // shouldn't happen
-            Log.e("ExtendedPageAdapter", "the view is null for the position " + position);
+            this.onNotCreatedViewSelected(position);
             return;
         }
 

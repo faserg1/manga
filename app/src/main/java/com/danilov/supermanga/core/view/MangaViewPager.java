@@ -1,8 +1,9 @@
 package com.danilov.supermanga.core.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.adapter.ExtendedPagerAdapter;
@@ -22,8 +22,7 @@ import com.danilov.supermanga.core.service.DownloadManager;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
-import com.danilov.supermanga.core.view.library.TiledBitmapDrawable;
-import com.danilov.supermanga.core.view.library.TouchImageView;
+import com.davemorrissey.labs.subscaleview.ImageSource;
 
 import java.io.File;
 import java.util.HashMap;
@@ -92,35 +91,38 @@ public class MangaViewPager extends CompatPager {
         }
     }
 
-    private class Byaku implements ImageWrapper {
+    private class NewSSIV implements ImageWrapper {
 
-        private TouchImageView touchImageView;
-
+        private boolean shouldDraw = false;
         private String fileName;
 
-        public Byaku(final TouchImageView touchImageView) {
-            this.touchImageView = touchImageView;
+        private com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView iv;
+
+        public NewSSIV(final com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView iv) {
+            this.iv = iv;
         }
 
         @Override
         public void setImageFile(final String fileName) {
             this.fileName = fileName;
-            TiledBitmapDrawable.attachTiledBitmapDrawable(touchImageView, fileName, null, null);
+            if (shouldDraw) {
+                iv.setImage(ImageSource.uri(fileName));
+            }
         }
 
         @Override
         public void setMaxScale(final float maxScale) {
-            touchImageView.setMaxScale(maxScale);
+            iv.setMaxScale(maxScale);
         }
 
         @Override
         public void setVisibility(final int visibility) {
-            touchImageView.setVisibility(visibility);
+            iv.setVisibility(visibility);
         }
 
         @Override
         public void reset() {
-            touchImageView.reset();
+            iv.reset();
         }
 
         @Override
@@ -130,14 +132,14 @@ public class MangaViewPager extends CompatPager {
 
         @Override
         public void setShouldDrawLarge(final boolean shouldDrawLarge) {
-            if (shouldDrawLarge) {
-                TiledBitmapDrawable.attachTiledBitmapDrawable(touchImageView, fileName, null, null);
-            } else {
-                touchImageView.setImageDrawable(null);
+            this.shouldDraw = shouldDrawLarge;
+            if (shouldDraw && (fileName != null)) { //FIXME: почему-то в этот момент вьюха отделена от пейджера и не рисуется
+                iv.setImage(ImageSource.uri(fileName));
             }
+//            iv.setShouldDrawLarge(shouldDrawLarge);
         }
-
     }
+
 
     private DownloadManager downloadManager = new DownloadManager();
     private Adapter adapter = null;
@@ -265,9 +267,10 @@ public class MangaViewPager extends CompatPager {
             listeners.remove(this.listener);
         }
 
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
         @Override
         protected View createView(final int position) {
-            String url = getItem(position);
+            final String url = getItem(position);
 
             View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
 
@@ -275,20 +278,25 @@ public class MangaViewPager extends CompatPager {
             ImageWrapper imageView = null;
             if (imageViewHolder instanceof SubsamplingScaleImageView) {
                 imageView = new SSIV((SubsamplingScaleImageView) imageViewHolder);
-            } else if (imageViewHolder instanceof TouchImageView) {
-                imageView = new Byaku((TouchImageView) imageViewHolder);
+            } else if (imageViewHolder instanceof com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView) {
+                imageView = new NewSSIV((com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView) imageViewHolder);
+                ((com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView) imageViewHolder).setParallelLoadingEnabled(true);
             }
             imageView.setMaxScale(4);
             TextView progressView = (TextView) v.findViewById(R.id.progress);
             Button restart = (Button) v.findViewById(R.id.restart);
             imageView.setVisibility(View.VISIBLE);
             loadImage(url, imageView, progressView, restart);
+            if (this.positionNotCreatedView != null && this.positionNotCreatedView.equals(position)) {
+                imageView.setShouldDrawLarge(true);
+            }
             views.put(position, imageView);
             return v;
         }
 
         @Override
         protected void onViewUnselected(final int position, final View view) {
+            this.positionNotCreatedView = null;
             for (Map.Entry<Integer, ImageWrapper> entry : views.entrySet()) {
                 int pos = entry.getKey();
                 if (Math.abs(position - pos) > 1) {
@@ -305,11 +313,22 @@ public class MangaViewPager extends CompatPager {
             }
         }
 
+        private Integer positionNotCreatedView = null;
+
+        @Override
+        protected void onNotCreatedViewSelected(final int posistion) {
+            this.positionNotCreatedView = posistion;
+        }
+
         @Override
         protected void onViewSelected(final int position, final View view) {
-            ImageWrapper imageView = views.get(position);
+            this.positionNotCreatedView = null;
+            ImageWrapper imageView = views.get(position); //FIXME: сюда прилетает уже удалённый view
             if (imageView != null) {
+                imageView.setVisibility(View.VISIBLE);
                 imageView.setShouldDrawLarge(true);
+                imageView.setMaxScale(4);
+                imageView.setVisibility(View.VISIBLE);
             }
         }
     }
