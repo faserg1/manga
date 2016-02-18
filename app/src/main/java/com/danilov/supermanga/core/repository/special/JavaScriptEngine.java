@@ -17,7 +17,6 @@ import com.danilov.supermanga.core.util.Utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -68,7 +67,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
          * @param url URL of a page
          * @return
          */
-        public String get(final String url) {
+        public String get(final String url) throws JSHttpException {
             HttpClient httpClient = new ExtendedHttpClient();
             try {
                 final String newUrl = url.replace(" ", "%20");
@@ -78,7 +77,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 return responseString;
             } catch (IOException e) {
                 loge(JavaTag, e.getMessage());
-                return "null";
+                throw new JSHttpException("Failed to load url " + url + ": " + e.getMessage(), e);
             }
         }
 
@@ -139,7 +138,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function getSuggestionsFn = (Function) scope.get("getSuggestions", scope);
-        Object callResult = getSuggestionsFn.call(context, scope, scope, new Object[]{query});
+        Object callResult;
+        try {
+            callResult = exceptionable(getSuggestionsFn.call(context, scope, scope, new Object[]{query}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return mangaSuggestions;
         }
@@ -170,7 +174,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryRepository", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{query});
+        Object callResult;
+        try {
+            callResult = exceptionable(queryRepositoryFn.call(context, scope, scope, new Object[]{query}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return mangaList;
         }
@@ -207,7 +216,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryForMangaDescription", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        Object callResult;
+        try {
+            callResult = exceptionable(queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return false;
         }
@@ -240,7 +254,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("queryForChapters", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()});
+        Object callResult;
+        try {
+            callResult = exceptionable(queryRepositoryFn.call(context, scope, scope, new Object[]{manga.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return false;
         }
@@ -274,7 +293,12 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
         final Scriptable scope = jsb.scope;
         final Context context = jsb.context;
         Function queryRepositoryFn = (Function) scope.get("getChapterImages", scope);
-        Object callResult = queryRepositoryFn.call(context, scope, scope, new Object[]{chapter.getUri()});
+        Object callResult;
+        try {
+            callResult = exceptionable(queryRepositoryFn.call(context, scope, scope, new Object[]{chapter.getUri()}));
+        } catch (JSHttpException e) {
+            throw new RepositoryException(e.getMessage());
+        }
         if (callResult == null) {
             return null;
         }
@@ -425,6 +449,38 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
             return new Elements(singleElementList);
         }
 
+    }
+
+    private static class JSHttpException extends Exception {
+
+        public JSHttpException() {
+        }
+
+        public JSHttpException(final String detailMessage) {
+            super(detailMessage);
+        }
+
+        public JSHttpException(final String detailMessage, final Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+        public JSHttpException(final Throwable throwable) {
+            super(throwable);
+        }
+
+    }
+
+    /**
+     * Wraps JS calls (which use reflexion inside) to method
+     * with throws declaration, because otherwise it's not possible
+     * to catch checked exceptions like JSHttpException and any other
+     * @param t wrapped function call result
+     * @param <T> type of parameter
+     * @return it's parameter
+     * @throws JSHttpException
+     */
+    public <T> T exceptionable(final T t) throws JSHttpException {
+        return t;
     }
 
 }
