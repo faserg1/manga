@@ -130,6 +130,7 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
     @Override
     public Collection<T> select(final Selector selector) {
         Database database = null;
+        Cursor cursor = null;
         try {
             try {
                 database = databaseHelper.openWritable();
@@ -137,7 +138,7 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
                 //FIXME: THROW EXCEPTION
                 return Collections.emptyList();
             }
-            Cursor cursor = database.rawQuery(selector.formatQuery(), null);
+            cursor = database.rawQuery(selector.formatQuery(), null);
             ResultSet resultSet = new ResultSet(cursor, getMetaModel());
             if (!resultSet.moveToFirst()) {
                 return Collections.emptyList();
@@ -153,6 +154,9 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
         } finally {
             if (database != null) {
                 database.close();
+            }
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
             }
         }
     }

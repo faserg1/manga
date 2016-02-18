@@ -101,8 +101,9 @@ public class MangaDAO {
     public synchronized List<Manga> getAllManga() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         List<Manga> mangaList = new ArrayList<Manga>();
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return new ArrayList<Manga>(0);
             }
@@ -116,6 +117,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return mangaList;
@@ -126,8 +130,9 @@ public class MangaDAO {
         String selection = MANGA_INET_URI + " = ? AND " + MANGA_REPOSITORY + " = ?";
         String[] selectionArgs = new String[] {inetUri, repository.toString()};
         Manga manga = null;
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
             if (!cursor.moveToFirst()) {
                 return null;
             }
@@ -135,6 +140,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return manga;
@@ -144,8 +152,9 @@ public class MangaDAO {
         Database db = databaseHelper.openWritable();
         String selection = IS_DOWNLOADED + " = 1";
         List<LocalManga> mangaList = new ArrayList<LocalManga>();
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return new ArrayList<LocalManga>(0);
             }
@@ -159,6 +168,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return mangaList;
@@ -169,8 +181,9 @@ public class MangaDAO {
         Database db = databaseHelper.openWritable();
         String selection = IS_FAVORITE + " = 1";
         List<Manga> mangaList = new ArrayList<Manga>();
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return new ArrayList<Manga>(0);
             }
@@ -184,6 +197,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return mangaList;
@@ -194,8 +210,9 @@ public class MangaDAO {
         Database db = databaseHelper.openWritable();
         String selection = IS_TRACKING + " = 1";
         List<Manga> mangaList = new ArrayList<Manga>();
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return new ArrayList<Manga>(0);
             }
@@ -209,6 +226,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return mangaList;
@@ -219,8 +239,9 @@ public class MangaDAO {
         String selection = ID + " = ?";
         String[] selectionArgs = new String[] {"" + id};
         Manga manga = null;
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
             if (!cursor.moveToFirst()) {
                 return null;
             }
@@ -228,6 +249,9 @@ public class MangaDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return manga;

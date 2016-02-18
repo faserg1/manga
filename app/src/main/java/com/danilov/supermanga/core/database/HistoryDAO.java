@@ -72,8 +72,9 @@ public class HistoryDAO {
         String selection = MANGA_ID + " = ? AND " + IS_ONLINE + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId(), isOnline ? "1" : "0"};
         HistoryElement historyElement = null;
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
             if (!cursor.moveToFirst()) {
                 return null;
             }
@@ -92,6 +93,9 @@ public class HistoryDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         return historyElement;
@@ -104,9 +108,9 @@ public class HistoryDAO {
         List<HistoryElement> mangaList = Collections.emptyList();
 
         final List<Integer> scheduledForDeletion = new LinkedList<>();
-
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
                 return mangaList;
             }
@@ -147,6 +151,9 @@ public class HistoryDAO {
         } catch (Exception e) {
             throw new DatabaseAccessException(e.getMessage());
         } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
             db.close();
         }
         executor.execute(new Runnable() {

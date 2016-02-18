@@ -178,6 +178,9 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
                     return true;
                 }
             });
+        } else {
+            final MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
+            infoActivity.toggleOverlayBackground(true);
         }
         shown = true;
     }
