@@ -21,7 +21,6 @@ import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Logger;
 import com.danilov.supermanga.core.util.ServiceContainer;
-import com.danilov.supermanga.core.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

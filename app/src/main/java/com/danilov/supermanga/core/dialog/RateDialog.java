@@ -1,6 +1,5 @@
 package com.danilov.supermanga.core.dialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.application.MangaApplication;

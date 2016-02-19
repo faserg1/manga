@@ -43,9 +43,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.software.shell.fab.ActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by Semyon on 28.08.2015.
  */

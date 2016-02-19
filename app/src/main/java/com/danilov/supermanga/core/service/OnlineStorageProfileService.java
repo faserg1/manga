@@ -13,7 +13,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 
 import com.danilov.supermanga.core.application.ApplicationSettings;
-import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
 import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.util.Constants;
@@ -22,10 +21,8 @@ import com.google.android.gms.common.ConnectionResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.json.JsonParser;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

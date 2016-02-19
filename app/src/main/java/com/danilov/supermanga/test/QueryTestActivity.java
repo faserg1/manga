@@ -7,18 +7,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.core.adapter.MangaListAdapter;
 import com.danilov.supermanga.core.model.Manga;
-import com.danilov.supermanga.core.repository.ReadmangaEngine;
-import com.danilov.supermanga.core.repository.RepositoryEngine;
-import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Constants;
-
-import java.util.List;
 
 /**
  * Created by Semyon Danilov on 17.05.2014.

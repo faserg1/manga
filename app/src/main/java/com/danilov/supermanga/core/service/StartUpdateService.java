@@ -9,15 +9,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
-import com.danilov.supermanga.core.database.DatabaseAccessException;
-import com.danilov.supermanga.core.database.MangaDAO;
-import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.notification.UpdatesNotificationHelper;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Logger;
-import com.danilov.supermanga.core.util.ServiceContainer;
-
-import java.util.List;
 
 /**
  * Created by Semyon on 06.08.2015.

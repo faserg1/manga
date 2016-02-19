@@ -4,7 +4,6 @@ import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.strategy.ShowMangaException;
 import com.danilov.supermanga.core.strategy.StrategyDelegate;
 import com.danilov.supermanga.core.view.CompatPager;
-import com.danilov.supermanga.core.view.MangaViewPager;
 
 import java.util.List;
 

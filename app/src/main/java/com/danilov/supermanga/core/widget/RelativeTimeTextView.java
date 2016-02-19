@@ -3,8 +3,8 @@ package com.danilov.supermanga.core.widget;
 /**
  * Created by Semyon on 30.08.2015.
  */
+
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Parcel;

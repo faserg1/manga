@@ -1,12 +1,9 @@
 package com.danilov.supermanga.core.repository.special;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.crud.Model;
 import com.danilov.supermanga.core.database.crud.ResultSet;
-import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
-import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 
 /**
  * Created by Semyon on 23.01.2016.

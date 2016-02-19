@@ -50,13 +50,14 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.MangaViewPager;
 import com.danilov.supermanga.core.view.SlidingLayer;
-//import com.google.android.gms.ads.AdListener;
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+//import com.google.android.gms.ads.AdListener;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.InterstitialAd;
 
 /**
  * Created by Semyon Danilov on 06.08.2014.

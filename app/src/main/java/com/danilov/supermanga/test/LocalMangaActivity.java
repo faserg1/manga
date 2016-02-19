@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaViewerActivity;
-import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;

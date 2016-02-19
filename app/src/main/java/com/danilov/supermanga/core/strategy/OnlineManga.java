@@ -1,6 +1,5 @@
 package com.danilov.supermanga.core.strategy;
 
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -10,7 +9,6 @@ import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.view.CompatPager;
-import com.danilov.supermanga.core.view.MangaViewPager;
 
 import java.util.List;
 

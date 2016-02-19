@@ -1,13 +1,10 @@
 package com.danilov.supermanga.core.application;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
@@ -22,24 +19,20 @@ import com.danilov.supermanga.core.http.HttpBitmapReader;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.receiver.AlarmReceiver;
-import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.repository.special.JSCrud;
-import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
-import com.danilov.supermanga.core.repository.special.JavaScriptRepository;
-import com.danilov.supermanga.core.repository.special.test.JSTestEngine;
 import com.danilov.supermanga.core.service.LocalImageManager;
-import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
-import com.danilov.supermanga.test.DBTest;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.Collection;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Created by Semyon Danilov on 02.08.2014.
@@ -102,6 +95,19 @@ public class MangaApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(final Thread thread, final Throwable ex) {
+                StringWriter errors = new StringWriter();
+                ex.printStackTrace(new PrintWriter(errors));
+                Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG).show();
+
+                File f = Environment.getExternalStorageDirectory();
+                File logFile = new File(f, "mangaerror.log");
+                try {
+                    FileWriter writer = new FileWriter(logFile);
+                    ex.printStackTrace(new PrintWriter(writer));
+                } catch (IOException e) {
+
+                }
+
                 Log.e("MangaFAIL", ex.getMessage());
                 ex.printStackTrace();
                 defaultUncaughtExceptionHandler.uncaughtException(thread, ex);

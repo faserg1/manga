@@ -6,7 +6,6 @@ import android.util.Log;
 import com.danilov.supermanga.core.database.Database;
 import com.danilov.supermanga.core.database.DatabaseHelper;
 import com.danilov.supermanga.core.database.DatabaseOptions;
-import com.danilov.supermanga.core.database.crud.Crud;
 import com.danilov.supermanga.core.database.crud.MetaModel;
 import com.danilov.supermanga.core.database.crud.SimpleCrud;
 

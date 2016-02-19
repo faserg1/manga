@@ -272,7 +272,7 @@ public class MangaViewPager extends CompatPager {
         protected View createView(final int position) {
             final String url = getItem(position);
 
-            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
+            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page_new, MangaViewPager.this, false);
 
             View imageViewHolder = v.findViewById(R.id.imageView);
             ImageWrapper imageView = null;

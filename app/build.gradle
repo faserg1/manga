@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.noveogroup.android.check'
 
 android {
     compileSdkVersion 21
@@ -16,6 +17,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+    }
+}
+
+check {
+    pmd {
+        config '../quality/pmd-config.xml'
+    }
+    findbugs {
+        skip true
     }
 }
 

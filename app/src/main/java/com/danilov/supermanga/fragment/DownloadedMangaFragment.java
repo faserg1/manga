@@ -29,7 +29,6 @@ import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.LocalManga;
-import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;

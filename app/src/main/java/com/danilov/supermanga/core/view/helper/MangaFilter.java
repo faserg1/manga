@@ -4,7 +4,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.Filter;
-import android.widget.GridView;
 
 import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.model.Manga;

@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.activity.MangaQueryActivity;
 
 /**
  * Created by Semyon on 07.01.2016.

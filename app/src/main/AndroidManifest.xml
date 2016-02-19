@@ -2,7 +2,7 @@
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:versionCode="31"
-          android:versionName="1.38.15.olddecoder">
+          android:versionName="1.38.15.newdecoder">
 
     <uses-sdk
         android:minSdkVersion="10"

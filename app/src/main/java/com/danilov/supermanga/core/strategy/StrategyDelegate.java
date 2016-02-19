@@ -3,7 +3,6 @@ package com.danilov.supermanga.core.strategy;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
-import com.danilov.supermanga.core.interfaces.MangaShowObserver;
 import com.danilov.supermanga.core.interfaces.MangaShowStrategy;
 import com.danilov.supermanga.core.view.CompatPager;
 import com.danilov.supermanga.core.view.MangaViewPager;
