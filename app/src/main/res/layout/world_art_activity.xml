@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar"/>
+
+    <com.danilov.supermanga.core.view.ScrollViewParallax
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        app:isChild="true"
+        app:viewToParallax="@+id/manga_cover">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/header"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/info_parallax_image_height">
+
+                <ImageView
+                    android:id="@+id/manga_cover"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/loading"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/header"
+                android:background="@color/color_world_art"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="5dp"
+                    android:layout_marginTop="-5dp"
+                    android:src="@drawable/material_shadow"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+
+                    <!--title-->
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="15dp"
+                        android:orientation="vertical">
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/manga_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/info_item_title_text_size"/>
+
+                    </LinearLayout>
+
+                    <!--cover and buttons-->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/sv_chapters"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"/>
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:id="@+id/chapters_quantity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"
+                                android:textStyle="bold"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:orientation="horizontal">
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/info_item_genre"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"/>
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:id="@+id/genres"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"
+                                android:textStyle="bold"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:orientation="horizontal">
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/info_item_author"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"/>
+
+                            <com.danilov.supermanga.core.view.CTextView
+                                android:id="@+id/authors"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/info_attribute_title_size"
+                                android:textStyle="bold"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <!--cover and buttons end-->
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:orientation="vertical">
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:text="@string/description"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/info_item_def_title_size"
+                            android:textStyle="bold"/>
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:id="@+id/manga_description"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/info_attribute_title_size"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:orientation="vertical">
+
+                        <com.danilov.supermanga.core.view.CTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:text="@string/images_from"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/info_item_def_title_size"
+                            android:textStyle="bold"/>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/manga_images"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:scrollbars="vertical"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </com.danilov.supermanga.core.view.ScrollViewParallax>
+
+    <include layout="@layout/world_art_toolbar"/>
+
+</RelativeLayout>

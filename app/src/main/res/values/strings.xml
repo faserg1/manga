@@ -114,4 +114,6 @@
     <string name="text_clear_filter">Очистить</string>
     <string name="open_in_repo">Open on %1$s</string>
     <string name="application_version_settings_title">Версия приложения</string>
+    <string name="yandex_account_info_title">Yandex account</string>
+    <string name="images_from">Images from manga</string>
 </resources>

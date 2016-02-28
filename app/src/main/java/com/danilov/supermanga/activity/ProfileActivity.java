@@ -62,6 +62,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     private View alwaysShowButtonsCard;
     private View downloadPathCard;
     private RelativeTimeTextView googleAccountTextView;
+    private RelativeTimeTextView yandexAccountTextView;
 
     private TextView userNameSmall;
     private TextView email;
@@ -86,6 +87,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         alwaysShowButtonsCard = findViewWithId(R.id.always_show_buttons_card);
         downloadPathCard = findViewWithId(R.id.download_path_card);
         googleAccountTextView = findViewWithId(R.id.google_account);
+        yandexAccountTextView = findViewWithId(R.id.yandex_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
         googleDownloadButton = findViewWithId(R.id.google_download_button);
 
@@ -144,7 +146,6 @@ public class ProfileActivity extends BaseToolbarActivity {
                         userNameParams.bottomMargin = marginBottom;
                         userNameTextView.setLayoutParams(userNameParams);
 
-
                         return 0;
                     }
                 });
@@ -182,6 +183,10 @@ public class ProfileActivity extends BaseToolbarActivity {
                 service.download();
             }
         });
+        String yandexPrefix =  "SamVimes@yandex.ru (" + getString(R.string.sv_synchronized) + " ";
+        yandexAccountTextView.setPrefix(yandexPrefix);
+        yandexAccountTextView.setReferenceTime(RelativeTimeTextView.NEVER);
+        yandexAccountTextView.setSuffix(")");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
         String googleProfileName = sharedPreferences.getString(Constants.Settings.GOOGLE_PROFILE_NAME, null);

@@ -22,6 +22,7 @@
     <color name="red">#ff0000</color>
     <color name="medium_dark_red_semi_transparent">#afff000d</color>
     <color name="medium_dark_red">#ff000d</color>
+    <color name="red_trasparent">#990000</color>
 
     <color name="darkest_blue">#ff133c78</color>
     <color name="dark_blue">#0055b8</color>

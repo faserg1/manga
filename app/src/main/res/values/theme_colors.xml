@@ -2,6 +2,7 @@
 <resources>
 
     <color name="color_primary">@color/dark_blue</color>
+    <color name="color_world_art">@color/red_trasparent</color>
     <color name="color_primary_dark">@color/darkest_blue</color>
     <color name="action_mode_background">@color/light_blue</color>
     <color name="color_accent">@color/medium_dark_blue</color>

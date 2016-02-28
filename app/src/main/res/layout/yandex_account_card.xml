@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/yandex_sync_card"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:background="@drawable/selectable_item_background">
+
+    <com.danilov.supermanga.core.view.CTextView
+        android:id="@+id/yandex_account_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/yandex_sync_button"
+        android:layout_alignParentTop="true"
+        android:text="@string/yandex_account_info_title"
+        android:textColor="@color/profile_text_category_title"/>
+
+    <com.danilov.supermanga.core.widget.RelativeTimeTextView
+        android:id="@+id/yandex_account"
+        android:layout_below="@+id/yandex_account_title"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/yandex_sync_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:textColor="@color/profile_text"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/yandex_sync_button"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignTop="@+id/yandex_account_title"
+        android:gravity="center"
+        android:background="@drawable/selectable_item_background"
+        android:orientation="horizontal">
+
+        <com.danilov.supermanga.core.view.CTextView
+            android:text="Синхронизировать"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@drawable/ic_action_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/yandex_download_button"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignLeft="@+id/yandex_sync_button"
+        android:layout_below="@+id/yandex_sync_button"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@drawable/selectable_item_background"
+        android:orientation="horizontal">
+
+        <com.danilov.supermanga.core.view.CTextView
+            android:text="Загрузить"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@drawable/ic_action_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

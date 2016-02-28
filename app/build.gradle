@@ -31,6 +31,7 @@ check {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'com.nineoldandroids:library:2.4.0'
     compile files('libs/jsoup-1.7.3.jar')
     compile 'rapid.decoder:library:0.3.0'
@@ -38,7 +39,7 @@ dependencies {
     compile 'rapid.decoder:png-decoder:0.3.0'
     compile 'com.github.shell-software:fab:1.0.5'
     compile 'de.hdodenhof:circleimageview:1.2.2'
-//    compile 'com.google.android.gms:play-services-ads:7.8.0'
+    //    compile 'com.google.android.gms:play-services-ads:7.8.0'
     //google drive api
     compile 'com.google.android.gms:play-services-identity:7.8.0'
     compile 'com.google.android.gms:play-services-base:7.8.0'
