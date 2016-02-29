@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class ChaptersFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ChaptersFragment extends BaseFragmentNative implements AdapterView.OnItemClickListener {
 
     private final String TAG = "ChaptersFragment";
     private static final String CHAPTERS_KEY = "CK";

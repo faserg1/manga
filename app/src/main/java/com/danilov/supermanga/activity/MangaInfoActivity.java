@@ -1,9 +1,9 @@
 package com.danilov.supermanga.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,10 +15,13 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.interfaces.RefreshableActivity;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.transition.ActivitySwitcher;
 import com.danilov.supermanga.core.view.AnimatedActionView;
 import com.danilov.supermanga.fragment.BaseFragment;
+import com.danilov.supermanga.fragment.BaseFragmentNative;
 import com.danilov.supermanga.fragment.ChaptersFragment;
 import com.danilov.supermanga.fragment.InfoFragment;
+import com.danilov.supermanga.fragment.WorldArtFragment;
 
 import java.util.List;
 
@@ -42,7 +45,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     private InfoFragment infoFragment;
     private ChaptersFragment chaptersFragment;
 
-    private BaseFragment currentFragment;
+    private BaseFragmentNative currentFragment;
 
     private boolean isRefreshing = false;
 
@@ -62,17 +65,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
             height = getIntent().getIntExtra(EXTRA_HEIGHT, 0);
             showInfoFragment(true);
         } else {
-            currentFragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.frame);
-            List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            if (fragments != null) {
-                for (Fragment fragment : fragments) {
-                    if (fragment instanceof InfoFragment) {
-                        infoFragment = (InfoFragment) fragment;
-                    } else if (fragment instanceof ChaptersFragment) {
-                        chaptersFragment = (ChaptersFragment) fragment;
-                    }
-                }
-            }
+            currentFragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.frame);
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -84,12 +77,12 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     private int height;
 
     public void showInfoFragment(final boolean init) {
-        Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (infoFragment == null) {
+            Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
             infoFragment = InfoFragment.newInstance(manga, left, top, width, height);
         }
         currentFragment = infoFragment;
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (!init) {
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -98,12 +91,12 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     }
 
     public void showChaptersFragment() {
-        Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
         if (chaptersFragment == null) {
+            Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
             chaptersFragment = ChaptersFragment.newInstance(manga);
         }
         currentFragment = chaptersFragment;
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         fragmentTransaction.replace(R.id.frame, chaptersFragment).commit();
@@ -119,10 +112,42 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+//                onBackPressed();
+                flipToWorldArt();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void flipFromWorldArt() {
+        if (infoFragment == null) {
+            Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+            infoFragment = InfoFragment.newInstance(manga, left, top, width, height);
+        }
+        currentFragment = infoFragment;
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out,
+                        R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out)
+                .replace(R.id.frame, currentFragment)
+                .commit();
+    }
+
+    private void flipToWorldArt() {
+        WorldArtFragment fragment = new WorldArtFragment();
+        currentFragment = fragment;
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out)
+                .replace(R.id.frame, fragment)
+                .commit();
     }
 
     @Override

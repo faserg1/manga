@@ -1,12 +1,12 @@
 package com.danilov.supermanga.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +43,7 @@ import com.danilov.supermanga.core.widget.ToggleImageButton;
 /**
  * Created by Semyon on 09.11.2014.
  */
-public class InfoFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
+public class InfoFragment extends BaseFragmentNative implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
 
     private final String TAG = "InfoFragment";
 
@@ -292,7 +292,7 @@ public class InfoFragment extends BaseFragment implements View.OnClickListener, 
                         .setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        FragmentActivity activity = getActivity();
+                        Activity activity = getActivity();
                         if (activity != null) {
                             activity.finish();
                         }
