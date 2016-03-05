@@ -623,10 +623,10 @@ public class SubsamplingScaleImageView extends View {
     private void onImageInited(int sWidth, int sHeight, int sOrientation) {
         this.sWidth = sWidth;
         this.sHeight = sHeight;
-        if (sWidth > Constants.ImageRestrictions.MAX_SIDE_SIZE || sHeight > Constants.ImageRestrictions.MAX_SIDE_SIZE) {
+//        if (sWidth > Constants.ImageRestrictions.MAX_SIDE_SIZE || sHeight > Constants.ImageRestrictions.MAX_SIDE_SIZE) {
             //не начинаем грузить, пока не попросят
             isLargePicture = true;
-        }
+//        }
 
         this.sOrientation = sOrientation;
         requestLayout();

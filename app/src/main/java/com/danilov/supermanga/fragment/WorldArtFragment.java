@@ -5,7 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -41,7 +43,8 @@ public class WorldArtFragment extends BaseFragmentNative {
     private ScrollViewParallax scrollViewParallax;
 
     private RecyclerView mangaImagesView;
-    
+    private boolean isBackPressed = false;
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.world_art_activity, container, false);
@@ -83,9 +86,10 @@ public class WorldArtFragment extends BaseFragmentNative {
             }
         });
 
-        LinearLayoutManager layoutManager= new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mangaImagesView = findViewById(R.id.manga_images);
         mangaImagesView.setLayoutManager(layoutManager);
+        ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.INVISIBLE);
         testInit();
     }
 
@@ -96,6 +100,17 @@ public class WorldArtFragment extends BaseFragmentNative {
         mangaDescriptionTextView.setText("Действия происходят в 2071 году, на Земле появились монстры «Арагами» и начали охоту на людей. Всего за несколько лет человеческая популяция сократилась до одной сотой, а планета превратилась в бесконечную пустыню. Но нашлась группа людей, борющихся с монстрами с помощью биологического оружия «Джинки». Их назвали «Пожирателями богов». Смогут ли они прекратить завоевание и вернуть человечеству надежду на будущее?");
         mangaCover.setImageResource(R.drawable.test_cover1);
         mangaImagesView.setAdapter(new ImagesAdapter(new ArrayList<Integer>(Arrays.asList(R.drawable.test_screen0, R.drawable.test_screen1, R.drawable.test_screen2, R.drawable.test_screen3, R.drawable.test_screen4))));
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (isBackPressed) {
+            return false;
+        }
+        isBackPressed = true;
+        ((MangaInfoActivity) getActivity()).flipFromWorldArt();
+        ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.VISIBLE);
+        return true;
     }
 
     private class ImagesAdapter extends RecyclerView.Adapter<ImageHolder> {
@@ -142,14 +157,100 @@ public class WorldArtFragment extends BaseFragmentNative {
         }
     }
 
-    private boolean isBackPressed = false;
+    public class OnSwipeTouchListener implements View.OnTouchListener {
 
-    @Override
-    public boolean onBackPressed() {
-        if (isBackPressed) {
-            return false;
+        private GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener(Context c) {
+            gestureDetector = new GestureDetector(c, new GestureListener());
         }
-        ((MangaInfoActivity) getActivity()).flipFromWorldArt();
-        return true;
+
+        public boolean onTouch(final View view, final MotionEvent motionEvent) {
+            return gestureDetector.onTouchEvent(motionEvent);
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeUp() {
+        }
+
+        public void onSwipeDown() {
+        }
+
+        public void onClick() {
+
+        }
+
+        public void onDoubleClick() {
+
+        }
+
+        public void onLongClick() {
+
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                onClick();
+                return super.onSingleTapUp(e);
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                onDoubleClick();
+                return super.onDoubleTap(e);
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                onLongClick();
+                super.onLongPress(e);
+            }
+
+            // Determines the fling velocity and then fires the appropriate swipe event accordingly
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                        }
+                    } else {
+                        if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffY > 0) {
+                                onSwipeDown();
+                            } else {
+                                onSwipeUp();
+                            }
+                        }
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
     }
+
 }
