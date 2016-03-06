@@ -30,6 +30,17 @@ check {
     }
 }
 
+android {
+    defaultConfig {
+        generatedDensities = []
+    }
+
+    // This is handled for you by the 2.0+ Gradle Plugin
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+}
+
 dependencies {
     compile 'com.android.support:appcompat-v7:23.2.+'
     compile 'com.android.support:recyclerview-v7:23.2.+'

@@ -2,7 +2,7 @@
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:versionCode="33"
-          android:versionName="1.39.0.1(rapid)">
+          android:versionName="1.39.0.2(rapid)">
 
     <uses-sdk
         android:minSdkVersion="14"

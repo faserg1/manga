@@ -19,6 +19,7 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
+import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.decor.DividerItemDecoration;
 import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.Manga;
@@ -131,7 +132,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         public void onBindViewHolder(final ChapterVH holder, final int position) {
             ChapterItem item = chapterItemList.get(position);
             MangaChapter chapter = item.chapter;
-            holder.chapterTitle.setText(getString(R.string.cap_chapter) + " " + chapter.getNumber() + ". " + chapter.getTitle());
+            holder.chapterTitle.setText(getString(R.string.cap_chapter) + " " + (chapter.getNumber() + 1) + ". " + chapter.getTitle());
             holder.isSaved.setVisibility(item.saved ? View.VISIBLE : View.GONE);
             holder.isRed.setVisibility(item.isRed ? View.VISIBLE : View.GONE);
         }
@@ -212,11 +213,21 @@ public class ChapterManagementFragment extends BaseFragmentNative {
     }
 
     private List<ChapterItem> getChaptersInfo() {
+
+        MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+        try {
+            Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
+            manga = _manga != null ? _manga : manga;
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+        }
+
+
         HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
         int maxChapter = -1;
 
         try {
-            HistoryElement onlineHistory = historyDAO.getHistoryByManga(manga, false);
+            HistoryElement onlineHistory = historyDAO.getHistoryByManga(manga, true);
             HistoryElement offlineHistory = historyDAO.getHistoryByManga(manga, false);
             if (onlineHistory != null) {
                 maxChapter = onlineHistory.getChapter();
