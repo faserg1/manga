@@ -3,6 +3,7 @@ package com.danilov.supermanga.activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -12,13 +13,19 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.database.DatabaseAccessException;
+import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.interfaces.RefreshableActivity;
+import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.transition.ActivitySwitcher;
 import com.danilov.supermanga.core.view.AnimatedActionView;
 import com.danilov.supermanga.fragment.BaseFragment;
 import com.danilov.supermanga.fragment.BaseFragmentNative;
+import com.danilov.supermanga.fragment.ChapterManagementFragment;
 import com.danilov.supermanga.fragment.ChaptersFragment;
 import com.danilov.supermanga.fragment.InfoFragment;
 import com.danilov.supermanga.fragment.WorldArtFragment;
@@ -28,7 +35,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 21.05.2014.
  */
-public class MangaInfoActivity extends BaseToolbarActivity implements RefreshableActivity {
+public class MangaInfoActivity extends BaseToolbarActivity implements RefreshableActivity, ChapterManagementFragment.Callback {
 
     public static final String EXTRA_LEFT = ".left";
     public static final String EXTRA_TOP = ".top";
@@ -102,6 +109,22 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         fragmentTransaction.replace(R.id.frame, chaptersFragment).commit();
     }
 
+    public void showChapterManagementFragment() {
+        Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        ChapterManagementFragment fragment = ChapterManagementFragment.newInstance(manga);
+        currentFragment = fragment;
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.animator.card_flip_right_in,
+                        R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in,
+                        R.animator.card_flip_left_out)
+                .replace(R.id.frame, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.myactivity, menu);
@@ -112,8 +135,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-//                onBackPressed();
-                flipToWorldArt();
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -193,9 +215,24 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
     @Override
     public void onBackPressed() {
+        currentFragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.frame);
         if (currentFragment.onBackPressed()) {
+            return;
+        }
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
             return;
         }
         super.onBackPressed();
     }
+
+    @Override
+    public void onChapterSelected(final Manga manga, final MangaChapter chapter, final boolean isOnline) {
+        Intent intent = new Intent(this, MangaViewerActivity.class);
+        intent.putExtra(Constants.FROM_CHAPTER_KEY, chapter.getNumber());
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        intent.putExtra(Constants.SHOW_ONLINE, isOnline);
+        startActivity(intent);
+    }
+
 }

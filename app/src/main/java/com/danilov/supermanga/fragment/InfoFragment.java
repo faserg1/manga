@@ -60,6 +60,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
     private TextView chaptersQuantityTextView = null;
     private TextView mangaTitle = null;
     private ImageButton repositoryLink = null;
+    private ImageButton manageChapters = null;
     private TextView authors = null;
     private TextView genres = null;
     private TextView repositoryTitle = null;
@@ -121,6 +122,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         mangaCover = (ImageView) view.findViewById(R.id.manga_cover);
         downloadButton = view.findViewById(R.id.download);
         readOnlineButton = view.findViewById(R.id.read_online);
+        manageChapters = findViewById(R.id.chapters_list);
         scrollViewParallax = findViewById(R.id.scrollView);
         authors = findViewById(R.id.authors);
         genres = findViewById(R.id.genres);
@@ -138,7 +140,9 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         toggleFavorite = findViewById(R.id.toggle_favorite);
         toggleFavorite.setOnCheckedChangeListener(this);
         toggleFavorite.setOnLongClickListener(this);
+        manageChapters.setOnLongClickListener(this);
 
+        manageChapters.setOnClickListener(this);
         addToTracking.setOnClickListener(this);
         removeFromTracking.setOnClickListener(this);
 
@@ -421,6 +425,9 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
             case R.id.repository_link:
                 openInBrowser();
                 break;
+            case R.id.chapters_list:
+                activity.showChapterManagementFragment();
+                break;
             case R.id.read_online:
                 intent = new Intent(activity, MangaViewerActivity.class);
 
@@ -462,6 +469,9 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
                 break;
             case R.id.read_online:
                 Toast.makeText(getActivity(), "Читать онлайн", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.chapters_list:
+                Toast.makeText(getActivity(), "Главы", Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;

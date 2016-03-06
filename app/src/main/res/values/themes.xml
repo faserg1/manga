@@ -9,6 +9,7 @@
     <style name="Manga" parent="MangaBaseTheme">
         <item name="android:buttonStyle">@style/Manga.ButtonCommon</item>
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:textColorPrimary">#fff</item>
         <item name="colorPrimary">@color/color_primary</item>

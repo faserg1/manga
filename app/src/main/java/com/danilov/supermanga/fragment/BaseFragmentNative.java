@@ -34,4 +34,8 @@ public class BaseFragmentNative extends Fragment {
         return PreferenceManager.getDefaultSharedPreferences(applicationContext);
     }
 
+    public Context getContext() {
+        return applicationContext;
+    }
+
 }

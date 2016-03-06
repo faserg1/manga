@@ -113,7 +113,7 @@ public class  Slider extends FrameLayout {
     float distanceInfluenceForSnapDuration(float f) {
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
-        return FloatMath.sin(f);
+        return (float) Math.sin(f);
     }
 
     @Override

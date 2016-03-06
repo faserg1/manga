@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="32"
-          android:versionName="1.39(rapid)">
+          android:versionCode="33"
+          android:versionName="1.39.0.1(rapid)">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -41,17 +41,6 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-
-
-        <activity
-            android:name=".activity.WorldArtActivity"
-            android:label="WorldArtTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

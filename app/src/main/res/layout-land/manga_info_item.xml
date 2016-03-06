@@ -193,6 +193,12 @@
                         android:background="@drawable/selectable_normal_background"
                         android:src="@drawable/button_open_in_browser"/>
 
+                    <ImageButton
+                        android:id="@+id/chapters_list"
+                        android:layout_width="@dimen/info_item_image_button_size"
+                        android:layout_height="@dimen/info_item_image_button_size"
+                        android:background="@drawable/selectable_normal_background"
+                        android:src="@drawable/ic_chapters_list"/>
 
                 </LinearLayout>
 
