@@ -1,5 +1,6 @@
 package com.danilov.supermanga.activity;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.UpdatesDAO;
 import com.danilov.supermanga.core.dialog.CustomDialogFragment;
 import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.model.MangaChapter;
+import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.DrawerStub;
 import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -48,7 +51,7 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class MainActivity extends BaseToolbarActivity {
+public class MainActivity extends BaseToolbarActivity implements FragmentManager.OnBackStackChangedListener, ChapterManagementFragment.Callback {
 
     private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
 
@@ -68,8 +71,6 @@ public class MainActivity extends BaseToolbarActivity {
 
     private ListView drawerList;
 
-    private boolean isOnMainFragment = false;
-
     private boolean isLargeLandscape = false;
 
     private int updatesQuantity = 0;
@@ -85,6 +86,11 @@ public class MainActivity extends BaseToolbarActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_main_activity);
+
+        //используем лиснер бэкстека, так как
+        //нужно синхронизировать состояние стрелочки (дровера)
+        //а изменение бэкстека -- асинхронное
+        getFragmentManager().addOnBackStackChangedListener(this);
 
         View profileOverlayButton = findViewWithId(R.id.profile_overlay_button);
         profileOverlayButton.setOnClickListener(new View.OnClickListener() {
@@ -258,10 +264,13 @@ public class MainActivity extends BaseToolbarActivity {
                 if (castedDrawerLayout.isDrawerOpen(drawerMenu)) {
                     castedDrawerLayout.closeDrawer(drawerMenu);
                 } else {
-                    if (currentFragment != null) {
-                        if (currentFragment.onBackPressed()) {
-                            return true;
-                        }
+                    currentFragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.content_frame);
+                    if (currentFragment != null && currentFragment.onBackPressed()) {
+                        return true;
+                    }
+                    if (getFragmentManager().getBackStackEntryCount() > 1) {
+                        getFragmentManager().popBackStack();
+                        return true;
                     }
                     castedDrawerLayout.openDrawer(drawerMenu);
                 }
@@ -281,6 +290,11 @@ public class MainActivity extends BaseToolbarActivity {
         }
     }
 
+    @Override
+    public void onBackStackChanged() {
+        syncToggle();
+    }
+
     public enum MainMenuItem {
 
         UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
@@ -297,7 +311,7 @@ public class MainActivity extends BaseToolbarActivity {
 
         private boolean isSelected = false;
 
-        private MainMenuItem(final int iconId, final int stringId) {
+        MainMenuItem(final int iconId, final int stringId) {
             this.iconId = iconId;
             this.stringId = stringId;
         }
@@ -367,13 +381,15 @@ public class MainActivity extends BaseToolbarActivity {
     }
 
     private void syncToggle() {
+        boolean isOnMainFragment = !(getFragmentManager().getBackStackEntryCount() > 1);
+
         if (drawerToggle != null) {
             drawerToggle.syncState();
         }
         ActionBar actionBar = getSupportActionBar();
         if (drawerToggle != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerToggle.setDrawerIndicatorEnabled(isOnMainFragment);
         } else {
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
@@ -394,10 +410,13 @@ public class MainActivity extends BaseToolbarActivity {
                 drawerToggle.syncState();
             }
         } else {
-            if (currentFragment != null) {
-                if (currentFragment.onBackPressed()) {
-                    return;
-                }
+            currentFragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.content_frame);
+            if (currentFragment != null && currentFragment.onBackPressed()) {
+                return;
+            }
+            if (getFragmentManager().getBackStackEntryCount() > 1) {
+                getFragmentManager().popBackStack();
+                return;
             }
             super.onBackPressed();
         }
@@ -405,141 +424,70 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showRepositoryPickerFragment() {
         currentFragment = RepositoryPickerFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
-        syncToggle();
+        showFragment(currentFragment);
     }
 
     public void showDownloadedMangaFragment() {
         currentFragment = DownloadedMangaFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
-        syncToggle();
+        showFragment(currentFragment);
     }
 
     private void showFavoriteMangaFragment() {
         currentFragment = FavoritesFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
+        showFragment(currentFragment);
     }
 
     private void showDownloadManagerFragment() {
         currentFragment = DownloadManagerFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
+        showFragment(currentFragment);
     }
 
     private void showSettingsFragment() {
         currentFragment = SettingsFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
+        showFragment(currentFragment);
     }
 
     private void showHistoryFragment() {
         currentFragment = HistoryMangaFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
+        showFragment(currentFragment);
     }
 
     public void showAddLocalMangaFragment() {
         currentFragment = AddLocalMangaFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
-        syncToggle();
+        showFragment(currentFragment);
     }
 
     public void showChaptersFragment(final Manga manga) {
-        ChapterManagementFragment fragment = ChapterManagementFragment.newInstance(manga);
-        currentFragment = fragment;
-        getFragmentManager()
-                .beginTransaction()
+        currentFragment = ChapterManagementFragment.newInstance(manga, false);
+        showFragment(currentFragment);
+    }
+
+    public void showAddJSRepositoryFragment() {
+        currentFragment = AddJSRepositoryFragment.newInstance();
+        showFragment(currentFragment);
+    }
+
+    public void showTrackingFragment() {
+        currentFragment = TrackingFragment.newInstance();
+        showFragment(currentFragment);
+    }
+
+    public void showMainFragment() {
+        currentFragment = MainFragment.newInstance(firstLaunch);
+        showFragment(currentFragment);
+    }
+
+    private void showFragment(final Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
                 .setCustomAnimations(
                         android.R.animator.fade_in,
                         android.R.animator.fade_out,
                         android.R.animator.fade_in,
                         android.R.animator.fade_out)
-                .replace(R.id.content_frame, fragment)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    public void showAddJSRepositoryFragment() {
-        currentFragment = AddJSRepositoryFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
-        syncToggle();
-    }
-
-    public void showTrackingFragment() {
-        currentFragment = TrackingFragment.newInstance();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(false);
-        }
-        isOnMainFragment = false;
-    }
-
-    public void showMainFragment() {
-        currentFragment = MainFragment.newInstance(firstLaunch);
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, currentFragment)
-                .commit();
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(true);
-        }
-        isOnMainFragment = true;
     }
 
     public void changeUpdatesQuantity(final int updatesQuantity) {
@@ -611,6 +559,15 @@ public class MainActivity extends BaseToolbarActivity {
             public ImageView icon;
         }
 
+    }
+
+    @Override
+    public void onChapterSelected(final Manga manga, final MangaChapter chapter, final boolean isOnline) {
+        Intent intent = new Intent(this, MangaViewerActivity.class);
+        intent.putExtra(Constants.FROM_CHAPTER_KEY, chapter.getNumber());
+        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+        intent.putExtra(Constants.SHOW_ONLINE, isOnline);
+        startActivity(intent);
     }
 
 }

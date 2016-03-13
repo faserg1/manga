@@ -105,7 +105,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
     public void showChapterManagementFragment() {
         Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-        ChapterManagementFragment fragment = ChapterManagementFragment.newInstance(manga);
+        ChapterManagementFragment fragment = ChapterManagementFragment.newInstance(manga, true);
         currentFragment = fragment;
         getFragmentManager()
                 .beginTransaction()

@@ -43,14 +43,19 @@ import java.util.List;
  */
 public class ChapterManagementFragment extends BaseFragmentNative {
 
+    private static final String TOOLBAR_OFFSET_KEY = "TOOLBAR_OFFSET";
+
     private RecyclerView chaptersView;
 
     private Manga manga;
 
-    public static ChapterManagementFragment newInstance(final Manga manga) {
+    private boolean withToolbarOffset;
+
+    public static ChapterManagementFragment newInstance(final Manga manga, final boolean withToolbarOffset) {
         ChapterManagementFragment fragment = new ChapterManagementFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+        bundle.putBoolean(TOOLBAR_OFFSET_KEY, withToolbarOffset);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -69,6 +74,9 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         chaptersView.setLayoutManager(new LinearLayoutManager(getContext()));
         Bundle bundle = getArguments();
         manga = bundle.getParcelable(Constants.MANGA_PARCEL_KEY);
+
+        withToolbarOffset = bundle.getBoolean(TOOLBAR_OFFSET_KEY);
+        findViewById(R.id.fake_toolbar).setVisibility(withToolbarOffset ? View.VISIBLE : View.GONE);
 
         BaseToolbarActivity infoActivity = (BaseToolbarActivity) getActivity();
         final int baseColor = getResources().getColor(R.color.color_primary);
