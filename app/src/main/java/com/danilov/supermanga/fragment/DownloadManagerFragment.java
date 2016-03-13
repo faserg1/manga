@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.BaseToolbarActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
@@ -64,7 +64,7 @@ public class DownloadManagerFragment extends BaseFragmentNative {
 
     private ListView listView;
 
-    private ActionBarActivity actionBarActivity;
+    private BaseToolbarActivity activity;
 
     private Context context;
 
@@ -83,8 +83,8 @@ public class DownloadManagerFragment extends BaseFragmentNative {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBarActivity = (ActionBarActivity) getActivity();
-        context = actionBarActivity;
+        activity = (BaseToolbarActivity) getActivity();
+        context = activity;
         cardWrapper = findViewById(R.id.card_wrapper);
         title = findViewById(R.id.title);
         noActiveDownloadSign = findViewById(R.id.no_downloads);
@@ -160,8 +160,8 @@ public class DownloadManagerFragment extends BaseFragmentNative {
         noActiveDownloadSign.setVisibility(View.VISIBLE);
         cardWrapper.setVisibility(View.GONE);
         serviceConnection = new MangaDownloadService.MDownloadServiceConnection(new DownloadServiceConnectionListener());
-        serviceIntent = new Intent(actionBarActivity, MangaDownloadService.class);
-        actionBarActivity.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        serviceIntent = new Intent(activity, MangaDownloadService.class);
+        activity.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         Log.d(TAG, "Connecting to service");
     }
 
@@ -290,7 +290,7 @@ public class DownloadManagerFragment extends BaseFragmentNative {
 
     @Override
     public void onPause() {
-        actionBarActivity.unbindService(serviceConnection);
+        activity.unbindService(serviceConnection);
         if (service != null) {
             service.removeObserver(handler);
         }
@@ -303,9 +303,9 @@ public class DownloadManagerFragment extends BaseFragmentNative {
         public void onServiceConnected(final MangaDownloadService service) {
             DownloadManagerFragment.this.service = service;
             service.addObserver(handler);
-            actionBarActivity.startService(serviceIntent);
+            activity.startService(serviceIntent);
 
-            Intent i = actionBarActivity.getIntent();
+            Intent i = activity.getIntent();
             final Manga manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
             final ArrayList<Integer> selectedChapters = i.getIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY);
             if (selectedChapters != null) {

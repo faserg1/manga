@@ -7,8 +7,8 @@ import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -123,7 +123,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         adInit();
 
         this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
-        mangaViewPager.setFragmentManager(getSupportFragmentManager());
+        mangaViewPager.setFragmentManager(getFragmentManager());
         this.nextBtn = findViewWithId(R.id.nextBtn);
         this.prevBtn = findViewWithId(R.id.prevBtn);
         this.nextBtnBottom = findViewWithId(R.id.nextBtnBottom);
@@ -178,7 +178,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         fromPage = intent.getIntExtra(Constants.FROM_PAGE_KEY, -1);
         showOnline = intent.getBooleanExtra(Constants.SHOW_ONLINE, true);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         if (savedInstanceState != null) {
             strategyHolder = (StrategyHolder) fragmentManager.getFragment(savedInstanceState, StrategyHolder.NAME);
             progressDialog = (DialogFragment) fragmentManager.findFragmentByTag(PROGRESS_DIALOG_TAG);
@@ -372,20 +372,20 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     public void onNext(@Nullable final Integer chapterNum) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean rated = sharedPreferences.getBoolean(Constants.RATED, false);
+        boolean rated = sharedPreferences.getBoolean(Constants.RATED, true); //now rated by default
 
 
         if (chapterNum != null) {
             if (chapterNum == -1) {
                 if (!rated && rateDialog == null) {
                     rateDialog = new RateDialog();
-                    rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
+                    rateDialog.show(getFragmentManager(), RateDialog.TAG);
                 }
             } else {
                 chaptersRead++;
                 if (!rated && chaptersRead >= CHAPTERS_READ_RATE_THRESHOLD && rateDialog == null) {
                     rateDialog = new RateDialog();
-                    rateDialog.show(getSupportFragmentManager(), RateDialog.TAG);
+                    rateDialog.show(getFragmentManager(), RateDialog.TAG);
                 } else {
                     if (Constants.HAS_ADS) {
 //                        if (mInterstitialAd.isLoaded()) {
@@ -553,10 +553,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void showProgressDialog(final String title, final String message) {
         if (progressDialog == null) {
-            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
         } else {
             hideProgress();
-            progressDialog = Utils.easyDialogProgress(getSupportFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
         }
     }
 
@@ -691,7 +691,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         if (uris != null) {
             outState.putStringArrayList(URIS_KEY, uris);
         }
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.putFragment(outState, StrategyHolder.NAME, strategyHolder);
         super.onSaveInstanceState(outState);
     }

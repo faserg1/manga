@@ -2,7 +2,7 @@ package com.danilov.supermanga;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +16,7 @@ import com.danilov.supermanga.core.view.AnimatedActionView;
 import com.danilov.supermanga.test.LocalMangaActivity;
 import com.danilov.supermanga.test.QueryTestActivity;
 
-public class MyActivity extends ActionBarActivity {
+public class MyActivity extends AppCompatActivity {
 
     private MangaDownloadService service = null;
 

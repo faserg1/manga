@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 14.06.2014.
  */
-public class DownloadsActivity extends ActionBarActivity {
+public class DownloadsActivity extends AppCompatActivity {
 
     private static final String TAG = "DownloadsActivity";
 

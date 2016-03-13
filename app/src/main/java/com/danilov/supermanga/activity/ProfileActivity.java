@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -276,14 +276,14 @@ public class ProfileActivity extends BaseToolbarActivity {
             @Override
             public void onClick(final View v) {
                 ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.username), userNameString, Constants.Settings.USER_NAME);
-                dialogFragment.show(getSupportFragmentManager(), ValueDialogFragment.TAG);
+                dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
             }
         });
         emailCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.email), emailString, Constants.Settings.EMAIL);
-                dialogFragment.show(getSupportFragmentManager(), ValueDialogFragment.TAG);
+                dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
             }
         });
         downloadPathCard.setOnClickListener(new View.OnClickListener() {

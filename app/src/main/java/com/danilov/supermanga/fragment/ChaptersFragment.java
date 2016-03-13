@@ -307,7 +307,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         builder.setTitle(R.string.sv_select_range_dialog);
         dialog = builder.build();
         dialogFragment.setDialog(dialog);
-        dialogFragment.show(activity.getSupportFragmentManager(), "select-range");
+        dialogFragment.show(activity.getFragmentManager(), "select-range");
     }
 
     private class MangaChaptersQueryThread extends Thread {

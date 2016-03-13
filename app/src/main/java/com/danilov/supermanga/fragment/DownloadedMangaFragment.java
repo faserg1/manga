@@ -1,11 +1,8 @@
 package com.danilov.supermanga.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -21,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.activity.BaseToolbarActivity;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
 import com.danilov.supermanga.core.adapter.DownloadedMangaAdapter;
@@ -156,13 +154,13 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
 
     @Override
     public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
+        BaseToolbarActivity baseToolbarActivity = (BaseToolbarActivity) getActivity();
         if (isInMultiChoice) {
             adapter.onMultiSelectClick(view, position);
             updateActionMode(actionMode);
             return true;
         }
-        actionMode = actionBarActivity.startSupportActionMode(this);
+        actionMode = baseToolbarActivity.startSupportActionMode(this);
         adapter.onMultiSelectClick(view, position);
         adapter.setIsInMultiSelect(true);
         isInMultiChoice = true;
