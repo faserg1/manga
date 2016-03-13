@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.danilov.supermanga.R;
@@ -37,7 +39,6 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     public static final String EXTRA_HEIGHT = ".height";
 
     private final String TAG = "MangaInfoActivity";
-    private AnimatedActionView refreshSign;
 
     private RelativeLayout frame;
 
@@ -47,6 +48,8 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     private ChaptersFragment chaptersFragment;
 
     private BaseFragmentNative currentFragment;
+
+    private ProgressBar progressBar;
 
     private boolean isRefreshing = false;
 
@@ -59,6 +62,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
 
         frame = (RelativeLayout) findViewById(R.id.frame);
         overlayBackground = findViewById(R.id.overlay_background);
+        progressBar = findViewWithId(R.id.progress_bar);
         if (savedInstanceState == null) {
             top = getIntent().getIntExtra(EXTRA_TOP, 0);
             left = getIntent().getIntExtra(EXTRA_LEFT, 0);
@@ -120,12 +124,6 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.myactivity, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -167,34 +165,15 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(final Menu menu) {
-        refreshSign = new AnimatedActionView(this, menu, R.id.refresh, R.drawable.ic_action_refresh, R.anim.rotation);
-        if (isRefreshing) {
-            refreshSign.show();
-            refreshSign.startAnimation();
-        } else {
-            refreshSign.stopAnimation();
-            refreshSign.hide();
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public void startRefresh() {
         isRefreshing = true;
-        if (refreshSign != null) {
-            refreshSign.show();
-            refreshSign.startAnimation();
-        }
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void stopRefresh() {
         isRefreshing = false;
-        if (refreshSign != null) {
-            refreshSign.stopAnimation();
-            refreshSign.hide();
-        }
+        progressBar.setVisibility(View.GONE);
     }
 
     public void toggleOverlayBackground(final boolean enable) {

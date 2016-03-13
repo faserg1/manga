@@ -18,13 +18,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView
+        <com.danilov.supermanga.core.view.CTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/chapterTitle"
             android:textColor="#000"
             android:lines="2"/>
+
+        <com.danilov.supermanga.core.view.CTextView
+            android:id="@+id/is_new"
+            android:text="NEW"
+            android:textColor="@color/red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>

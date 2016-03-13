@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,17 +23,22 @@ import android.widget.TextView;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.SingleFragmentActivity;
+import com.danilov.supermanga.core.database.DatabaseAccessException;
+import com.danilov.supermanga.core.database.UpdatesDAO;
 import com.danilov.supermanga.core.dialog.CustomDialog;
 import com.danilov.supermanga.core.dialog.CustomDialogFragment;
 import com.danilov.supermanga.core.interfaces.RefreshableActivity;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
+import com.danilov.supermanga.core.model.UpdatesElement;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,6 +73,12 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         ChaptersFragment chaptersFragment = new ChaptersFragment();
         chaptersFragment.manga = manga;
         return chaptersFragment;
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -167,8 +181,26 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
     }
 
     private void showChapters() {
+        UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
+
+        int newChapters = 0;
+
+        try {
+            //апдейты, которые пользователь ещё не удалил
+            UpdatesElement updatesByManga = updatesDAO.getUpdatesByManga(manga);
+            if (updatesByManga != null) {
+                newChapters = updatesByManga.getDifference();
+            }
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (newChapters < 0) {
+            newChapters = 0;
+        }
+
         List<MangaChapter> chapters = manga.getChapters();
-        adapter = new ChaptersAdapter(getActivity(), chapters);
+        adapter = new ChaptersAdapter(getActivity(), chapters, newChapters);
         if (selection != null) {
             adapter.setSelectedChapters(selection);
         }
@@ -297,6 +329,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
                 error = e.getMessage();
                 Log.d(TAG, e.getMessage());
             }
+
             activity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -327,18 +360,30 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
 
         private boolean[] selectedChapters = null;
 
+        private int newChapters = 0;
+
+        private boolean reversed = false;
+
+        public void reverse() {
+            all(false);
+            Collections.reverse(chapters);
+            reversed = !reversed;
+            notifyDataSetChanged();
+        }
+
         @Override
         public int getCount() {
             return chapters.size();
         }
 
-        public ChaptersAdapter(final Context context, final List<MangaChapter> objects) {
+        public ChaptersAdapter(final Context context, final List<MangaChapter> objects, final int newChapters) {
             super(context, 0, objects);
             this.chapters = objects;
             selectedChapters = new boolean[chapters.size()];
             for (int i = 0; i < chapters.size(); i++) {
                 selectedChapters[i] = false;
             }
+            this.newChapters = newChapters;
         }
 
         @Override
@@ -349,9 +394,11 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
                 view = activity.getLayoutInflater().inflate(R.layout.chapter_list_item, null);
                 h = new Holder();
                 TextView title = (TextView) view.findViewById(R.id.chapterTitle);
+                TextView isNew = (TextView) view.findViewById(R.id.is_new);
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
                 h.checkBox = checkBox;
                 h.title = title;
+                h.isNew = isNew;
                 view.setTag(h);
             } else {
                 h = (Holder) view.getTag();
@@ -365,7 +412,10 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
                 }
             });
 
-            h.checkBox.setChecked(selectedChapters[position]);
+            h.checkBox.setChecked(selectedChapters[reversed ? (getCount() - 1 - position) : position]);
+
+            boolean isNew = position >= getCount() - newChapters;
+            h.isNew.setVisibility(isNew ? View.VISIBLE : View.GONE);
 
             return view;
         }
@@ -399,16 +449,28 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         }
 
         public void select(final int position) {
-            selectedChapters[position] = !selectedChapters[position];
+            int pos = position;
+            if (reversed) {
+                pos = getCount() - 1 - position;
+            }
+            selectedChapters[pos] = !selectedChapters[pos];
             notifyDataSetChanged();
         }
 
         public void select(final int position, final boolean isChecked) {
-            selectedChapters[position] = isChecked;
+            int pos = position;
+            if (reversed) {
+                pos = getCount() - 1 - position;
+            }
+            selectedChapters[pos] = isChecked;
         }
 
         public boolean isSelected(final int position) {
-            return selectedChapters.length >= position && selectedChapters[position];
+            int pos = position;
+            if (reversed) {
+                pos = getCount() - 1 - position;
+            }
+            return selectedChapters.length >= pos && selectedChapters[pos];
         }
 
         public void all(final boolean select) {
@@ -420,12 +482,30 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
 
         private class Holder {
 
-            public CheckBox checkBox;
+            CheckBox checkBox;
 
-            public TextView title;
+            TextView title;
+
+            TextView isNew;
 
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.chapter_management_fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.inverse:
+                adapter.reverse();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

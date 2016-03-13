@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,7 +17,7 @@ import com.danilov.supermanga.core.util.Utils;
 /**
  * Created by Semyon on 06.12.2014.
  */
-public class BaseToolbarActivity extends ActionBarActivity {
+public class BaseToolbarActivity extends AppCompatActivity {
 
     protected Toolbar toolbar;
 
@@ -65,7 +66,7 @@ public class BaseToolbarActivity extends ActionBarActivity {
         setupToolbar();
     }
 
-    public static TextView getToolbarTitleView(ActionBarActivity activity, Toolbar toolbar){
+    public static TextView getToolbarTitleView(AppCompatActivity activity, Toolbar toolbar){
         ActionBar actionBar = activity.getSupportActionBar();
         CharSequence actionbarTitle = null;
         if(actionBar != null)
