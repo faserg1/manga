@@ -13,17 +13,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.core.database.DatabaseAccessException;
-import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.interfaces.RefreshableActivity;
-import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.util.Constants;
-import com.danilov.supermanga.core.util.ServiceContainer;
-import com.danilov.supermanga.core.util.transition.ActivitySwitcher;
 import com.danilov.supermanga.core.view.AnimatedActionView;
-import com.danilov.supermanga.fragment.BaseFragment;
 import com.danilov.supermanga.fragment.BaseFragmentNative;
 import com.danilov.supermanga.fragment.ChapterManagementFragment;
 import com.danilov.supermanga.fragment.ChaptersFragment;

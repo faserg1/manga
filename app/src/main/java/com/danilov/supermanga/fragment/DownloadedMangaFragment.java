@@ -1,5 +1,6 @@
 package com.danilov.supermanga.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class DownloadedMangaFragment extends BaseFragment implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
+public class DownloadedMangaFragment extends BaseFragmentNative implements AdapterView.OnItemClickListener, PopupButtonClickListener, AdapterView.OnItemLongClickListener, ActionMode.Callback {
 
     private static final String TAG = "DownloadedMangaFragment";
 
@@ -149,23 +150,8 @@ public class DownloadedMangaFragment extends BaseFragment implements AdapterView
             return;
         }
         LocalManga manga = adapter.getItem(position);
-
-        HistoryElement historyElement = null;
-        try {
-            historyElement = historyDAO.getHistoryByManga(manga, false);
-        } catch (DatabaseAccessException e) {
-        }
-
-        Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
-
-
-        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-        intent.putExtra(Constants.SHOW_ONLINE, false);
-        if (historyElement != null) {
-            intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
-            intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
-        }
-        startActivity(intent);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.showChaptersFragment(manga);
     }
 
     @Override

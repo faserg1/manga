@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class RepositoryPickerFragment extends BaseFragment {
+public class RepositoryPickerFragment extends BaseFragmentNative {
 
     private RepositoryEngine.Repository[] repositories;
     private GridView repositoriesView;

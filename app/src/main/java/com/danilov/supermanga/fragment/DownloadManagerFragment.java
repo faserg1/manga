@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Created by Semyon on 15.11.2014.
  */
-public class DownloadManagerFragment extends BaseFragment {
+public class DownloadManagerFragment extends BaseFragmentNative {
 
     private static final String TAG = "DownloadManagerFragment";
 

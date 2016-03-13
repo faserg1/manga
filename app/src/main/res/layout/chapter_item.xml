@@ -26,4 +26,10 @@
         android:layout_width="35dp"
         android:layout_height="35dp"/>
 
+    <com.danilov.supermanga.core.view.CTextView
+        android:id="@+id/is_new"
+        android:text="NEW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

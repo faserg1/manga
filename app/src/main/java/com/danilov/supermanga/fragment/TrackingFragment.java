@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * Created by Semyon on 22.12.2014.
  */
-public class TrackingFragment extends BaseFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class TrackingFragment extends BaseFragmentNative implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private static final String TAG = "TrackingFragment";
 

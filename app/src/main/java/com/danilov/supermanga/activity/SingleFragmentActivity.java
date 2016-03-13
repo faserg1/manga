@@ -1,8 +1,8 @@
 package com.danilov.supermanga.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.util.Constants;
@@ -29,7 +29,7 @@ public class SingleFragmentActivity extends BaseToolbarActivity {
                 break;
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();

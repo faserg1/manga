@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Created by Semyon on 01.03.2015.
  */
-public class FiltersFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener {
+public class FiltersFragment extends BaseFragmentNative implements Toolbar.OnMenuItemClickListener {
 
     public static final String CURSOR_ID = BaseColumns._ID;
     public static final String CURSOR_NAME = SearchManager.SUGGEST_COLUMN_TEXT_1;

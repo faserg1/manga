@@ -40,7 +40,7 @@ import java.util.Set;
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
-public class MainFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class MainFragment extends BaseFragmentNative implements AdapterView.OnItemClickListener {
 
     private static final String FIRST_LAUNCH = "FIRST_LAUNCH";
 

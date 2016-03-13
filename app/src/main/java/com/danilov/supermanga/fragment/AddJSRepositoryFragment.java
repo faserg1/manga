@@ -22,7 +22,7 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 /**
  * Created by Semyon on 30.12.2015.
  */
-public class AddJSRepositoryFragment extends BaseFragment implements View.OnClickListener {
+public class AddJSRepositoryFragment extends BaseFragmentNative implements View.OnClickListener {
 
     private static final int FILE_PICKER_REQUEST = 1;
 

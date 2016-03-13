@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by Semyon on 01.03.2015.
  */
-public class GenresFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class GenresFragment extends BaseFragmentNative implements AdapterView.OnItemClickListener {
 
     private GridView genresView;
 

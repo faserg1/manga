@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    compile 'com.android.support:support-v13:23.2.+'
     compile 'com.android.support:appcompat-v7:23.2.+'
     compile 'com.android.support:recyclerview-v7:23.2.+'
     compile 'com.nineoldandroids:library:2.4.0'

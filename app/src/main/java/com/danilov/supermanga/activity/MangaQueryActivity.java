@@ -3,9 +3,9 @@ package com.danilov.supermanga.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.PopupMenu;
@@ -115,7 +115,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
 
     private void setupTabs(final ActionBar actionBar) {
         viewPager = findViewWithId(R.id.viewPager);
-        viewPager.setAdapter(new SamplePagerAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new SamplePagerAdapter(getFragmentManager()));
         slidingTabLayout = findViewWithId(R.id.sliding_tabs);
         slidingTabLayout.setViewPager(viewPager);
     }

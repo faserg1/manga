@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by Semyon on 30.12.2015.
  */
-public class AddLocalMangaFragment extends BaseFragment implements View.OnClickListener {
+public class AddLocalMangaFragment extends BaseFragmentNative implements View.OnClickListener {
 
     private static final int FOLDER_PICKER_REQUEST = 1;
 

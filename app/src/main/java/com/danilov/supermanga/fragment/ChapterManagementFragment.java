@@ -16,14 +16,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.activity.MangaInfoActivity;
+import com.danilov.supermanga.activity.BaseToolbarActivity;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
+import com.danilov.supermanga.core.database.UpdatesDAO;
 import com.danilov.supermanga.core.decor.DividerItemDecoration;
 import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
+import com.danilov.supermanga.core.model.UpdatesElement;
 import com.danilov.supermanga.core.repository.OfflineEngine;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
@@ -68,7 +70,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         Bundle bundle = getArguments();
         manga = bundle.getParcelable(Constants.MANGA_PARCEL_KEY);
 
-        MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
+        BaseToolbarActivity infoActivity = (BaseToolbarActivity) getActivity();
         final int baseColor = getResources().getColor(R.color.color_primary);
         infoActivity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
 
@@ -135,6 +137,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
             holder.chapterTitle.setText(getString(R.string.cap_chapter) + " " + (chapter.getNumber() + 1) + ". " + chapter.getTitle());
             holder.isSaved.setVisibility(item.saved ? View.VISIBLE : View.GONE);
             holder.isRed.setVisibility(item.isRed ? View.VISIBLE : View.GONE);
+            holder.isNew.setVisibility(item.isNew ? View.VISIBLE : View.GONE);
         }
 
         @Override
@@ -165,6 +168,8 @@ public class ChapterManagementFragment extends BaseFragmentNative {
 
         TextView chapterTitle;
 
+        TextView isNew;
+
         ImageView isSaved;
 
         ImageView isRed;
@@ -174,6 +179,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
             chapterTitle = (TextView) itemView.findViewById(R.id.chapter_title);
             isSaved = (ImageView) itemView.findViewById(R.id.is_saved);
             isRed = (ImageView) itemView.findViewById(R.id.is_red);
+            isNew = (TextView) itemView.findViewById(R.id.is_new);
             itemView.setOnClickListener(this);
         }
 
@@ -203,18 +209,23 @@ public class ChapterManagementFragment extends BaseFragmentNative {
 
         boolean isRed;
 
-        public ChapterItem(final MangaChapter chapter, final boolean saved, final boolean selected, final boolean isRed) {
+        boolean isNew;
+
+        public ChapterItem(final MangaChapter chapter, final boolean saved, final boolean selected, final boolean isRed, final boolean isNew) {
             this.chapter = chapter;
             this.saved = saved;
             this.selected = selected;
             this.isRed = isRed;
+            this.isNew = isNew;
         }
 
     }
 
+    //FIXME: printing stacktrace --> error handling
     private List<ChapterItem> getChaptersInfo() {
 
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+        UpdatesDAO updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
         try {
             Manga _manga = mangaDAO.getByLinkAndRepository(manga.getUri(), manga.getRepository());
             manga = _manga != null ? _manga : manga;
@@ -241,11 +252,30 @@ public class ChapterManagementFragment extends BaseFragmentNative {
             e.printStackTrace();
         }
 
+        int newChapters = 0;
+
+        try {
+            //апдейты, которые пользователь ещё не удалил
+            UpdatesElement updatesByManga = updatesDAO.getUpdatesByManga(manga);
+            if (updatesByManga != null) {
+                newChapters = updatesByManga.getDifference();
+            }
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (newChapters < 0) {
+            newChapters = 0;
+        }
+
+
         List<ChapterItem> info = new ArrayList<>();
         int chaptersQuantity = manga.getChaptersQuantity();
         for (int i = 0; i < chaptersQuantity; i++) {
             MangaChapter mangaChapter = new MangaChapter("", i, null);
-            ChapterItem item = new ChapterItem(mangaChapter, false, false, maxChapter > i);
+            //добавим галочку новым главам
+            boolean isNew = i >= chaptersQuantity - newChapters;
+            ChapterItem item = new ChapterItem(mangaChapter, false, false, maxChapter > i, isNew);
             info.add(item);
         }
         if (!manga.isDownloaded()) {
@@ -297,9 +327,4 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         removeMangaHandler = new Handler(removeMangaChapterThread.getLooper());
     }
 
-    @Override
-    public boolean onBackPressed() {
-        getActivity();
-        return false;
-    }
 }

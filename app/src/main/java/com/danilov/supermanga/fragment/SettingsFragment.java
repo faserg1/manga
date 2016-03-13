@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by Semyon on 23.02.2015.
  */
-public class SettingsFragment extends BaseFragment {
+public class SettingsFragment extends BaseFragmentNative {
 
     private static final int FOLDER_PICKER_REQUEST = 1;
 

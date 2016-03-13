@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,13 +24,15 @@ import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.UpdatesDAO;
 import com.danilov.supermanga.core.dialog.CustomDialogFragment;
+import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.util.DrawerStub;
 import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.fragment.AddJSRepositoryFragment;
 import com.danilov.supermanga.fragment.AddLocalMangaFragment;
-import com.danilov.supermanga.fragment.BaseFragment;
+import com.danilov.supermanga.fragment.BaseFragmentNative;
+import com.danilov.supermanga.fragment.ChapterManagementFragment;
 import com.danilov.supermanga.fragment.DownloadManagerFragment;
 import com.danilov.supermanga.fragment.DownloadedMangaFragment;
 import com.danilov.supermanga.fragment.FavoritesFragment;
@@ -76,7 +78,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private boolean firstLaunch = true;
 
-    private BaseFragment currentFragment = null;
+    private BaseFragmentNative currentFragment = null;
 
 
     @Override
@@ -403,7 +405,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showRepositoryPickerFragment() {
         currentFragment = RepositoryPickerFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -416,7 +418,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showDownloadedMangaFragment() {
         currentFragment = DownloadedMangaFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -429,7 +431,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showFavoriteMangaFragment() {
         currentFragment = FavoritesFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -441,7 +443,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showDownloadManagerFragment() {
         currentFragment = DownloadManagerFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -453,7 +455,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showSettingsFragment() {
         currentFragment = SettingsFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -465,7 +467,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     private void showHistoryFragment() {
         currentFragment = HistoryMangaFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -477,7 +479,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showAddLocalMangaFragment() {
         currentFragment = AddLocalMangaFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -488,9 +490,24 @@ public class MainActivity extends BaseToolbarActivity {
         syncToggle();
     }
 
+    public void showChaptersFragment(final Manga manga) {
+        ChapterManagementFragment fragment = ChapterManagementFragment.newInstance(manga);
+        currentFragment = fragment;
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        android.R.animator.fade_in,
+                        android.R.animator.fade_out,
+                        android.R.animator.fade_in,
+                        android.R.animator.fade_out)
+                .replace(R.id.content_frame, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
     public void showAddJSRepositoryFragment() {
         currentFragment = AddJSRepositoryFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -503,7 +520,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showTrackingFragment() {
         currentFragment = TrackingFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
@@ -515,7 +532,7 @@ public class MainActivity extends BaseToolbarActivity {
 
     public void showMainFragment() {
         currentFragment = MainFragment.newInstance(firstLaunch);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, currentFragment)
                 .commit();
