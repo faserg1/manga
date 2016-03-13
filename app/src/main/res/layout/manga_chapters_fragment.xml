@@ -13,44 +13,51 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"/>
 
-    <CheckBox
+    <LinearLayout
+        android:id="@+id/ind"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:layout_below="@+id/fake_toolbar"
-        android:id="@+id/select_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sv_select_all"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_below="@+id/fake_toolbar"
-        android:id="@+id/select_last"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/select_all"
-        android:layout_alignBottom="@+id/select_all"
-        android:layout_alignTop="@+id/select_all">
-
-        <com.danilov.supermanga.core.view.RippleView
+        <CheckBox
+            android:id="@+id/select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:rippleColorOne="#33b5e5"
-            app:rippleColorTwo="#ffe5000d"
-            android:padding="5dp"
-            app:backgroundColor="@android:color/transparent">
+            android:text="@string/sv_select_all"/>
 
-            <TextView
+        <RelativeLayout
+            android:id="@+id/select_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp">
+
+            <com.danilov.supermanga.core.view.RippleView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:layout_centerInParent="true"
-                android:text="@string/sv_select_last"/>
+                app:rippleColorOne="#33b5e5"
+                app:rippleColorTwo="#ffe5000d"
+                android:padding="5dp"
+                app:backgroundColor="@android:color/transparent">
 
-        </com.danilov.supermanga.core.view.RippleView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:layout_centerInParent="true"
+                    android:text="@string/sv_select_last"/>
 
-    </RelativeLayout>
+            </com.danilov.supermanga.core.view.RippleView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
 
     <ListView
-        android:layout_below="@+id/select_all"
+        android:layout_below="@+id/ind"
         android:id="@+id/chaptersListView"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
