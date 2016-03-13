@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.danilov.supermanga"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="36"
-          android:versionName="1.39.0.5(rapid)">
+          android:versionCode="37"
+          android:versionName="1.39.0.6(rapid)">
 
     <uses-sdk
         android:minSdkVersion="14"
