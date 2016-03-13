@@ -116,4 +116,5 @@
     <string name="application_version_settings_title">Версия приложения</string>
     <string name="yandex_account_info_title">Yandex account</string>
     <string name="images_from">Images from manga</string>
+    <string name="sv_reverse">Inverse</string>
 </resources>

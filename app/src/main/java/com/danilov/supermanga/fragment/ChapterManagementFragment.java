@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.BaseToolbarActivity;
+import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
@@ -36,6 +40,7 @@ import com.danilov.supermanga.core.util.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,6 +63,12 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         bundle.putBoolean(TOOLBAR_OFFSET_KEY, withToolbarOffset);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -168,6 +179,11 @@ public class ChapterManagementFragment extends BaseFragmentNative {
             adapter.notifyItemRemoved(position);
             chapterItemList.add(position, chapterItem);
             adapter.notifyItemInserted(position);
+        }
+
+        private void reverse() {
+            Collections.reverse(this.chapterItemList);
+            notifyDataSetChanged();
         }
 
     }
@@ -333,6 +349,23 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         removeMangaChapterThread = new HandlerThread("remove-manga-thread");
         removeMangaChapterThread.start();
         removeMangaHandler = new Handler(removeMangaChapterThread.getLooper());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.chapter_management_fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.inverse:
+                ChapterAdapter adapter = (ChapterAdapter) chaptersView.getAdapter();
+                adapter.reverse();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

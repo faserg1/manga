@@ -118,4 +118,5 @@
     <string name="application_version_settings_title">Версия приложения</string>
     <string name="yandex_account_info_title">Яндекс аккаунт</string>
     <string name="images_from">Кадры из манги</string>
+    <string name="sv_reverse">Наоборот</string>
 </resources>
