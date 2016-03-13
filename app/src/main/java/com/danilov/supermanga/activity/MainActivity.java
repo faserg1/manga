@@ -479,6 +479,17 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
 
     private void showFragment(final Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
+
+        String transactionName = fragment.getClass().toString();
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            FragmentManager.BackStackEntry backStackEntryAt = fragmentManager.getBackStackEntryAt(i);
+            String name = backStackEntryAt.getName();
+            if (name != null && name.equals(transactionName)) {
+                fragmentManager.popBackStack(transactionName, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                break;
+            }
+        }
+
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .setCustomAnimations(
@@ -486,8 +497,9 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
                         android.R.animator.fade_out,
                         android.R.animator.fade_in,
                         android.R.animator.fade_out)
-                .addToBackStack(null)
+                .addToBackStack(transactionName)
                 .commit();
+
     }
 
     public void changeUpdatesQuantity(final int updatesQuantity) {

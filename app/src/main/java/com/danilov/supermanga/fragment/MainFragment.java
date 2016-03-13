@@ -102,7 +102,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
         if (_updates != null) {
             updates = new ArrayList<>();
             for (UpdatesElement updatesElement : _updates) {
-                updates.add(new Pair<Manga, UpdatesElement>(updatesElement.getManga(), updatesElement));
+                updates.add(new Pair<>(updatesElement.getManga(), updatesElement));
             }
         }
         if (savedInstanceState != null) {
@@ -230,7 +230,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
                     }
                 }
                 if (!isUpdating) {
-                    updates.add(new Pair<Manga, UpdatesElement>(updatesElement.getManga(), updatesElement));
+                    updates.add(new Pair<>(updatesElement.getManga(), updatesElement));
                 }
             }
         }
