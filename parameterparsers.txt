@@ -37,8 +37,3 @@ function asd() {
     }
     console.log(str);
 }
-
-passes Peopledie95
-alias mangareader
-
-
