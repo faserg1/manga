@@ -12,7 +12,7 @@ import java.util.List;
 public class ProgressInputStream extends FilterInputStream {
 
     public static final String TAG = "ProgressInputStream";
-    private final List<IProgressChangeListener> mListeners = new ArrayList<IProgressChangeListener>();
+    private final List<IProgressChangeListener> mListeners = new ArrayList<>();
     private volatile long mTotalNumBytesRead;
 
     public ProgressInputStream(InputStream in) {

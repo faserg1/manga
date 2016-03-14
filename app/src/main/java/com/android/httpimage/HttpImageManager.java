@@ -86,7 +86,7 @@ public class HttpImageManager {
     private final Handler mHandler = new Handler();
     private final ExecutorService mExecutor = Executors.newFixedThreadPool(4);
 
-    private final Set<LoadRequest> mActiveRequests = new HashSet<LoadRequest>();
+    private final Set<LoadRequest> mActiveRequests = new HashSet<>();
 
     public static class LoadRequest {
 
@@ -104,7 +104,7 @@ public class HttpImageManager {
                     '}' + super.toString();
         }
 
-        private static Queue<LoadRequest> pool = new ArrayDeque<LoadRequest>();
+        private static Queue<LoadRequest> pool = new ArrayDeque<>();
 
         public static LoadRequest obtain(final Uri uri, final ImageView imageView, final RequestPreprocessor preprocessor, final int newSize) {
             LoadRequest r = null;

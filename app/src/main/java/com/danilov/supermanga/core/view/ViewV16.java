@@ -87,9 +87,7 @@ public class ViewV16 {
                     field = aClass.getDeclaredField("mNative");
                     field.setAccessible(true);
                     viewPropertyAnimatorNew.mNative = (WeakReference<android.view.ViewPropertyAnimator>) field.get(wrappedAnimator);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }

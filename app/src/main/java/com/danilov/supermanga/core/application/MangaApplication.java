@@ -92,26 +92,23 @@ public class MangaApplication extends Application {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
         final Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(final Thread thread, final Throwable ex) {
-                StringWriter errors = new StringWriter();
-                ex.printStackTrace(new PrintWriter(errors));
-                Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG).show();
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            StringWriter errors = new StringWriter();
+            ex.printStackTrace(new PrintWriter(errors));
+            Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG).show();
 
-                File f = Environment.getExternalStorageDirectory();
-                File logFile = new File(f, "mangaerror.log");
-                try {
-                    FileWriter writer = new FileWriter(logFile);
-                    ex.printStackTrace(new PrintWriter(writer));
-                } catch (IOException e) {
+            File f = Environment.getExternalStorageDirectory();
+            File logFile = new File(f, "mangaerror.log");
+            try {
+                FileWriter writer = new FileWriter(logFile);
+                ex.printStackTrace(new PrintWriter(writer));
+            } catch (IOException e) {
 
-                }
-
-                Log.e("MangaFAIL", ex.getMessage());
-                ex.printStackTrace();
-                defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
             }
+
+            Log.e("MangaFAIL", ex.getMessage());
+            ex.printStackTrace();
+            defaultUncaughtExceptionHandler.uncaughtException(thread, ex);
         });
     }
 

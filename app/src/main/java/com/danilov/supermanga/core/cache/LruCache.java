@@ -26,7 +26,7 @@ public class LruCache<K, V> {
             throw new IllegalArgumentException("maxSize <= 0");
         }
         this.maxSize = maxSize;
-        this.map = new LinkedHashMap<K, V>(0, 0.75f, true);
+        this.map = new LinkedHashMap<>(0, 0.75f, true);
     }
 
     /**
@@ -88,11 +88,7 @@ public class LruCache<K, V> {
             throw new NullPointerException("key == null");
         }
         synchronized (this) {
-            if (map.get(key) != null) {
-                return true;
-            } else {
-                return false;
-            }
+            return map.get(key) != null;
         }
     }
 
@@ -313,7 +309,7 @@ public class LruCache<K, V> {
      * recently accessed to most recently accessed.
      */
     public synchronized final Map<K, V> snapshot() {
-        return new LinkedHashMap<K, V>(map);
+        return new LinkedHashMap<>(map);
     }
 
     @Override public synchronized final String toString() {

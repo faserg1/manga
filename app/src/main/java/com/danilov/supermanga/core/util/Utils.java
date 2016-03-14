@@ -127,8 +127,7 @@ public class Utils {
     }
     public static int dpToPx(int dp) {
         DisplayMetrics displayMetrics = MangaApplication.getContext().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static String getDeviceId(final Context context) {
@@ -167,12 +166,14 @@ public class Utils {
             byte messageDigest[] = digest.digest();
 
             // Create Hex String
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
+            StringBuilder hexString = new StringBuilder();
+            int i = 0;
+            while (i < messageDigest.length) {
                 String h = Integer.toHexString(0xFF & messageDigest[i]);
                 while (h.length() < 2)
                     h = "0" + h;
                 hexString.append(h);
+                i++;
             }
             return hexString.toString();
 
@@ -188,7 +189,7 @@ public class Utils {
         if (oldList instanceof ArrayList) {
             return (ArrayList) oldList;
         } else {
-            return new ArrayList<T>(oldList);
+            return new ArrayList<>(oldList);
         }
     }
 

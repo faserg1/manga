@@ -115,7 +115,7 @@ public class UpdatesDAO {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-            mangaList = new ArrayList<UpdatesElement>(cursor.getCount());
+            mangaList = new ArrayList<>(cursor.getCount());
             int idIndex = cursor.getColumnIndex(ID);
             int mangaIdIndex = cursor.getColumnIndex(MANGA_ID);
             int differenceIndex = cursor.getColumnIndex(DIFFERENCE);

@@ -58,9 +58,9 @@ public class MangaDownloadService extends Service {
 
     private MangaDAO mangaDAO = null;
 
-    private final List<SafeHandler> observerHandlers = new LinkedList<SafeHandler>();
+    private final List<SafeHandler> observerHandlers = new LinkedList<>();
 
-    private Queue<MangaDownloadRequest> requests = new LinkedList<MangaDownloadRequest>();
+    private Queue<MangaDownloadRequest> requests = new LinkedList<>();
 
     private MangaDownloadRequest currentRequest;
 
@@ -309,7 +309,7 @@ public class MangaDownloadService extends Service {
             return;
         }
 
-        List<MangaDownloadRequest> rqs = new ArrayList<MangaDownloadRequest>(requests.size());
+        List<MangaDownloadRequest> rqs = new ArrayList<>(requests.size());
         for (MangaDownloadRequest request : requests) {
             if (currentRequest == request) {
                 continue;
@@ -506,7 +506,7 @@ public class MangaDownloadService extends Service {
 
         public MangaDownloadRequest(final Manga manga, final int from, final int to) {
             int size = (from == to) ? (1) : (to - from + 1);
-            List<Integer> which = new ArrayList<Integer>(size);
+            List<Integer> which = new ArrayList<>(size);
             int _from = from;
             for (int i = 0; i < size; i++) {
                 which.add(_from);

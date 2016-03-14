@@ -155,15 +155,12 @@ public class HistoryDAO {
             }
             db.close();
         }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (Integer id : scheduledForDeletion) {
-                    try {
-                        deleteHistoryById(id);
-                    } catch (DatabaseAccessException e) {
-                        LOGGER.e("Failed to delete manga history: " + e.getMessage(), e); //shit shit shit
-                    }
+        executor.execute(() -> {
+            for (Integer id : scheduledForDeletion) {
+                try {
+                    deleteHistoryById(id);
+                } catch (DatabaseAccessException e) {
+                    LOGGER.e("Failed to delete manga history: " + e.getMessage(), e); //shit shit shit
                 }
             }
         });

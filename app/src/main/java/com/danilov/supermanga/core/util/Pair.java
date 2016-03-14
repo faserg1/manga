@@ -9,7 +9,7 @@ import java.util.Queue;
  */
 public class Pair {
 
-    private static Queue<Pair> pool = new ArrayDeque<Pair>(50);
+    private static Queue<Pair> pool = new ArrayDeque<>(50);
 
     public Object first;
 

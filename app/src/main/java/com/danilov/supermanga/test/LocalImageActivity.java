@@ -18,7 +18,6 @@ import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,12 +38,7 @@ public class LocalImageActivity extends Activity {
 
     private List<String> getAllImagesInFolder(final String folder) {
         File file = new File(folder);
-        String[] uris = file.list(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String filename) {
-                return true;
-            }
-        });
+        String[] uris = file.list((dir, filename) -> true);
         for (int i = 0; i < uris.length; i++) {
             String uri = uris[i];
             uris[i] = folder + "/" + uri;

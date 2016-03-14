@@ -29,7 +29,6 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.DrawerStub;
-import com.danilov.supermanga.core.util.Promise;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.fragment.AddJSRepositoryFragment;
@@ -93,12 +92,9 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
         getFragmentManager().addOnBackStackChangedListener(this);
 
         View profileOverlayButton = findViewWithId(R.id.profile_overlay_button);
-        profileOverlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(intent);
-            }
+        profileOverlayButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         });
 
         updatesDAO = ServiceContainer.getService(UpdatesDAO.class);
@@ -234,25 +230,17 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
     }
 
     public void updateQuantity() {
-        Promise<Integer> promise = Promise.run(new Promise.PromiseRunnable<Integer>() {
+        new Thread() {
             @Override
-            public void run(final Promise<Integer>.Resolver resolver) {
+            public void run() {
                 try {
                     updatesQuantity = updatesDAO.getUpdatesQuantity();
-                    resolver.resolve(updatesQuantity);
                 } catch (DatabaseAccessException e) {
                     e.printStackTrace();
-                    resolver.except(e);
                 }
+                runOnUiThread(adapter::notifyDataSetChanged);
             }
-        }, true);
-        promise.then(new Promise.Action<Integer, Void>() {
-            @Override
-            public Void action(final Integer data, final boolean success) {
-                adapter.notifyDataSetChanged();
-                return null;
-            }
-        });
+        }.start();
     }
 
 

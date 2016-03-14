@@ -67,14 +67,7 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
         }
         viewBag.titleView.setText(manga.getTitle());
         if (popupButtonClickListener != null) {
-            viewBag.popupButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(final View v) {
-                    popupButtonClickListener.onPopupButtonClick(viewBag.popupButton, position);
-                }
-
-            });
+            viewBag.popupButton.setOnClickListener(v -> popupButtonClickListener.onPopupButtonClick(viewBag.popupButton, position));
         }
         if (manga.getCoverUri() != null) {
             //TODO: временный хак! Потом заблочить добавление в избранное если нет картинки (или придумать что-то ещё)

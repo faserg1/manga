@@ -29,7 +29,7 @@ public class Mock {
         Manga manga = new Manga("Fairy tail", s, RepositoryEngine.DefaultRepository.OFFLINE);
         MangaChapter c1 = new MangaChapter("Uno", 0, s + "/0");
         MangaChapter c2 = new MangaChapter("Dos", 1, s + "/1");
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>();
+        List<MangaChapter> chapters = new ArrayList<>();
         chapters.add(c1);
         chapters.add(c2);
         manga.setChapters(chapters);

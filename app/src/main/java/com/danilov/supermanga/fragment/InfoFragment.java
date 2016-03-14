@@ -160,12 +160,9 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         final int baseColor = getResources().getColor(R.color.color_primary);
         final float size = getResources().getDimension(R.dimen.info_parallax_image_height);
         activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(.0f, baseColor));
-        scrollViewParallax.setScrollListener(new ScrollViewParallax.ScrollListener() {
-            @Override
-            public void onScroll(final int horizontal, final int vertical, final int oldl, final int oldt) {
-                float alpha = 1 - (float) Math.max(0, size - vertical) / size;
-                activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(alpha, baseColor));
-            }
+        scrollViewParallax.setScrollListener((horizontal, vertical, oldl, oldt) -> {
+            float alpha = 1 - (float) Math.max(0, size - vertical) / size;
+            activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(alpha, baseColor));
         });
         if (savedInstanceState == null && !shown) {
             mangaCover.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -215,23 +212,15 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
 
         final MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
 
-        body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(1).scaleX(1);
-                removeFromFavorites.animate().scaleY(1).scaleX(1);
-                infoActivity.toggleOverlayBackground(true);
-            }
+        body.animate().setDuration(ANIM_DURATION).alpha(1).translationY(0).withEndAction(() -> {
+            addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(1).scaleX(1);
+            removeFromFavorites.animate().scaleY(1).scaleX(1);
+            infoActivity.toggleOverlayBackground(true);
         });
 
         final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
         if (bigView != null) {
-            bigView.animate().setDuration(0).alpha(0).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    bigView.animate().setDuration(ANIM_DURATION).alpha(1);
-                }
-            });
+            bigView.animate().setDuration(0).alpha(0).withEndAction(() -> bigView.animate().setDuration(ANIM_DURATION).alpha(1));
         }
 
         ViewV16.ViewPropertyAnimator pa = mangaCover.animate().setDuration(duration).scaleX(1).scaleY(1).translationX(0).translationY(0)
@@ -240,12 +229,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         //TODO: android 2.3 fix
         final int version = Integer.valueOf(Build.VERSION.SDK);
         if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            pa.withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(true);
-                }
-            });
+            pa.withEndAction(() -> ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(true));
         }
     }
 
@@ -274,36 +258,30 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
 
         final MangaInfoActivity infoActivity = (MangaInfoActivity) getActivity();
 
-        addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                body.animate().setDuration(ANIM_DURATION).alpha(0).translationY(200);
+        addToFavorites.animate().setDuration(ANIM_DURATION).scaleY(0).scaleX(0).withEndAction(() -> {
+            body.animate().setDuration(ANIM_DURATION).alpha(0).translationY(200);
 
-                infoActivity.toggleOverlayBackground(false);
+            infoActivity.toggleOverlayBackground(false);
 
-                final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
-                if (bigView != null) {
-                    bigView.animate().setDuration(ANIM_DURATION).alpha(0);
-                }
-
-                //TODO: android 2.3 fix
-                final int version = Integer.valueOf(Build.VERSION.SDK);
-                if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                    ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(false);
-                }
-
-                mangaCover.animate().setDuration(duration).scaleX(widthScale).scaleY(heightScale).translationX(leftDelta).translationY(topDelta)
-                        .setInterpolator(new DecelerateInterpolator()).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.finish();
-                        }
-                    }
-                });
-
+            final ViewV16 bigView = ViewV16.wrap(view.findViewById(R.id.very_big));
+            if (bigView != null) {
+                bigView.animate().setDuration(ANIM_DURATION).alpha(0);
             }
+
+            //TODO: android 2.3 fix
+            final int version = Integer.valueOf(Build.VERSION.SDK);
+            if (version < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                ((ViewGroup) InfoFragment.this.mangaCover.getParent().getParent()).setClipChildren(false);
+            }
+
+            mangaCover.animate().setDuration(duration).scaleX(widthScale).scaleY(heightScale).translationX(leftDelta).translationY(topDelta)
+                    .setInterpolator(new DecelerateInterpolator()).withEndAction(() -> {
+                        Activity activity1 = getActivity();
+                        if (activity1 != null) {
+                            activity1.finish();
+                        }
+                    });
+
         });
         removeFromFavorites.animate().scaleY(0).scaleX(0);
         return true;
@@ -556,50 +534,45 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
                 error = e.getMessage();
                 Log.d(TAG, e.getMessage());
             }
-            activity.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (isDetached) {
-                        return;
+            activity.runOnUiThread(() -> {
+                if (isDetached) {
+                    return;
+                }
+                if (loaded) {
+                    if (manga.isTracking()) {
+                        flipper.flip(2);
                     }
-                    if (loaded) {
-                        if (manga.isTracking()) {
-                            flipper.flip(2);
-                        }
-                        if (manga.isFavorite()) {
-                            toggleFavorite.setIsChecked(true);
-                        }
-                        enableButtons();
-                        String mangaDescription = manga.getDescription();
-                        mangaDescriptionTextView.setText(mangaDescription);
-                        authors.setText(manga.getAuthor());
-                        genres.setText(manga.getGenres());
-                        chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
-                        if (!hasCoverLoaded) {
-                            String coverUrl = manga.getCoverUri();
-                            if (coverUrl != null) {
-                                hasCoverLoaded = true;
-                                Uri coverUri = Uri.parse(coverUrl);
+                    if (manga.isFavorite()) {
+                        toggleFavorite.setIsChecked(true);
+                    }
+                    enableButtons();
+                    String mangaDescription = manga.getDescription();
+                    mangaDescriptionTextView.setText(mangaDescription);
+                    authors.setText(manga.getAuthor());
+                    genres.setText(manga.getGenres());
+                    chaptersQuantityTextView.setText(String.valueOf(manga.getChaptersQuantity()));
+                    if (!hasCoverLoaded) {
+                        String coverUrl = manga.getCoverUri();
+                        if (coverUrl != null) {
+                            hasCoverLoaded = true;
+                            Uri coverUri = Uri.parse(coverUrl);
 
-                                final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
+                            final int sizeOfImage = getResources().getDimensionPixelSize(R.dimen.manga_info_height);
 
-                                Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage));
+                            Bitmap bitmap = httpImageManager.loadImage(new HttpImageManager.LoadRequest(coverUri, new LoadResponseListener(), manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage));
 
-                                if (bitmap != null) {
-                                    setCover(bitmap);
-                                }
+                            if (bitmap != null) {
+                                setCover(bitmap);
                             }
                         }
-                    } else {
-                        Context context = getActivity();
-                        String message = Utils.errorMessage(context, error, R.string.p_internet_error);
-                        Utils.showToast(context, message);
                     }
-                    isLoading = false;
-                    refreshable.stopRefresh();
+                } else {
+                    Context context = getActivity();
+                    String message = Utils.errorMessage(context, error, R.string.p_internet_error);
+                    Utils.showToast(context, message);
                 }
-
+                isLoading = false;
+                refreshable.stopRefresh();
             });
         }
 

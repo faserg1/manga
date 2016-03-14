@@ -36,7 +36,7 @@ public class LocalImageManager {
 
     private final ExecutorService mExecutor = Executors.newFixedThreadPool(4);
 
-    private final Set<ImageRequest> mActiveRequests = new HashSet<ImageRequest>();
+    private final Set<ImageRequest> mActiveRequests = new HashSet<>();
 
     public LocalImageManager(final BitmapMemoryCache mCache, final Resources resources) {
         this.mCache = mCache;
@@ -89,68 +89,62 @@ public class LocalImageManager {
     }
 
     private Callable<Bitmap> newRequestCall(final ImageRequest imageRequest) {
-        return new Callable<Bitmap>() {
-            @Override
-            public Bitmap call() throws Exception {
+        return () -> {
 
-                synchronized (LocalImageManager.this.mActiveRequests) {
-                    // If there's been already request pending for the same URL,
-                    // we just wait until it is handled.
-                    while (LocalImageManager.this.mActiveRequests.contains(imageRequest)) {
-                        try {
-                            LocalImageManager.this.mActiveRequests.wait();
-                        } catch (InterruptedException e) {
-                            Log.e(TAG, e.getMessage());
-                        }
+            synchronized (LocalImageManager.this.mActiveRequests) {
+                // If there's been already request pending for the same URL,
+                // we just wait until it is handled.
+                while (LocalImageManager.this.mActiveRequests.contains(imageRequest)) {
+                    try {
+                        LocalImageManager.this.mActiveRequests.wait();
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, e.getMessage());
                     }
-
-                    LocalImageManager.this.mActiveRequests.add(imageRequest);
                 }
 
-                Bitmap data = null;
-                try {
-                    String key = imageRequest.getHashedUri();
-                    //first - ram cache
-                    data = mCache.loadData(key);
-                    if (data == null) {
-                        //now lets go persistent (ballin, ballin, yarl ballin)
-                        data = BitmapUtils.loadLocal(imageRequest.getUri(), imageRequest.getNewSize(), 1);
-                        int newSize = imageRequest.getNewSize();
-                        if (newSize >= 0) {
-                            data = BitmapUtils.reduceBitmapSize(resources, data, imageRequest.getNewSize());
-                        }
-                        if (data != null) {
-                            mCache.storeData(key, data);
-                        }
+                LocalImageManager.this.mActiveRequests.add(imageRequest);
+            }
+
+            Bitmap data = null;
+            try {
+                String key = imageRequest.getHashedUri();
+                //first - ram cache
+                data = mCache.loadData(key);
+                if (data == null) {
+                    //now lets go persistent (ballin, ballin, yarl ballin)
+                    data = BitmapUtils.loadLocal(imageRequest.getUri(), imageRequest.getNewSize(), 1);
+                    int newSize = imageRequest.getNewSize();
+                    if (newSize >= 0) {
+                        data = BitmapUtils.reduceBitmapSize(resources, data, imageRequest.getNewSize());
                     }
-                    final Bitmap b = data;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!imageRequest.isCancelled()) {
-                                ImageView imageView = imageRequest.getImageView();
-                                Drawable d = imageView.getDrawable();
-                                if (d != null && d instanceof RequestDrawable) {
-                                    RequestDrawable oldRequest = (RequestDrawable) d;
-                                    if (imageRequest.equals(oldRequest.getRequest())) {
-                                        imageRequest.getImageView().setImageBitmap(b);
-                                    }
-                                }
+                    if (data != null) {
+                        mCache.storeData(key, data);
+                    }
+                }
+                final Bitmap b = data;
+                handler.post(() -> {
+                    if (!imageRequest.isCancelled()) {
+                        ImageView imageView = imageRequest.getImageView();
+                        Drawable d = imageView.getDrawable();
+                        if (d != null && d instanceof RequestDrawable) {
+                            RequestDrawable oldRequest = (RequestDrawable) d;
+                            if (imageRequest.equals(oldRequest.getRequest())) {
+                                imageRequest.getImageView().setImageBitmap(b);
                             }
                         }
-                    });
-                } catch (Throwable t) {
-                    Log.e(TAG, t.getMessage());
-                } finally {
-                    synchronized (LocalImageManager.this.mActiveRequests) {
-                        LocalImageManager.this.mActiveRequests.remove(imageRequest);
-                        LocalImageManager.this.mActiveRequests.notifyAll(); // wake up pending requests
-                        // who's querying the same
-                        // URL.
                     }
+                });
+            } catch (Throwable t) {
+                Log.e(TAG, t.getMessage());
+            } finally {
+                synchronized (LocalImageManager.this.mActiveRequests) {
+                    LocalImageManager.this.mActiveRequests.remove(imageRequest);
+                    LocalImageManager.this.mActiveRequests.notifyAll(); // wake up pending requests
+                    // who's querying the same
+                    // URL.
                 }
-                return data;
             }
+            return data;
         };
     }
 

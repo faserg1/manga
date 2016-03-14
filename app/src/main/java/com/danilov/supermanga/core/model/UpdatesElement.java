@@ -70,9 +70,8 @@ public class UpdatesElement {
 
         UpdatesElement element = (UpdatesElement) o;
 
-        if (id != element.id) return false;
+        return id == element.id;
 
-        return true;
     }
 
     @Override

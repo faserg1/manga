@@ -42,7 +42,7 @@ public class RippleView extends RelativeLayout implements Checkable {
 
     private Paint paintTwo;
 
-    private List<InkSpot> spots = new ArrayList<InkSpot>();
+    private List<InkSpot> spots = new ArrayList<>();
 
     public RippleView(Context context) {
         super(context);

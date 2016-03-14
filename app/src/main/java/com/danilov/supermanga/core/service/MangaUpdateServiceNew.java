@@ -18,7 +18,6 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.UpdatesElement;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
-import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.Logger;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
@@ -98,7 +97,7 @@ public class MangaUpdateServiceNew extends Service {
 
                 this.mangas = new ArrayList<>();
                 for (Manga m : mangas) {
-                    this.mangas.add(new Pair<Manga, UpdatesElement>(m, null));
+                    this.mangas.add(new Pair<>(m, null));
                 }
                 updating = true;
             } catch (DatabaseAccessException e) {
@@ -206,8 +205,6 @@ public class MangaUpdateServiceNew extends Service {
                 manga.setChaptersQuantity(quantity);
                 return manga;
             }
-        } catch (RepositoryException e) {
-            throw new UpdateException(e);
         } catch (Exception e) {
             throw new UpdateException(e);
         }

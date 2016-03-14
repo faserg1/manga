@@ -2,7 +2,6 @@ package com.danilov.supermanga.core.animation;
 
 import android.view.View;
 
-import com.danilov.supermanga.core.util.Promise;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
@@ -23,8 +22,7 @@ public class XRotation {
         this.duration = duration;
     }
 
-    public Promise<Void> start() {
-        final Promise<Void> promise = new Promise<>();
+    public void start(final Runnable listener) {
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(v, "rotationX", from, to);
         objectAnimator.setDuration(duration);
         objectAnimator.addListener(new Animator.AnimatorListener() {
@@ -35,7 +33,7 @@ public class XRotation {
 
             @Override
             public void onAnimationEnd(final Animator animation) {
-                promise.finish(null, true);
+                listener.run();
             }
 
             @Override
@@ -49,7 +47,6 @@ public class XRotation {
             }
         });
         objectAnimator.start();
-        return promise;
     }
 
 }

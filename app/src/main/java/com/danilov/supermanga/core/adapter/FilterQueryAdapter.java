@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
@@ -144,12 +143,7 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
                     } else {
                         holder.triStateCheckbox.setState(TriStateCheckbox.UNCHECKED);
                     }
-                    holder.triStateCheckbox.setTriStateListener(new TriStateCheckbox.TriStateListener() {
-                        @Override
-                        public void onStateChanged(final int state) {
-                            values.put(filter, state);
-                        }
-                    });
+                    holder.triStateCheckbox.setTriStateListener(state -> values.put(filter, state));
                     break;
                 case TWO_STATE:
                     holder.setCheckboxText(filter.getName());
@@ -158,12 +152,7 @@ public class FilterQueryAdapter extends BaseAdapter<FilterQueryAdapter.Holder, R
                     } else {
                         holder.checkBox.setChecked(false);
                     }
-                    holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-                            values.put(filter, b ? 1 : 0);
-                        }
-                    });
+                    holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> values.put(filter, b ? 1 : 0));
                     break;
             }
         }

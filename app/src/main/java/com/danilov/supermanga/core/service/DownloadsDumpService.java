@@ -326,8 +326,7 @@ public class DownloadsDumpService {
         String uri = jsonObject.getString(URI);
         int number = jsonObject.getInt(NUMBER);
         String title = jsonObject.getString(TITLE);
-        MangaChapter mangaChapter = new MangaChapter(title, number, uri);
-        return mangaChapter;
+        return new MangaChapter(title, number, uri);
     }
 
 }

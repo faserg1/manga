@@ -40,12 +40,7 @@ public class OfflineManga implements MangaShowStrategy, CompatPager.OnPageChange
 
     @Override
     public void showChapterAndImage(final int chapterNumber, final int imageNumber, final boolean fromNext) {
-        showChapterInternal(chapterNumber, new Runnable() {
-            @Override
-            public void run() {
-                showImage(imageNumber);
-            }
-        }, fromNext);
+        showChapterInternal(chapterNumber, () -> showImage(imageNumber), fromNext);
     }
 
     private boolean isShowChapterInProgress = false;

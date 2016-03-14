@@ -3,7 +3,6 @@ package com.danilov.supermanga.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
@@ -23,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -142,8 +140,7 @@ public class ProfileActivity extends BaseToolbarActivity {
 
 
                         RelativeLayout.LayoutParams userNameParams = (RelativeLayout.LayoutParams) userNameTextView.getLayoutParams();
-                        int marginBottom = (int) (percentage * USER_NAME_MARGIN_BOTTOM);
-                        userNameParams.bottomMargin = marginBottom;
+                        userNameParams.bottomMargin = (int) (percentage * USER_NAME_MARGIN_BOTTOM);
                         userNameTextView.setLayoutParams(userNameParams);
 
                         return 0;
@@ -157,31 +154,22 @@ public class ProfileActivity extends BaseToolbarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fakeBarInner = findViewWithId(R.id.fake_bar_inner);
         scrollView = findViewWithId(R.id.scroll_view);
-        googleSyncCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (service != null) {
-                    service.connect();
-                }
+        googleSyncCard.setOnClickListener(v -> {
+            if (service != null) {
+                service.connect();
             }
         });
-        googleSyncButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (service == null) {
-                    return;
-                }
-                service.save();
+        googleSyncButton.setOnClickListener(v -> {
+            if (service == null) {
+                return;
             }
+            service.save();
         });
-        googleDownloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (service == null) {
-                    return;
-                }
-                service.download();
+        googleDownloadButton.setOnClickListener(v -> {
+            if (service == null) {
+                return;
             }
+            service.download();
         });
         String yandexPrefix =  "SamVimes@yandex.ru (" + getString(R.string.sv_synchronized) + " ";
         yandexAccountTextView.setPrefix(yandexPrefix);
@@ -253,46 +241,31 @@ public class ProfileActivity extends BaseToolbarActivity {
         mangasComplete.setText(mangasCompleteInt + "");
         megabytesDownloaded.setText(megabytesDownloadedLong + "");
         showBtnsSwitch.setChecked(alwaysShowButtons);
-        alwaysShowButtonsCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                boolean isChecked = !showBtnsSwitch.isChecked();
-                showBtnsSwitch.setChecked(isChecked);
-                userSettings.setAlwaysShowButtons(isChecked);
-                Context context = getApplicationContext();
-                ApplicationSettings.get(context).update(context);
-            }
+        alwaysShowButtonsCard.setOnClickListener(v -> {
+            boolean isChecked = !showBtnsSwitch.isChecked();
+            showBtnsSwitch.setChecked(isChecked);
+            userSettings.setAlwaysShowButtons(isChecked);
+            Context context = getApplicationContext();
+            ApplicationSettings.get(context).update(context);
         });
-        showBtnsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                userSettings.setAlwaysShowButtons(isChecked);
-                Context context = getApplicationContext();
-                ApplicationSettings.get(context).update(context);
-            }
+        showBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            userSettings.setAlwaysShowButtons(isChecked);
+            Context context = getApplicationContext();
+            ApplicationSettings.get(context).update(context);
         });
 
-        userNameCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.username), userNameString, Constants.Settings.USER_NAME);
-                dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
-            }
+        userNameCard.setOnClickListener(v -> {
+            ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.username), userNameString, Constants.Settings.USER_NAME);
+            dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
         });
-        emailCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.email), emailString, Constants.Settings.EMAIL);
-                dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
-            }
+        emailCard.setOnClickListener(v -> {
+            ValueDialogFragment dialogFragment = ValueDialogFragment.createDialog(getString(R.string.email), emailString, Constants.Settings.EMAIL);
+            dialogFragment.show(getFragmentManager(), ValueDialogFragment.TAG);
         });
-        downloadPathCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                Intent intent = new Intent(ProfileActivity.this, FolderPickerActivity.class);
-                intent.putExtra(FolderPickerActivity.FOLDER_KEY, downloadPathString);
-                startActivityForResult(intent, FOLDER_PICKER_REQUEST);
-            }
+        downloadPathCard.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, FolderPickerActivity.class);
+            intent.putExtra(FolderPickerActivity.FOLDER_KEY, downloadPathString);
+            startActivityForResult(intent, FOLDER_PICKER_REQUEST);
         });
     }
 
@@ -445,29 +418,19 @@ public class ProfileActivity extends BaseToolbarActivity {
             parameterName = b.getString(PARAMETER_NAME);
 
             CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
-            builder.setPositiveButton(getString(R.string.sv_ok), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    Context context = MangaApplication.getContext();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    preferences.edit().putString(parameterName, editText.getText().toString()).apply();
-                    ApplicationSettings.get(context).invalidate(context);
-                    ProfileActivity activity = (ProfileActivity) getActivity();
-                    if (activity != null) {
-                        activity.init();
-                    }
-                    dismiss();
+            builder.setPositiveButton(getString(R.string.sv_ok), (arg0, arg1) -> {
+                Context context = MangaApplication.getContext();
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                preferences.edit().putString(parameterName, editText.getText().toString()).apply();
+                ApplicationSettings.get(context).invalidate(context);
+                ProfileActivity activity = (ProfileActivity) getActivity();
+                if (activity != null) {
+                    activity.init();
                 }
-
+                dismiss();
             });
-            builder.setNegativeButton(getString(R.string.sv_cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(final DialogInterface dialogInterface, final int i) {
-                    dismiss();
-                }
-
+            builder.setNegativeButton(getString(R.string.sv_cancel), (dialogInterface, i) -> {
+                dismiss();
             });
             LayoutInflater layoutInflater = getActivity().getLayoutInflater();
             View contentView = layoutInflater.inflate(R.layout.dialog_enter_string, null);

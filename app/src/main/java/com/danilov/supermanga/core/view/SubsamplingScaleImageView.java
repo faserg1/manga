@@ -21,7 +21,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -30,7 +29,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.core.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -600,8 +598,7 @@ public class SubsamplingScaleImageView extends View {
                 }
                 return true;
         }
-        boolean val = super.onTouchEvent(event);
-        return val;
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -694,11 +691,7 @@ public class SubsamplingScaleImageView extends View {
         // Everything is set up and coordinates are valid. Inform subclasses.
         if (!readySent) {
             readySent = true;
-            new Thread(new Runnable() {
-                public void run() {
-                    onImageReady();
-                }
-            }).start();
+            new Thread(this::onImageReady).start();
         }
 
         // If animating scale, calculate current scale and center with easing equations
@@ -1023,7 +1016,7 @@ public class SubsamplingScaleImageView extends View {
      * Once source image and view dimensions are known, creates a map of sample size to tile grid.
      */
     private void initialiseTileMap(Point maxTileDimensions) {
-        this.tileMap = new LinkedHashMap<Integer, List<Tile>>();
+        this.tileMap = new LinkedHashMap<>();
         int sampleSize = fullImageSampleSize;
         int xTiles = 1;
         int yTiles = 1;
@@ -1042,7 +1035,7 @@ public class SubsamplingScaleImageView extends View {
                 sTileHeight = sHeight()/yTiles;
                 subTileHeight = sTileHeight/sampleSize;
             }
-            List<Tile> tileGrid = new ArrayList<Tile>(xTiles * yTiles);
+            List<Tile> tileGrid = new ArrayList<>(xTiles * yTiles);
             for (int x = 0; x < xTiles; x++) {
                 for (int y = 0; y < yTiles; y++) {
                     Tile tile = new Tile();
@@ -1085,8 +1078,8 @@ public class SubsamplingScaleImageView extends View {
         private final boolean sourceIsAsset;
 
         public BitmapInitTask(SubsamplingScaleImageView view, Context context, String source, boolean sourceIsAsset) {
-            this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
-            this.contextRef = new WeakReference<Context>(context);
+            this.viewRef = new WeakReference<>(view);
+            this.contextRef = new WeakReference<>(context);
             this.source = source;
             view._source = source;
             this.sourceIsAsset = sourceIsAsset;
@@ -1160,9 +1153,9 @@ public class SubsamplingScaleImageView extends View {
         private final WeakReference<Tile> tileRef;
 
         public BitmapTileTask(SubsamplingScaleImageView view/*, Object decoderLock*/, Tile tile) {
-            this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
+            this.viewRef = new WeakReference<>(view);
             //this.decoderLockRef = new WeakReference<Object>(decoderLock);
-            this.tileRef = new WeakReference<Tile>(tile);
+            this.tileRef = new WeakReference<>(tile);
             tile.loading = true;
             tile.task = this;
         }

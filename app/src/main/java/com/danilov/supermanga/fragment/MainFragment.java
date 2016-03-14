@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaInfoActivity;
@@ -46,7 +48,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
 
     private View update;
     private GridView updatesView;
-    private List<Pair<Manga,UpdatesElement>> updates = new ArrayList<Pair<Manga,UpdatesElement>>();
+    private List<Pair<Manga,UpdatesElement>> updates = new ArrayList<>();
 
     private UpdatesAdapterNew adapter;
 
@@ -85,12 +87,9 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
         updatesView = findViewById(R.id.updates);
         update = findViewById(R.id.update);
 
-        findViewById(R.id.show_tracking).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.showTrackingFragment();
-            }
+        findViewById(R.id.show_tracking).setOnClickListener(v -> {
+            MainActivity activity1 = (MainActivity) getActivity();
+            activity1.showTrackingFragment();
         });
 
         List<UpdatesElement> _updates = null;
@@ -101,9 +100,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
         }
         if (_updates != null) {
             updates = new ArrayList<>();
-            for (UpdatesElement updatesElement : _updates) {
-                updates.add(new Pair<>(updatesElement.getManga(), updatesElement));
-            }
+            updates.addAll(Stream.of(_updates).map(updatesElement -> new Pair<>(updatesElement.getManga(), updatesElement)).collect(Collectors.toList()));
         }
         if (savedInstanceState != null) {
             firstLaunch = savedInstanceState.getBoolean(FIRST_LAUNCH, firstLaunch);
@@ -123,12 +120,9 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
             updatesView.setOnItemClickListener(this);
         }
         activity = (MainActivity) getActivity();
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                activity.changeUpdatesQuantity(updates.size());
-                MangaUpdateServiceNew.startUpdateList(getActivity());
-            }
+        update.setOnClickListener(view1 -> {
+            activity.changeUpdatesQuantity(updates.size());
+            MangaUpdateServiceNew.startUpdateList(getActivity());
         });
 
         super.onActivityCreated(savedInstanceState);
@@ -211,9 +205,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (Pair<Manga, UpdatesElement> pair : pairs) {
-            updates.add(pair);
-        }
+        updates.addAll(Stream.of(pairs).collect(Collectors.toList()));
         if (_updates != null) {
             for (UpdatesElement updatesElement : _updates) {
 
@@ -290,12 +282,7 @@ public class MainFragment extends BaseFragmentNative implements AdapterView.OnIt
                 holder.progressBar.setVisibility(hasError ? View.INVISIBLE : View.VISIBLE);
             } else {
                 holder.okBtn.setVisibility(View.VISIBLE);
-                holder.okBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View view) {
-                        deleteUpdate(element);
-                    }
-                });
+                holder.okBtn.setOnClickListener(view1 -> deleteUpdate(element));
                 holder.quantityNew.setVisibility(View.VISIBLE);
                 holder.progressBar.setVisibility(View.INVISIBLE);
                 Resources res = getResources();

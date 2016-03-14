@@ -55,7 +55,7 @@ public final class StorageHelper {
      * @return list of mounted {@link StorageVolume}s
      */
     public static List<StorageVolume> getStorages(final boolean includeUsb) {
-        final Map<String, List<StorageVolume>> deviceVolumeMap = new HashMap<String, List<StorageVolume>>();
+        final Map<String, List<StorageVolume>> deviceVolumeMap = new HashMap<>();
 
         // this approach considers that all storages are mounted in the same non-root directory
         if (!STORAGES_ROOT.equals(File.separator)) {
@@ -99,7 +99,7 @@ public final class StorageHelper {
 
                     List<StorageVolume> volumes = deviceVolumeMap.get(device);
                     if (volumes == null) {
-                        volumes = new ArrayList<StorageVolume>(3);
+                        volumes = new ArrayList<>(3);
                         deviceVolumeMap.put(device, volumes);
                     }
 
@@ -134,7 +134,7 @@ public final class StorageHelper {
         // remove volumes that are the same devices
         boolean primaryStorageIncluded = false;
         final File externalStorage = Environment.getExternalStorageDirectory();
-        final List<StorageVolume> volumeList = new ArrayList<StorageVolume>();
+        final List<StorageVolume> volumeList = new ArrayList<>();
         for (final Entry<String, List<StorageVolume>> entry : deviceVolumeMap.entrySet()) {
             final List<StorageVolume> volumes = entry.getValue();
             if (volumes.size() == 1) {

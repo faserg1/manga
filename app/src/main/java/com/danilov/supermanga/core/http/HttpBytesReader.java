@@ -40,8 +40,7 @@ public class HttpBytesReader {
         HttpStreamModel streamModel = this.mHttpStreamReader.fromUri(uri, preprocessor, customHeaders, listener, task);
 
         try {
-            byte[] result = this.convertStreamToBytes(streamModel.stream);
-            return result;
+            return this.convertStreamToBytes(streamModel.stream);
         } finally {
             ExtendedHttpClient.releaseRequestResponse(streamModel.request, streamModel.response);
         }
@@ -55,8 +54,7 @@ public class HttpBytesReader {
         InputStream stream = this.mHttpStreamReader.fromResponse(response, listener, task);
 
         try {
-            byte[] result = this.convertStreamToBytes(stream);
-            return result;
+            return this.convertStreamToBytes(stream);
         } finally {
             ExtendedHttpClient.releaseResponse(response);
         }
@@ -68,8 +66,7 @@ public class HttpBytesReader {
 
     private byte[] convertStreamToBytes(InputStream stream) throws HttpRequestException {
         try {
-            byte[] result = IoUtils.convertStreamToBytes(stream);
-            return result;
+            return IoUtils.convertStreamToBytes(stream);
         } catch (Exception e) {
             throw new HttpRequestException(e.getMessage() != null ? e.getMessage() : "Failed to read stream");
         }

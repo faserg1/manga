@@ -65,9 +65,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 suggestions = parseSuggestionsResponse(responseString);
-            } catch (UnsupportedEncodingException e) {
-                ex = e;
-            } catch (HttpRequestException e) {
+            } catch (UnsupportedEncodingException | HttpRequestException e) {
                 ex = e;
             }
             if (ex != null) {
@@ -78,7 +76,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
     }
 
     private List<MangaSuggestion> parseSuggestionsResponse(final String responseString) {
-        List<MangaSuggestion> mangaSuggestions = new ArrayList<MangaSuggestion>();
+        List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         String[] lines = responseString.split("\n");
         if (lines.length > 0) {
             for (String line : lines) {
@@ -109,9 +107,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
-            } catch (UnsupportedEncodingException e) {
-                throw new RepositoryException("Failed to load: " + e.getMessage());
-            } catch (HttpRequestException e) {
+            } catch (UnsupportedEncodingException | HttpRequestException e) {
                 throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
@@ -200,19 +196,13 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             Promise<Object[]> allImages = Promise.all(promises);
             final Exception[] holder = new Exception[1];
 
-            allImages.catchException(new Promise.Action<Exception, Object>() {
-                @Override
-                public Object action(final Exception data, final boolean success) {
-                    holder[0] = data;
-                    return null;
-                }
+            allImages.catchException((data, success) -> {
+                holder[0] = data;
+                return null;
             });
-            allImages.then(new Promise.Action<Object[], Object>() {
-                @Override
-                public Object action(final Object[] data, final boolean success) {
-                    System.arraycopy(data, 0, imageUrisArray, 0, data.length);
-                    return null;
-                }
+            allImages.then((data, success) -> {
+                System.arraycopy(data, 0, imageUrisArray, 0, data.length);
+                return null;
             });
             allImages.waitForIt();
             if (holder[0] != null) {
@@ -374,7 +364,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
             return null;
         }
         Elements chapterLinks = chaptersContainer.getElementsByTag("a");
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>(chapterLinks.size());
+        List<MangaChapter> chapters = new ArrayList<>(chapterLinks.size());
         int number = 0;
         for (Element element : chapterLinks) {
             String link = element.attr(linkValueAttr);
@@ -391,7 +381,7 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     private List<String> getImagePagesUris(final Document document) {
         Element element = document.getElementById(selectorId);
-        List<String> uris = new LinkedList<String>();
+        List<String> uris = new LinkedList<>();
         if (element == null) {
             return uris;
         }

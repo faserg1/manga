@@ -70,12 +70,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
         }
         final ImageButton popupButton = holder.popupButton;
         if (popupButtonClickListener != null) {
-            holder.popupButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    popupButtonClickListener.onPopupButtonClick(popupButton, position);
-                }
-            });
+            holder.popupButton.setOnClickListener(v -> popupButtonClickListener.onPopupButtonClick(popupButton, position));
         }
         LocalManga manga = getItem(position);
         holder.mangaTitle.setText(manga.getTitle());
@@ -124,7 +119,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
     }
 
     public List<LocalManga> getSelectedManga() {
-        List<LocalManga> selected = new LinkedList<LocalManga>();
+        List<LocalManga> selected = new LinkedList<>();
         for (int i = 0; i < getCount(); i++) {
             if (isPosSelected[i]) {
                 selected.add(getItem(i));

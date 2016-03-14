@@ -83,9 +83,7 @@ public class CacheDirectoryManagerImpl implements CacheDirectoryManager {
     public File getCachedImageFileForWrite(Uri uri) {
         String fileName = uri.getLastPathSegment();
 
-        File cachedFile = new File(this.getImagesCacheDirectory(), fileName);
-
-        return cachedFile;
+        return new File(this.getImagesCacheDirectory(), fileName);
     }
 
     @Override
@@ -133,9 +131,8 @@ public class CacheDirectoryManagerImpl implements CacheDirectoryManager {
             // storage
             File externalStorageDir = Environment.getExternalStorageDirectory();
             // {SD_PATH}/Android/data/com.vortexwolf.chan/cache
-            File extStorageAppCachePath = new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + this.mPackageName + File.separator + "cache");
 
-            return extStorageAppCachePath;
+            return new File(externalStorageDir, "Android" + File.separator + "data" + File.separator + this.mPackageName + File.separator + "cache");
         }
 
         return null;

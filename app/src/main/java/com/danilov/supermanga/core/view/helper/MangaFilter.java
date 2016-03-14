@@ -68,10 +68,7 @@ public class MangaFilter extends Filter implements TextWatcher {
         mangaTitle = mangaTitle.replace(" ", "").toLowerCase();
         String constraint = val.replace(" ", "").toLowerCase();
 
-        if (mangaTitle.contains(constraint)) {
-            return true;
-        }
-        return false;
+        return mangaTitle.contains(constraint);
     }
 
     public void setAdapterAccessor(final BaseAdapterAccessor adapterAccessor) {

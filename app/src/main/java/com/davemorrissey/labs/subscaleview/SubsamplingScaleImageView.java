@@ -1393,7 +1393,7 @@ public class SubsamplingScaleImageView extends View {
      * Once source image and view dimensions are known, creates a map of sample size to tile grid.
      */
     private void initialiseTileMap(Point maxTileDimensions) {
-        this.tileMap = new LinkedHashMap<Integer, List<Tile>>();
+        this.tileMap = new LinkedHashMap<>();
         int sampleSize = fullImageSampleSize;
         int xTiles = 1;
         int yTiles = 1;
@@ -1412,7 +1412,7 @@ public class SubsamplingScaleImageView extends View {
                 sTileHeight = sHeight()/yTiles;
                 subTileHeight = sTileHeight/sampleSize;
             }
-            List<Tile> tileGrid = new ArrayList<Tile>(xTiles * yTiles);
+            List<Tile> tileGrid = new ArrayList<>(xTiles * yTiles);
             for (int x = 0; x < xTiles; x++) {
                 for (int y = 0; y < yTiles; y++) {
                     Tile tile = new Tile();
@@ -1451,9 +1451,9 @@ public class SubsamplingScaleImageView extends View {
 
         public TilesInitTask(SubsamplingScaleImageView view, Context context, DecoderFactory<? extends ImageRegionDecoder> decoderFactory, Uri source) {
             System.err.println("TilesInitTask::cons");
-            this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
-            this.contextRef = new WeakReference<Context>(context);
-            this.decoderFactoryRef = new WeakReference<DecoderFactory<? extends ImageRegionDecoder>>(decoderFactory);
+            this.viewRef = new WeakReference<>(view);
+            this.contextRef = new WeakReference<>(context);
+            this.decoderFactoryRef = new WeakReference<>(decoderFactory);
             this.source = source;
         }
 
@@ -1533,9 +1533,9 @@ public class SubsamplingScaleImageView extends View {
 
         public TileLoadTask(SubsamplingScaleImageView view, ImageRegionDecoder decoder, Tile tile) {
             System.err.println("TileLoadTask::cons");
-            this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
-            this.decoderRef = new WeakReference<ImageRegionDecoder>(decoder);
-            this.tileRef = new WeakReference<Tile>(tile);
+            this.viewRef = new WeakReference<>(view);
+            this.decoderRef = new WeakReference<>(decoder);
+            this.tileRef = new WeakReference<>(tile);
             tile.loading = true;
         }
 
@@ -1612,9 +1612,9 @@ public class SubsamplingScaleImageView extends View {
 
         public BitmapLoadTask(SubsamplingScaleImageView view, Context context, DecoderFactory<? extends ImageDecoder> decoderFactory, Uri source, boolean preview) {
             System.err.println("BitmapLoadTask::cons");
-            this.viewRef = new WeakReference<SubsamplingScaleImageView>(view);
-            this.contextRef = new WeakReference<Context>(context);
-            this.decoderFactoryRef = new WeakReference<DecoderFactory<? extends ImageDecoder>>(decoderFactory);
+            this.viewRef = new WeakReference<>(view);
+            this.contextRef = new WeakReference<>(context);
+            this.decoderFactoryRef = new WeakReference<>(decoderFactory);
             this.source = source;
             this.preview = preview;
         }
@@ -2134,7 +2134,7 @@ public class SubsamplingScaleImageView extends View {
         if (regionDecoderClass == null) {
             throw new IllegalArgumentException("Decoder class cannot be set to null");
         }
-        this.regionDecoderFactory = new CompatDecoderFactory<ImageRegionDecoder>(regionDecoderClass);
+        this.regionDecoderFactory = new CompatDecoderFactory<>(regionDecoderClass);
     }
 
     /**
@@ -2160,7 +2160,7 @@ public class SubsamplingScaleImageView extends View {
         if (bitmapDecoderClass == null) {
             throw new IllegalArgumentException("Decoder class cannot be set to null");
         }
-        this.bitmapDecoderFactory = new CompatDecoderFactory<ImageDecoder>(bitmapDecoderClass);
+        this.bitmapDecoderFactory = new CompatDecoderFactory<>(bitmapDecoderClass);
     }
 
     /**

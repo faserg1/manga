@@ -1,7 +1,6 @@
 package com.danilov.supermanga.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -98,57 +96,38 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         selectRange = (Button) view.findViewById(R.id.number_select);
         checkBox = (CheckBox) view.findViewById(R.id.select_all);
         selectLast = view.findViewById(R.id.select_last);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                if (adapter != null) {
-                    adapter.all(isChecked);
-                }
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (adapter != null) {
+                adapter.all(isChecked);
             }
         });
         chaptersListView.setOnItemClickListener(this);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                activity.showInfoFragment(false);
+        backButton.setOnClickListener(v -> activity.showInfoFragment(false));
+        download.setOnClickListener(v -> {
+            if (adapter == null) {
+                return;
             }
+            Intent intent = new Intent(activity, SingleFragmentActivity.class);
+            intent.putExtra(Constants.FRAGMENTS_KEY, SingleFragmentActivity.DOWNLOAD_MANAGER_FRAGMENT);
+            intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+            intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
+            startActivity(intent);
+            activity.showInfoFragment(false);
         });
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (adapter == null) {
-                    return;
+        selectLast.setOnClickListener(view1 -> {
+            int size = chaptersListView.getCount();
+            if (size == 0) {
+                return;
+            }
+            int pos = size - 1;
+            if (adapter != null) {
+                if (!adapter.isSelected(pos)) {
+                    adapter.select(pos);
                 }
-                Intent intent = new Intent(activity, SingleFragmentActivity.class);
-                intent.putExtra(Constants.FRAGMENTS_KEY, SingleFragmentActivity.DOWNLOAD_MANAGER_FRAGMENT);
-                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-                intent.putIntegerArrayListExtra(Constants.SELECTED_CHAPTERS_KEY, adapter.getSelectedChaptersList());
-                startActivity(intent);
-                activity.showInfoFragment(false);
+                chaptersListView.setSelection(pos);
             }
         });
-        selectLast.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                int size = chaptersListView.getCount();
-                if (size == 0) {
-                    return;
-                }
-                int pos = size - 1;
-                if (adapter != null) {
-                    if (!adapter.isSelected(pos)) {
-                        adapter.select(pos);
-                    }
-                    chaptersListView.setSelection(pos);
-                }
-            }
-        });
-        selectRange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                showNumberPickerFragment();
-            }
-        });
+        selectRange.setOnClickListener(v -> showNumberPickerFragment());
         if (savedInstanceState == null) {
             Intent i = activity.getIntent();
             manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
@@ -281,27 +260,21 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
 
 
         CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
-        builder.setPositiveButton(R.string.sv_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialog, final int which) {
-                if (adapter != null) {
-                    Integer _from = Utils.stringToInt(from.getText().toString());
-                    Integer _to = Utils.stringToInt(to.getText().toString());
-                    if (_from == null || _to == null) {
-                        return;
-                    }
-                    _from--;
-                    _to--;
-                    adapter.selectFromAndTo(_from, _to);
+        builder.setPositiveButton(R.string.sv_ok, (dialog1, which) -> {
+            if (adapter != null) {
+                Integer _from = Utils.stringToInt(from.getText().toString());
+                Integer _to = Utils.stringToInt(to.getText().toString());
+                if (_from == null || _to == null) {
+                    return;
                 }
-                dialogFragment.dismiss();
+                _from--;
+                _to--;
+                adapter.selectFromAndTo(_from, _to);
             }
+            dialogFragment.dismiss();
         });
-        builder.setNegativeButton(R.string.sv_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialog, final int which) {
-                dialogFragment.dismiss();
-            }
+        builder.setNegativeButton(R.string.sv_cancel, (dialog1, which) -> {
+            dialogFragment.dismiss();
         });
         builder.setView(contentView);
         builder.setTitle(R.string.sv_select_range_dialog);
@@ -330,24 +303,19 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
                 Log.d(TAG, e.getMessage());
             }
 
-            activity.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (isDetached) {
-                        return;
-                    }
-                    if (loaded) {
-                        showChapters();
-                    } else {
-                        Context context = getActivity();
-                        String message = Utils.errorMessage(context, error, R.string.p_internet_error);
-                        Utils.showToast(context, message);
-                    }
-                    isLoading = false;
-                    refreshable.stopRefresh();
+            activity.runOnUiThread(() -> {
+                if (isDetached) {
+                    return;
                 }
-
+                if (loaded) {
+                    showChapters();
+                } else {
+                    Context context = getActivity();
+                    String message = Utils.errorMessage(context, error, R.string.p_internet_error);
+                    Utils.showToast(context, message);
+                }
+                isLoading = false;
+                refreshable.stopRefresh();
             });
         }
 
@@ -395,8 +363,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
                 h = new Holder();
                 TextView title = (TextView) view.findViewById(R.id.chapterTitle);
                 TextView isNew = (TextView) view.findViewById(R.id.is_new);
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-                h.checkBox = checkBox;
+                h.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
                 h.title = title;
                 h.isNew = isNew;
                 view.setTag(h);
@@ -405,12 +372,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
             }
             MangaChapter chapter = chapters.get(position);
             h.title.setText((chapter.getNumber() + 1) + ". " + chapter.getTitle());
-            h.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                    select(position, isChecked);
-                }
-            });
+            h.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> select(position, isChecked));
 
             h.checkBox.setChecked(selectedChapters[reversed ? (getCount() - 1 - position) : position]);
 
@@ -439,7 +401,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         }
 
         public ArrayList<Integer> getSelectedChaptersList() {
-            ArrayList<Integer> selection = new ArrayList<Integer>();
+            ArrayList<Integer> selection = new ArrayList<>();
             for (int i = 0; i < selectedChapters.length; i++) {
                 if (selectedChapters[i]) {
                     selection.add(i);

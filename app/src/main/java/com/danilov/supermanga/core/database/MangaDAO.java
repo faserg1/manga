@@ -100,12 +100,12 @@ public class MangaDAO {
 
     public synchronized List<Manga> getAllManga() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
-        List<Manga> mangaList = new ArrayList<Manga>();
+        List<Manga> mangaList = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return new ArrayList<Manga>(0);
+                return new ArrayList<>(0);
             }
             do {
                 Manga manga = null;
@@ -151,12 +151,12 @@ public class MangaDAO {
     public synchronized List<LocalManga> getAllDownloaded() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = IS_DOWNLOADED + " = 1";
-        List<LocalManga> mangaList = new ArrayList<LocalManga>();
+        List<LocalManga> mangaList = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return new ArrayList<LocalManga>(0);
+                return new ArrayList<>(0);
             }
             do {
                 Manga manga = null;
@@ -180,12 +180,12 @@ public class MangaDAO {
     public synchronized List<Manga> getFavorite() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = IS_FAVORITE + " = 1";
-        List<Manga> mangaList = new ArrayList<Manga>();
+        List<Manga> mangaList = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return new ArrayList<Manga>(0);
+                return new ArrayList<>(0);
             }
             do {
                 Manga manga = null;
@@ -209,12 +209,12 @@ public class MangaDAO {
     public synchronized List<Manga> getTracking() throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = IS_TRACKING + " = 1";
-        List<Manga> mangaList = new ArrayList<Manga>();
+        List<Manga> mangaList = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(TABLE_NAME, null, selection, null, null, null, null);
             if (!cursor.moveToFirst()) {
-                return new ArrayList<Manga>(0);
+                return new ArrayList<>(0);
             }
             do {
                 Manga manga = null;

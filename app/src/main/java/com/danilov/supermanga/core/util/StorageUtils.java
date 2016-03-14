@@ -51,7 +51,7 @@ public class StorageUtils {
 
     public static List<StorageInfo> getStorageList() {
 
-        List<StorageInfo> list = new ArrayList<StorageInfo>();
+        List<StorageInfo> list = new ArrayList<>();
         String def_path = Environment.getExternalStorageDirectory().getPath();
         boolean def_path_removable = Environment.isExternalStorageRemovable();
         String def_path_state = Environment.getExternalStorageState();
@@ -59,7 +59,7 @@ public class StorageUtils {
                 || def_path_state.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
         boolean def_path_readonly = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
 
-        HashSet<String> paths = new HashSet<String>();
+        HashSet<String> paths = new HashSet<>();
         int cur_removable_number = 1;
 
         if (def_path_available) {

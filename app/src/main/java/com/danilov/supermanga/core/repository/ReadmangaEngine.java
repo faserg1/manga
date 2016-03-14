@@ -72,11 +72,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 suggestions = parseSuggestionsResponse(Utils.toJSON(responseString));
-            } catch (UnsupportedEncodingException e) {
-                ex = e;
-            } catch (HttpRequestException e) {
-                ex = e;
-            } catch (JSONException e) {
+            } catch (UnsupportedEncodingException | JSONException | HttpRequestException e) {
                 ex = e;
             }
             if (ex != null) {
@@ -99,9 +95,7 @@ public class ReadmangaEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseSearchResponse(Utils.toDocument(responseString));
-            } catch (UnsupportedEncodingException e) {
-                throw new RepositoryException("Failed to load: " + e.getMessage());
-            } catch (HttpRequestException e) {
+            } catch (UnsupportedEncodingException | HttpRequestException e) {
                 throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
@@ -187,10 +181,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = extractUrls(str);
-        } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
-            throw new RepositoryException(e.getMessage());
-        } catch (HttpRequestException e) {
+        } catch (IOException | HttpRequestException e) {
             Log.d(TAG, e.getMessage());
             throw new RepositoryException(e.getMessage());
         } finally {
@@ -209,7 +200,7 @@ public class ReadmangaEngine implements RepositoryEngine {
 
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
-        List<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<>();
         final String newStr = str + ","; //savant
         Matcher matcher = arrayItemPattern.matcher(newStr);
         while (matcher.find()) {
@@ -240,7 +231,7 @@ public class ReadmangaEngine implements RepositoryEngine {
     //!json names
 
     private List<MangaSuggestion> parseSuggestionsResponse(final JSONObject object) {
-        List<MangaSuggestion> mangaSuggestions = new ArrayList<MangaSuggestion>();
+        List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
             JSONArray suggestions = object.getJSONArray(suggestionsElementName);
             for (int i = 0; i < suggestions.length(); i++) {
@@ -261,7 +252,6 @@ public class ReadmangaEngine implements RepositoryEngine {
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
-                    continue;
                 }
             }
         } catch (JSONException e) {
@@ -282,7 +272,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         List<Manga> mangaList = null;
         Element searchResults = document.getElementById(searchElementId);
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
-        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        mangaList = new ArrayList<>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
             String uri = null;
             String mangaName = null;
@@ -332,7 +322,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         }
         Element searchResults = els.first();
         List<Element> mangaLinks = searchResults.getElementsByClass(mangaTileClass);
-        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        mangaList = new ArrayList<>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
             String uri = null;
             String mangaName = null;
@@ -490,7 +480,7 @@ public class ReadmangaEngine implements RepositoryEngine {
         if (links.isEmpty()) {
             return null;
         }
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>(links.size());
+        List<MangaChapter> chapters = new ArrayList<>(links.size());
         int number = 0;
         for (int i = links.size() - 1; i >= 0; i--) {
             Element element = links.get(i);

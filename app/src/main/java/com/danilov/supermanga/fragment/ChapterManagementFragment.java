@@ -1,6 +1,5 @@
 package com.danilov.supermanga.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.BaseToolbarActivity;
-import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
@@ -336,12 +334,9 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         if (removeMangaChapterThread == null || !removeMangaChapterThread.isAlive()) {
             initRemoval();
         }
-        removeMangaHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                String uri = mangaChapter.getUri();
-                IoUtils.deleteDirectory(new File(uri));
-            }
+        removeMangaHandler.post(() -> {
+            String uri = mangaChapter.getUri();
+            IoUtils.deleteDirectory(new File(uri));
         });
     }
 

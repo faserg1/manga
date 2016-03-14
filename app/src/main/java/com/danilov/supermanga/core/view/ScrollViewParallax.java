@@ -70,8 +70,7 @@ public class ScrollViewParallax extends ScrollView {
         int rP = contentView.getPaddingRight();
         int bP = contentView.getPaddingBottom();
         if (initialPadding == -1) {
-            int tP = contentView.getPaddingTop();
-            initialPadding = tP;
+            initialPadding = contentView.getPaddingTop();
         }
         if (viewToParallax == null) {
             View v = getRootView().findViewById(viewToParallaxId);

@@ -120,9 +120,9 @@ public class DatabaseOptions {
 
         private boolean hasPrimaryKey;
 
-        private List<Column> columns = new ArrayList<Column>();
+        private List<Column> columns = new ArrayList<>();
 
-        private Map<String, List<Column>> constraints = new HashMap<String, List<Column>>();
+        private Map<String, List<Column>> constraints = new HashMap<>();
 
         private String tableName;
 
@@ -144,7 +144,7 @@ public class DatabaseOptions {
             if (constraintName != null) {
                 List<Column> constraint = constraints.get(constraintName);
                 if (constraint == null) {
-                    constraint = new ArrayList<Column>();
+                    constraint = new ArrayList<>();
                     constraints.put(constraintName, constraint);
                 }
                 constraint.add(column);

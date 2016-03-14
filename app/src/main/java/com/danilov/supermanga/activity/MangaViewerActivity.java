@@ -410,12 +410,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void onShowMessage(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MangaViewerActivity.this, message, Toast.LENGTH_LONG).show();
-            }
-        });
+        runOnUiThread(() -> Toast.makeText(MangaViewerActivity.this, message, Toast.LENGTH_LONG).show());
     }
 
     @Override
@@ -842,30 +837,27 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         if (tutorialView != null) {
             tutorialView.setVisibility(View.VISIBLE);
             Button closeTutorial = (Button) tutorialView.findViewById(R.id.close_tutorial);
-            closeTutorial.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                   switch (number) {
-                       case 1:
-                           showTutorial(2);
-                           break;
-                       case 2:
-                           slidingLayer.openLayer(true);
-                           slidingLayer.postDelayed(new Runnable() {
-                               @Override
-                               public void run() {
-                                   slidingLayer.closeLayer(true);
-                               }
-                           }, 1000);
-                           Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
-                           showTutorial(-1);
-                           final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
-                           userSettings.setTutorialViewerPassed(true);
-                           settings.update(getApplicationContext());
-                           hideBtns(HIDE_TIME_OFFSET);
-                           break;
-                   }
-                }
+            closeTutorial.setOnClickListener(view -> {
+               switch (number) {
+                   case 1:
+                       showTutorial(2);
+                       break;
+                   case 2:
+                       slidingLayer.openLayer(true);
+                       slidingLayer.postDelayed(new Runnable() {
+                           @Override
+                           public void run() {
+                               slidingLayer.closeLayer(true);
+                           }
+                       }, 1000);
+                       Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
+                       showTutorial(-1);
+                       final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+                       userSettings.setTutorialViewerPassed(true);
+                       settings.update(getApplicationContext());
+                       hideBtns(HIDE_TIME_OFFSET);
+                       break;
+               }
             });
         }
     }
@@ -920,7 +912,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void adInit() {
         if (!Constants.HAS_ADS) {
-            return;
         }
 //        mInterstitialAd = new InterstitialAd(this);
 //        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
@@ -935,7 +926,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     private void requestNewInterstitial() {
         if (!Constants.HAS_ADS) {
-            return;
         }
 //        AdRequest adRequest = new AdRequest.Builder()
 //                .addTestDevice(Utils.getDeviceId(this))

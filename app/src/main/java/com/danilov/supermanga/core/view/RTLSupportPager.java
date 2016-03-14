@@ -110,21 +110,14 @@ public class RTLSupportPager extends ViewGroup {
         float offset;
     }
 
-    private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>(){
-        @Override
-        public int compare(ItemInfo lhs, ItemInfo rhs) {
-            return lhs.position - rhs.position;
-        }
+    private static final Comparator<ItemInfo> COMPARATOR = (lhs, rhs) -> lhs.position - rhs.position;
+
+    private static final Interpolator sInterpolator = t -> {
+        t -= 1.0f;
+        return t * t * t * t * t + 1.0f;
     };
 
-    private static final Interpolator sInterpolator = new Interpolator() {
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
-
-    private final ArrayList<ItemInfo> mItems = new ArrayList<ItemInfo>();
+    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
     private final ItemInfo mTempItem = new ItemInfo();
 
     private final Rect mTempRect = new Rect();
@@ -238,11 +231,9 @@ public class RTLSupportPager extends ViewGroup {
      */
     public static final int SCROLL_STATE_SETTLING = 2;
 
-    private final Runnable mEndScrollRunnable = new Runnable() {
-        public void run() {
-            setScrollState(SCROLL_STATE_IDLE);
-            populate();
-        }
+    private final Runnable mEndScrollRunnable = () -> {
+        setScrollState(SCROLL_STATE_IDLE);
+        populate();
     };
 
     private int mScrollState = SCROLL_STATE_IDLE;
@@ -637,7 +628,7 @@ public class RTLSupportPager extends ViewGroup {
     public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
         if (Build.VERSION.SDK_INT >= 11) {
             final boolean hasTransformer = transformer != null;
-            final boolean needsPopulate = hasTransformer != (mPageTransformer != null);
+            final boolean needsPopulate = hasTransformer == (mPageTransformer == null);
             mPageTransformer = transformer;
             setChildrenDrawingOrderEnabledCompat(hasTransformer);
             if (hasTransformer) {
@@ -670,8 +661,7 @@ public class RTLSupportPager extends ViewGroup {
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
         final int index = mDrawingOrder == DRAW_ORDER_REVERSE ? childCount - 1 - i : i;
-        final int result = ((LayoutParams) mDrawingOrderedChildren.get(index).getLayoutParams()).childIndex;
-        return result;
+        return ((LayoutParams) mDrawingOrderedChildren.get(index).getLayoutParams()).childIndex;
     }
 
     /**
@@ -1135,7 +1125,7 @@ public class RTLSupportPager extends ViewGroup {
     private void sortChildDrawingOrder() {
         if (mDrawingOrder != DRAW_ORDER_DEFAULT) {
             if (mDrawingOrderedChildren == null) {
-                mDrawingOrderedChildren = new ArrayList<View>();
+                mDrawingOrderedChildren = new ArrayList<>();
             } else {
                 mDrawingOrderedChildren.clear();
             }
@@ -1600,7 +1590,6 @@ public class RTLSupportPager extends ViewGroup {
                 if (!lp.isDecor && (ii = infoForChild(child)) != null) {
                     int loff = (int) (childWidth * ii.offset);
                     int childLeft = paddingLeft + loff;
-                    int childTop = paddingTop;
                     if (lp.needsMeasure) {
                         // This was added during layout and needs measurement.
                         // Do it now that we know what we're working with.
@@ -1614,11 +1603,11 @@ public class RTLSupportPager extends ViewGroup {
                         child.measure(widthSpec, heightSpec);
                     }
                     if (DEBUG) Log.v(TAG, "Positioning #" + i + " " + child + " f=" + ii.object
-                            + ":" + childLeft + "," + childTop + " " + child.getMeasuredWidth()
+                            + ":" + childLeft + "," + paddingTop + " " + child.getMeasuredWidth()
                             + "x" + child.getMeasuredHeight());
-                    child.layout(childLeft, childTop,
+                    child.layout(childLeft, paddingTop,
                             childLeft + child.getMeasuredWidth(),
-                            childTop + child.getMeasuredHeight());
+                            paddingTop + child.getMeasuredHeight());
                 }
             }
         }
@@ -2059,8 +2048,7 @@ public class RTLSupportPager extends ViewGroup {
                 break;
             case MotionEventCompat.ACTION_POINTER_DOWN: {
                 final int index = MotionEventCompat.getActionIndex(ev);
-                final float x = MotionEventCompat.getX(ev, index);
-                mLastMotionX = x;
+                mLastMotionX = MotionEventCompat.getX(ev, index);
                 mActivePointerId = MotionEventCompat.getPointerId(ev, index);
                 break;
             }

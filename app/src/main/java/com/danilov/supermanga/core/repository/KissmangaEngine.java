@@ -17,7 +17,6 @@ import com.danilov.supermanga.core.util.Utils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -83,7 +82,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
             HttpPost request = new HttpPost(baseSuggestUri);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(2);
             nameValuePairs.add(new BasicNameValuePair("keyword", query));
             nameValuePairs.add(new BasicNameValuePair("type", "Manga"));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -103,10 +102,6 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
                 MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.KISSMANGA);
                 mangaSuggestions.add(suggestion);
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,7 +118,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             }
             HttpPost request = new HttpPost(uri);
 
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(1);
             nameValuePairs.add(new BasicNameValuePair("keyword", query));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -150,10 +145,6 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             } else if (currentUrl.contains("kissmanga.com/Search")) {
                 mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
             }
-        } catch (UnsupportedEncodingException e) {
-            throw new RepositoryException("Failed to load: " + e.getMessage());
-        } catch (ClientProtocolException e) {
-            throw new RepositoryException("Failed to load: " + e.getMessage());
         } catch (IOException e) {
             throw new RepositoryException("Failed to load: " + e.getMessage());
         }
@@ -367,7 +358,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
         Matcher matcher = urlPattern.matcher(str);
-        List<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<>();
         while (matcher.find()) {
             String url = matcher.group(1);
             if (!url.contains("http")) {

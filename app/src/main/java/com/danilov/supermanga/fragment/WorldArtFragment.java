@@ -72,16 +72,13 @@ public class WorldArtFragment extends BaseFragmentNative {
         } else {
             worldArtToolbar.setVisibility(View.INVISIBLE);
         }
-        scrollViewParallax.setScrollListener(new ScrollViewParallax.ScrollListener() {
-            @Override
-            public void onScroll(final int horizontal, final int vertical, final int oldl, final int oldt) {
-                float alpha = 1 - (float) Math.max(0, size - vertical) / size;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    worldArtToolbar.setAlpha(alpha);
-                } else {
-                    if (alpha > 0.5) {
-                        worldArtToolbar.setVisibility(View.VISIBLE);
-                    }
+        scrollViewParallax.setScrollListener((horizontal, vertical, oldl, oldt) -> {
+            float alpha = 1 - (float) Math.max(0, size - vertical) / size;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                worldArtToolbar.setAlpha(alpha);
+            } else {
+                if (alpha > 0.5) {
+                    worldArtToolbar.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -99,7 +96,7 @@ public class WorldArtFragment extends BaseFragmentNative {
         mangaAuthor.setText("Сайто Рокуро");
         mangaDescriptionTextView.setText("Действия происходят в 2071 году, на Земле появились монстры «Арагами» и начали охоту на людей. Всего за несколько лет человеческая популяция сократилась до одной сотой, а планета превратилась в бесконечную пустыню. Но нашлась группа людей, борющихся с монстрами с помощью биологического оружия «Джинки». Их назвали «Пожирателями богов». Смогут ли они прекратить завоевание и вернуть человечеству надежду на будущее?");
         mangaCover.setImageResource(R.drawable.test_cover1);
-        mangaImagesView.setAdapter(new ImagesAdapter(new ArrayList<Integer>(Arrays.asList(R.drawable.test_screen0, R.drawable.test_screen1, R.drawable.test_screen2, R.drawable.test_screen3, R.drawable.test_screen4))));
+        mangaImagesView.setAdapter(new ImagesAdapter(new ArrayList<>(Arrays.asList(R.drawable.test_screen0, R.drawable.test_screen1, R.drawable.test_screen2, R.drawable.test_screen3, R.drawable.test_screen4))));
     }
 
     @Override

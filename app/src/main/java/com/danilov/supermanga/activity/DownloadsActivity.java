@@ -78,22 +78,8 @@ public class DownloadsActivity extends AppCompatActivity {
 
         restartButton = (Button) findViewById(R.id.restart);
         skipButton = (Button) findViewById(R.id.skip);
-        restartButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                service.restartDownload();
-            }
-
-        });
-        skipButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                service.skipImage();
-            }
-
-        });
+        restartButton.setOnClickListener(v -> service.restartDownload());
+        skipButton.setOnClickListener(v -> service.skipImage());
     }
 
     @Override

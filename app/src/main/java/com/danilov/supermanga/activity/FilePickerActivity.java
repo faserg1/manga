@@ -19,7 +19,6 @@ import com.danilov.supermanga.core.util.StorageUtils;
 import org.acra.ACRA;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -110,20 +109,8 @@ public class FilePickerActivity extends BaseToolbarActivity implements AdapterVi
             //because we call clear on this list
             return getBaseFolders();
         }
-        File[] filesArray = file.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(final File file) {
-                return file.isDirectory();
-            }
-
-        });
-        File[] justFiles = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File file) {
-                return file.isFile();
-            }
-        });
+        File[] filesArray = file.listFiles(File::isDirectory);
+        File[] justFiles = file.listFiles(File::isFile);
         if (filesArray == null) {
             ACRA.getErrorReporter().putCustomData("Crashed_file_path", file.getPath());
             ACRA.getErrorReporter().putCustomData("Crashed_file_abs_path", file.getAbsolutePath());

@@ -73,8 +73,7 @@ public abstract class JavaScriptEngine implements RepositoryEngine {
                 final String newUrl = url.replace(" ", "%20");
                 HttpResponse response = httpClient.execute(new HttpGet(newUrl));
                 byte[] result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
-                String responseString = IoUtils.convertBytesToString(result);
-                return responseString;
+                return IoUtils.convertBytesToString(result);
             } catch (IOException e) {
                 loge(JavaTag, e.getMessage());
                 throw new JSHttpException("Failed to load url " + url + ": " + e.getMessage(), e);

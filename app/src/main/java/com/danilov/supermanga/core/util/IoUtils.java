@@ -40,8 +40,7 @@ public class IoUtils {
     public static String convertStreamToString(InputStream stream) throws IOException {
         byte[] bytes = convertStreamToBytes(stream);
 
-        String result = convertBytesToString(bytes);
-        return result;
+        return convertBytesToString(bytes);
     }
 
     public static byte[] convertStreamToBytes(InputStream stream) throws IOException {
@@ -211,9 +210,8 @@ public class IoUtils {
         long size2 = IoUtils.dirSize(folder2);
 
         double allSizeMb = convertBytesToMb(size1 + size2);
-        double result = Math.round(allSizeMb * 100) / 100d;
 
-        return result;
+        return Math.round(allSizeMb * 100) / 100d;
     }
 
     public static File getSaveFilePath(Uri uri, ApplicationSettings settings) {
@@ -221,9 +219,8 @@ public class IoUtils {
 
         File dir = new File(Environment.getExternalStorageDirectory(), settings.getDownloadPath());
         dir.mkdirs();
-        File file = new File(dir, fileName);
 
-        return file;
+        return new File(dir, fileName);
     }
 
     public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
@@ -370,7 +367,7 @@ public class IoUtils {
 
     public static List<String> extractUrls(final String str) {
         Matcher matcher = urlPattern.matcher(str);
-        List<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<>();
         while (matcher.find()) {
             urls.add(matcher.group());
         }

@@ -3,6 +3,7 @@ package com.danilov.supermanga.core.service;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.annimon.stream.Stream;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
@@ -37,7 +38,7 @@ public class DownloadManager {
 
     private DownloadProgressListener listener;
 
-    private ArrayDeque<Download> downloads = new ArrayDeque<Download>();
+    private ArrayDeque<Download> downloads = new ArrayDeque<>();
 
     //thread
     final Lock lock = new ReentrantLock();
@@ -137,11 +138,7 @@ public class DownloadManager {
     public void cancelDownloadsWithTag(final Object tag) {
         lock.lock();
         try {
-            for (Download download : downloads) {
-                if (tag.equals(download.getTag())) {
-                    download.setStatus(DownloadStatus.CANCELLED);
-                }
-            }
+            Stream.of(downloads).filter(download -> tag.equals(download.getTag())).forEach((Download download) -> download.setStatus(DownloadStatus.CANCELLED));
             wakeUp();
             Log.e(TAG, "Cancelling download");
         } catch (Exception e) {
@@ -538,7 +535,7 @@ public class DownloadManager {
 
         private int poolMaxSize = 15;
 
-        private Queue<Download> pool = new ArrayDeque<Download>(poolMaxSize);
+        private Queue<Download> pool = new ArrayDeque<>(poolMaxSize);
 
         @Override
         public Download obtain() {

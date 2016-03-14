@@ -102,53 +102,25 @@ public class DownloadManagerFragment extends BaseFragmentNative {
         skipButton = findViewById(R.id.skip_btn);
         removeButton = findViewById(R.id.remove);
 
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (currentRequest != null && service != null) {
-                    service.deleteCurRequest(currentRequest);
-                }
+        removeButton.setOnClickListener(view1 -> {
+            if (currentRequest != null && service != null) {
+                service.deleteCurRequest(currentRequest);
             }
         });
 
-        restartButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                showPauseBtn();
-                service.restartDownload();
-            }
-
+        restartButton.setOnClickListener(v -> {
+            showPauseBtn();
+            service.restartDownload();
         });
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                service.pause();
-            }
-        });
-        resumeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                service.resume();
-            }
-        });
-        skipButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View v) {
-                service.skipImage();
-            }
-
-        });
+        pauseButton.setOnClickListener(view1 -> service.pause());
+        resumeButton.setOnClickListener(view1 -> service.resume());
+        skipButton.setOnClickListener(v -> service.skipImage());
         restoreButton = findViewById(R.id.restore);
-        restoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (service != null) {
-                    //TODO: show breadcrumb
-                    DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
-                    downloadsDumpService.unDump(service);
-                }
+        restoreButton.setOnClickListener(view1 -> {
+            if (service != null) {
+                //TODO: show breadcrumb
+                DownloadsDumpService downloadsDumpService = new DownloadsDumpService();
+                downloadsDumpService.unDump(service);
             }
         });
         showPauseBtn();
@@ -377,12 +349,9 @@ public class DownloadManagerFragment extends BaseFragmentNative {
         public void onBindViewHolder(final Holder holder, final int position) {
             final MangaDownloadService.MangaDownloadRequest request = requests.get(position);
             holder.title.setText(request.getManga().getTitle());
-            holder.removeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    if (service != null) {
-                        service.deleteSomeRequest(request);
-                    }
+            holder.removeButton.setOnClickListener(view1 -> {
+                if (service != null) {
+                    service.deleteSomeRequest(request);
                 }
             });
         }

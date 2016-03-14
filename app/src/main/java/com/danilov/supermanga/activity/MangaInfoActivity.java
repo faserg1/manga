@@ -1,16 +1,13 @@
 package com.danilov.supermanga.activity;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -19,14 +16,11 @@ import com.danilov.supermanga.core.interfaces.RefreshableActivity;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.util.Constants;
-import com.danilov.supermanga.core.view.AnimatedActionView;
 import com.danilov.supermanga.fragment.BaseFragmentNative;
 import com.danilov.supermanga.fragment.ChapterManagementFragment;
 import com.danilov.supermanga.fragment.ChaptersFragment;
 import com.danilov.supermanga.fragment.InfoFragment;
 import com.danilov.supermanga.fragment.WorldArtFragment;
-
-import java.util.List;
 
 /**
  * Created by Semyon Danilov on 21.05.2014.

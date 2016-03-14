@@ -21,7 +21,6 @@ import com.danilov.supermanga.core.util.StorageUtils;
 import org.acra.ACRA;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -142,14 +141,7 @@ public class FolderPickerActivity extends BaseToolbarActivity implements Adapter
             //because we call clear on this list
             return getBaseFolders();
         }
-        File[] filesArray = file.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(final java.io.File file) {
-                return file.isDirectory();
-            }
-
-        });
+        File[] filesArray = file.listFiles(File::isDirectory);
         if (filesArray == null) {
             ACRA.getErrorReporter().putCustomData("Crashed_file_path", file.getPath());
             ACRA.getErrorReporter().putCustomData("Crashed_file_abs_path", file.getAbsolutePath());

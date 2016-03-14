@@ -76,12 +76,7 @@ public class FavoritesFragment extends BaseFragmentNative implements AdapterView
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = findViewById(R.id.grid_view);
         filterEditText = findViewById(R.id.filter);
-        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                filterEditText.setText("");
-            }
-        });
+        findViewById(R.id.clear).setOnClickListener(v -> filterEditText.setText(""));
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
         gridView.setOnItemLongClickListener(this);
@@ -109,19 +104,16 @@ public class FavoritesFragment extends BaseFragmentNative implements AdapterView
                 final List<Manga> mangas = _mangas;
                 final boolean success = _success;
                 final String error = _error;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        MangaFilter filter = new MangaFilter(filterEditText, mangas);
-                        adapter = new FavoritesAdapter(context, 0, mangas, filter);
-                        filter.setAdapterAccessor(filter.new AdapterAccessor(adapter));
-                        downloadedProgressBar.setVisibility(View.INVISIBLE);
-                        if (success) {
-                            gridView.setAdapter(adapter);
-                        } else {
-                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
-                            Utils.showToast(getActivity(), formedError + error);
-                        }
+                handler.post(() -> {
+                    MangaFilter filter = new MangaFilter(filterEditText, mangas);
+                    adapter = new FavoritesAdapter(context, 0, mangas, filter);
+                    filter.setAdapterAccessor(filter.new AdapterAccessor(adapter));
+                    downloadedProgressBar.setVisibility(View.INVISIBLE);
+                    if (success) {
+                        gridView.setAdapter(adapter);
+                    } else {
+                        String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
+                        Utils.showToast(getActivity(), formedError + error);
                     }
                 });
             }

@@ -33,7 +33,6 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -107,16 +106,13 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
                 }
                 final boolean success = _success;
                 final String error = _error;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        historyProgressBar.setVisibility(View.INVISIBLE);
-                        if (success) {
-                            gridView.setAdapter(adapter);
-                        } else {
-                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
-                            Utils.showToast(getActivity(), formedError + error);
-                        }
+                handler.post(() -> {
+                    historyProgressBar.setVisibility(View.INVISIBLE);
+                    if (success) {
+                        gridView.setAdapter(adapter);
+                    } else {
+                        String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
+                        Utils.showToast(getActivity(), formedError + error);
                     }
                 });
             }
@@ -200,12 +196,7 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
                 holder.isOnline = view.findViewById(R.id.is_online);
             }
             final HistoryElement historyElement = history.get(position);
-            holder.discardButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    removeHistory(historyElement);
-                }
-            });
+            holder.discardButton.setOnClickListener(view1 -> removeHistory(historyElement));
             Manga manga = historyElement.getManga();
             holder.mangaTitle.setText(manga.getTitle());
             if (!historyElement.isOnline()) {
@@ -261,16 +252,13 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
     @NonNull
     private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {
         List<HistoryElement> history = historyDAO.getMangaHistory();
-        Collections.sort(history, new Comparator<HistoryElement>() {
-            @Override
-            public int compare(final HistoryElement l, final HistoryElement r) {
-                Date lDate = l.getDate();
-                Date rDate = r.getDate();
-                if (lDate.equals(rDate)) {
-                    return 0;
-                }
-                return lDate.after(rDate) ? -1 : 1;
+        Collections.sort(history, (l, r) -> {
+            Date lDate = l.getDate();
+            Date rDate = r.getDate();
+            if (lDate.equals(rDate)) {
+                return 0;
             }
+            return lDate.after(rDate) ? -1 : 1;
         });
         return history;
     }

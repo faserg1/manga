@@ -53,9 +53,8 @@ public class BitmapMemoryCache implements BitmapCache {
 
     @Override
     public synchronized Bitmap loadData(String key) {
-        Bitmap res = this.cache.get(key);
 
-        return res;
+        return this.cache.get(key);
     }
 
     @Override

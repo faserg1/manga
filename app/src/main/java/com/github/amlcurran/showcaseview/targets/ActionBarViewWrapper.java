@@ -126,9 +126,7 @@ class ActionBarViewWrapper {
             }
 
             return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return null;
@@ -142,9 +140,7 @@ class ActionBarViewWrapper {
             if("android.support.v7.app.MediaRouteButton".equals(view.getClass().getName())) {
                 return view;
             }
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -183,9 +179,7 @@ class ActionBarViewWrapper {
                     }
                 }
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return null;

@@ -121,11 +121,9 @@ public class AddLocalMangaFragment extends BaseFragmentNative implements View.On
                 finish();
             } catch (DatabaseAccessException e) {
                 error(e.getMessage());
-                return;
             }
         } else {
             error("Unknown error");
-            return;
         }
     }
 

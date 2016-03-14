@@ -2,8 +2,6 @@ package com.danilov.supermanga.core.animation;
 
 import android.view.View;
 
-import com.danilov.supermanga.core.util.Promise;
-
 /**
  * Created by Semyon on 30.12.2014.
  */
@@ -26,21 +24,16 @@ public class OverXFlipper {
     }
 
     public void flip() {
-
         View tmp = v1;
         v1 = v2;
         v2 = tmp;
 
         v1.setVisibility(View.VISIBLE);
         v2.setVisibility(View.GONE);
-        new XRotation(v1, 0, 90, halfFlip).start().then(new Promise.Action<Void, Object>() {
-            @Override
-            public Object action(final Void data, final boolean success) {
-                v2.setVisibility(View.VISIBLE);
-                v1.setVisibility(View.GONE);
-                new XRotation(v2, -90, 0, halfFlip).start();
-                return null;
-            }
+        new XRotation(v1, 0, 90, halfFlip).start(() -> {
+            v2.setVisibility(View.VISIBLE);
+            v1.setVisibility(View.GONE);
+            new XRotation(v2, -90, 0, halfFlip).start(()->{});
         });
     }
 

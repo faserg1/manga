@@ -33,7 +33,6 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewConfigurationCompat;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -90,12 +89,9 @@ public class SlidingLayer extends FrameLayout {
 
     private static final int MAX_SCROLLING_DURATION = 600; // in ms
     private static final int MIN_DISTANCE_FOR_FLING = 25; // in dip
-    private static final Interpolator sMenuInterpolator = new Interpolator() {
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return (float) Math.pow(t, 5) + 1.0f;
-        }
+    private static final Interpolator sMenuInterpolator = t -> {
+        t -= 1.0f;
+        return (float) Math.pow(t, 5) + 1.0f;
     };
 
     /**
@@ -515,12 +511,8 @@ public class SlidingLayer extends FrameLayout {
 
         final int action = ev.getAction();
 
-        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
-                || action == MotionEvent.ACTION_OUTSIDE) {
-            mLastTouchAllowed = false;
-        } else {
-            mLastTouchAllowed = true;
-        }
+        mLastTouchAllowed = !(action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
+                || action == MotionEvent.ACTION_OUTSIDE);
 
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();

@@ -55,13 +55,8 @@ public class EasyDialog extends DialogFragment {
         }
         CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
         if (userClosable) {
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface arg0, int arg1) {
-                    dismiss();
-                }
-
+            builder.setNeutralButton("OK", (arg0, arg1) -> {
+                dismiss();
             });
         }
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();

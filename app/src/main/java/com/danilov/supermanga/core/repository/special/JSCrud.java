@@ -86,21 +86,11 @@ public class JSCrud extends SimpleCrud<JavaScriptRepository> {
     }
 
     public Selector getByNameSelector(final String name) {
-        return new Selector() {
-            @Override
-            public String formatQuery() {
-                return "SELECT * from " + getTableName() + " WHERE " + JavaScriptRepository.REPO_NAME + " = '" + name + "';";
-            }
-        };
+        return () -> "SELECT * from " + getTableName() + " WHERE " + JavaScriptRepository.REPO_NAME + " = '" + name + "';";
     }
 
     public Selector getAllSelector() {
-        return new Selector() {
-            @Override
-            public String formatQuery() {
-                return "SELECT * from " + getTableName() + ";";
-            }
-        };
+        return () -> "SELECT * from " + getTableName() + ";";
     }
 
 }

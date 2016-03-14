@@ -2,7 +2,6 @@ package com.danilov.supermanga.core.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -32,47 +31,32 @@ public class RateDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
-        builder.setPositiveButton(getString(R.string.please_rate_ok), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Context context = MangaApplication.getContext();
-                SharedPreferences preferencese = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor ed = preferencese.edit();
-                ed.putBoolean(Constants.RATED, true);
-                ed.apply();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.setData(Uri.parse("market://details?id=com.danilov.supermanga"));
-                try {
-                    context.startActivity(i);
-                } catch (Exception e) {
-                    //маркет не установлен
-                }
-                dismiss();
+        builder.setPositiveButton(getString(R.string.please_rate_ok), (arg0, arg1) -> {
+            Context context = MangaApplication.getContext();
+            SharedPreferences preferencese = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor ed = preferencese.edit();
+            ed.putBoolean(Constants.RATED, true);
+            ed.apply();
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.setData(Uri.parse("market://details?id=com.danilov.supermanga"));
+            try {
+                context.startActivity(i);
+            } catch (Exception e) {
+                //маркет не установлен
             }
-
+            dismiss();
         });
-        builder.setNegativeButton(getString(R.string.please_rate_forget_about_it), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(final DialogInterface dialogInterface, final int i) {
-                Context context = MangaApplication.getContext();
-                SharedPreferences preferencese = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor ed = preferencese.edit();
-                ed.putBoolean(Constants.RATED, true);
-                ed.apply();
-                dismiss();
-            }
-
+        builder.setNegativeButton(getString(R.string.please_rate_forget_about_it), (dialogInterface, i) -> {
+            Context context = MangaApplication.getContext();
+            SharedPreferences preferencese = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor ed = preferencese.edit();
+            ed.putBoolean(Constants.RATED, true);
+            ed.apply();
+            dismiss();
         });
-        builder.setNeutralButton(getString(R.string.please_rate_later), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(final DialogInterface dialogInterface, final int i) {
-                dismiss();
-            }
-
+        builder.setNeutralButton(getString(R.string.please_rate_later), (dialogInterface, i) -> {
+            dismiss();
         });
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
         View contentView = layoutInflater.inflate(R.layout.rate_dialog, null);

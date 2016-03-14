@@ -10,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -74,17 +73,12 @@ public class RepositoryPickerFragment extends BaseFragmentNative {
         RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
 //        repositories = RepositoryEngine.DefaultRepository.getBySettings(addedRepositoriesStringArray);
         repositories = repositoryHolder.getRepositories();;
-        repositoriesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-                RepositoryEngine.Repository repository = repositories[position];
-                String repoString = repository.toString();
-                Intent intent = new Intent(getActivity(), MangaQueryActivity.class);
-                intent.putExtra(Constants.REPOSITORY_KEY, repoString);
-                startActivity(intent);
-            }
-
+        repositoriesView.setOnItemClickListener((parent, view1, position, id) -> {
+            RepositoryEngine.Repository repository = repositories[position];
+            String repoString = repository.toString();
+            Intent intent = new Intent(getActivity(), MangaQueryActivity.class);
+            intent.putExtra(Constants.REPOSITORY_KEY, repoString);
+            startActivity(intent);
         });
 
 

@@ -68,11 +68,7 @@ public class AllHentaiEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 suggestions = parseSuggestionsResponse(Utils.toJSONArray(responseString));
-            } catch (UnsupportedEncodingException e) {
-                ex = e;
-            } catch (HttpRequestException e) {
-                ex = e;
-            } catch (JSONException e) {
+            } catch (UnsupportedEncodingException | JSONException | HttpRequestException e) {
                 ex = e;
             }
             if (ex != null) {
@@ -95,9 +91,7 @@ public class AllHentaiEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseSearchResponse(Utils.toDocument(responseString));
-            } catch (UnsupportedEncodingException e) {
-                throw new RepositoryException("Failed to load: " + e.getMessage());
-            } catch (HttpRequestException e) {
+            } catch (UnsupportedEncodingException | HttpRequestException e) {
                 throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
@@ -183,10 +177,7 @@ public class AllHentaiEngine implements RepositoryEngine {
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = extractUrls(str);
-        } catch (IOException e) {
-            Log.d(TAG, "Failed to load: " + e.getMessage());
-            throw new RepositoryException("Failed to load: " + e.getMessage());
-        } catch (HttpRequestException e) {
+        } catch (IOException | HttpRequestException e) {
             Log.d(TAG, "Failed to load: " + e.getMessage());
             throw new RepositoryException("Failed to load: " + e.getMessage());
         } finally {
@@ -206,7 +197,7 @@ public class AllHentaiEngine implements RepositoryEngine {
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
         Matcher matcher = urlPattern.matcher(str);
-        List<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<>();
         while (matcher.find()) {
             String url = matcher.group(1);
             if (!url.contains("http")) {
@@ -229,7 +220,7 @@ public class AllHentaiEngine implements RepositoryEngine {
     //!json names
 
     private List<MangaSuggestion> parseSuggestionsResponse(final JSONArray suggestions) {
-        List<MangaSuggestion> mangaSuggestions = new ArrayList<MangaSuggestion>();
+        List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
             for (int i = 0; i < suggestions.length(); i++) {
                 JSONObject suggestion = suggestions.getJSONObject(i);
@@ -245,7 +236,6 @@ public class AllHentaiEngine implements RepositoryEngine {
                     mangaSuggestions.add(mangaSuggestion);
                 } catch (JSONException e ) {
                     Log.d(TAG, e.getMessage());
-                    continue;
                 }
             }
         } catch (JSONException e) {
@@ -266,7 +256,7 @@ public class AllHentaiEngine implements RepositoryEngine {
         List<Manga> mangaList = null;
         Element searchResults = document.getElementById(searchElementId);
         List<Element> mangaLinks = searchResults.getElementsByTag("a");
-        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        mangaList = new ArrayList<>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
             if (mangaLink.hasClass(mangaCoverClass)) {
                 continue;
@@ -290,7 +280,7 @@ public class AllHentaiEngine implements RepositoryEngine {
         List<Manga> mangaList = null;
         Element searchResults = document.getElementsByClass("cTable").last();
         List<Element> mangaLinks = searchResults.getElementsByTag("a");
-        mangaList = new ArrayList<Manga>(mangaLinks.size());
+        mangaList = new ArrayList<>(mangaLinks.size());
         for (Element mangaLink : mangaLinks) {
             if (mangaLink.hasClass(mangaCoverClass)) {
                 continue;
@@ -456,7 +446,7 @@ public class AllHentaiEngine implements RepositoryEngine {
         if (links.isEmpty()) {
             return null;
         }
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>(links.size());
+        List<MangaChapter> chapters = new ArrayList<>(links.size());
         int number = 0;
         for (int i = links.size() - 1; i >= 0; i--) {
             Element element = links.get(i);

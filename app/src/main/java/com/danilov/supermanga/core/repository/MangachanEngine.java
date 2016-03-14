@@ -20,7 +20,6 @@ import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -68,7 +67,7 @@ public class MangachanEngine implements RepositoryEngine {
         List<MangaSuggestion> mangaSuggestions = new ArrayList<>();
         try {
             HttpPost request = new HttpPost(baseSuggestionUri);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            List<NameValuePair> nameValuePairs = new ArrayList<>(1);
             nameValuePairs.add(new BasicNameValuePair("query", query));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -85,10 +84,6 @@ public class MangachanEngine implements RepositoryEngine {
                 MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.MANGACHAN);
                 mangaSuggestions.add(suggestion);
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,9 +105,7 @@ public class MangachanEngine implements RepositoryEngine {
                 byte[] response = httpBytesReader.fromUri(uri);
                 String responseString = IoUtils.convertBytesToString(response);
                 mangaList = parseMangaSearchResponse(Utils.toDocument(responseString));
-            } catch (UnsupportedEncodingException e) {
-                throw new RepositoryException("Failed to load: " + e.getMessage());
-            } catch (HttpRequestException e) {
+            } catch (UnsupportedEncodingException | HttpRequestException e) {
                 throw new RepositoryException("Failed to load: " + e.getMessage());
             }
         }
@@ -235,7 +228,7 @@ public class MangachanEngine implements RepositoryEngine {
             }
         }
 
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>(elements.size());
+        List<MangaChapter> chapters = new ArrayList<>(elements.size());
 
         Collections.reverse(elements);
         int number = 0;
@@ -267,10 +260,7 @@ public class MangachanEngine implements RepositoryEngine {
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
             imageUrls = extractUrls(str);
-        } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
-            throw new RepositoryException(e.getMessage());
-        } catch (HttpRequestException e) {
+        } catch (IOException | HttpRequestException e) {
             Log.d(TAG, e.getMessage());
             throw new RepositoryException(e.getMessage());
         } finally {
@@ -289,7 +279,7 @@ public class MangachanEngine implements RepositoryEngine {
 
     private List<String> extractUrls(final String str) {
         Log.d(TAG, "a: " + str);
-        List<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<>();
         final String newStr = str + ","; //savant
         Matcher matcher = arrayItemPattern.matcher(newStr);
         while (matcher.find()) {

@@ -61,37 +61,32 @@ public class OfflineEngine implements RepositoryEngine {
         return false;
     }
 
-    private Comparator<String> chapterNumericStringComparator = new Comparator<String>() {
-
-        @Override
-        public int compare(final String lhs, final String rhs) {
-            String _lhs = lhs;
-            String _rhs = rhs;
-            int index = _lhs.lastIndexOf('/');
-            if (index == -1) {
-                index = _lhs.lastIndexOf('\\');
-            }
-            if (index != -1) {
-                _lhs = _lhs.substring(index + 1);
-            }
-
-            index = _rhs.lastIndexOf('/');
-            if (index == -1) {
-                index = _rhs.lastIndexOf('\\');
-            }
-            if (index != -1) {
-                _rhs = _rhs.substring(index + 1);
-            }
-            try {
-                Integer left = Integer.valueOf(_lhs);
-                Integer right = Integer.valueOf(_rhs);
-                return left.compareTo(right);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return 0;
+    private Comparator<String> chapterNumericStringComparator = (lhs, rhs) -> {
+        String _lhs = lhs;
+        String _rhs = rhs;
+        int index = _lhs.lastIndexOf('/');
+        if (index == -1) {
+            index = _lhs.lastIndexOf('\\');
+        }
+        if (index != -1) {
+            _lhs = _lhs.substring(index + 1);
         }
 
+        index = _rhs.lastIndexOf('/');
+        if (index == -1) {
+            index = _rhs.lastIndexOf('\\');
+        }
+        if (index != -1) {
+            _rhs = _rhs.substring(index + 1);
+        }
+        try {
+            Integer left = Integer.valueOf(_lhs);
+            Integer right = Integer.valueOf(_rhs);
+            return left.compareTo(right);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     };
 
     @Override
@@ -107,7 +102,7 @@ public class OfflineEngine implements RepositoryEngine {
         }
         List<String> urisList = Arrays.asList(dirs);
         Collections.sort(urisList, chapterNumericStringComparator);
-        List<MangaChapter> chapters = new ArrayList<MangaChapter>(urisList.size());
+        List<MangaChapter> chapters = new ArrayList<>(urisList.size());
         for (int i = 0; i < urisList.size(); i++) {
             String uri = urisList.get(i);
             int index = uri.lastIndexOf('/');
@@ -131,12 +126,9 @@ public class OfflineEngine implements RepositoryEngine {
     }
 
     private String[] getMangaChaptersUris(final LocalManga localManga) {
-        FilenameFilter filenameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String filename) {
-                File maybeDir = new File(dir.getPath() + "/" + filename);
-                return maybeDir.isDirectory();
-            }
+        FilenameFilter filenameFilter = (dir, filename) -> {
+            File maybeDir = new File(dir.getPath() + "/" + filename);
+            return maybeDir.isDirectory();
         };
         String mangaUri = localManga.getLocalUri();
         String[] chapters = null;
@@ -166,56 +158,46 @@ public class OfflineEngine implements RepositoryEngine {
         return new String[0];
     }
 
-    private Comparator<String> imageNumericStringComparator = new Comparator<String>() {
-
-        @Override
-        public int compare(final String lhs, final String rhs) {
-            String _lhs = lhs;
-            String _rhs = rhs;
-            int index = _lhs.lastIndexOf('.');
+    private Comparator<String> imageNumericStringComparator = (lhs, rhs) -> {
+        String _lhs = lhs;
+        String _rhs = rhs;
+        int index = _lhs.lastIndexOf('.');
+        if (index != -1) {
+            _lhs = _lhs.substring(0, index);
+            index = _lhs.lastIndexOf('/');
+            if (index == -1) {
+                index = _lhs.lastIndexOf('\\');
+            }
             if (index != -1) {
-                _lhs = _lhs.substring(0, index);
-                index = _lhs.lastIndexOf('/');
-                if (index == -1) {
-                    index = _lhs.lastIndexOf('\\');
-                }
-                if (index != -1) {
-                    _lhs = _lhs.substring(index + 1);
-                }
+                _lhs = _lhs.substring(index + 1);
             }
-            index = _rhs.lastIndexOf('.');
-            if (index != -1) {
-                _rhs = _rhs.substring(0, index);
-                index = _rhs.lastIndexOf('/');
-                if (index == -1) {
-                    index = _rhs.lastIndexOf('\\');
-                }
-                if (index != -1) {
-                    _rhs = _rhs.substring(index + 1);
-                }
-            }
-            try {
-                Integer left = Integer.valueOf(_lhs);
-                Integer right = Integer.valueOf(_rhs);
-                return left.compareTo(right);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return 0;
         }
-
+        index = _rhs.lastIndexOf('.');
+        if (index != -1) {
+            _rhs = _rhs.substring(0, index);
+            index = _rhs.lastIndexOf('/');
+            if (index == -1) {
+                index = _rhs.lastIndexOf('\\');
+            }
+            if (index != -1) {
+                _rhs = _rhs.substring(index + 1);
+            }
+        }
+        try {
+            Integer left = Integer.valueOf(_lhs);
+            Integer right = Integer.valueOf(_rhs);
+            return left.compareTo(right);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     };
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String chapterUri = chapter.getUri();
         File folder = new File(chapterUri);
-        String[] uris = folder.list(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String filename) {
-                return true;
-            }
-        });
+        String[] uris = folder.list((dir, filename) -> true);
         for (int i = 0; i < uris.length; i++) {
             String uri = uris[i];
             uris[i] = chapterUri + "/" + uri;

@@ -24,7 +24,7 @@ public class HttpStreamReader {
 
     private final DefaultHttpClient mHttpClient;
     private final Resources mResources;
-    private final HashMap<String, String> mIfModifiedMap = new HashMap<String, String>();
+    private final HashMap<String, String> mIfModifiedMap = new HashMap<>();
 
     public HttpStreamReader(DefaultHttpClient httpClient, Resources resources) {
         this.mHttpClient = httpClient;

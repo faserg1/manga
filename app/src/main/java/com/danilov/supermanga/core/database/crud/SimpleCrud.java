@@ -200,11 +200,7 @@ public abstract class SimpleCrud<T extends Model> implements Crud<T>, ModelFacto
         try {
             Method declaredMethod = aClass.getDeclaredMethod("get" + getterName);
             return declaredMethod.invoke(object);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;

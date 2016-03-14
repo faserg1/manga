@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class ServiceContainer {
 
-    private static Map<Class, Object> services = new HashMap<Class, Object>();
+    private static Map<Class, Object> services = new HashMap<>();
 
     public static <T> T getService(final Class<T> clazz) {
         return (T) services.get(clazz);

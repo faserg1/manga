@@ -20,16 +20,13 @@ import android.widget.ProgressBar;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.BaseToolbarActivity;
 import com.danilov.supermanga.activity.MainActivity;
-import com.danilov.supermanga.activity.MangaViewerActivity;
 import com.danilov.supermanga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.supermanga.core.adapter.PopupButtonClickListener;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
-import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.service.LocalImageManager;
-import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
@@ -86,12 +83,7 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = findViewById(R.id.grid_view);
         filterEditText = findViewById(R.id.filter);
-        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                filterEditText.setText("");
-            }
-        });
+        findViewById(R.id.clear).setOnClickListener(v -> filterEditText.setText(""));
         downloadedProgressBar = (ProgressBar) view.findViewById(R.id.downloaded_progress_bar);
         gridView.setOnItemClickListener(this);
         gridView.setOnItemLongClickListener(this);
@@ -119,19 +111,16 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
                 final List<LocalManga> localMangas = _manga;
                 final boolean success = _success;
                 final String error = _error;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        MangaFilter mangaFilter = new MangaFilter(filterEditText, localMangas);
-                        adapter = new DownloadedMangaAdapter(context, localMangas, mangaFilter, DownloadedMangaFragment.this);
-                        mangaFilter.setAdapterAccessor(adapter.createAccessor());
-                        downloadedProgressBar.setVisibility(View.INVISIBLE);
-                        if (success) {
-                            gridView.setAdapter(adapter);
-                        } else {
-                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
-                            Utils.showToast(getActivity(), formedError + error);
-                        }
+                handler.post(() -> {
+                    MangaFilter mangaFilter = new MangaFilter(filterEditText, localMangas);
+                    adapter = new DownloadedMangaAdapter(context, localMangas, mangaFilter, DownloadedMangaFragment.this);
+                    mangaFilter.setAdapterAccessor(adapter.createAccessor());
+                    downloadedProgressBar.setVisibility(View.INVISIBLE);
+                    if (success) {
+                        gridView.setAdapter(adapter);
+                    } else {
+                        String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_show_loaded);
+                        Utils.showToast(getActivity(), formedError + error);
                     }
                 });
             }
@@ -212,20 +201,15 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.downloaded_manga_item_menu, popup.getMenu());
         final LocalManga manga = adapter.getItem(listPosition);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.delete:
-                        List<LocalManga> mangas = new ArrayList<LocalManga>(1);
-                        mangas.add(manga);
-                        deleteManga(mangas);
-                        return true;
-                }
-                return false;
+        popup.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.delete:
+                    List<LocalManga> mangas = new ArrayList<>(1);
+                    mangas.add(manga);
+                    deleteManga(mangas);
+                    return true;
             }
-
+            return false;
         });
         popup.show();
     }
@@ -255,18 +239,15 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
                     }
                     final boolean success = _success;
                     final String error = _error;
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e(TAG, "WW");
-                            if (success) {
-                                loadDownloadedManga();
-                                Log.e(TAG, "XX");
-                            } else {
-                                String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
-                                Utils.showToast(getActivity(), formedError + error);
-                                Log.e(TAG, "YY");
-                            }
+                    handler.post(() -> {
+                        Log.e(TAG, "WW");
+                        if (success) {
+                            loadDownloadedManga();
+                            Log.e(TAG, "XX");
+                        } else {
+                            String formedError = Utils.stringResource(getActivity(), R.string.p_failed_to_delete);
+                            Utils.showToast(getActivity(), formedError + error);
+                            Log.e(TAG, "YY");
                         }
                     });
                     if (!success) {
@@ -278,12 +259,9 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Adapt
                     IoUtils.deleteDirectory(new File(localManga.getLocalUri()));
                 }
                 Log.e(TAG, "F");
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e(TAG, "ZZ");
+                handler.post(() -> {
+                    Log.e(TAG, "ZZ");
 //                        progressDialog.dismiss();
-                    }
                 });
             }
         };

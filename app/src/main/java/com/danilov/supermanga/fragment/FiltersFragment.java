@@ -133,7 +133,7 @@ public class FiltersFragment extends BaseFragmentNative implements Toolbar.OnMen
                 } else {
                     adapter.changeCursor(new MatrixCursor(COLUMNS));
                 }
-                adapter.setSuggestions(new ArrayList<MangaSuggestion>());
+                adapter.setSuggestions(new ArrayList<>());
                 return true;
             }
 
@@ -289,12 +289,7 @@ public class FiltersFragment extends BaseFragmentNative implements Toolbar.OnMen
             int textIndex = cursor.getColumnIndex(CURSOR_NAME);
             final String value = cursor.getString(textIndex);
             ImageButton btn = (ImageButton) view.findViewById(R.id.suggestion_merge);
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    searchView.setQuery(value, false);
-                }
-            });
+            btn.setOnClickListener(v -> searchView.setQuery(value, false));
             tv.setText(value);
         }
 

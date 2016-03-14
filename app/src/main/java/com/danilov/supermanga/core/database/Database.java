@@ -321,35 +321,29 @@ public class Database {
     }
 
     public static Database create(final SQLiteDatabase.CursorFactory factory) {
-        Database database = new Database(SQLiteDatabase.create(factory));
-        return database;
+        return new Database(SQLiteDatabase.create(factory));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static Database openOrCreateDatabase(final String path, final SQLiteDatabase.CursorFactory factory, final DatabaseErrorHandler errorHandler) {
-        Database database = new Database(SQLiteDatabase.openOrCreateDatabase(path, factory, errorHandler));
-        return database;
+        return new Database(SQLiteDatabase.openOrCreateDatabase(path, factory, errorHandler));
     }
 
     public static Database openDatabase(final String path, final SQLiteDatabase.CursorFactory factory, final int flags) {
-        Database database = new Database(SQLiteDatabase.openDatabase(path, factory, flags));
-        return database;
+        return new Database(SQLiteDatabase.openDatabase(path, factory, flags));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static Database openDatabase(final String path, final SQLiteDatabase.CursorFactory factory, final int flags, final DatabaseErrorHandler errorHandler) {
-        Database database = new Database(SQLiteDatabase.openDatabase(path, factory, flags, errorHandler));
-        return database;
+        return new Database(SQLiteDatabase.openDatabase(path, factory, flags, errorHandler));
     }
 
     public static Database openOrCreateDatabase(final String path, final SQLiteDatabase.CursorFactory factory) {
-        Database database = new Database(SQLiteDatabase.openOrCreateDatabase(path, factory));
-        return database;
+        return new Database(SQLiteDatabase.openOrCreateDatabase(path, factory));
     }
 
     public static Database openOrCreateDatabase(final File file, final SQLiteDatabase.CursorFactory factory) {
-        Database database = new Database(SQLiteDatabase.openOrCreateDatabase(file, factory));
-        return database;
+        return new Database(SQLiteDatabase.openOrCreateDatabase(file, factory));
     }
 
 }

@@ -57,37 +57,24 @@ public class SettingsFragment extends BaseFragmentNative {
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
         final String path = userSettings.getDownloadPath();
         final Activity activity = getActivity(); //hack
-        findViewById(R.id.transfer).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-                Thread t = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            List<Manga> favorite = mangaDAO.getFavorite();
-                            for (Manga manga : favorite) {
-                                manga.setTracking(true);
-                                mangaDAO.setTracking(manga, true);
-                            }
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(activity, "Готово!", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        } catch (DatabaseAccessException e) {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(activity, "Ошибка при переносе, пишите разработчику", Toast.LENGTH_LONG).show();
-                                }
-                            });
+        findViewById(R.id.transfer).setOnClickListener(v -> {
+            final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        List<Manga> favorite = mangaDAO.getFavorite();
+                        for (Manga manga : favorite) {
+                            manga.setTracking(true);
+                            mangaDAO.setTracking(manga, true);
                         }
+                        activity.runOnUiThread(() -> Toast.makeText(activity, "Готово!", Toast.LENGTH_LONG).show());
+                    } catch (DatabaseAccessException e) {
+                        activity.runOnUiThread(() -> Toast.makeText(activity, "Ошибка при переносе, пишите разработчику", Toast.LENGTH_LONG).show());
                     }
-                };
-                t.start();
-            }
+                }
+            };
+            t.start();
         });
 //        downloadPath.setText(path);
 //        selectPath = findViewById(R.id.select_folder);

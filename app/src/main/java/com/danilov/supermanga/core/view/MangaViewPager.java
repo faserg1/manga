@@ -383,12 +383,7 @@ public class MangaViewPager extends CompatPager {
         public void onProgress(final DownloadManager.Download download, final int progress) {
             final TextView tv = imageBundle.tv;
             final int _progress = (int) (((float) progress /  download.getSize()) * 100);
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    tv.setText(_progress + "%");
-                }
-            });
+            handler.post(() -> tv.setText(_progress + "%"));
         }
 
         @Override
@@ -412,12 +407,9 @@ public class MangaViewPager extends CompatPager {
             if (!renamed) {
                 Log.e("MangaViewPager", "Failed to rename file");
             }
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    imageBundle1.iv.setImageFile(imageBundle1.donePath);
-                    imageBundle1.tv.setVisibility(View.GONE);
-                }
+            handler.post(() -> {
+                imageBundle1.iv.setImageFile(imageBundle1.donePath);
+                imageBundle1.tv.setVisibility(View.GONE);
             });
         }
 
@@ -440,21 +432,18 @@ public class MangaViewPager extends CompatPager {
             final TextView tv = imageBundle.tv;
             final Button button = imageBundle.restart;
 
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    tv.setVisibility(View.INVISIBLE);
-                    button.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(final View view) {
-                            tv.setVisibility(View.VISIBLE);
-                            button.setVisibility(View.INVISIBLE);
-                            loadImage(url, iv, tv, button);
-                        }
-                    });
-                    button.setVisibility(View.VISIBLE);
-                    downloadManager.cancelDownload(download);
-                }
+            handler.post(() -> {
+                tv.setVisibility(View.INVISIBLE);
+                button.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        tv.setVisibility(View.VISIBLE);
+                        button.setVisibility(View.INVISIBLE);
+                        loadImage(url, iv, tv, button);
+                    }
+                });
+                button.setVisibility(View.VISIBLE);
+                downloadManager.cancelDownload(download);
             });
         }
 

@@ -2,7 +2,6 @@ package com.danilov.supermanga.core.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
@@ -18,12 +17,9 @@ public class  Slider extends FrameLayout {
 
     private Scroller mScroller;
 
-    private static final Interpolator sMenuInterpolator = new Interpolator() {
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return (float) Math.pow(t, 5) + 1.0f;
-        }
+    private static final Interpolator sMenuInterpolator = t -> {
+        t -= 1.0f;
+        return (float) Math.pow(t, 5) + 1.0f;
     };
 
     public Slider(final Context context, final AttributeSet attrs, final int defStyle) {

@@ -185,22 +185,17 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.queried_manga_item_menu, popup.getMenu());
         final Manga manga = foundManga.get(listPosition);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(final MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.download:
-                        Intent intent = new Intent(MangaQueryActivity.this, DownloadsActivity.class);
-                        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-                        startActivity(intent);
-                        return true;
-                    case R.id.add_to_favorites:
-                        return true;
-                }
-                return false;
+        popup.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.download:
+                    Intent intent = new Intent(MangaQueryActivity.this, DownloadsActivity.class);
+                    intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                    startActivity(intent);
+                    return true;
+                case R.id.add_to_favorites:
+                    return true;
             }
-
+            return false;
         });
         popup.show();
     }
@@ -314,7 +309,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         ArrayList<Manga> mangas = null;
         if (foundManga != null) {
             if (!(foundManga instanceof ArrayList)) {
-                mangas = new ArrayList<Manga>(foundManga.size());
+                mangas = new ArrayList<>(foundManga.size());
                 mangas.addAll(foundManga);
             } else {
                 mangas = (ArrayList<Manga>) foundManga;
