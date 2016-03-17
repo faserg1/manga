@@ -105,9 +105,8 @@ public class WorldArtFragment extends BaseFragmentNative {
             return false;
         }
         isBackPressed = true;
-        ((MangaInfoActivity) getActivity()).flipFromWorldArt();
         ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.VISIBLE);
-        return true;
+        return false;
     }
 
     private class ImagesAdapter extends RecyclerView.Adapter<ImageHolder> {

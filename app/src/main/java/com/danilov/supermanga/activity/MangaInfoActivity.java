@@ -65,6 +65,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
             showInfoFragment(true);
         } else {
             currentFragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.frame);
+            toggleOverlayBackground(true);
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -127,24 +128,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         return super.onOptionsItemSelected(item);
     }
 
-    public void flipFromWorldArt() {
-        if (infoFragment == null) {
-            Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
-            infoFragment = InfoFragment.newInstance(manga, left, top, width, height);
-        }
-        currentFragment = infoFragment;
-        getFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(
-                        R.animator.card_flip_left_in,
-                        R.animator.card_flip_left_out,
-                        R.animator.card_flip_right_in,
-                        R.animator.card_flip_right_out)
-                .replace(R.id.frame, currentFragment)
-                .commit();
-    }
-
-    private void flipToWorldArt() {
+    public void flipToWorldArt() {
         WorldArtFragment fragment = new WorldArtFragment();
         currentFragment = fragment;
         getFragmentManager()
@@ -155,6 +139,7 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
                         R.animator.card_flip_left_in,
                         R.animator.card_flip_left_out)
                 .replace(R.id.frame, fragment)
+                .addToBackStack(null)
                 .commit();
     }
 

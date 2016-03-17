@@ -145,7 +145,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         manageChapters.setOnClickListener(this);
         addToTracking.setOnClickListener(this);
         removeFromTracking.setOnClickListener(this);
-
+        mangaTitle.setOnClickListener(this);
         flipper = new OverXFlipper(addToTracking, removeFromTracking, 300);
         disableButtons();
         if (savedInstanceState == null) {
@@ -365,6 +365,10 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
 
     public void restoreInstanceState(final Bundle savedInstanceState) {
         manga = savedInstanceState.getParcelable(Constants.MANGA_PARCEL_KEY);
+        if (manga == null) {
+            Intent i = activity.getIntent();
+            manga = i.getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        }
         if (manga != null) {
             loadMangaInfo(manga);
         }
@@ -391,6 +395,9 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
     public void onClick(final View v) {
         Intent intent = null;
         switch (v.getId()) {
+            case R.id.manga_title:
+                activity.flipToWorldArt();
+                break;
             case R.id.download:
                 activity.showChaptersFragment();
                 break;
