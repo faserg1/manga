@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.noveogroup.android.check'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId "com.danilov.supermanga"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 37
-        versionName "1.39.0.6(rapid)"
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode versions.code
+        versionName versions.name
     }
 
     retrolambda {
@@ -60,10 +60,30 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v13:23.2.+'
-    compile 'com.android.support:appcompat-v7:23.2.+'
-    compile 'com.android.support:recyclerview-v7:23.2.+'
-    compile 'com.annimon:stream:1.0.8'
+    compile libraries.dagger
+    apt libraries.daggerCompiler
+    compile libraries.javaxInject
+    compile libraries.javaxAnnotationApi
+
+    compile libraries.supportAnnotations
+    compile libraries.supportV13
+    compile libraries.supportAppCompat
+    compile libraries.supportDesign
+    compile libraries.supportRecyclerView
+    compile libraries.supportCardView
+
+    compile libraries.streamBackport
+
+    compile libraries.butterKnife
+
+    testCompile libraries.junit
+    testCompile libraries.robolectric
+    testCompile libraries.assertJ
+    testCompile libraries.equalsVerifier
+    testCompile libraries.okHttpMockWebServer
+    testCompile libraries.mockitoCore
+    //todo: вынести в deps'ы
+    //ЛЕНЬ
     compile 'com.nineoldandroids:library:2.4.0'
     compile files('libs/jsoup-1.7.3.jar')
     compile 'rapid.decoder:library:0.3.0'
@@ -73,10 +93,12 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.2.2'
     //    compile 'com.google.android.gms:play-services-ads:7.8.0'
     //google drive api
-    compile 'com.google.android.gms:play-services-identity:8.3.0'
-    compile 'com.google.android.gms:play-services-base:8.3.0'
-    compile 'com.google.android.gms:play-services-drive:8.3.0'
-    compile 'com.google.android.gms:play-services-plus:8.3.0'
+    compile 'com.google.android.gms:play-services-identity:8.4.0'
+    compile 'com.google.android.gms:play-services-base:8.4.0'
+    compile 'com.google.android.gms:play-services-drive:8.4.0'
+    compile 'com.google.android.gms:play-services-plus:8.4.0'
     compile 'org.mozilla:rhino:1.7R4'
     compile files('libs/acra-4.5.0.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'

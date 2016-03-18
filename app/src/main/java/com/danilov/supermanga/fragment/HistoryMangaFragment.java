@@ -22,6 +22,7 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.model.HistoryElement;
@@ -36,6 +37,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
@@ -48,14 +51,22 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
 
     private HistoryMangaAdapter adapter = null;
 
-    private LocalImageManager localImageManager = null;
-    private HttpImageManager httpImageManager = null;
+    @Inject
+    public LocalImageManager localImageManager = null;
+
+    @Inject
+    public HttpImageManager httpImageManager = null;
+
     private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
 
     public static HistoryMangaFragment newInstance() {
         return new HistoryMangaFragment();
+    }
+
+    public HistoryMangaFragment() {
+        MangaApplication.get().applicationComponent().inject(this);
     }
 
     @Override
@@ -67,8 +78,6 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        localImageManager = ServiceContainer.getService(LocalImageManager.class);
-        httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = (GridView) view.findViewById(R.id.grid_view);

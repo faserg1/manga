@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.model.HistoryElement;
@@ -25,6 +26,8 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon Danilov on 02.10.2014.
  */
@@ -32,7 +35,9 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
 
     private static final String TAG = "HistoryActivity";
 
-    private LocalImageManager localImageManager = null;
+    @Inject
+    public LocalImageManager localImageManager = null;
+
     private GridView gridView;
     int sizeOfImage = 0;
 
@@ -40,7 +45,7 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        localImageManager = ServiceContainer.getService(LocalImageManager.class);
+        MangaApplication.get().applicationComponent().inject(this);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         setContentView(R.layout.history_activity);
         gridView = (GridView) findViewById(R.id.grid_view);

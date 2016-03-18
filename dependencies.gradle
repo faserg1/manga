@@ -1,0 +1,111 @@
+ext.versions = [
+        code                         : 37,
+        name                         : '1.39.0.6(rapid)',
+
+        minSdk                       : 14,
+        targetSdk                    : 23,
+        compileSdk                   : 23,
+        buildTools                   : '23.0.2',
+
+        androidGradlePlugin          : '2.0.0-alpha3',
+        aptGradlePlugin              : '1.8',
+        retrolambdaGradlePlugin      : '3.2.5',
+        lombokGradlePlugin           : '0.2.3.a2',
+        paperworkGradlePlugin        : '1.2.4',
+        jacocoGradlePlugin           : '0.7.6.201602180812',
+        androidDevMetricsGradlePlugin: '0.3.1',
+
+        dagger                       : '2.1',
+        javaxInject                  : '1',
+        javaxAnnotationApi           : '1.2',
+        rxJava                       : '1.1.1',
+        streamBackport               : '1.0.8',
+        supportLibs                  : '23.1.1',
+        okHttp                       : '3.2.0',
+        retrofit                     : '2.0.0-beta4',
+        jackson                      : '2.6.3',
+        autoValue                    : '1.1',
+        butterKnife                  : '7.0.1',
+        picasso                      : '2.5.2',
+        picassoOkHttpDownloader      : '1.0.2',
+        timber                       : '4.1.1',
+        espresso                     : '2.2.1',
+        stetho                       : '1.3.0',
+        leakCanary                   : '1.3.1',
+        tinyDancer                   : '0.0.8',
+        yandexAppMetrica             : '2.30',
+        lynx                         : '1.6',
+
+        junit                        : '4.12',
+        robolectric                  : '3.0',
+        assertJ                      : '1.7.1',
+        equalsVerifier               : '1.7.5',
+        mockito                      : '1.10.19',
+        supportTestRunner            : '0.5',
+]
+
+ext.gradlePlugins = [
+        android          : "com.android.tools.build:gradle:$versions.androidGradlePlugin",
+        apt              : "com.neenbedankt.gradle.plugins:android-apt:$versions.aptGradlePlugin",
+        retrolambda      : "me.tatarka:gradle-retrolambda:$versions.retrolambdaGradlePlugin",
+        lombok           : "me.tatarka.retrolambda.projectlombok:lombok.ast:$versions.lombokGradlePlugin",
+]
+
+
+//всё что только можно
+//взято из quality matters
+//god save us all
+ext.libraries = [
+        dagger                  : "com.google.dagger:dagger:$versions.dagger",
+        daggerCompiler          : "com.google.dagger:dagger-compiler:$versions.dagger",
+        javaxInject             : "javax.inject:javax.inject:$versions.javaxInject",
+        javaxAnnotationApi      : "javax.annotation:javax.annotation-api:$versions.javaxAnnotationApi",
+
+        rxJava                  : "io.reactivex:rxjava:$versions.rxJava",
+        streamBackport          : "com.annimon:stream:$versions.streamBackport",
+
+        okHttp                  : "com.squareup.okhttp3:okhttp:$versions.okHttp",
+        okHttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:$versions.okHttp",
+        retrofit                : "com.squareup.retrofit2:retrofit:$versions.retrofit",
+        retrofitJacksonConverter: "com.squareup.retrofit2:converter-jackson:$versions.retrofit",
+        retrofitRxJavaAdapter   : "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit",
+        jacksonDataBind         : "com.fasterxml.jackson.core:jackson-databind:$versions.jackson",
+
+        autoValue               : "com.google.auto.value:auto-value:$versions.autoValue",
+
+        supportAnnotations      : "com.android.support:support-annotations:$versions.supportLibs",
+        supportV13              : "com.android.support:support-v13:$versions.supportLibs",
+        supportAppCompat        : "com.android.support:appcompat-v7:$versions.supportLibs",
+        supportDesign           : "com.android.support:design:$versions.supportLibs",
+        supportRecyclerView     : "com.android.support:recyclerview-v7:$versions.supportLibs",
+        supportCardView         : "com.android.support:cardview-v7:$versions.supportLibs",
+
+        butterKnife             : "com.jakewharton:butterknife:$versions.butterKnife",
+        picasso                 : "com.squareup.picasso:picasso:$versions.picasso",
+        picassoOkHttpDownloader : "com.jakewharton.picasso:picasso2-okhttp3-downloader:$versions.picassoOkHttpDownloader",
+        timber                  : "com.jakewharton.timber:timber:$versions.timber",
+
+        // Analytics https://tech.yandex.com/metrica-mobile-sdk/
+        yandexAppMetrica        : "com.yandex.android:mobmetricalib:$versions.yandexAppMetrica",
+
+        // Developer Tools
+        stetho                  : "com.facebook.stetho:stetho:$versions.stetho",
+        stethoOkHttp            : "com.facebook.stetho:stetho-okhttp3:$versions.stetho",
+        leakCanary              : "com.squareup.leakcanary:leakcanary-android:$versions.leakCanary",
+        tinyDancer              : "com.github.brianPlummer:tinydancer:$versions.tinyDancer",
+        paperwork               : "hu.supercluster:paperwork:$versions.paperworkGradlePlugin",
+        lynx                    : "com.github.pedrovgs:lynx:$versions.lynx",
+        devMetricsNoOp          : "com.frogermcs.androiddevmetrics:androiddevmetrics-runtime-noop:$versions.androidDevMetricsGradlePlugin",
+
+        // Test dependencies
+        junit                   : "junit:junit:$versions.junit",
+        robolectric             : "org.robolectric:robolectric:$versions.robolectric",
+        assertJ                 : "org.assertj:assertj-core:$versions.assertJ",
+        equalsVerifier          : "nl.jqno.equalsverifier:equalsverifier:$versions.equalsVerifier",
+        okHttpMockWebServer     : "com.squareup.okhttp3:mockwebserver:$versions.okHttp",
+        mockitoCore             : "org.mockito:mockito-core:$versions.mockito",
+        supportTestRunner       : "com.android.support.test:runner:$versions.supportTestRunner",
+        supportTestRules        : "com.android.support.test:rules:$versions.supportTestRunner",
+        espressoCore            : "com.android.support.test.espresso:espresso-core:$versions.espresso",
+        espressoContrib         : "com.android.support.test.espresso:espresso-contrib:$versions.espresso",
+]

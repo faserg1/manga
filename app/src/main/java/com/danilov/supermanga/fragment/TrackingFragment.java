@@ -22,6 +22,7 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.core.adapter.BaseAdapter;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
@@ -36,6 +37,8 @@ import com.danilov.supermanga.core.view.helper.MangaFilter;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 22.12.2014.
  */
@@ -45,8 +48,12 @@ public class TrackingFragment extends BaseFragmentNative implements AdapterView.
 
     private ProgressBar downloadedProgressBar;
 
-    private LocalImageManager localImageManager = null;
-    private HttpImageManager httpImageManager = null;
+    @Inject
+    public LocalImageManager localImageManager = null;
+
+    @Inject
+    public HttpImageManager httpImageManager = null;
+
     private MangaDAO mangaDAO = null;
     private HistoryDAO historyDAO = null;
 
@@ -60,6 +67,10 @@ public class TrackingFragment extends BaseFragmentNative implements AdapterView.
         return new TrackingFragment();
     }
 
+    public TrackingFragment() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.manga_favorites_fragment, container, false);
@@ -69,8 +80,6 @@ public class TrackingFragment extends BaseFragmentNative implements AdapterView.
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
-        localImageManager = ServiceContainer.getService(LocalImageManager.class);
-        httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         gridView = findViewById(R.id.grid_view);

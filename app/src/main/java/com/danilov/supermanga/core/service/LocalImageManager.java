@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.android.httpimage.BitmapCache;
 import com.android.httpimage.BitmapMemoryCache;
 import com.danilov.supermanga.core.util.BitmapUtils;
 
@@ -29,7 +30,7 @@ public class LocalImageManager {
 
     private static final String TAG = "LocalImageManager";
 
-    private final BitmapMemoryCache mCache;
+    private final BitmapCache mCache;
     private final Resources resources;
 
     public Handler handler = new Handler();
@@ -38,7 +39,7 @@ public class LocalImageManager {
 
     private final Set<ImageRequest> mActiveRequests = new HashSet<>();
 
-    public LocalImageManager(final BitmapMemoryCache mCache, final Resources resources) {
+    public LocalImageManager(final BitmapCache mCache, final Resources resources) {
         this.mCache = mCache;
         this.resources = resources;
     }

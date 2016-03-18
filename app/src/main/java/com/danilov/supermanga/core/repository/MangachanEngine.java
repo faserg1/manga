@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpRequestException;
@@ -39,6 +40,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 07.01.2016.
  */
@@ -50,17 +53,17 @@ public class MangachanEngine implements RepositoryEngine {
     private String baseSuggestionUri = "http://mangachan.ru/engine/ajax/search.php";
     private String baseSearchUri = "http://mangachan.ru/?do=search&subaction=search&story=";
 
-    @Override
-    public String getLanguage() {
-        return "Русский";
-    }
+    @Inject
+    public HttpStreamReader httpStreamReader;
 
-    @Override
-    public boolean requiresAuth() {
-        return false;
-    }
+    @Inject
+    public HttpBytesReader httpBytesReader;
 
     private String suggestionPattern = "a href=\"(.*?)\"><span.*?>(.*?)</span></a>";
+
+    public MangachanEngine() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
 
     @Override
     public List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException {
@@ -92,7 +95,6 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         if (httpBytesReader != null) {
             try {
@@ -139,7 +141,6 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = manga.getUri();
             byte[] response = null;
@@ -194,7 +195,6 @@ public class MangachanEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = manga.getUri();
             byte[] response = null;
@@ -246,7 +246,6 @@ public class MangachanEngine implements RepositoryEngine {
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String uri = chapter.getUri();
-        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
         byte[] bytes = new byte[1024];
         List<String> imageUrls = null;
         LinesSearchInputStream inputStream = null;
@@ -315,6 +314,16 @@ public class MangachanEngine implements RepositoryEngine {
     @Override
     public RequestPreprocessor getRequestPreprocessor() {
         return null;
+    }
+
+    @Override
+    public String getLanguage() {
+        return "Русский";
+    }
+
+    @Override
+    public boolean requiresAuth() {
+        return false;
     }
 
 }

@@ -15,6 +15,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.android.httpimage.HttpImageManager;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.model.LocalManga;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
+
+import javax.inject.Inject;
 
 /**
  * Created by Semyon Danilov on 12.06.2014.
@@ -64,10 +67,14 @@ public class MangaDownloadService extends Service {
 
     private MangaDownloadRequest currentRequest;
 
-    private HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
+    @Inject
+    public HttpImageManager httpImageManager;
 
     private NotificationHelper helper = null;
 
+    public MangaDownloadService() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
 
     @Override
     public void onCreate() {

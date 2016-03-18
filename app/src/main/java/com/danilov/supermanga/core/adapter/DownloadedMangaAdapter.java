@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.service.LocalImageManager;
@@ -20,12 +21,15 @@ import com.danilov.supermanga.core.view.helper.MangaFilter;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 26.10.2014.
  */
 public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
-    private LocalImageManager localImageManager = ServiceContainer.getService(LocalImageManager.class);
+    @Inject
+    public LocalImageManager localImageManager;
 
     private int sizeOfImage;
 
@@ -39,6 +43,7 @@ public class DownloadedMangaAdapter extends ArrayAdapter<LocalManga> {
 
     public DownloadedMangaAdapter(final Context context, final List<LocalManga> mangas, final MangaFilter filter, final PopupButtonClickListener listener) {
         super(context, 0, mangas);
+        MangaApplication.get().applicationComponent().inject(this);
         this.filter = filter;
         isPosSelected = new boolean[mangas.size()];
         for (int i = 0; i < mangas.size(); i++) {

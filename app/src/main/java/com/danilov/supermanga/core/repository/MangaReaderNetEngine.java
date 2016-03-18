@@ -4,8 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpRequestException;
+import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
@@ -31,6 +33,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 19.10.2014.
  */
@@ -44,6 +48,12 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     private String baseSearchUri = "http://www.mangareader.net/search/?w=";
 
+    @Inject
+    public HttpStreamReader httpStreamReader;
+
+    @Inject
+    public HttpBytesReader httpBytesReader;
+
     @Override
     public String getLanguage() {
         return "English";
@@ -54,9 +64,12 @@ public class MangaReaderNetEngine implements RepositoryEngine {
         return false;
     }
 
+    public MangaReaderNetEngine() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
+
     @Override
     public List<MangaSuggestion> getSuggestions(String query) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<MangaSuggestion> suggestions = null;
         if (httpBytesReader != null) {
             Exception ex = null;
@@ -94,7 +107,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         if (httpBytesReader != null) {
             try {
@@ -121,7 +133,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
             byte[] response = null;
@@ -144,7 +155,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
             byte[] response = null;
@@ -168,7 +178,6 @@ public class MangaReaderNetEngine implements RepositoryEngine {
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + chapter.getUri();
             byte[] response = null;

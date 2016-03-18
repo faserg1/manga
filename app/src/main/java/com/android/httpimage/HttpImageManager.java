@@ -78,7 +78,7 @@ public class HttpImageManager {
 
     private static final String TAG = "HttpImageManager";
 
-    private final BitmapMemoryCache mCache;
+    private final BitmapCache mCache;
     private final FileSystemPersistence mPersistence;
     private final HttpBitmapReader mNetworkResourceLoader;
     private final Resources mResources;
@@ -278,7 +278,7 @@ public class HttpImageManager {
         public void onLoadError(LoadRequest r, Throwable e);
     }
 
-    public HttpImageManager(BitmapMemoryCache cache, FileSystemPersistence persistence, Resources resources, HttpBitmapReader httpBitmapReader) {
+    public HttpImageManager(BitmapCache cache, FileSystemPersistence persistence, Resources resources, HttpBitmapReader httpBitmapReader) {
         this.mCache = cache;
         this.mPersistence = persistence;
         this.mNetworkResourceLoader = httpBitmapReader;

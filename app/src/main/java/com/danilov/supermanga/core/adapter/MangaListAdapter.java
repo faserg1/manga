@@ -13,10 +13,13 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by Semyon Danilov on 18.05.2014.
@@ -25,18 +28,16 @@ public class MangaListAdapter extends ArrayAdapter<Manga> {
 
     private final String TAG = "MangaListAdapter";
 
-    private HttpImageManager httpImageManager = ServiceContainer.getService(HttpImageManager.class);
+    @Inject
+    public HttpImageManager httpImageManager;
 
     private final int resourceId;
     private int sizeOfImage;
     private PopupButtonClickListener popupButtonClickListener;
 
-    public MangaListAdapter(final Context context, final int resource, final List<Manga> objects) {
-        this(context, resource, objects, null);
-    }
-
     public MangaListAdapter(final Context context, final int resource, final List<Manga> objects, final PopupButtonClickListener popupButtonClickListener) {
         super(context, resource, objects);
+        MangaApplication.get().applicationComponent().inject(this);
         resourceId = resource;
         sizeOfImage = context.getResources().getDimensionPixelSize(R.dimen.manga_list_image_height);
         this.popupButtonClickListener = popupButtonClickListener;

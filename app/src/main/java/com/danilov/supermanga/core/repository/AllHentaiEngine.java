@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.HttpBytesReader;
 import com.danilov.supermanga.core.http.HttpRequestException;
 import com.danilov.supermanga.core.http.HttpStreamModel;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 14.03.2015.
  */
@@ -47,6 +50,12 @@ public class AllHentaiEngine implements RepositoryEngine {
     private String baseSuggestionUri = "http://allhentai.ru/search/suggestion?term=";
     public static final String baseUri = "http://allhentai.ru";
 
+    @Inject
+    public HttpStreamReader httpStreamReader;
+
+    @Inject
+    public HttpBytesReader httpBytesReader;
+
     @Override
     public String getLanguage() {
         return "Русский";
@@ -57,9 +66,12 @@ public class AllHentaiEngine implements RepositoryEngine {
         return false;
     }
 
+    public AllHentaiEngine() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
+
     @Override
     public List<MangaSuggestion> getSuggestions(final String query) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<MangaSuggestion> suggestions = null;
         if (httpBytesReader != null) {
             Exception ex = null;
@@ -80,7 +92,6 @@ public class AllHentaiEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final String query, final List<Filter.FilterValue> filterValues) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         if (httpBytesReader != null) {
             try {
@@ -100,7 +111,6 @@ public class AllHentaiEngine implements RepositoryEngine {
 
     @Override
     public List<Manga> queryRepository(final Genre _genre) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         List<Manga> mangaList = null;
         AllHentaiGenre genre = (AllHentaiGenre) _genre;
         if (httpBytesReader != null) {
@@ -118,7 +128,6 @@ public class AllHentaiEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForMangaDescription(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
             byte[] response = null;
@@ -140,7 +149,6 @@ public class AllHentaiEngine implements RepositoryEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        HttpBytesReader httpBytesReader = ServiceContainer.getService(HttpBytesReader.class);
         if (httpBytesReader != null) {
             String uri = baseUri + manga.getUri();
             byte[] response = null;
@@ -163,7 +171,6 @@ public class AllHentaiEngine implements RepositoryEngine {
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
         String uri = baseUri + chapter.getUri() + "?mature=1";
-        HttpStreamReader httpStreamReader = ServiceContainer.getService(HttpStreamReader.class);
         byte[] bytes = new byte[1024];
         List<String> imageUrls = null;
         LinesSearchInputStream inputStream = null;

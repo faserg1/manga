@@ -3,12 +3,16 @@ package com.danilov.supermanga.core.application;
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.httpimage.BitmapMemoryCache;
 import com.android.httpimage.FileSystemPersistence;
 import com.android.httpimage.HttpImageManager;
+import com.danilov.supermanga.ApplicationComponent;
+import com.danilov.supermanga.ApplicationModule;
+import com.danilov.supermanga.DaggerApplicationComponent;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.supermanga.core.database.HistoryDAO;
@@ -43,35 +47,38 @@ import java.io.StringWriter;
         resToastText = R.string.crash_toast_text)
 public class MangaApplication extends Application {
 
+
+    @SuppressWarnings("NullableProblems")
+    // Initialized in onCreate. But be careful if you have ContentProviders
+    // -> their onCreate may be called before app.onCreate()
+    // -> move initialization to attachBaseContext().
+    @NonNull
+    private ApplicationComponent applicationComponent;
+
     public static Context context;
+
+    @NonNull
+    // Prevent need in a singleton (global) reference to the application object.
+    public static MangaApplication get() {
+        return (MangaApplication) context.getApplicationContext();
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        File mydir = getBaseContext().getDir("mydir", Context.MODE_PRIVATE);
-        CacheDirectoryManagerImpl cacheDirectoryManager = new CacheDirectoryManagerImpl(mydir, ApplicationSettings.get(this), ApplicationSettings.PACKAGE_NAME);
-        FileSystemPersistence fsp = new FileSystemPersistence(cacheDirectoryManager);
-        HttpStreamReader httpStreamReader = new HttpStreamReader(new ExtendedHttpClient(), getResources());
-        HttpBytesReader httpBytesReader = new HttpBytesReader(httpStreamReader, getResources());
-        HttpBitmapReader httpBitmapReader = new HttpBitmapReader(httpBytesReader);
-        BitmapMemoryCache bmc = new BitmapMemoryCache(0.4f);
-        HttpImageManager httpImageManager = new HttpImageManager(bmc, fsp, getResources(), httpBitmapReader);
-        LocalImageManager localImageManager = new LocalImageManager(bmc, getResources());
+
+        applicationComponent = prepareApplicationComponent().build();
+        applicationComponent.inject(this);
+
         HistoryDAO historyDAO = new HistoryDAO();
         UpdatesDAO updatesDAO = new UpdatesDAO();
         MangaDAO mangaDAO = new MangaDAO();
         JSCrud jsCrud = new JSCrud();
-        ServiceContainer.addService(cacheDirectoryManager);
-        ServiceContainer.addService(httpBytesReader);
-        ServiceContainer.addService(httpStreamReader);
-        ServiceContainer.addService(httpImageManager);
-        ServiceContainer.addService(localImageManager);
         ServiceContainer.addService(historyDAO);
         ServiceContainer.addService(updatesDAO);
         ServiceContainer.addService(mangaDAO);
         ServiceContainer.addService(jsCrud);
-        cacheDirectoryManager.trimCacheIfNeeded();
 
         RepositoryHolder repositoryHolder = new RepositoryHolder();
         repositoryHolder.init();
@@ -86,7 +93,7 @@ public class MangaApplication extends Application {
         //Google Play Service ты офигел!
         try {
             Class.forName("android.os.AsyncTask");
-        } catch(Throwable ignore) {
+        } catch (Throwable ignore) {
         }
 
         // The following line triggers the initialization of ACRA
@@ -112,7 +119,16 @@ public class MangaApplication extends Application {
         });
     }
 
+    @NonNull
+    protected DaggerApplicationComponent.Builder prepareApplicationComponent() {
+        return DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this));
+    }
 
+    @NonNull
+    public ApplicationComponent applicationComponent() {
+        return applicationComponent;
+    }
 
     public static Context getContext() {
         return context;

@@ -24,6 +24,7 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
 import com.danilov.supermanga.core.animation.OverXFlipper;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
@@ -40,6 +41,8 @@ import com.danilov.supermanga.core.view.ScrollViewParallax;
 import com.danilov.supermanga.core.view.ViewV16;
 import com.danilov.supermanga.core.widget.ToggleImageButton;
 
+import javax.inject.Inject;
+
 /**
  * Created by Semyon on 09.11.2014.
  */
@@ -52,7 +55,8 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
     private MangaInfoActivity activity;
     private RefreshableActivity refreshable;
 
-    private HttpImageManager httpImageManager = null;
+    @Inject
+    public HttpImageManager httpImageManager = null;
 
     private ScrollViewParallax scrollViewParallax;
 
@@ -104,6 +108,10 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         return infoFragment;
     }
 
+    public InfoFragment() {
+        MangaApplication.get().applicationComponent().inject(this);
+    }
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.manga_info_item, container, false);
@@ -134,7 +142,6 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         repositoryLink.setOnClickListener(this);
         repositoryLink.setOnLongClickListener(this);
         mangaDAO = ServiceContainer.getService(MangaDAO.class);
-        httpImageManager = ServiceContainer.getService(HttpImageManager.class);
         addToTracking = view.findViewById(R.id.add_to_tracking);
         removeFromTracking = view.findViewById(R.id.remove_from_tracking);
         toggleFavorite = findViewById(R.id.toggle_favorite);

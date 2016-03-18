@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.adapter.ExtendedPagerAdapter;
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.cache.CacheDirectoryManager;
 import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * Created by Semyon on 17.03.2015.
@@ -143,7 +146,10 @@ public class MangaViewPager extends CompatPager {
 
     private DownloadManager downloadManager = new DownloadManager();
     private Adapter adapter = null;
-    private CacheDirectoryManager cacheDirectoryManager = null;
+
+    @Inject
+    public CacheDirectoryManager cacheDirectoryManager;
+
     private String cachePath = null;
     private FragmentManager fragmentManager;
     private List<String> uris = null;
@@ -205,9 +211,9 @@ public class MangaViewPager extends CompatPager {
     }
 
     private void init() {
+        MangaApplication.get().applicationComponent().inject(this);
         requestDisallowInterceptTouchEvent(true);
         super.setOnPageChangeListener(internalListener);
-        cacheDirectoryManager = ServiceContainer.getService(CacheDirectoryManagerImpl.class);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
     }
 
