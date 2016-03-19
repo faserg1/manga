@@ -9,4 +9,15 @@ public class DatabaseAccessException extends Exception {
         super(message);
     }
 
+    public DatabaseAccessException() {
+    }
+
+    public DatabaseAccessException(final Throwable throwable) {
+        super(throwable);
+    }
+
+    public DatabaseAccessException(final String detailMessage, final Throwable throwable) {
+        super(detailMessage, throwable);
+    }
+
 }

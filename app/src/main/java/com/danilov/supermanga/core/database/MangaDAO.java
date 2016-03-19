@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.danilov.supermanga.core.application.ApplicationSettings;
@@ -11,16 +12,23 @@ import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
+import com.danilov.supermanga.core.util.Logger;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Semyon on 29.11.2014.
  */
 public class MangaDAO {
+
+    private static final Logger LOGGER = new Logger(UpdatesDAO.class);
+
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     private final static String TAG = "MangaDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
@@ -257,6 +265,19 @@ public class MangaDAO {
         return manga;
     }
 
+    public synchronized void deleteManga(final int id) throws DatabaseAccessException {
+        Database db = databaseHelper.openWritable();
+        String selection = ID + " = ?";
+        String[] selectionArgs = new String[] {"" + id};
+        try {
+            db.delete(TABLE_NAME, selection, selectionArgs);
+        } catch (Exception e){
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
     public synchronized void deleteManga(final Manga manga) throws DatabaseAccessException {
         Database db = databaseHelper.openWritable();
         String selection = ID + " = ?";
@@ -426,6 +447,7 @@ public class MangaDAO {
         return null;
     }
 
+    @Nullable
     private Manga resolve(final Cursor cursor) {
         int idIndex = cursor.getColumnIndex(ID);
         int chaptersQuantityIndex = cursor.getColumnIndex(CHAPTERS_QUANTITY);
@@ -455,6 +477,7 @@ public class MangaDAO {
         RepositoryHolder repositoryHolder = ServiceContainer.getService(RepositoryHolder.class);
         RepositoryEngine.Repository repository = repositoryHolder.valueOf(cursor.getString(repositoryIndex));
         if (repository == null) {
+            queryRemoval(id);
             return null;
         }
 
@@ -482,6 +505,16 @@ public class MangaDAO {
         manga.setTracking(isTracking);
         manga.setGenres(genre);
         return manga;
+    }
+
+    private void queryRemoval(final int id) {
+        executor.execute(() -> {
+            try {
+                deleteManga(id);
+            } catch (DatabaseAccessException e) {
+                LOGGER.e("Failed to delete manga: " + e.getMessage(), e);
+            }
+        });
     }
 
     private static class UpgradeHandler implements DatabaseHelper.DatabaseUpgradeHandler {

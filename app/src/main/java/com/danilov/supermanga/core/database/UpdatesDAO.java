@@ -8,17 +8,23 @@ import android.util.Log;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.UpdatesElement;
+import com.danilov.supermanga.core.util.Logger;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Semyon on 23.11.2014.
  */
 public class UpdatesDAO {
+
+    private static final Logger LOGGER = new Logger(UpdatesDAO.class);
 
     private final static String TAG = "UpdatesDAO";
     private static final String packageName = ApplicationSettings.PACKAGE_NAME;
@@ -32,6 +38,8 @@ public class UpdatesDAO {
     private static final String DIFFERENCE = "difference";
 
     public DatabaseHelper databaseHelper = null;
+
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     public UpdatesDAO() {
         File externalStorageDir = Environment.getExternalStorageDirectory();
@@ -109,6 +117,7 @@ public class UpdatesDAO {
         Database db = databaseHelper.openWritable();
         MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
         List<UpdatesElement> mangaList = null;
+        final List<Integer> scheduledForDeletion = new LinkedList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
@@ -126,6 +135,11 @@ public class UpdatesDAO {
                 long timestamp = cursor.getInt(timestampIndex);
                 int difference = cursor.getInt(differenceIndex);
                 Manga manga = mangaDAO.getById(mangaId);
+                if (manga == null) {
+                    //нет манги, надо удалить апдейты
+                    scheduledForDeletion.add(id);
+                    continue;
+                }
                 UpdatesElement element = new UpdatesElement();
                 element.setId(id);
                 element.setDifference(difference);
@@ -134,13 +148,22 @@ public class UpdatesDAO {
                 mangaList.add(element);
             } while (cursor.moveToNext());
         } catch (Exception e) {
-            throw new DatabaseAccessException(e.getMessage());
+            throw new DatabaseAccessException(e.getMessage(), e);
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
             db.close();
         }
+        executor.execute(() -> {
+            for (Integer id : scheduledForDeletion) {
+                try {
+                    delete(id);
+                } catch (DatabaseAccessException e) {
+                    LOGGER.e("Failed to delete manga updates: " + e.getMessage(), e);
+                }
+            }
+        });
         return mangaList;
     }
 
@@ -148,6 +171,19 @@ public class UpdatesDAO {
         Database db = databaseHelper.openWritable();
         String selection = MANGA_ID + " = ?";
         String[] selectionArgs = new String[] {"" + manga.getId()};
+        try {
+            db.delete(TABLE_NAME, selection, selectionArgs);
+        } catch (Exception e){
+            throw new DatabaseAccessException(e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
+    public void delete(final int id) throws DatabaseAccessException {
+        Database db = databaseHelper.openWritable();
+        String selection = ID + " = ?";
+        String[] selectionArgs = new String[] {"" + id};
         try {
             db.delete(TABLE_NAME, selection, selectionArgs);
         } catch (Exception e){
