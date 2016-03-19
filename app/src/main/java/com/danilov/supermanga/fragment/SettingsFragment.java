@@ -20,6 +20,7 @@ import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.util.Decoder;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.List;
@@ -29,12 +30,9 @@ import java.util.List;
  */
 public class SettingsFragment extends BaseFragmentNative {
 
-    private static final int FOLDER_PICKER_REQUEST = 1;
-
-//    private EditText downloadPath;
-//    private Button selectPath;
-//    private CheckBox showControls;
     private Spinner mainPageSelector;
+
+    private Spinner decoderSpinner;
 
     private ApplicationSettings settings;
 
@@ -50,10 +48,9 @@ public class SettingsFragment extends BaseFragmentNative {
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
-//        downloadPath = findViewById(R.id.download_path);
         settings = ApplicationSettings.get(getActivity());
-//        showControls = findViewById(R.id.show_viewer_controls);
         mainPageSelector = findViewById(R.id.main_page_selector);
+        decoderSpinner = findViewById(R.id.decoder_selector);
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
         final String path = userSettings.getDownloadPath();
         final Activity activity = getActivity(); //hack
@@ -76,24 +73,23 @@ public class SettingsFragment extends BaseFragmentNative {
             };
             t.start();
         });
-//        downloadPath.setText(path);
-//        selectPath = findViewById(R.id.select_folder);
-//        selectPath.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View view) {
-//                Intent intent = new Intent(getActivity(), FolderPickerActivity.class);
-//                intent.putExtra(FolderPickerActivity.FOLDER_KEY, path);
-//                startActivityForResult(intent, FOLDER_PICKER_REQUEST);
-//            }
-//        });
-        /*showControls.setChecked(userSettings.isAlwaysShowButtons());
-        showControls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        final DecoderAdapter decoderAdapter = new DecoderAdapter();
+        decoderSpinner.setAdapter(decoderAdapter);
+        decoderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-                userSettings.setAlwaysShowButtons(b);
+            public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+                Decoder element = decoderAdapter.getElement(position);
+                settings.setDecoder(element);
                 settings.update(getActivity());
             }
-        });*/
+
+            @Override
+            public void onNothingSelected(final AdapterView<?> parent) {
+
+            }
+        });
+
         final MainPageAdapter adapter = new MainPageAdapter();
         mainPageSelector.setAdapter(adapter);
         mainPageSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -122,24 +118,6 @@ public class SettingsFragment extends BaseFragmentNative {
         }
         mainPageSelector.setSelection(idx, false);
         super.onActivityCreated(savedInstanceState);
-    }
-
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        switch (requestCode) {
-            case FOLDER_PICKER_REQUEST:
-                final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
-                String path = data.getStringExtra(FolderPickerActivity.FOLDER_KEY);
-                userSettings.setDownloadPath(path);
-//                downloadPath.setText(path);
-                settings.update(getActivity());
-                break;
-        }
     }
 
     private class MainPageAdapter implements SpinnerAdapter {
@@ -202,6 +180,87 @@ public class SettingsFragment extends BaseFragmentNative {
                 textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_selected, null);
             }
             String text = getActivity().getString(items[i].getStringId());
+            textView.setText(text);
+            return textView;
+        }
+
+        @Override
+        public int getItemViewType(final int i) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 1;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+    }
+
+    private class DecoderAdapter implements SpinnerAdapter {
+
+        private Decoder[] values = Decoder.values();
+
+        @Override
+        public View getDropDownView(final int i, final View view, final ViewGroup viewGroup) {
+            TextView textView = null;
+            if (view != null) {
+                textView = (TextView) view;
+            } else {
+                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_dropdown, null);
+            }
+            String text = values[i].toString();
+            textView.setText(text);
+            return textView;
+        }
+
+        public Decoder getElement(final int i) {
+            return values[i];
+        }
+
+        @Override
+        public void registerDataSetObserver(final DataSetObserver dataSetObserver) {
+
+        }
+
+        @Override
+        public void unregisterDataSetObserver(final DataSetObserver dataSetObserver) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return values.length;
+        }
+
+        @Override
+        public Object getItem(final int i) {
+            return values[i];
+        }
+
+        @Override
+        public long getItemId(final int i) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getView(final int i, final View view, final ViewGroup viewGroup) {
+            TextView textView = null;
+            if (view != null) {
+                textView = (TextView) view;
+            } else {
+                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_selected, null);
+            }
+            String text = values[i].toString();
             textView.setText(text);
             return textView;
         }

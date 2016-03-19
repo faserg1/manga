@@ -117,4 +117,5 @@
     <string name="yandex_account_info_title">Yandex account</string>
     <string name="images_from">Images from manga</string>
     <string name="sv_reverse">Inverse</string>
+    <string name="sv_decoder">Декодер</string>
 </resources>

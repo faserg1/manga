@@ -7,41 +7,41 @@
 
   <style name="_MangaHoloTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
-    <item name="android:editTextStyle">@style/EditTextMangaHoloTheme</item>
+    <!--<item name="android:editTextStyle">@style/EditTextMangaHoloTheme</item>-->
 
-    <item name="android:textColorHighlight">#9933b5e5</item>
+    <!--<item name="android:textColorHighlight">#9933b5e5</item>-->
 
-    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMangaHoloTheme</item>
+    <!--<item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMangaHoloTheme</item>-->
 
-    <item name="android:checkboxStyle">@style/CheckBoxMangaHoloTheme</item>
+    <!--<item name="android:checkboxStyle">@style/CheckBoxMangaHoloTheme</item>-->
 
-    <item name="android:radioButtonStyle">@style/RadioButtonMangaHoloTheme</item>
+    <!--<item name="android:radioButtonStyle">@style/RadioButtonMangaHoloTheme</item>-->
 
-    <item name="android:buttonStyle">@style/ButtonMangaHoloTheme</item>
+    <!--<item name="android:buttonStyle">@style/ButtonMangaHoloTheme</item>-->
 
-    <item name="android:imageButtonStyle">@style/ImageButtonMangaHoloTheme</item>
+    <!--<item name="android:imageButtonStyle">@style/ImageButtonMangaHoloTheme</item>-->
 
-    <item name="android:spinnerStyle">@style/SpinnerMangaHoloTheme</item>
+    <!--<item name="android:spinnerStyle">@style/SpinnerMangaHoloTheme</item>-->
 
-    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMangaHoloTheme</item>
+    <!--<item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMangaHoloTheme</item>-->
 
-    <item name="android:progressBarStyleHorizontal">@style/ProgressBarMangaHoloTheme</item>
+    <!--<item name="android:progressBarStyleHorizontal">@style/ProgressBarMangaHoloTheme</item>-->
 
-    <item name="android:seekBarStyle">@style/SeekBarMangaHoloTheme</item>
+    <!--<item name="android:seekBarStyle">@style/SeekBarMangaHoloTheme</item>-->
 
-    <item name="android:ratingBarStyle">@style/RatingBarMangaHoloTheme</item>
+    <!--<item name="android:ratingBarStyle">@style/RatingBarMangaHoloTheme</item>-->
 
-    <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMangaHoloTheme</item>
+    <!--<item name="android:ratingBarStyleIndicator">@style/RatingBarBigMangaHoloTheme</item>-->
 
-    <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMangaHoloTheme</item>
+    <!--<item name="android:ratingBarStyleSmall">@style/RatingBarSmallMangaHoloTheme</item>-->
 
-    <item name="android:buttonStyleToggle">@style/ToggleMangaHoloTheme</item>
+    <!--<item name="android:buttonStyleToggle">@style/ToggleMangaHoloTheme</item>-->
 
-    <item name="android:listViewStyle">@style/ListViewMangaHoloTheme</item>
+    <!--<item name="android:listViewStyle">@style/ListViewMangaHoloTheme</item>-->
 
-    <item name="android:listViewWhiteStyle">@style/ListViewMangaHoloTheme.White</item>
+    <!--<item name="android:listViewWhiteStyle">@style/ListViewMangaHoloTheme.White</item>-->
 
-    <item name="android:spinnerItemStyle">@style/SpinnerItemMangaHoloTheme</item>
+    <!--<item name="android:spinnerItemStyle">@style/SpinnerItemMangaHoloTheme</item>-->
 
   </style>
 

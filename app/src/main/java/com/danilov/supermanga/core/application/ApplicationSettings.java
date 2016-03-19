@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.Decoder;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ public class ApplicationSettings {
     private static final String TUTORIAL_MENU_PASSED_FIELD = "TMP";
     private static final String SHOW_VIEWER_BTNS_ALWAYS_FIELD = "SVBA";
     private static final String IN_RTL_MODE_FIELD = "IRMF";
+    private static final String DECODER_FIELD = "DECF";
     private static final String MAIN_MENU_ITEM_FIELD = "MMI";
 
     private static ApplicationSettings instance;
@@ -43,6 +45,8 @@ public class ApplicationSettings {
 
     private String mainMenuItem;
 
+    private Decoder decoder;
+
     private UserSettings userSettings;
 
     public UserSettings getUserSettings() {
@@ -51,6 +55,14 @@ public class ApplicationSettings {
 
     public void setUserSettings(final UserSettings userSettings) {
         this.userSettings = userSettings;
+    }
+
+    public Decoder getDecoder() {
+        return decoder;
+    }
+
+    public void setDecoder(final Decoder decoder) {
+        this.decoder = decoder;
     }
 
     public boolean isRTLMode() {
@@ -120,6 +132,7 @@ public class ApplicationSettings {
         this.viewerFullscreen = sharedPreferences.getBoolean(VIEWER_FULLSCREEN_FIELD, false);
         this.isRTLMode = sharedPreferences.getBoolean(IN_RTL_MODE_FIELD, false);
         this.mainMenuItem = sharedPreferences.getString(MAIN_MENU_ITEM_FIELD, MainActivity.MainMenuItem.SEARCH.toString());
+        this.decoder = Decoder.valueOf(sharedPreferences.getString(DECODER_FIELD, Decoder.Rapid.toString()));
         userSettings = new UserSettings();
         userSettings.init(context);
     }
@@ -137,6 +150,7 @@ public class ApplicationSettings {
         editor.putBoolean(FIRST_LAUNCH, firstLaunch);
         editor.putBoolean(IN_RTL_MODE_FIELD, isRTLMode);
         editor.putString(MAIN_MENU_ITEM_FIELD, mainMenuItem);
+        editor.putString(DECODER_FIELD, decoder.toString());
         editor.apply();
         userSettings.save();
     }

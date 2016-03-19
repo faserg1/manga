@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.adapter.ExtendedPagerAdapter;
+import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.cache.CacheDirectoryManager;
 import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.service.DownloadManager;
+import com.danilov.supermanga.core.util.Decoder;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
@@ -37,6 +39,8 @@ import javax.inject.Inject;
  * Created by Semyon on 17.03.2015.
  */
 public class MangaViewPager extends CompatPager {
+
+    private ApplicationSettings settings;
 
     private interface ImageWrapper {
 
@@ -212,6 +216,7 @@ public class MangaViewPager extends CompatPager {
 
     private void init() {
         MangaApplication.get().applicationComponent().inject(this);
+        settings = ApplicationSettings.get(getContext());
         requestDisallowInterceptTouchEvent(true);
         super.setOnPageChangeListener(internalListener);
         this.cachePath = cacheDirectoryManager.getImagesCacheDirectory().toString() + "/";
@@ -278,7 +283,19 @@ public class MangaViewPager extends CompatPager {
         protected View createView(final int position) {
             final String url = getItem(position);
 
-            View v = LayoutInflater.from(getContext()).inflate(R.layout.viewer_page, MangaViewPager.this, false);
+            Decoder decoder = settings.getDecoder();
+            int pageLayout;
+            switch (decoder) {
+                case Skia:
+                    pageLayout = R.layout.viewer_page_new;
+                    break;
+                case Rapid:
+                default:
+                    pageLayout = R.layout.viewer_page;
+                    break;
+            }
+
+            View v = LayoutInflater.from(getContext()).inflate(pageLayout, MangaViewPager.this, false);
 
             View imageViewHolder = v.findViewById(R.id.imageView);
             ImageWrapper imageView = null;
