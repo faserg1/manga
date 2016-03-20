@@ -6,6 +6,11 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="MangaTransparent.Dark" parent="Manga.Dark">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <style name="Manga" parent="MangaBaseTheme">
         <item name="android:buttonStyle">@style/Manga.ButtonCommon</item>
         <item name="windowActionBar">false</item>

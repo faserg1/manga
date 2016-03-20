@@ -33,7 +33,7 @@
 
         <LinearLayout
             android:id="@+id/body"
-            android:background="@android:color/white"
+            android:background="?attr/card_background"
             android:orientation="vertical"
             android:layout_below="@+id/header"
             android:layout_width="match_parent"
@@ -66,6 +66,7 @@
                               android:singleLine="true"
                               android:ellipsize="marquee"
                               android:focusable="true"
+                              android:textColor="?attr/card_text_color"
                               android:focusableInTouchMode="true"
                               android:marqueeRepeatLimit="marquee_forever"
                               android:scrollHorizontally="true"/>
@@ -92,12 +93,14 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:textSize="@dimen/info_attribute_title_size"
                             android:text="@string/sv_chapters"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:layout_marginLeft="5dp"
                             android:textStyle="bold"
                             android:textSize="@dimen/info_attribute_title_size"
@@ -113,6 +116,7 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:textSize="@dimen/info_attribute_title_size"
                             android:text="@string/info_item_genre"/>
 
@@ -120,6 +124,7 @@
                             android:id="@+id/genres"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:layout_marginLeft="5dp"
                             android:textStyle="bold"
                             android:textSize="@dimen/info_attribute_title_size"/>
@@ -134,6 +139,7 @@
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:textSize="@dimen/info_attribute_title_size"
                             android:text="@string/info_item_author"/>
 
@@ -141,6 +147,7 @@
                             android:id="@+id/authors"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/card_text_color"
                             android:layout_marginLeft="5dp"
                             android:textStyle="bold"
                             android:textSize="@dimen/info_attribute_title_size"/>
@@ -205,12 +212,14 @@
                               android:textSize="@dimen/info_item_def_title_size"
                               android:textStyle="bold"
                               android:fontFamily="sans-serif-light"
+                        android:textColor="?attr/card_text_color"
                               android:singleLine="true"
                               android:text="@string/description"/>
 
                     <com.danilov.supermanga.core.view.CTextView
                         android:layout_width="fill_parent"
                               android:layout_height="fill_parent"
+                        android:textColor="?attr/card_text_color"
                               android:textSize="@dimen/info_attribute_title_size"
                               android:id="@+id/manga_description"/>
 

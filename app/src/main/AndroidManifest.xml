@@ -69,7 +69,7 @@
             android:label="Query Engine Test"/>
         <activity
             android:name=".activity.MangaInfoActivity"
-            android:theme="@style/MangaTransparent"/>
+            android:theme="@style/MangaTransparent.Dark"/>
         <activity android:name=".activity.SingleFragmentActivity"/>
         <activity
             android:name=".test.LocalMangaActivity"

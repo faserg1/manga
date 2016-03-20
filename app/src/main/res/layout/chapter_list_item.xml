@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/chapterTitle"
-            android:textColor="#000"
+            android:textColor="?attr/card_text_color"
             android:lines="2"/>
 
         <com.danilov.supermanga.core.view.CTextView

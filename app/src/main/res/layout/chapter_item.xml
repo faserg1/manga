@@ -11,6 +11,7 @@
         android:id="@+id/chapter_title"
         android:layout_weight="1"
         android:textSize="17sp"
+        android:textColor="?attr/card_text_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
