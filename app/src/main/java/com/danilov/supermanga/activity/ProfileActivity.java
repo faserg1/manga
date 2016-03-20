@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.app.DialogFragment;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +44,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.software.shell.fab.ActionButton;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by Semyon on 28.08.2015.
  */
@@ -53,9 +59,12 @@ public class ProfileActivity extends BaseToolbarActivity {
     private TextView userNameTextView;
 
     private View googleSyncCard;
+    private View yandexSyncCard;
     private View userNameCard;
     private View googleSyncButton;
     private View googleDownloadButton;
+    private View yandexSyncButton;
+    private View yandexDownloadButton;
     private View emailCard;
     private View alwaysShowButtonsCard;
     private View downloadPathCard;
@@ -80,6 +89,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         takePhoto = findViewWithId(R.id.take_photo);
         userNameTextView = findViewWithId(R.id.user_name);
         googleSyncCard = findViewWithId(R.id.google_sync_card);
+        yandexSyncCard = findViewWithId(R.id.yandex_sync_card);
         userNameCard = findViewWithId(R.id.user_name_card);
         emailCard = findViewWithId(R.id.email_card);
         alwaysShowButtonsCard = findViewWithId(R.id.always_show_buttons_card);
@@ -88,6 +98,8 @@ public class ProfileActivity extends BaseToolbarActivity {
         yandexAccountTextView = findViewWithId(R.id.yandex_account);
         googleSyncButton = findViewWithId(R.id.google_sync_button);
         googleDownloadButton = findViewWithId(R.id.google_download_button);
+        yandexSyncButton = findViewWithId(R.id.yandex_sync_button);
+        yandexDownloadButton = findViewWithId(R.id.yandex_download_button);
 
         appVersion = findViewWithId(R.id.app_version);
         userNameSmall = findViewWithId(R.id.user_name_small);
@@ -171,12 +183,39 @@ public class ProfileActivity extends BaseToolbarActivity {
             }
             service.download();
         });
-        String yandexPrefix =  "SamVimes@yandex.ru (" + getString(R.string.sv_synchronized) + " ";
-        yandexAccountTextView.setPrefix(yandexPrefix);
-        yandexAccountTextView.setReferenceTime(RelativeTimeTextView.NEVER);
-        yandexAccountTextView.setSuffix(")");
+        yandexSyncCard.setOnClickListener(v -> {
+            if (service != null) {
+                service.connectYandex();
+            }
+        });
+        yandexSyncButton.setOnClickListener(v -> {
+            if (service == null) {
+                return;
+            }
+            service.saveYandex();
+        });
+        yandexDownloadButton.setOnClickListener(v -> {
+            if (service == null) {
+                return;
+            }
+            service.downloadYandex();
+        });
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+
+        String yandexProfileName = sharedPreferences.getString("YA_USERNAME", null);
+        if (yandexProfileName == null) {
+            yandexProfileName = "Нажмите, чтобы подключить";
+            yandexAccountTextView.setPrefix(yandexProfileName);
+            yandexAccountTextView.setReferenceTime(RelativeTimeTextView.ONLY_PREFIX);
+        } else {
+            String prefix =  yandexProfileName + " (" + getString(R.string.sv_synchronized) + " ";
+            yandexAccountTextView.setPrefix(prefix);
+            yandexAccountTextView.setReferenceTime(lastUpdateTime);
+            yandexAccountTextView.setSuffix(")");
+        }
+
         String googleProfileName = sharedPreferences.getString(Constants.Settings.GOOGLE_PROFILE_NAME, null);
         if (googleProfileName == null) {
             googleProfileName = "Нажмите, чтобы подключить";
@@ -267,11 +306,41 @@ public class ProfileActivity extends BaseToolbarActivity {
             intent.putExtra(FolderPickerActivity.FOLDER_KEY, downloadPathString);
             startActivityForResult(intent, FOLDER_PICKER_REQUEST);
         });
+        if (getIntent() != null && getIntent().getData() != null) {
+            onYandexLogin();
+        }
+    }
+
+    private void onYandexLogin () {
+        Uri data = getIntent().getData();
+        setIntent(null);
+        Pattern pattern = Pattern.compile("access_token=(.*?)(&|$)");
+        Matcher matcher = pattern.matcher(data.toString());
+        if (matcher.find()) {
+            final String token = matcher.group(1);
+            if (!TextUtils.isEmpty(token)) {
+                Log.d("ProfileActivity", "onLogin: token: "+token);
+                saveToken(token);
+            } else {
+                Log.w("ProfileActivity", "onYandexLogin: empty token");
+            }
+        } else {
+            Log.w("ProfileActivity", "onYandexLogin: token not found in return url");
+        }
+    }
+
+    private void saveToken(String token) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("YA_USERNAME", "");
+        editor.putString("YA_TOKEN", token);
+        editor.apply();
+        handler.sendEmptyMessage(OnlineStorageProfileService.YANDEX_CONNECTED);
     }
 
     private ServiceConnection serviceConnection;
     private OnlineStorageProfileService service;
 
+//    @SuppressWarnings()
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
@@ -318,6 +387,37 @@ public class ProfileActivity extends BaseToolbarActivity {
                     googleAccountTextView.setSuffix(")");
                     break;
                 case OnlineStorageProfileService.GOOGLE_DOWNLOADED:
+                    init();
+                    break;
+                case OnlineStorageProfileService.YANDEX_NEED_CONFIRMATION:
+                    String yandexAuthURL = "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + getString(R.string.yandex_client_id);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(yandexAuthURL)));
+                    break;
+                case OnlineStorageProfileService.YANDEX_CONNECTED:
+                    yandexSyncButton.setVisibility(View.VISIBLE);
+                    yandexDownloadButton.setVisibility(View.VISIBLE);
+                    if (service != null) {
+                        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+                        accountName = sharedPreferences.getString("YA_USERNAME", "");
+                        prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
+                        yandexAccountTextView.setPrefix(prefix);
+                        yandexAccountTextView.setReferenceTime(lastUpdateTime);
+                        yandexAccountTextView.setSuffix(")");
+                    }
+                    break;
+                case OnlineStorageProfileService.YANDEX_SENT_SUCCESS:
+                    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                    lastUpdateTime = System.currentTimeMillis();
+                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, lastUpdateTime).apply();
+                    accountName = service.getYandexConnector().getAccountName();
+                    prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
+                    yandexAccountTextView.setPrefix(prefix);
+                    yandexAccountTextView.setReferenceTime(lastUpdateTime);
+                    yandexAccountTextView.setSuffix(")");
+                    break;
+                case OnlineStorageProfileService.YANDEX_DOWNLOADED:
                     init();
                     break;
             }

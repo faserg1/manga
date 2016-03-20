@@ -18,6 +18,15 @@ public abstract class OnlineStorageConnector {
         this.connectorListener = connectorListener;
     }
 
+    public abstract int getSentSuccessCode();
+
+    public abstract int getConnectedCode();
+
+    public abstract int getNeedConfirmationCode();
+
+    public abstract int getDownloadedCode();
+
+
     public abstract void init();
 
     public abstract String getAccountName();
@@ -62,7 +71,7 @@ public abstract class OnlineStorageConnector {
         }
     }
 
-    public static interface OnlineFile {
+    public interface OnlineFile {
 
         String getName();
 

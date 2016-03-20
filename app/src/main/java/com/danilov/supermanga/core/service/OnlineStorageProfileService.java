@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
 import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
+import com.danilov.supermanga.core.onlinestorage.YandexDiskConnector;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Logger;
 import com.google.android.gms.common.ConnectionResult;
@@ -35,12 +36,18 @@ public class OnlineStorageProfileService extends Service {
     public static final int GOOGLE_CONNECTED = 0;
     public static final int GOOGLE_NEED_CONFIRMATION = 1;
     public static final int GOOGLE_SENT_SUCCESS = 2;
-    public static final int GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK = 3;
-    public static final int GOOGLE_DOWNLOADED = 4;
+    public static final int GOOGLE_DOWNLOADED = 3;
+
+    public static final int YANDEX_CONNECTED = 4;
+    public static final int YANDEX_NEED_CONFIRMATION = 5;
+    public static final int YANDEX_SENT_SUCCESS = 6;
+    public static final int YANDEX_DOWNLOADED = 7;
 
     private Handler handler = null;
 
     private OnlineStorageConnector googleConnector = null;
+
+    private OnlineStorageConnector yandexConnector = null;
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
@@ -67,6 +74,11 @@ public class OnlineStorageProfileService extends Service {
         googleConnector.init();
     }
 
+    public void connectYandex() {
+        yandexConnector = new YandexDiskConnector(yandexConnectorListener);
+        yandexConnector.init();
+    }
+
     private void notifyHandler(final int action, final Object object) {
         if (handler != null) {
             if (object == null) {
@@ -84,6 +96,10 @@ public class OnlineStorageProfileService extends Service {
         return googleConnector;
     }
 
+    public OnlineStorageConnector getYandexConnector() {
+        return yandexConnector;
+    }
+
     public void sendDataViaGoogle() {
     }
 
@@ -99,6 +115,28 @@ public class OnlineStorageProfileService extends Service {
                 } else {
                     //диск пустой, заливаем файл
                     createNew();
+                }
+            }
+
+            @Override
+            public void onCommandError(final String message) {
+
+            }
+        });
+    }
+
+    public void saveYandex() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        yandexConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+            @Override
+            public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                if (onlineFile != null) {
+                    //заливаем на диск
+                    replaceCurrentYandex(onlineFile);
+                } else {
+                    //диск пустой, заливаем файл
+                    createNewYandex();
                 }
             }
 
@@ -129,7 +167,33 @@ public class OnlineStorageProfileService extends Service {
         });
     }
 
+    public void downloadYandex() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        yandexConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+            @Override
+            public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                if (onlineFile != null) {
+                    downloadYandex(onlineFile);
+                } else {
+                    //alert-no-data
+                }
+            }
+
+            @Override
+            public void onCommandError(final String message) {
+
+            }
+        });
+    }
+
     private class SyncUpCallback implements OnlineStorageConnector.CommandCallback<Boolean> {
+
+        private OnlineStorageConnector connector;
+
+        public SyncUpCallback(final OnlineStorageConnector connector) {
+            this.connector = connector;
+        }
 
         @Override
         public void onCommandSuccess(final Boolean object) {
@@ -157,7 +221,7 @@ public class OnlineStorageProfileService extends Service {
                         if (sent != filesToSend) {
 
                         } else {
-                            notifyHandler(GOOGLE_SENT_SUCCESS, null);
+                            notifyHandler(connector.getSentSuccessCode(), null);
                         }
                     }
                 }
@@ -167,15 +231,14 @@ public class OnlineStorageProfileService extends Service {
             for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
                 final String fileName = Constants.Settings.DB_FILES[i][0];
                 final String localFilePath = Constants.Settings.DB_FILES[i][1];
-                googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                connector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
                     @Override
                     public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
                         //TODO: remove and uncomment
-//                        googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.SQLITE, fileSendCallback);
                         if (onlineFile != null) {
                             onlineFile.rewriteWith(new File(localFilePath), fileSendCallback);
                         } else {
-                            googleConnector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.SQLITE, fileSendCallback);
+                            connector.createFile(fileName, new File(localFilePath), OnlineStorageConnector.MimeType.SQLITE, fileSendCallback);
                         }
                     }
 
@@ -195,81 +258,104 @@ public class OnlineStorageProfileService extends Service {
     }
 
     public void replaceCurrent(final OnlineStorageConnector.OnlineFile onlineFile) {
-        onlineFile.rewriteWith(getSettingsJsonString(), new SyncUpCallback());
+        onlineFile.rewriteWith(getSettingsJsonString(), new SyncUpCallback(googleConnector));
     }
 
     public void createNew() {
-        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, getSettingsJsonString(), OnlineStorageConnector.MimeType.TEXT_PLAIN, new SyncUpCallback());
+        googleConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, getSettingsJsonString(),
+                OnlineStorageConnector.MimeType.TEXT_PLAIN, new SyncUpCallback(googleConnector));
+    }
+
+    public void replaceCurrentYandex(final OnlineStorageConnector.OnlineFile onlineFile) {
+        onlineFile.rewriteWith(getSettingsJsonString(), new SyncUpCallback(yandexConnector));
+    }
+
+    public void createNewYandex() {
+        yandexConnector.createFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, getSettingsJsonString(),
+                OnlineStorageConnector.MimeType.TEXT_PLAIN, new SyncUpCallback(yandexConnector));
+    }
+
+    private class DownloadCallback implements OnlineStorageConnector.CommandCallback<String> {
+
+        private OnlineStorageConnector connector;
+
+        public DownloadCallback(final OnlineStorageConnector connector) {
+            this.connector = connector;
+        }
+
+        @Override
+        public void onCommandSuccess(final String object) {
+
+
+            //TODO: нужно предложить пользователю два варианта - скачать файл или залить новый
+            //notifyHandler(GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK, onlineFile);
+
+            final OnlineStorageConnector.CommandCallback<Boolean> fileDownloadCallback = new OnlineStorageConnector.CommandCallback<Boolean>() {
+                final int filesToSend = Constants.Settings.DB_FILES.length;
+                int sent = 0;
+                int callbacks = 0;
+
+                @Override
+                public synchronized void onCommandSuccess(final Boolean object) {
+                    if (object) {
+                        sent++;
+                    }
+                    callbacks++;
+                    check();
+                }
+
+                @Override
+                public synchronized void onCommandError(final String message) {
+                    callbacks++;
+                    check();
+                }
+
+                private void check() {
+                    if (callbacks == filesToSend) {
+                        if (sent != filesToSend) {
+                        } else {
+                            notifyHandler(connector.getDownloadedCode(), null);
+                        }
+                    }
+                }
+
+            };
+
+            saveJson(object);
+
+            for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
+                final String fileName = Constants.Settings.DB_FILES[i][0];
+                final String localFilePath = Constants.Settings.DB_FILES[i][1];
+                googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                    @Override
+                    public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
+                        if (onlineFile != null) {
+                            onlineFile.download(localFilePath, fileDownloadCallback);
+                        } else {
+                            fileDownloadCallback.onCommandSuccess(true);
+                        }
+                    }
+
+                    @Override
+                    public void onCommandError(final String message) {
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onCommandError(final String message) {
+
+        }
     }
 
     public void download(final OnlineStorageConnector.OnlineFile onlineFile) {
-        onlineFile.download(new OnlineStorageConnector.CommandCallback<String>() {
-            @Override
-            public void onCommandSuccess(final String object) {
+        onlineFile.download(new DownloadCallback(googleConnector));
+    }
 
-
-                //TODO: нужно предложить пользователю два варианта - скачать файл или залить новый
-                //notifyHandler(GOOGLE_FRESH_INIT_HAS_FILES_ON_DISK, onlineFile);
-
-                final OnlineStorageConnector.CommandCallback<Boolean> fileDownloadCallback = new OnlineStorageConnector.CommandCallback<Boolean>() {
-                    final int filesToSend = Constants.Settings.DB_FILES.length;
-                    int sent = 0;
-                    int callbacks = 0;
-
-                    @Override
-                    public synchronized void onCommandSuccess(final Boolean object) {
-                        if (object) {
-                            sent++;
-                        }
-                        callbacks++;
-                        check();
-                    }
-
-                    @Override
-                    public synchronized void onCommandError(final String message) {
-                        callbacks++;
-                        check();
-                    }
-
-                    private void check() {
-                        if (callbacks == filesToSend) {
-                            if (sent != filesToSend) {
-                            } else {
-                                notifyHandler(GOOGLE_DOWNLOADED, null);
-                            }
-                        }
-                    }
-
-                };
-
-                saveJson(object);
-
-                for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
-                    final String fileName = Constants.Settings.DB_FILES[i][0];
-                    final String localFilePath = Constants.Settings.DB_FILES[i][1];
-                    googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
-                        @Override
-                        public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
-                            if (onlineFile != null) {
-                                onlineFile.download(localFilePath, fileDownloadCallback);
-                            } else {
-                                fileDownloadCallback.onCommandSuccess(true);
-                            }
-                        }
-
-                        @Override
-                        public void onCommandError(final String message) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCommandError(final String message) {
-
-            }
-        });
+    public void downloadYandex(final OnlineStorageConnector.OnlineFile onlineFile) {
+        onlineFile.download(new DownloadCallback(yandexConnector));
     }
 
     public String getSettingsJsonString() {
@@ -338,6 +424,24 @@ public class OnlineStorageProfileService extends Service {
             notifyHandler(GOOGLE_NEED_CONFIRMATION, connectionResult);
         }
 
+    };
+
+    private OnlineStorageConnector.StorageConnectorListener yandexConnectorListener = new OnlineStorageConnector.StorageConnectorListener() {
+
+        @Override
+        public void onStorageConnected(final OnlineStorageConnector connector) {
+            notifyHandler(YANDEX_CONNECTED, null);
+        }
+
+        @Override
+        public void onStorageDisconnected(final OnlineStorageConnector connector) {
+
+        }
+
+        @Override
+        public void onConnectionFailed(final OnlineStorageConnector connector, final Object object) {
+            notifyHandler(YANDEX_NEED_CONFIRMATION, null);
+        }
     };
 
     @Override

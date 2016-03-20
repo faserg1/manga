@@ -18,6 +18,11 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode versions.code
         versionName versions.name
+
+
+        Properties properties = new Properties()
+        properties.load(project.file("local.properties").newDataInputStream())
+        resValue "string", "yandex_client_id", properties.getProperty("YCLIENTID")
     }
 
     retrolambda {
@@ -75,6 +80,13 @@ dependencies {
     compile libraries.streamBackport
 
     compile libraries.butterKnife
+
+    //yandex disk retarded deps
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.squareup.okhttp:okhttp:2.3.0'
+    compile 'com.squareup.okio:okio:1.6.0'
+    compile 'org.slf4j:slf4j-api:1.7.10'
 
     testCompile libraries.junit
     testCompile libraries.robolectric

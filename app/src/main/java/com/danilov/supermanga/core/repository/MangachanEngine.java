@@ -181,7 +181,7 @@ public class MangachanEngine implements RepositoryEngine {
             manga.setChaptersQuantity(chaptersQuantity);
         } catch (NumberFormatException e) {
             Log.e(TAG, "Failed to parse number: " + e.getMessage());
-            return false;
+            manga.setChaptersQuantity(0);
         }
 
         Element genresElement = mangaDescriptionBlock.child(5).getElementsByClass("item2").first();

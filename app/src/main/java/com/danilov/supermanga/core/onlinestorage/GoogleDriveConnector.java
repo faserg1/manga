@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.danilov.supermanga.core.service.OnlineStorageProfileService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -49,6 +50,26 @@ public class GoogleDriveConnector extends OnlineStorageConnector implements Goog
 
     public GoogleDriveConnector(final StorageConnectorListener connectorListener) {
         super(connectorListener);
+    }
+
+    @Override
+    public int getSentSuccessCode() {
+        return OnlineStorageProfileService.GOOGLE_SENT_SUCCESS;
+    }
+
+    @Override
+    public int getConnectedCode() {
+        return OnlineStorageProfileService.GOOGLE_CONNECTED;
+    }
+
+    @Override
+    public int getNeedConfirmationCode() {
+        return OnlineStorageProfileService.GOOGLE_NEED_CONFIRMATION;
+    }
+
+    @Override
+    public int getDownloadedCode() {
+        return OnlineStorageProfileService.GOOGLE_DOWNLOADED;
     }
 
     @Override
