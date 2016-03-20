@@ -377,7 +377,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
 
             h.checkBox.setChecked(selectedChapters[reversed ? (getCount() - 1 - position) : position]);
 
-            boolean isNew = position >= getCount() - newChapters;
+            boolean isNew = (reversed ? getCount() - 1 - position : position) >= getCount() - newChapters;
             h.isNew.setVisibility(isNew ? View.VISIBLE : View.GONE);
 
             return view;

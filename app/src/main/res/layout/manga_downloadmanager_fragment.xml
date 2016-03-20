@@ -31,7 +31,7 @@
             android:paddingRight="15dp"
             android:paddingTop="15dp">
 
-            <TextView
+            <com.danilov.supermanga.core.view.CTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,6 +43,7 @@
                 android:layout_toStartOf="@+id/btn_separator"
                 android:ellipsize="end"
                 android:focusable="true"
+                android:textColor="?attr/card_text_color"
                 android:focusableInTouchMode="true"
                 android:maxLines="2"
                 android:scrollHorizontally="true"
@@ -133,15 +134,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="?attr/card_text_color"
                         android:text="Chapters: "/>
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:id="@+id/chaptersProgress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="?attr/card_text_color"
                         android:text="~/~"/>
 
                 </LinearLayout>
@@ -158,13 +161,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="?attr/card_text_color"
                         android:text="Images: "/>
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:id="@+id/imageProgress"
+                        android:textColor="?attr/card_text_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="~/~"/>
@@ -195,8 +200,9 @@
         android:layout_height="fill_parent"
         android:layout_below="@+id/card_wrapper"/>
 
-    <TextView
+    <com.danilov.supermanga.core.view.CTextView
         android:id="@+id/no_downloads"
+        android:textColor="?attr/card_text_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
