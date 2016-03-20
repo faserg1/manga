@@ -23,6 +23,7 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.util.Decoder;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -89,6 +90,9 @@ public class SettingsFragment extends BaseFragmentNative {
 
             }
         });
+        Decoder decoder = settings.getDecoder();
+        int decoderIdx = Arrays.binarySearch(Decoder.values(), decoder);
+        decoderSpinner.setSelection(decoderIdx, false);
 
         final MainPageAdapter adapter = new MainPageAdapter();
         mainPageSelector.setAdapter(adapter);
