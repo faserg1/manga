@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:clipChildren="false">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="?attr/fragment_background"
+                android:clipChildren="false"
+                android:orientation="vertical">
 
     <View
         android:id="@+id/test"
@@ -31,122 +32,121 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:background="@android:color/white"
+                    android:background="?attr/profile_card_background"
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_marginTop="22dp"
                         android:id="@+id/user_name_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
+                        android:layout_marginTop="22dp"
                         android:background="@drawable/selectable_item_background"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/username"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/user_name_small"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <RelativeLayout
                         android:id="@+id/google_sync_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
+                        android:background="@drawable/selectable_item_background"
                         android:orientation="vertical"
-                        android:background="@drawable/selectable_item_background">
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/google_account_title"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@+id/google_sync_button"
                             android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@+id/google_sync_button"
                             android:text="@string/google_account_info_title"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.widget.RelativeTimeTextView
                             android:id="@+id/google_account"
-                            android:layout_below="@+id/google_account_title"
-                            android:layout_alignParentLeft="true"
-                            android:layout_toLeftOf="@+id/google_sync_button"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_below="@+id/google_account_title"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:layout_toLeftOf="@+id/google_sync_button"
+                            android:textColor="?attr/profile_text"/>
 
                         <LinearLayout
-                            android:visibility="gone"
                             android:id="@+id/google_sync_button"
-                            android:layout_alignParentRight="true"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
+                            android:layout_alignParentRight="true"
                             android:layout_alignTop="@+id/google_account_title"
-                            android:gravity="center"
                             android:background="@drawable/selectable_item_background"
-                            android:orientation="horizontal">
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
 
                             <com.danilov.supermanga.core.view.CTextView
-                                android:text="Синхронизировать"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:text="Синхронизировать"/>
 
                             <ImageView
-                                android:src="@drawable/ic_action_cloud"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_action_cloud"/>
 
                         </LinearLayout>
 
                         <LinearLayout
-                            android:visibility="gone"
                             android:id="@+id/google_download_button"
-                            android:layout_alignParentRight="true"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
                             android:layout_alignLeft="@+id/google_sync_button"
-                            android:layout_below="@+id/google_sync_button"
                             android:layout_alignParentBottom="true"
-                            android:gravity="center"
+                            android:layout_alignParentRight="true"
+                            android:layout_below="@+id/google_sync_button"
                             android:background="@drawable/selectable_item_background"
-                            android:orientation="horizontal">
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
 
                             <com.danilov.supermanga.core.view.CTextView
-                                android:text="Загрузить"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:text="Загрузить"/>
 
                             <ImageView
-                                android:src="@drawable/ic_action_cloud"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_action_cloud"/>
 
                         </LinearLayout>
 
                     </RelativeLayout>
 
 
-
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <include layout="@layout/yandex_account_card"/>
 
@@ -163,106 +163,106 @@
                 android:id="@+id/additional"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="70dp"
                 android:layout_below="@+id/info"
+                android:layout_marginBottom="70dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:background="@android:color/white"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/profile_card_background"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/email_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
                         android:background="@drawable/selectable_item_background"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/email"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/email"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/time_read"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/time_read"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <LinearLayout
                         android:id="@+id/download_path_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/selectable_item_background"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/sv_download_path"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/download_path"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <RelativeLayout
                         android:id="@+id/always_show_buttons_card"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
                         android:background="@drawable/selectable_item_background"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/show_btns_title"
@@ -271,101 +271,101 @@
                             android:layout_alignParentLeft="true"
                             android:layout_alignParentTop="true"
                             android:text="@string/additional"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
-                            android:text="@string/sv_always_show_viewer_controls"
-                            android:layout_below="@+id/show_btns_title"
-                            android:layout_alignParentLeft="true"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_below="@+id/show_btns_title"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:text="@string/sv_always_show_viewer_controls"
+                            android:textColor="?attr/profile_text"/>
 
                         <android.support.v7.widget.SwitchCompat
                             android:id="@+id/show_btns_switch"
                             android:layout_width="wrap_content"
                             android:layout_height="fill_parent"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentRight="true"/>
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"/>
 
                     </RelativeLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/mangas_complete"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/mangas_complete"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/megabytes_downloaded"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/megabytes_downloaded"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:background="@color/profile_divider"/>
+                        android:background="?attr/profile_divider"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/application_version_settings_title"
-                            android:textColor="@color/profile_text_category_title"/>
+                            android:textColor="?attr/profile_text_category_title"/>
 
                         <com.danilov.supermanga.core.view.CTextView
                             android:id="@+id/app_version"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:textColor="@color/profile_text"/>
+                            android:textColor="?attr/profile_text"/>
 
                     </LinearLayout>
 
@@ -385,10 +385,10 @@
 
     <RelativeLayout
         android:id="@+id/fake_bar"
-        android:clipChildren="false"
         android:layout_width="fill_parent"
         android:layout_height="146dp"
-        android:background="@color/toolbar_color">
+        android:background="?attr/toolbar_color"
+        android:clipChildren="false">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -401,50 +401,50 @@
 
         <RelativeLayout
             android:id="@+id/fake_bar_inner"
-            android:layout_marginTop="58dp"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginTop="58dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profile_image"
-                android:layout_alignParentLeft="true"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="61dp"
                 android:layout_height="61dp"
-                android:layout_marginTop="7dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="7dp"
                 android:src="@drawable/profile_stub"
-                app:border_width="2dp"
-                app:border_color="#ffffff"/>
+                app:border_color="#ffffff"
+                app:border_width="2dp"/>
 
             <com.danilov.supermanga.core.view.CTextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_toRightOf="@+id/profile_image"
+                android:layout_margin="16dp"
                 android:layout_toLeftOf="@+id/take_photo"
-                android:singleLine="true"
+                android:layout_toRightOf="@+id/profile_image"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
-                android:layout_margin="16dp"
-                android:textColor="@color/profile_text_toolbar_title"/>
+                android:singleLine="true"
+                android:textColor="?attr/profile_text_toolbar_title"
+                android:textSize="20sp"/>
 
 
             <com.software.shell.fab.ActionButton
                 android:id="@+id/take_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="-32dp"
                 android:layout_marginRight="20dp"
-                app:image="@drawable/ic_camera"
                 app:button_color="@color/btn_fab_disabled_normal"
                 app:button_colorPressed="@color/btn_fab_disabled_pressed"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="-32dp"/>
+                app:image="@drawable/ic_camera"/>
 
         </RelativeLayout>
 

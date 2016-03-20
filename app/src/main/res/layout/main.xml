@@ -57,7 +57,7 @@
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#e5e5e5"
+            android:background="?attr/fragment_background"
             android:divider="@null" >
 
     </ListView>

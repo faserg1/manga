@@ -31,6 +31,7 @@ import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.UpdatesElement;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.theme.ThemeUtils;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
@@ -137,7 +138,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         } else {
             restoreInstanceState(savedInstanceState);
         }
-        final int baseColor = getResources().getColor(R.color.color_primary);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
         activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
     }
 

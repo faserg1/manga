@@ -16,7 +16,7 @@
         android:layout_toLeftOf="@+id/yandex_sync_button"
         android:layout_alignParentTop="true"
         android:text="@string/yandex_account_info_title"
-        android:textColor="@color/profile_text_category_title"/>
+        android:textColor="?attr/profile_text_category_title"/>
 
     <com.danilov.supermanga.core.widget.RelativeTimeTextView
         android:id="@+id/yandex_account"
@@ -26,7 +26,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
-        android:textColor="@color/profile_text"/>
+        android:textColor="?attr/profile_text"/>
 
     <LinearLayout
         android:visibility="gone"

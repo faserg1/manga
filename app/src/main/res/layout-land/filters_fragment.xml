@@ -3,7 +3,7 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:background="#ffe3e3e3">
+              android:background="?attr/fragment_background">
 
         <include layout="@layout/toolbar"/>
 
@@ -17,7 +17,7 @@
             <GridView android:layout_width="fill_parent"
                       android:layout_height="fill_parent"
                       android:id="@+id/filters"
-                      android:background="#ffe3e3e3"
+                      android:background="?attr/fragment_background"
                       android:numColumns="2"
                       android:tag="2"
                       android:listSelector="#00000000"

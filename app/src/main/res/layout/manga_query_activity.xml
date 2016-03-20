@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:animateLayoutChanges="true">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:background="?attr/fragment_background">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                                       android:id="@+id/toolbar"
-                                       android:layout_height="wrap_content"
-                                       android:layout_width="match_parent"
-                                       android:minHeight="?attr/actionBarSize"
+    <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
                                        theme="@style/Manga"
-                                       android:background="@drawable/toolbar_background">
+                                       xmlns:android="http://schemas.android.com/apk/res/android"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="wrap_content"
+                                       android:background="@drawable/toolbar_background"
+                                       android:minHeight="?attr/actionBarSize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,26 +20,27 @@
 
             <TextView
                 android:id="@+id/repository_title"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
+                android:layout_marginBottom="5dp"/>
 
             <com.danilov.supermanga.core.widget.SlidingTabLayout
                 android:id="@+id/sliding_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
-    <GridView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:id="@+id/search_results"
-              android:layout_below="@+id/toolbar"
-              android:numColumns="@integer/search_results_in_line"
-              android:listSelector="#00000000"
-              android:cacheColorHint="@android:color/transparent">
+    <GridView
+        android:id="@+id/search_results"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/toolbar"
+        android:cacheColorHint="@android:color/transparent"
+        android:listSelector="#00000000"
+        android:numColumns="@integer/search_results_in_line">
 
     </GridView>
 
@@ -47,48 +49,48 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:gravity="center"
         android:text="@string/search_nothing_found"
-        android:visibility="gone"
-        android:gravity="center"/>
+        android:visibility="gone"/>
 
     <ProgressBar
+        android:id="@+id/progress_bar"
         style="@style/Manga.RoundProgressBar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/progress_bar"/>
+        android:layout_centerInParent="true"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
-        android:layout_below="@+id/toolbar"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/toolbar"/>
 
     <com.danilov.supermanga.core.widget.RepositoryLoginView
         android:id="@+id/login_view"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:weightSum="1"
+        android:layout_alignParentBottom="true"
+        android:background="#be000000"
         android:gravity="center"
-        android:background="#be000000">
+        android:weightSum="1">
 
         <TextView
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="#fff"
-            android:text="Вы не авторизованы"
-            android:layout_weight="1"
             android:id="@+id/login"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Вы не авторизованы"
+            android:textColor="#fff"
+            android:textSize="20sp"/>
 
         <Button
             android:id="@+id/login_button"
-            android:layout_marginRight="5dp"
-            android:text="Авторизация"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="Авторизация"/>
 
     </com.danilov.supermanga.core.widget.RepositoryLoginView>
 

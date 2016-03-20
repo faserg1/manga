@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/icon"
             android:layout_centerVertical="true"
-            android:textColor="@color/black_unselected_white_selected"
+            android:textColor="?attr/menu_drawer_item_color"
             android:textSize="16sp"/>
 
     <com.danilov.supermanga.core.view.CTextView

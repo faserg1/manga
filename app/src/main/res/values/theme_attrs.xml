@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="color_primary" format="color"/>
+    <attr name="color_primary_dark" format="color"/>
+    <attr name="action_mode_background" format="color"/>
+    <attr name="color_accent" format="color"/>
+
+    <attr name="color_showcase" format="color"/>
+    <attr name="color_showcase_background" format="color"/>
+
+    <attr name="dialog_top_bar" format="color"/>
+    <attr name="dialog_top_bar_divider" format="color"/>
+
+    <attr name="toolbar_color" format="color"/>
+
+    <attr name="dialog_top_bar_color" format="color"/>
+    <attr name="dialog_divider_color" format="color"/>
+
+    <attr name="btn_beauty_normal" format="color"/>
+    <attr name="btn_beauty_pressed" format="color"/>
+    <attr name="btn_beauty_ripple" format="color"/>
+    <attr name="btn_beauty_disabled" format="color"/>
+
+    <attr name="btn_normal_normal" format="color"/>
+    <attr name="btn_normal_pressed" format="color"/>
+    <attr name="btn_normal_disabled" format="color"/>
+
+    <attr name="btn_fab_enabled_normal" format="color"/>
+    <attr name="btn_fab_enabled_pressed" format="color"/>
+    <attr name="btn_fab_disabled_normal" format="color"/>
+    <attr name="btn_fab_disabled_pressed" format="color"/>
+
+    <attr name="spinner_dark_normal" format="color"/>
+    <attr name="spinner_dark_pressed" format="color"/>
+    <attr name="spinner_dark_ripple" format="color"/>
+    <attr name="spinner_dark_disabled" format="color"/>
+
+    <attr name="selected_color" format="color"/>
+
+    <attr name="error_message_color" format="color"/>
+
+    <attr name="profile_text_toolbar_title"/>
+    <attr name="profile_text_category_title"/>
+    <attr name="profile_text"/>
+    <attr name="profile_divider"/>
+    <attr name="profile_card_background"/>
+
+    <attr name="card_background"/>
+    <attr name="card_text_color"/>
+
+    <attr name="fragment_background" format="color"/>
+
+    <attr name="menu_drawer_item_color" format="color"/>
+    <attr name="drawer_background_image" format="reference"/>
+
+</resources>

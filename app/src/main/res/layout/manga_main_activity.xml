@@ -60,7 +60,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/material_background"/>
+                        android:src="?attr/drawer_background_image"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -99,6 +99,7 @@
                           android:choiceMode="singleChoice"
                           android:divider="@null"
                           android:dividerHeight="0dp"
+                          android:background="?attr/fragment_background"
                           android:listSelector="@drawable/item_selector"
                           android:cacheColorHint="#00000000"/>
 

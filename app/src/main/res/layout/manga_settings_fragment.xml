@@ -3,6 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
+              android:background="?attr/fragment_background"
               android:padding="10dp">
 
     <LinearLayout
@@ -10,14 +11,14 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/grid_item_background">
+        android:background="@drawable/list_item_background">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_main_page"
-            android:textColor="@color/text_view_normal"/>
+            android:textColor="?attr/card_text_color"/>
 
         <Spinner
             android:id="@+id/main_page_selector"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/sv_decoder"
-            android:textColor="@color/text_view_normal"/>
+            android:textColor="?attr/card_text_color"/>
 
         <Spinner
             android:id="@+id/decoder_selector"
@@ -46,7 +47,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:text="Остальные настройки ищите в профиле"
-            android:textColor="@color/blue"/>
+            android:textColor="?attr/card_text_color"/>
 
         <Button
             android:id="@+id/transfer"

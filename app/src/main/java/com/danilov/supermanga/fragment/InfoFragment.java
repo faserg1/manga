@@ -33,6 +33,7 @@ import com.danilov.supermanga.core.model.HistoryElement;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.theme.ThemeUtils;
 import com.danilov.supermanga.core.util.BitmapUtils;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -164,7 +165,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         } else {
             restoreInstanceState(savedInstanceState);
         }
-        final int baseColor = getResources().getColor(R.color.color_primary);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
         final float size = getResources().getDimension(R.dimen.info_parallax_image_height);
         activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(.0f, baseColor));
         scrollViewParallax.setScrollListener((horizontal, vertical, oldl, oldt) -> {

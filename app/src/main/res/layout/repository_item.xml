@@ -50,6 +50,7 @@
                     android:id="@+id/repository_title"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:textColor="?attr/card_text_color"
                     android:gravity="center"
                     android:textStyle="bold"
                     android:textSize="20sp"/>

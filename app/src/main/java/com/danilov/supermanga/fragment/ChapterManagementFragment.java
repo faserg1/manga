@@ -31,6 +31,7 @@ import com.danilov.supermanga.core.model.UpdatesElement;
 import com.danilov.supermanga.core.repository.OfflineEngine;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
+import com.danilov.supermanga.core.theme.ThemeUtils;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -88,7 +89,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         findViewById(R.id.fake_toolbar).setVisibility(withToolbarOffset ? View.VISIBLE : View.GONE);
 
         BaseToolbarActivity infoActivity = (BaseToolbarActivity) getActivity();
-        final int baseColor = getResources().getColor(R.color.color_primary);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
         infoActivity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
 
         setupRecycler();
