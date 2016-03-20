@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.danilov.supermanga.core.http.ExtendedHttpClient;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.util.IoUtils;
 
 import org.apache.http.HttpResponse;
@@ -23,6 +24,7 @@ import org.mozilla.javascript.Scriptable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,13 +117,14 @@ public abstract class CloudFlareBypassEngine implements RepositoryEngine {
         return null;
     }
 
-    public void emptyRequest() throws IOException {
-        loadPage(new HttpGet(getEmptyRequestURL()));
+    public void emptyRequest() throws IOException, RepositoryException {
+        queryRepository("", Collections.emptyList());
     }
 
     private Lock lock = new ReentrantLock();
+    private volatile boolean recursiveEnter = false;
 
-    public HttpResponse loadPage(final HttpUriRequest request, final HttpContext context) throws IOException {
+    public HttpResponse loadPage(final HttpUriRequest request, final HttpContext context) throws IOException, RepositoryException {
         DefaultHttpClient httpClient = new ExtendedHttpClient();
         boolean lockLocked = false;
         try {
@@ -131,6 +134,14 @@ public abstract class CloudFlareBypassEngine implements RepositoryEngine {
             }
             if (cookieStore != null) {
                 httpClient.setCookieStore(cookieStore);
+            } else {
+                if (!recursiveEnter) {
+                    recursiveEnter = true;
+                    emptyRequest();
+                    if (cookieStore != null) {
+                        httpClient.setCookieStore(cookieStore);
+                    }
+                }
             }
             HttpResponse response = context != null ? httpClient.execute(request, context) : httpClient.execute(request);
             if (response.getStatusLine().getStatusCode() >= 400) {
@@ -145,7 +156,7 @@ public abstract class CloudFlareBypassEngine implements RepositoryEngine {
         }
     }
 
-    public HttpResponse loadPage(final HttpUriRequest request) throws IOException {
+    public HttpResponse loadPage(final HttpUriRequest request) throws IOException, RepositoryException {
         return loadPage(request, null);
     }
 
