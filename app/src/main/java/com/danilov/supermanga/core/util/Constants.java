@@ -56,7 +56,8 @@ public class Constants {
                 {HistoryDAO.DB_NAME + "_new" + "-journal", HISTORY_DB_PATH + "-journal"}};
 
         public static final String ONLINE_SETTINGS_FILENAME = "settings.json";
-        public static final String LAST_UPDATE_PROFILE_TIME = "LAST_UPDATE_PROFILE_TIME";
+        public static final String LAST_UPDATE_PROFILE_TIME_GOOGLE = "LAST_UPDATE_PROFILE_TIME";
+        public static final String LAST_UPDATE_PROFILE_TIME_YANDEX = "LAST_UPDATE_PROFILE_TIME_YANDEX";
         public static final String GOOGLE_PROFILE_NAME = "GOOGLE_PROFILE_NAME";
 
         public static final String USER_NAME = "USER_NAME";

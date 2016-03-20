@@ -47,68 +47,96 @@ import com.software.shell.fab.ActionButton;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Semyon on 28.08.2015.
  */
 public class ProfileActivity extends BaseToolbarActivity {
 
-    private UnderToolbarScrollView scrollView;
-    private ActionButton takePhoto;
-    private ViewGroup fakeBar;
-    private ViewGroup fakeBarInner;
-    private TextView userNameTextView;
+    @Bind(R.id.scroll_view)
+    public UnderToolbarScrollView scrollView;
 
-    private View googleSyncCard;
-    private View yandexSyncCard;
-    private View userNameCard;
-    private View googleSyncButton;
-    private View googleDownloadButton;
-    private View yandexSyncButton;
-    private View yandexDownloadButton;
-    private View emailCard;
-    private View alwaysShowButtonsCard;
-    private View downloadPathCard;
-    private RelativeTimeTextView googleAccountTextView;
-    private RelativeTimeTextView yandexAccountTextView;
+    @Bind(R.id.take_photo)
+    public ActionButton takePhoto;
 
-    private TextView userNameSmall;
-    private TextView email;
-    private TextView timeRead;
-    private TextView downloadPath;
-    private TextView mangasComplete;
-    private TextView megabytesDownloaded;
-    private TextView appVersion;
-    private SwitchCompat showBtnsSwitch;
+    @Bind(R.id.fake_bar)
+    public ViewGroup fakeBar;
+
+    @Bind(R.id.fake_bar_inner)
+    public ViewGroup fakeBarInner;
+
+    @Bind(R.id.user_name)
+    public TextView userNameTextView;
+
+    @Bind(R.id.google_sync_card)
+    public View googleSyncCard;
+
+    @Bind(R.id.yandex_sync_card)
+    public View yandexSyncCard;
+
+    @Bind(R.id.user_name_card)
+    public View userNameCard;
+
+    @Bind(R.id.google_sync_button)
+    public View googleSyncButton;
+
+    @Bind(R.id.google_download_button)
+    public View googleDownloadButton;
+
+    @Bind(R.id.yandex_sync_button)
+    public View yandexSyncButton;
+
+    @Bind(R.id.yandex_download_button)
+    public View yandexDownloadButton;
+
+    @Bind(R.id.email_card)
+    public View emailCard;
+
+    @Bind(R.id.always_show_buttons_card)
+    public View alwaysShowButtonsCard;
+
+    @Bind(R.id.download_path_card)
+    public View downloadPathCard;
+
+    @Bind(R.id.google_account)
+    public RelativeTimeTextView googleAccountTextView;
+
+    @Bind(R.id.yandex_account)
+    public RelativeTimeTextView yandexAccountTextView;
+
+    @Bind(R.id.user_name_small)
+    public TextView userNameSmall;
+
+    @Bind(R.id.email)
+    public TextView email;
+
+    @Bind(R.id.time_read)
+    public TextView timeRead;
+
+    @Bind(R.id.download_path)
+    public TextView downloadPath;
+
+    @Bind(R.id.mangas_complete)
+    public TextView mangasComplete;
+
+    @Bind(R.id.megabytes_downloaded)
+    public TextView megabytesDownloaded;
+
+    @Bind(R.id.app_version)
+    public TextView appVersion;
+
+    @Bind(R.id.show_btns_switch)
+    public SwitchCompat showBtnsSwitch;
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-        fakeBar = findViewWithId(R.id.fake_bar);
-        takePhoto = findViewWithId(R.id.take_photo);
-        userNameTextView = findViewWithId(R.id.user_name);
-        googleSyncCard = findViewWithId(R.id.google_sync_card);
-        yandexSyncCard = findViewWithId(R.id.yandex_sync_card);
-        userNameCard = findViewWithId(R.id.user_name_card);
-        emailCard = findViewWithId(R.id.email_card);
-        alwaysShowButtonsCard = findViewWithId(R.id.always_show_buttons_card);
-        downloadPathCard = findViewWithId(R.id.download_path_card);
-        googleAccountTextView = findViewWithId(R.id.google_account);
-        yandexAccountTextView = findViewWithId(R.id.yandex_account);
-        googleSyncButton = findViewWithId(R.id.google_sync_button);
-        googleDownloadButton = findViewWithId(R.id.google_download_button);
-        yandexSyncButton = findViewWithId(R.id.yandex_sync_button);
-        yandexDownloadButton = findViewWithId(R.id.yandex_download_button);
 
-        appVersion = findViewWithId(R.id.app_version);
-        userNameSmall = findViewWithId(R.id.user_name_small);
-        email = findViewWithId(R.id.email);
-        timeRead = findViewWithId(R.id.time_read);
-        downloadPath = findViewWithId(R.id.download_path);
-        mangasComplete = findViewWithId(R.id.mangas_complete);
-        megabytesDownloaded = findViewWithId(R.id.megabytes_downloaded);
-        showBtnsSwitch = findViewWithId(R.id.show_btns_switch);
+        setContentView(R.layout.activity_profile);
+        ButterKnife.bind(this);
 
         final View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
@@ -164,8 +192,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        fakeBarInner = findViewWithId(R.id.fake_bar_inner);
-        scrollView = findViewWithId(R.id.scroll_view);
+
         googleSyncCard.setOnClickListener(v -> {
             if (service != null) {
                 service.connect();
@@ -202,7 +229,8 @@ public class ProfileActivity extends BaseToolbarActivity {
         });
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+        long lastUpdateTimeGoogle = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1L);
+        long lastUpdateTimeYandex = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1L);
 
         String yandexProfileName = sharedPreferences.getString("YA_USERNAME", null);
         if (yandexProfileName == null) {
@@ -212,7 +240,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         } else {
             String prefix =  yandexProfileName + " (" + getString(R.string.sv_synchronized) + " ";
             yandexAccountTextView.setPrefix(prefix);
-            yandexAccountTextView.setReferenceTime(lastUpdateTime);
+            yandexAccountTextView.setReferenceTime(lastUpdateTimeYandex);
             yandexAccountTextView.setSuffix(")");
         }
 
@@ -224,7 +252,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         } else {
             String prefix =  googleProfileName + " (" + getString(R.string.sv_synchronized) + " ";
             googleAccountTextView.setPrefix(prefix);
-            googleAccountTextView.setReferenceTime(lastUpdateTime);
+            googleAccountTextView.setReferenceTime(lastUpdateTimeGoogle);
             googleAccountTextView.setSuffix(")");
         }
 
@@ -331,7 +359,7 @@ public class ProfileActivity extends BaseToolbarActivity {
 
     private void saveToken(String token) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("YA_USERNAME", "");
+        editor.putString("YA_USERNAME", "YaUser");
         editor.putString("YA_TOKEN", token);
         editor.apply();
         handler.sendEmptyMessage(OnlineStorageProfileService.YANDEX_CONNECTED);
@@ -350,7 +378,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                     googleDownloadButton.setVisibility(View.VISIBLE);
                     if (service != null) {
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+                        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1L);
                         String accountName = service.getGoogleConnector().getAccountName();
                         String prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
                         googleAccountTextView.setPrefix(prefix);
@@ -379,7 +407,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
                     long lastUpdateTime = System.currentTimeMillis();
-                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, lastUpdateTime).apply();
+                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, lastUpdateTime).apply();
                     String accountName = service.getGoogleConnector().getAccountName();
                     String prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
                     googleAccountTextView.setPrefix(prefix);
@@ -398,7 +426,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                     yandexDownloadButton.setVisibility(View.VISIBLE);
                     if (service != null) {
                         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1L);
+                        lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1L);
                         accountName = sharedPreferences.getString("YA_USERNAME", "");
                         prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
                         yandexAccountTextView.setPrefix(prefix);
@@ -410,7 +438,7 @@ public class ProfileActivity extends BaseToolbarActivity {
                     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
                     lastUpdateTime = System.currentTimeMillis();
-                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, lastUpdateTime).apply();
+                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, lastUpdateTime).apply();
                     accountName = service.getYandexConnector().getAccountName();
                     prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
                     yandexAccountTextView.setPrefix(prefix);

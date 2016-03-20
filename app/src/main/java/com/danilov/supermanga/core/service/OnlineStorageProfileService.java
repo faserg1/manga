@@ -105,7 +105,7 @@ public class OnlineStorageProfileService extends Service {
 
     public void save() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1);
         googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
             @Override
             public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
@@ -127,7 +127,7 @@ public class OnlineStorageProfileService extends Service {
 
     public void saveYandex() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1);
         yandexConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
             @Override
             public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
@@ -149,7 +149,7 @@ public class OnlineStorageProfileService extends Service {
 
     public void download() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1);
         googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
             @Override
             public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
@@ -169,7 +169,7 @@ public class OnlineStorageProfileService extends Service {
 
     public void downloadYandex() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME, -1);
+        final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1);
         yandexConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
             @Override
             public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
