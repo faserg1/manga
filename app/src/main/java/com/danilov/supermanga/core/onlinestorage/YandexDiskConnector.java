@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.onlinestorage.yandex.Credentials;
 import com.danilov.supermanga.core.service.OnlineStorageProfileService;
+import com.danilov.supermanga.core.util.Utils;
 import com.yandex.disk.rest.ProgressListener;
 import com.yandex.disk.rest.ResourcesArgs;
 import com.yandex.disk.rest.RestClient;
@@ -17,7 +18,9 @@ import com.yandex.disk.rest.json.DiskInfo;
 import com.yandex.disk.rest.json.Link;
 import com.yandex.disk.rest.json.Resource;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -189,6 +192,8 @@ public class YandexDiskConnector extends OnlineStorageConnector {
                 restClient.uploadFile(link, false, file, null);
             } catch (IOException | ServerException e) {
                 commandCallback.onCommandError(e.getMessage());
+            } finally {
+                file.delete();
             }
             commandCallback.onCommandSuccess(true);
         });
@@ -243,12 +248,38 @@ public class YandexDiskConnector extends OnlineStorageConnector {
 
         @Override
         public void download(final String path, final CommandCallback<Boolean> commandCallback) {
-
+            try {
+                restClient.downloadFile(file.getPath().toString(), new File(path), null);
+            } catch (IOException | ServerException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void download(final CommandCallback<String> commandCallback) {
-
+            File tmp = null;
+            try {
+                tmp = File.createTempFile("tmpfile", "" + System.currentTimeMillis());
+            } catch (IOException e) {
+                commandCallback.onCommandError(e.getMessage());
+            }
+            try {
+                restClient.downloadFile(file.getPath().toString(), tmp, null);
+                FileReader fileReader = null;
+                if (tmp != null) {
+                    fileReader = new FileReader(tmp);
+                } else {
+                    commandCallback.onCommandError("File is empty");
+                }
+                BufferedReader reader = new BufferedReader(fileReader);
+                StringBuilder builder = new StringBuilder();
+                for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+                    builder.append(line);
+                }
+                commandCallback.onCommandSuccess(builder.toString());
+            } catch (IOException | ServerException e) {
+                commandCallback.onCommandError(e.getMessage());
+            }
         }
 
     }
