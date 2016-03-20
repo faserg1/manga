@@ -8,6 +8,8 @@
 
 package com.yandex.disk.rest;
 
+import com.danilov.supermanga.core.util.Constants;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +18,7 @@ public class Credentials {
 
     /* package */ static final String AUTHORIZATION_HEADER = "Authorization";
     /* package */ static final String USER_AGENT_HEADER = "User-Agent";
-    private static final String USER_AGENT = "Cloud API Android Client Example/1.0";
+    private static final String USER_AGENT = Constants.USER_AGENT_STRING;
 
     protected String user, token;
 

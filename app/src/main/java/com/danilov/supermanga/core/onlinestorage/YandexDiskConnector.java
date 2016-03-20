@@ -8,6 +8,7 @@ import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.onlinestorage.yandex.Credentials;
 import com.danilov.supermanga.core.service.OnlineStorageProfileService;
 import com.danilov.supermanga.core.util.Utils;
+import com.yandex.disk.rest.DownloadListener;
 import com.yandex.disk.rest.ProgressListener;
 import com.yandex.disk.rest.ResourcesArgs;
 import com.yandex.disk.rest.RestClient;
@@ -20,9 +21,12 @@ import com.yandex.disk.rest.json.Resource;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -249,7 +253,7 @@ public class YandexDiskConnector extends OnlineStorageConnector {
         @Override
         public void download(final String path, final CommandCallback<Boolean> commandCallback) {
             try {
-                restClient.downloadFile(file.getPath().toString(), new File(path), null);
+                restClient.downloadFile(file.getPath().toString(), new FileDownloadListener(new File(path), null));
             } catch (IOException | ServerException e) {
                 e.printStackTrace();
             }
@@ -270,6 +274,7 @@ public class YandexDiskConnector extends OnlineStorageConnector {
                     fileReader = new FileReader(tmp);
                 } else {
                     commandCallback.onCommandError("File is empty");
+                    return;
                 }
                 BufferedReader reader = new BufferedReader(fileReader);
                 StringBuilder builder = new StringBuilder();
@@ -282,6 +287,40 @@ public class YandexDiskConnector extends OnlineStorageConnector {
             }
         }
 
+    }
+
+    public class FileDownloadListener extends DownloadListener {
+
+        private final File saveTo;
+        private final ProgressListener progressListener;
+
+        public FileDownloadListener(File saveTo, ProgressListener progressListener) {
+            this.saveTo = saveTo;
+            this.progressListener = progressListener;
+        }
+
+        @Override
+        public OutputStream getOutputStream(boolean append)
+                throws FileNotFoundException {
+            return new FileOutputStream(saveTo, false);
+        }
+
+        @Override
+        public long getLocalLength() {
+            return 0;
+        }
+
+        @Override
+        public void updateProgress(long loaded, long total) {
+            if (progressListener != null) {
+                progressListener.updateProgress(loaded, total);
+            }
+        }
+
+        @Override
+        public boolean hasCancelled() {
+            return progressListener != null && progressListener.hasCancelled();
+        }
     }
 
 }

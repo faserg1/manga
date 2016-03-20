@@ -326,7 +326,7 @@ public class OnlineStorageProfileService extends Service {
             for (int i = 0; i < Constants.Settings.DB_FILES.length; i++) {
                 final String fileName = Constants.Settings.DB_FILES[i][0];
                 final String localFilePath = Constants.Settings.DB_FILES[i][1];
-                googleConnector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
+                connector.getExistingFile(fileName, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
                     @Override
                     public void onCommandSuccess(final OnlineStorageConnector.OnlineFile onlineFile) {
                         if (onlineFile != null) {
