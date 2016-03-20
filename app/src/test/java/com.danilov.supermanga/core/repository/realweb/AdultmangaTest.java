@@ -12,10 +12,8 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -27,14 +25,14 @@ import java.util.List;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class ReadmangaTest {
+public class AdultmangaTest {
 
     private RepositoryEngine engine;
 
     @Before
     public void setUp() {
         RepositoryHolder service = ServiceContainer.getService(RepositoryHolder.class);
-        RepositoryEngine.Repository repository = service.valueOf(RepositoryEngine.DefaultRepository.READMANGA.toString());
+        RepositoryEngine.Repository repository = service.valueOf(RepositoryEngine.DefaultRepository.ADULTMANGA.toString());
         engine = repository.getEngine();
     }
 

@@ -457,7 +457,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
                         try {
                             emptyRequest();
                             cookieStore = getCookieStore();
-                        } catch (IOException e) {
+                        } catch (IOException | RepositoryException e) {
                             //ну а что мы можем сделать, если куки нет
                         }
                     }
