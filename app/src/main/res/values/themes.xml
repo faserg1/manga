@@ -4,11 +4,51 @@
     <style name="MangaTransparent" parent="Manga">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+        <!--theme dependent-->
+        <item name="color_primary">@color/dark_blue</item>
+        <item name="color_primary_dark">@color/darkest_blue</item>
+        <item name="action_mode_background">@color/light_blue</item>
+        <item name="color_accent">@color/medium_dark_blue</item>
+        <item name="toolbar_color">@color/dark_blue</item>
+        <item name="fragment_background">#ffe3e3e3</item>
+        <item name="menu_drawer_item_color">@color/black_unselected_white_selected</item>
+        <item name="drawer_background_image">@drawable/material_background</item>
+
+        <item name="profile_text_toolbar_title">@android:color/white</item>
+        <item name="profile_text_category_title">@color/medium_dark_blue</item>
+        <item name="profile_text">@color/dark_gray</item>
+        <item name="profile_divider">@color/light_gray</item>
+        <item name="profile_card_background">@android:color/white</item>
+        <item name="card_background">@android:color/white</item>
+        <item name="card_text_color">@color/dark_gray</item>
+        <item name="list_item_background_drawable">@drawable/list_item_background</item>
+        <item name="toolbar_background_drawable">@drawable/toolbar_background</item>
+        <item name="update_item_background_drawable">@drawable/updates_item_background</item>
     </style>
 
     <style name="MangaTransparent.Dark" parent="Manga.Dark">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+        <!--theme dependent-->
+        <item name="color_primary">#353535</item>
+        <item name="color_primary_dark">#000</item>
+        <item name="action_mode_background">#222e39</item>
+        <item name="color_accent">@color/medium_dark_blue</item>
+        <item name="toolbar_color">#353535</item>
+        <item name="fragment_background">#565656</item>
+        <item name="menu_drawer_item_color">@color/white_unselected_white_selected</item>
+        <item name="drawer_background_image">@drawable/material_background_dark</item>
+
+        <item name="profile_text_toolbar_title">@android:color/white</item>
+        <item name="profile_text_category_title">@android:color/white</item>
+        <item name="profile_text">@android:color/white</item>
+        <item name="profile_divider">#3d3d3d</item>
+        <item name="profile_card_background">#4d4d4d</item>
+        <item name="card_background">#353535</item>
+        <item name="card_text_color">@android:color/white</item>
+        <item name="list_item_background_drawable">@drawable/list_item_background_dark</item>
+        <item name="toolbar_background_drawable">@drawable/toolbar_background_dark</item>
+        <item name="update_item_background_drawable">@drawable/updates_item_background_dark</item>
     </style>
 
     <style name="Manga" parent="MangaBaseTheme">
