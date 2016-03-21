@@ -21,11 +21,13 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:hint="@string/hint_filter_edittext"
-            android:textColor="@color/dialog_text"
+            android:textColorHint="?attr/card_text_color"
+            android:textColor="?attr/card_text_color"
             android:textSize="22sp"/>
 
         <Button
             android:id="@+id/clear"
+            style="@style/Manga.ButtonCommon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"

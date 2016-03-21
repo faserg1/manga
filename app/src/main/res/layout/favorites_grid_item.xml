@@ -11,7 +11,7 @@
 
     <RelativeLayout android:layout_width="fill_parent"
                   android:layout_height="@dimen/grid_item_height"
-                  android:background="@drawable/grid_item_background"
+                    android:background="?attr/grid_item_background"
                   android:id="@+id/card_wrapper">
 
 
@@ -21,15 +21,16 @@
                    android:layout_above="@+id/manga_title"
                    android:scaleType="centerCrop"/>
 
-        <TextView android:layout_width="wrap_content"
+
+        <com.danilov.supermanga.core.view.CTextView
+                android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:id="@+id/manga_title"
                   android:padding="10dp"
                   android:layout_alignParentBottom="true"
                   android:textSize="@dimen/grid_item_text_size"
-                  android:text="Bakuman"
                   android:singleLine="true"
-                  android:textColor="@android:color/black"/>
+                android:textColor="?attr/card_text_color"/>
 
     </RelativeLayout>
 
@@ -41,7 +42,7 @@
         android:background="#CC000000"
         android:layout_alignParentTop="true">
 
-        <TextView android:layout_width="wrap_content"
+        <com.danilov.supermanga.core.view.CTextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="22sp"
                   android:layout_centerVertical="true"

@@ -1,78 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingLeft="4dp"
-              android:paddingRight="4dp"
-              android:paddingTop="2dp"
-              android:paddingBottom="2dp">
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="2dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="2dp">
 
-    <RelativeLayout android:layout_width="fill_parent"
-                  android:layout_height="@dimen/grid_item_height"
-                  android:background="@drawable/grid_item_background"
-                  android:id="@+id/card_wrapper">
+    <RelativeLayout
+        android:id="@+id/card_wrapper"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/grid_item_height"
+        android:background="?attr/grid_item_background">
 
-        <ImageView android:layout_width="fill_parent"
-                   android:layout_height="fill_parent"
-                   android:scaleType="centerCrop"
-                   android:layout_above="@+id/bottom_holder"
-                   android:id="@+id/manga_cover"/>
+        <ImageView
+            android:id="@+id/manga_cover"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/bottom_holder"
+            android:scaleType="centerCrop"/>
 
         <RelativeLayout
-            android:layout_alignParentBottom="true"
             android:id="@+id/bottom_holder"
-            android:padding="10dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:descendantFocusability="blocksDescendants">
+            android:layout_alignParentBottom="true"
+            android:descendantFocusability="blocksDescendants"
+            android:padding="10dp">
 
-            <TextView android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+
+            <com.danilov.supermanga.core.view.CTextView
                 android:id="@+id/manga_title"
-                android:singleLine="true"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/popup_button"
                 android:layout_toStartOf="@+id/popup_button"
                 android:ellipsize="marquee"
                 android:focusable="true"
-                android:textSize="@dimen/grid_item_text_size"
                 android:focusableInTouchMode="true"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
-                android:textColor="@android:color/black"/>
+                android:singleLine="true"
+                android:textColor="?attr/card_text_color"
+                android:textSize="@dimen/grid_item_text_size"/>
 
             <ImageButton
                 android:id="@+id/popup_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_action_overflow"
+                android:layout_alignParentRight="true"
+                android:background="?attr/selectableItemBackground"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:background="?attr/selectableItemBackground"/>
+                android:src="@drawable/ic_action_overflow"/>
 
-            </RelativeLayout>
+        </RelativeLayout>
 
 
     </RelativeLayout>
 
     <ImageView
-            android:src="@drawable/card_shadow"
-            android:layout_height="@dimen/card_shadow"
-            android:layout_width="fill_parent"
-            android:layout_below="@id/card_wrapper"/>
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/card_shadow"
+        android:layout_below="@id/card_wrapper"
+        android:src="@drawable/card_shadow"/>
 
-    <View android:layout_width="fill_parent"
-        android:layout_height="@dimen/grid_item_height"
+    <View
         android:id="@+id/selectorBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/grid_item_height"
         android:background="@color/selected_color">
     </View>
 
-    <View android:layout_width="fill_parent"
-        android:layout_height="@dimen/grid_item_height"
+    <View
         android:id="@+id/background"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/grid_item_height"
         android:background="@drawable/selectable_item_background">
     </View>
 
