@@ -71,6 +71,15 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public void setupTheme(final boolean isDark) {
+        if (isDark) {
+            setTheme(R.style.MangaTransparent_Dark);
+        } else {
+            setTheme(R.style.MangaTransparent);
+        }
+    }
+
     private int top;
     private int left;
     private int width;

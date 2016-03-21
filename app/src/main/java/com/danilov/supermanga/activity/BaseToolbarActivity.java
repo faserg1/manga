@@ -1,7 +1,9 @@
 package com.danilov.supermanga.activity;
 
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,9 @@ public class BaseToolbarActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean darkTheme = sharedPreferences.getBoolean("DARK_THEME", false);
+        setupTheme(darkTheme);
         super.onCreate(savedInstanceState);
     }
 
@@ -86,6 +91,14 @@ public class BaseToolbarActivity extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    public void setupTheme(final boolean isDark) {
+        if (isDark) {
+            setTheme(R.style.Manga_Dark);
+        } else {
+            setTheme(R.style.Manga);
+        }
     }
 
 }

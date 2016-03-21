@@ -16,6 +16,7 @@
         android:id="@+id/useful_info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textColor="?attr/card_text_color"
         android:text="@string/p_useful_main_fragment"/>
 
     <!--card-->
@@ -41,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/updates_item_background"
+                android:background="?attr/update_item_background_drawable"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -53,10 +54,11 @@
                     android:gravity="center"
                     android:padding="5dp">
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:textColor="?attr/card_text_color"
                         android:text="@string/sv_update"/>
 
                 </LinearLayout>
@@ -82,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/updates_item_background"
+                android:background="?attr/update_item_background_drawable"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -100,7 +102,8 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_action_important_black"/>
 
-                    <TextView
+                    <com.danilov.supermanga.core.view.CTextView
+                        android:textColor="?attr/card_text_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Читаемое"/>

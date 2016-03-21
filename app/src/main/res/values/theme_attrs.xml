@@ -46,6 +46,9 @@
     <attr name="profile_card_background"/>
 
     <attr name="card_background"/>
+    <attr name="list_item_background_drawable"/>
+    <attr name="update_item_background_drawable"/>
+    <attr name="toolbar_background_drawable"/>
     <attr name="card_text_color"/>
 
     <attr name="fragment_background" format="color"/>

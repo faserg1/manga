@@ -22,7 +22,7 @@
             android:id="@+id/card_no_shadow_wrapper"
             android:layout_width="fill_parent"
             android:layout_height="140dp"
-            android:background="@drawable/list_item_background"
+            android:background="?attr/list_item_background_drawable"
             android:baselineAligned="false"
             android:descendantFocusability="blocksDescendants"
             android:orientation="horizontal"

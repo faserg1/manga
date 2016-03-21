@@ -2,12 +2,15 @@ package com.danilov.supermanga.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -26,6 +29,9 @@ import com.danilov.supermanga.core.util.ServiceContainer;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Semyon on 23.02.2015.
  */
@@ -36,6 +42,9 @@ public class SettingsFragment extends BaseFragmentNative {
     private Spinner decoderSpinner;
 
     private ApplicationSettings settings;
+
+    @Bind(R.id.dark_theme)
+    public CheckBox checkBox;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -49,6 +58,7 @@ public class SettingsFragment extends BaseFragmentNative {
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
+        ButterKnife.bind(this, view);
         settings = ApplicationSettings.get(getActivity());
         mainPageSelector = findViewById(R.id.main_page_selector);
         decoderSpinner = findViewById(R.id.decoder_selector);
@@ -73,6 +83,15 @@ public class SettingsFragment extends BaseFragmentNative {
                 }
             };
             t.start();
+        });
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+        boolean darkTheme = sharedPreferences.getBoolean("DARK_THEME", false);
+        checkBox.setChecked(darkTheme);
+
+        checkBox.setOnCheckedChangeListener((a, b) -> {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+            sp.edit().putBoolean("DARK_THEME", b).apply();
         });
 
         final DecoderAdapter decoderAdapter = new DecoderAdapter();

@@ -16,7 +16,7 @@
             android:layout_height="@dimen/repository_height"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:background="@drawable/list_item_background"
+            android:background="?attr/list_item_background_drawable"
             android:paddingLeft="15dp"
             android:paddingTop="15dp"
             android:paddingRight="15dp"
