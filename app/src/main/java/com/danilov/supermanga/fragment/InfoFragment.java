@@ -165,7 +165,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         } else {
             restoreInstanceState(savedInstanceState);
         }
-        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, getActivity());
         final float size = getResources().getDimension(R.dimen.info_parallax_image_height);
         activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(.0f, baseColor));
         scrollViewParallax.setScrollListener((horizontal, vertical, oldl, oldt) -> {

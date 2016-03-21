@@ -138,7 +138,7 @@ public class ChaptersFragment extends BaseFragmentNative implements AdapterView.
         } else {
             restoreInstanceState(savedInstanceState);
         }
-        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, getActivity());
         activity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
     }
 

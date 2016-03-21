@@ -89,7 +89,7 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         findViewById(R.id.fake_toolbar).setVisibility(withToolbarOffset ? View.VISIBLE : View.GONE);
 
         BaseToolbarActivity infoActivity = (BaseToolbarActivity) getActivity();
-        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, applicationContext);
+        final int baseColor = ThemeUtils.getColor(R.attr.color_primary, getActivity());
         infoActivity.getToolbar().setBackgroundColor(Utils.getColorWithAlpha(1.0f, baseColor));
 
         setupRecycler();
