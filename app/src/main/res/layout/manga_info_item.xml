@@ -174,28 +174,28 @@
                         android:layout_width="@dimen/info_item_image_button_size"
                         android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
-                        android:src="@drawable/button_download_icon"/>
+                        android:src="?attr/button_download_icon"/>
 
                     <ImageButton
                         android:id="@+id/read_online"
                         android:layout_width="@dimen/info_item_image_button_size"
                         android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
-                        android:src="@drawable/button_online_icon"/>
+                        android:src="?attr/button_online_icon"/>
 
                     <ImageButton
                         android:id="@+id/repository_link"
                         android:layout_width="@dimen/info_item_image_button_size"
                         android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
-                        android:src="@drawable/button_open_in_browser"/>
+                        android:src="?attr/button_open_in_browser"/>
 
                     <ImageButton
                         android:id="@+id/chapters_list"
                         android:layout_width="@dimen/info_item_image_button_size"
                         android:layout_height="@dimen/info_item_image_button_size"
                         android:background="@drawable/selectable_normal_background"
-                        android:src="@drawable/ic_chapters_list"/>
+                        android:src="?attr/button_chapters_icon"/>
 
 
                 </LinearLayout>

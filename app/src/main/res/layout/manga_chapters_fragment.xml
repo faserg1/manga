@@ -25,6 +25,7 @@
             android:id="@+id/select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="?attr/card_text_color"
             android:text="@string/sv_select_all"/>
 
         <RelativeLayout
@@ -44,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/card_text_color"
                     android:layout_centerInParent="true"
                     android:text="@string/sv_select_last"/>
 

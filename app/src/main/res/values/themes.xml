@@ -61,6 +61,24 @@
         <item name="toolbar_background_drawable">@drawable/toolbar_background</item>
         <item name="update_item_background_drawable">@drawable/updates_item_background</item>
 
+
+        <!--icons-->
+        <item name="button_chapters_icon">@drawable/button_chapters_icon</item>
+        <item name="button_download_icon">@drawable/button_download_icon</item>
+        <item name="button_online_icon">@drawable/button_online_icon</item>
+        <item name="button_open_in_browser">@drawable/button_open_in_browser</item>
+
+        <item name="ic_action_downloads">@drawable/ic_action_downloads</item>
+        <item name="ic_action_new">@drawable/ic_action_new</item>
+        <item name="ic_action_search_black">@drawable/ic_action_search_black</item>
+        <item name="ic_action_settings">@drawable/ic_action_settings</item>
+        <item name="ic_action_time">@drawable/ic_action_time</item>
+        <item name="ic_chapters_list">@drawable/ic_chapters_list</item>
+        <item name="ic_download_manager">@drawable/ic_download_manager</item>
+        <item name="ic_readed">@drawable/ic_readed</item>
+        <item name="ic_saved">@drawable/ic_saved</item>
+        <item name="ic_action_discard">@drawable/ic_action_discard</item>
+
     </style>
 
     <style name="Manga.Dark" parent="Manga">
@@ -94,6 +112,23 @@
         <item name="list_item_background_drawable">@drawable/list_item_background_dark</item>
         <item name="toolbar_background_drawable">@drawable/toolbar_background_dark</item>
         <item name="update_item_background_drawable">@drawable/updates_item_background_dark</item>
+
+        <!--icons-->
+        <item name="button_chapters_icon">@drawable/dark_button_chapters_icon</item>
+        <item name="button_download_icon">@drawable/dark_button_download_icon</item>
+        <item name="button_online_icon">@drawable/dark_button_online_icon</item>
+        <item name="button_open_in_browser">@drawable/dark_button_open_in_browser</item>
+
+        <item name="ic_action_downloads">@drawable/dark_ic_action_downloads</item>
+        <item name="ic_action_new">@drawable/dark_ic_action_new</item>
+        <item name="ic_action_search_black">@drawable/dark_ic_action_search_black</item>
+        <item name="ic_action_settings">@drawable/dark_ic_action_settings</item>
+        <item name="ic_action_time">@drawable/dark_ic_action_time</item>
+        <item name="ic_chapters_list">@drawable/dark_ic_chapters_list</item>
+        <item name="ic_download_manager">@drawable/dark_ic_download_manager</item>
+        <item name="ic_readed">@drawable/dark_ic_readed</item>
+        <item name="ic_saved">@drawable/dark_ic_saved</item>
+        <item name="ic_action_discard">@drawable/dark_ic_action_discard</item>
 
     </style>
 

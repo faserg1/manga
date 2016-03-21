@@ -10,14 +10,14 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_width="wrap_content"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/card_text_color"
         android:layout_height="wrap_content"/>
 
     <com.danilov.supermanga.core.widget.TriStateCheckbox
         android:layout_width="wrap_content"
         android:paddingLeft="30dp"
         android:paddingTop="5dp"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/card_text_color"
         android:id="@+id/triStateCheckbox"
         android:layout_height="wrap_content"/>
 
@@ -26,7 +26,7 @@
         android:visibility="gone"
         android:text="Эччи"
         android:id="@+id/checkbox"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/card_text_color"
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>

@@ -55,7 +55,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:src="@drawable/ic_action_discard"/>
+                android:src="?attr/ic_action_discard"/>
 
         </RelativeLayout>
 

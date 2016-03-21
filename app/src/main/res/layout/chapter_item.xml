@@ -17,13 +17,13 @@
 
     <ImageView
         android:id="@+id/is_saved"
-        android:src="@drawable/ic_saved"
+        android:src="?attr/ic_saved"
         android:layout_width="35dp"
         android:layout_height="35dp"/>
 
     <ImageView
         android:id="@+id/is_red"
-        android:src="@drawable/ic_readed"
+        android:src="?attr/ic_readed"
         android:layout_width="35dp"
         android:layout_height="35dp"/>
 

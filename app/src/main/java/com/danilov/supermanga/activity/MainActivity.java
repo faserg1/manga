@@ -27,6 +27,7 @@ import com.danilov.supermanga.core.database.UpdatesDAO;
 import com.danilov.supermanga.core.dialog.CustomDialogFragment;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
+import com.danilov.supermanga.core.theme.ThemeUtils;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.DrawerStub;
 import com.danilov.supermanga.core.util.ServiceContainer;
@@ -285,13 +286,13 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
 
     public enum MainMenuItem {
 
-        UPDATES(R.drawable.ic_action_new, R.string.menu_updates),
-        SEARCH(R.drawable.ic_action_search_black, R.string.menu_search),
-        HISTORY(R.drawable.ic_action_time, R.string.menu_history),
+        UPDATES(R.attr.ic_action_new, R.string.menu_updates),
+        SEARCH(R.attr.ic_action_search_black, R.string.menu_search),
+        HISTORY(R.attr.ic_action_time, R.string.menu_history),
         FAVORITE(R.drawable.button_love_checked_icon, R.string.menu_love),
-        LOCAL(R.drawable.ic_action_downloads, R.string.menu_local),
-        DOWNLOAD_MANAGER(R.drawable.ic_download_manager, R.string.menu_download),
-        SETTINGS(R.drawable.ic_action_settings, R.string.menu_settings);
+        LOCAL(R.attr.ic_action_downloads, R.string.menu_local),
+        DOWNLOAD_MANAGER(R.attr.ic_download_manager, R.string.menu_download),
+        SETTINGS(R.attr.ic_action_settings, R.string.menu_settings);
 
         private int iconId;
 
@@ -550,7 +551,11 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
                 quantityNew.setVisibility(View.INVISIBLE);
             }
             text.setText(context.getString(item.getStringId()));
-            icon.setImageResource(item.getIconId());
+            if (item == MainMenuItem.FAVORITE) {
+                icon.setImageResource(item.getIconId());
+            } else {
+                icon.setImageDrawable(ThemeUtils.getReferencedDrawable(item.getIconId(), MainActivity.this));
+            }
             return view;
         }
 
