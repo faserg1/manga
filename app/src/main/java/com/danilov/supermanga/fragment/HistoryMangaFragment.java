@@ -2,11 +2,15 @@ package com.danilov.supermanga.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +36,16 @@ import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
+import com.danilov.supermanga.core.view.helper.GridViewHelper;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
@@ -46,27 +54,27 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
 
     private static final String TAG = "HistoryMangaFragment";
 
-    private GridView gridView;
-    private ProgressBar historyProgressBar;
+    @Bind(R.id.grid_view)
+    public GridView gridView;
 
-    private HistoryMangaAdapter adapter = null;
-
+    @Bind(R.id.history_progress_bar)
+    public ProgressBar historyProgressBar;
     @Inject
     public LocalImageManager localImageManager = null;
-
     @Inject
     public HttpImageManager httpImageManager = null;
-
+    public float gridItemRatio;
+    private HistoryMangaAdapter adapter = null;
     private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
 
-    public static HistoryMangaFragment newInstance() {
-        return new HistoryMangaFragment();
-    }
-
     public HistoryMangaFragment() {
         MangaApplication.get().applicationComponent().inject(this);
+    }
+
+    public static HistoryMangaFragment newInstance() {
+        return new HistoryMangaFragment();
     }
 
     @Override
@@ -78,12 +86,46 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        historyProgressBar = (ProgressBar) view.findViewById(R.id.history_progress_bar);
+        ButterKnife.bind(this, view);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        gridView = (GridView) view.findViewById(R.id.grid_view);
         gridView.setOnItemClickListener(this);
         gridView.setOnItemLongClickListener(this);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        int pColCount = sharedPreferences.getInt("P_COL_COUNT", 0);
+        int lColCount = sharedPreferences.getInt("L_COL_COUNT", 0);
+        int screenOrientation = getScreenOrientation();
+        switch (screenOrientation) {
+            case Configuration.ORIENTATION_PORTRAIT:
+            case Configuration.ORIENTATION_SQUARE:
+                if (pColCount != 0) {
+                    gridView.setNumColumns(pColCount);
+                }
+                break;
+            case Configuration.ORIENTATION_LANDSCAPE:
+                if (lColCount != 0) {
+                    gridView.setNumColumns(lColCount);
+                }
+                break;
+        }
+
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
+        gridItemRatio = Utils.getFloatResource(R.dimen.grid_item_ratio, getActivity().getResources());
+    }
+
+    public int getScreenOrientation() {
+        Display getOrient = getActivity().getWindowManager().getDefaultDisplay();
+        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        if (getOrient.getWidth() == getOrient.getHeight()) {
+            orientation = Configuration.ORIENTATION_SQUARE;
+        } else {
+            if (getOrient.getWidth() < getOrient.getHeight()) {
+                orientation = Configuration.ORIENTATION_PORTRAIT;
+            } else {
+                orientation = Configuration.ORIENTATION_LANDSCAPE;
+            }
+        }
+        return orientation;
     }
 
     @Override
@@ -166,19 +208,42 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
         return true;
     }
 
+    private void removeHistory(final HistoryElement historyElement) {
+        try {
+            historyDAO.deleteManga(historyElement.getManga(), historyElement.isOnline());
+            loadHistory();
+        } catch (DatabaseAccessException e) {
+            e.printStackTrace();
+            Utils.showToast(getActivity(), getActivity().getString(R.string.e_failed_remove_history) + e.getMessage());
+        }
+    }
+
+    @NonNull
+    private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {
+        List<HistoryElement> history = historyDAO.getMangaHistory();
+        Collections.sort(history, (l, r) -> {
+            Date lDate = l.getDate();
+            Date rDate = r.getDate();
+            if (lDate.equals(rDate)) {
+                return 0;
+            }
+            return lDate.after(rDate) ? -1 : 1;
+        });
+        return history;
+    }
 
     private class HistoryMangaAdapter extends ArrayAdapter<HistoryElement> {
 
         private List<HistoryElement> history = null;
 
-        @Override
-        public int getCount() {
-            return history.size();
-        }
-
         public HistoryMangaAdapter(final Context context, final List<HistoryElement> history) {
             super(context, 0, history);
             this.history = history;
+        }
+
+        @Override
+        public int getCount() {
+            return history.size();
         }
 
         public List<HistoryElement> getHistoryElements() {
@@ -191,6 +256,12 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
             if (view == null) {
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.history_grid_item, parent, false);
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+
+                int colWidth = GridViewHelper.getColumnWidth(gridView);
+
+                layoutParams.height = (int) (colWidth * gridItemRatio);
+                view.setLayoutParams(layoutParams);
             }
             GridItemHolder holder = null;
             Object tag = view.getTag();
@@ -246,30 +317,6 @@ public class HistoryMangaFragment extends BaseFragmentNative implements AdapterV
 
         }
 
-    }
-
-    private void removeHistory(final HistoryElement historyElement) {
-        try {
-            historyDAO.deleteManga(historyElement.getManga(), historyElement.isOnline());
-            loadHistory();
-        } catch (DatabaseAccessException e) {
-            e.printStackTrace();
-            Utils.showToast(getActivity(), getActivity().getString(R.string.e_failed_remove_history) + e.getMessage());
-        }
-    }
-
-    @NonNull
-    private List<HistoryElement> getHistorySorted() throws DatabaseAccessException {
-        List<HistoryElement> history = historyDAO.getMangaHistory();
-        Collections.sort(history, (l, r) -> {
-            Date lDate = l.getDate();
-            Date rDate = r.getDate();
-            if (lDate.equals(rDate)) {
-                return 0;
-            }
-            return lDate.after(rDate) ? -1 : 1;
-        });
-        return history;
     }
 
 }

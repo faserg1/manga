@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -45,6 +46,12 @@ public class SettingsFragment extends BaseFragmentNative {
 
     @Bind(R.id.dark_theme)
     public CheckBox checkBox;
+
+    @Bind(R.id.portrait_col_count)
+    public SeekBar portraitColCount;
+
+    @Bind(R.id.landscape_col_count)
+    public SeekBar landscapeColCount;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -92,6 +99,53 @@ public class SettingsFragment extends BaseFragmentNative {
         checkBox.setOnCheckedChangeListener((a, b) -> {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(applicationContext);
             sp.edit().putBoolean("DARK_THEME", b).apply();
+        });
+
+
+        int pColCount = sharedPreferences.getInt("P_COL_COUNT", 0);
+        int lColCount = sharedPreferences.getInt("L_COL_COUNT", 0);
+
+        portraitColCount.setProgress(pColCount);
+        landscapeColCount.setProgress(lColCount);
+
+        portraitColCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+                if (fromUser) {
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+                    sp.edit().putInt("P_COL_COUNT", progress).apply();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(final SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+
+            }
+        });
+
+        landscapeColCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+                if (fromUser) {
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+                    sp.edit().putInt("L_COL_COUNT", progress).apply();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(final SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+
+            }
         });
 
         final DecoderAdapter decoderAdapter = new DecoderAdapter();

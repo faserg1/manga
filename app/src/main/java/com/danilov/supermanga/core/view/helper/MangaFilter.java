@@ -87,8 +87,9 @@ public class MangaFilter extends Filter implements TextWatcher {
         }
     }
 
-    public interface  BaseAdapterAccessor {
+    public interface BaseAdapterAccessor {
         void notifyDataSetInvalidated();
+
         void notifyDataSetChanged(final List<Manga> mangaList);
     }
 

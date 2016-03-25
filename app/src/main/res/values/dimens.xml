@@ -42,4 +42,6 @@
 
     <dimen name="padding_classic">16dp</dimen>
 
+    <item name="grid_item_ratio" type="dimen" format="float">1.2</item>
+
 </resources>

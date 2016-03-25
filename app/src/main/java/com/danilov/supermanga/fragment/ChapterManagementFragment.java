@@ -153,10 +153,15 @@ public class ChapterManagementFragment extends BaseFragmentNative {
         ChapterAdapter adapter = (ChapterAdapter) chaptersView.getAdapter();
         for (int i = 0; i < selection.length; i++) {
             if (selection[i]) {
-                removeChapter(adapter.chapterAt(i));
-                adapter.deleteMangaChapterAt(i);
+                int chapterPos = i;
+                if (adapter.isReversed) {
+                    chapterPos = getCount() - 1 - chapterPos;
+                }
+                removeChapter(adapter.chapterAt(chapterPos));
+                adapter.deleteMangaChapterAt(chapterPos);
             }
         }
+        setSelectionMode(false);
     }
 
     private void setupRecycler() {
@@ -199,7 +204,10 @@ public class ChapterManagementFragment extends BaseFragmentNative {
                                          @NonNull final ItemHolderInfo postLayoutInfo) {
                 ChapterVH holder = (ChapterVH) newHolder;
                 holder.isSelected.setVisibility(isInSelectionMode ? View.VISIBLE : View.GONE);
-                holder.download.setVisibility(isInSelectionMode ? View.GONE : View.VISIBLE);
+                ChapterAdapter adapter = (ChapterAdapter) chaptersView.getAdapter();
+                int adapterPosition = newHolder.getAdapterPosition();
+                ChapterItem chapterItem = adapter.infoAt(adapterPosition);
+                holder.download.setVisibility(chapterItem.saved || isInSelectionMode ? View.GONE : View.VISIBLE);
                 dispatchAnimationFinished(newHolder);
                 return true;
             }

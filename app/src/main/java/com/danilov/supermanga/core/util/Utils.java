@@ -9,6 +9,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -85,6 +86,12 @@ public class Utils {
         int a = Math.min(255, Math.max(0, (int) (alpha * 255))) << 24;
         int rgb = 0x00ffffff & baseColor;
         return a + rgb;
+    }
+
+    public static float getFloatResource(final int id, final Resources resources) {
+        TypedValue outValue = new TypedValue();
+        resources.getValue(id, outValue, true);
+        return outValue.getFloat();
     }
 
     public static DialogFragment easyDialogMessage(final FragmentManager fm, final boolean userClosable, final boolean hasProgress, final String title, final String message) {

@@ -49,6 +49,32 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Кол-во столбцов в портретном режиме (0 - авто)"
+            android:textColor="?attr/card_text_color"/>
+
+        <SeekBar
+            android:id="@+id/portrait_col_count"
+            android:max="6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Кол-во столбцов в лендскейпе  (0 - авто)"
+            android:textColor="?attr/card_text_color"/>
+
+        <SeekBar
+            android:max="10"
+            android:id="@+id/landscape_col_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
