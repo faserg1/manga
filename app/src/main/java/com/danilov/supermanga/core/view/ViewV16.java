@@ -282,7 +282,7 @@ public class ViewV16 {
 
     }
 
-    private static class OneShotCancelableAnimatorListenerAdapter extends com.nineoldandroids.animation.AnimatorListenerAdapter {
+    public static class OneShotCancelableAnimatorListenerAdapter extends com.nineoldandroids.animation.AnimatorListenerAdapter {
 
         /**
          * Created by Gustavo Claramunt (AnderWeb) on 2014/07/10
@@ -355,6 +355,68 @@ public class ViewV16 {
          * @param animation
          */
         public void onAnimationEndCanceled(Animator animation) {
+
+        }
+
+    }
+
+    public static class OneShotAnimatorListener implements android.animation.Animator.AnimatorListener {
+
+
+        private boolean doneStart = false;
+        private boolean doneEnd = false;
+        private boolean canceled = false;
+        /**
+         * This method will be called ONLY ONCE when your animation starts
+         * @param animation
+         */
+        public void onAnimationStartOk(final android.animation.Animator animation) {
+
+        }
+
+        /**
+         * This method will be called ONLY ONCE when your animation ends and ONLY if it wasn't previously canceled
+         * @param animation
+         */
+        public void onAnimationEndOk(final android.animation.Animator animation) {
+
+        }
+
+        /**
+         * This method will be called ONLY ONCE when your animation ends and ONLY because it was canceled
+         * @param animation
+         */
+        public void onAnimationEndCanceled(final android.animation.Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationStart(final android.animation.Animator animation) {
+            if (!doneStart) {
+                doneStart = true;
+                onAnimationStartOk(animation);
+            }
+        }
+
+        @Override
+        public void onAnimationEnd(final android.animation.Animator animation) {
+            if (!doneEnd) {
+                doneEnd = true;
+                if (canceled) {
+                    onAnimationEndCanceled(animation);
+                } else {
+                    onAnimationEndOk(animation);
+                }
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(final android.animation.Animator animation) {
+            canceled = true;
+        }
+
+        @Override
+        public void onAnimationRepeat(final android.animation.Animator animation) {
 
         }
 

@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:weightSum="1"
               android:background="?attr/fragment_background"
+              android:animateLayoutChanges="true"
               android:orientation="vertical">
 
     <View
@@ -12,9 +14,43 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chapters"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp">
 
     </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/number_select"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sv_select_range"
+        style="@style/Manga.ButtonCommon"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/selection_helper">
+
+        <Button
+            android:id="@+id/download"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            style="@style/Manga.ButtonCommon"
+            android:layout_height="wrap_content"
+            android:text="@string/sv_download"/>
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            style="@style/Manga.ButtonCommon"
+            android:layout_height="wrap_content"
+            android:text="@string/sv_delete"/>
+
+    </LinearLayout>
 
 </LinearLayout>
