@@ -106,6 +106,7 @@
                             <com.danilov.supermanga.core.view.CTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textColor="?attr/card_text_color"
                                 android:text="Синхронизировать"/>
 
                             <ImageView
@@ -131,6 +132,7 @@
                             <com.danilov.supermanga.core.view.CTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textColor="?attr/card_text_color"
                                 android:text="Загрузить"/>
 
                             <ImageView

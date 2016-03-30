@@ -1,21 +1,30 @@
 package com.danilov.supermanga.core.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
 
+import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.onlinestorage.GoogleDriveConnector;
 import com.danilov.supermanga.core.onlinestorage.OnlineStorageConnector;
 import com.danilov.supermanga.core.onlinestorage.YandexDiskConnector;
+import com.danilov.supermanga.core.theme.ThemeUtils;
+import com.danilov.supermanga.core.util.BitmapUtils;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Logger;
 import com.google.android.gms.common.ConnectionResult;
@@ -104,6 +113,7 @@ public class OnlineStorageProfileService extends Service {
     }
 
     public void save() {
+        showPendingUploadNotification(true);
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1);
         googleConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
@@ -126,6 +136,7 @@ public class OnlineStorageProfileService extends Service {
     }
 
     public void saveYandex() {
+        showPendingUploadNotification(false);
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         final long lastSyncTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1);
         yandexConnector.getExistingFile(Constants.Settings.ONLINE_SETTINGS_FILENAME, new OnlineStorageConnector.CommandCallback<OnlineStorageConnector.OnlineFile>() {
@@ -222,6 +233,7 @@ public class OnlineStorageProfileService extends Service {
 
                         } else {
                             notifyHandler(connector.getSentSuccessCode(), null);
+                            closePendingUploadNotification(connector.getSentSuccessCode() == GOOGLE_SENT_SUCCESS);
                         }
                     }
                 }
@@ -485,6 +497,42 @@ public class OnlineStorageProfileService extends Service {
             return OnlineStorageProfileService.this;
         }
 
+    }
+
+
+    private void showPendingUploadNotification(final boolean isGoogle) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_action_cloud);
+
+        builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.dark_ic_saved));
+
+        final String text = "Загрузка данных в " + (isGoogle ? "Google Drive" : "Яндекс.Диск");
+
+        builder.setContentTitle("Super Manga Reader");
+        builder.setContentText(text);
+        Notification notification = builder.build();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(isGoogle ? 1337 : 228, notification);
+    }
+
+    private void closePendingUploadNotification(final boolean isGoogle) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.cancel(isGoogle ? 1337 : 228);
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setAutoCancel(true);
+        builder.setSmallIcon(R.drawable.ic_action_cloud);
+
+        builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.dark_ic_saved));
+
+        final String text = "Загружено в " + (isGoogle ? "Google Drive" : "Яндекс.Диск");
+        builder.setTicker(text);
+        builder.setContentTitle("Ура!");
+        builder.setContentText(text);
+        Notification notification = builder.build();
+        notificationManager.notify(isGoogle ? 1338 : 229, notification);
     }
 
 }

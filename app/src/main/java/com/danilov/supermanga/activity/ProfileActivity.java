@@ -483,6 +483,7 @@ public class ProfileActivity extends BaseToolbarActivity {
     protected void onDestroy() {
         if (serviceConnection != null && service != null) {
             unbindService(serviceConnection);
+            service.removeHandler();
             service = null;
         }
         super.onDestroy();
