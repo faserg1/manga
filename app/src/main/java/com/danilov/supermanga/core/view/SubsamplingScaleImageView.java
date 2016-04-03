@@ -252,6 +252,7 @@ public class SubsamplingScaleImageView extends View {
             if (typedAttr.hasValue(R.styleable.SubsamplingScaleImageView_zoomEnabled)) {
                 setZoomEnabled(typedAttr.getBoolean(R.styleable.SubsamplingScaleImageView_zoomEnabled, true));
             }
+            typedAttr.recycle();
         }
     }
 

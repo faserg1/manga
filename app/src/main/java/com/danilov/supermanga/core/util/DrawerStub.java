@@ -1,5 +1,6 @@
 package com.danilov.supermanga.core.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -20,11 +21,13 @@ public class DrawerStub extends DrawerLayout {
         super(context);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected Parcelable onSaveInstanceState() {
         return null;
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onRestoreInstanceState(final Parcelable state) {
 
@@ -123,6 +126,7 @@ public class DrawerStub extends DrawerLayout {
     public void computeScroll() {
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void requestLayout() {
     }
@@ -135,10 +139,12 @@ public class DrawerStub extends DrawerLayout {
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onAttachedToWindow() {
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onDetachedFromWindow() {
     }

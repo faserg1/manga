@@ -188,7 +188,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         popup.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.download:
-                    Intent intent = new Intent(MangaQueryActivity.this, DownloadsActivity.class);
+                    Intent intent = new Intent(MangaQueryActivity.this, null);
                     intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
                     startActivity(intent);
                     return true;
