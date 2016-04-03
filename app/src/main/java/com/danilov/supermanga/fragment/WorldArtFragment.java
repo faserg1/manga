@@ -1,8 +1,13 @@
 package com.danilov.supermanga.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -13,37 +18,100 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.httpimage.HttpImageManager;
+import com.danilov.supermanga.DaggerApplicationComponent;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
+import com.danilov.supermanga.core.application.MangaApplication;
+import com.danilov.supermanga.core.http.ExtendedHttpClient;
+import com.danilov.supermanga.core.model.LocalManga;
+import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.repository.RepositoryEngine;
+import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
+import com.danilov.supermanga.core.service.LocalImageManager;
+import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.IoUtils;
+import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.ScrollViewParallax;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.BindDimen;
+import butterknife.ButterKnife;
 
 /**
  * Created by Semyon on 29.02.2016.
  */
 public class WorldArtFragment extends BaseFragmentNative {
 
-    private TextView mangaTitle;
+    @Bind(R.id.manga_title)
+    public TextView mangaTitle;
 
-    private View worldArtToolbar;
+    @Bind(R.id.world_art_toolbar)
+    public View worldArtToolbar;
 
-    private TextView mangaDescriptionTextView;
+    @Bind(R.id.manga_description)
+    public TextView mangaDescriptionTextView;
 
-    private TextView chaptersQuantityTextView;
+    @Bind(R.id.chapters_quantity)
+    public TextView chaptersQuantityTextView;
 
-    private TextView mangaAuthor;
+    @Bind(R.id.authors)
+    public TextView mangaAuthor;
 
-    private TextView mangaGenres;
+    @Bind(R.id.genres)
+    public TextView mangaGenres;
 
-    private ImageView mangaCover = null;
+    @Bind(R.id.manga_cover)
+    public ImageView mangaCover;
 
-    private ScrollViewParallax scrollViewParallax;
+    @Bind(R.id.scrollView)
+    public ScrollViewParallax scrollViewParallax;
 
-    private RecyclerView mangaImagesView;
+    @Bind(R.id.manga_images)
+    public RecyclerView mangaImagesView;
+
+    @BindDimen(R.dimen.grid_item_height)
+    public int sizeOfImage;
+
+    @Inject
+    public LocalImageManager localImageManager;
+
+    @Inject
+    public HttpImageManager httpImageManager;
+
     private boolean isBackPressed = false;
+
+    public static WorldArtFragment newInstance(final Manga manga) {
+        WorldArtFragment fragment = new WorldArtFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -54,15 +122,8 @@ public class WorldArtFragment extends BaseFragmentNative {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        scrollViewParallax = findViewById(R.id.scrollView);
-        mangaDescriptionTextView = findViewById(R.id.manga_description);
-        chaptersQuantityTextView = findViewById(R.id.chapters_quantity);
-        mangaAuthor = findViewById(R.id.authors);
-        mangaGenres = findViewById(R.id.genres);
-        mangaTitle = findViewById(R.id.manga_title);
-        mangaCover = findViewById(R.id.manga_cover);
-        worldArtToolbar = findViewById(R.id.world_art_toolbar);
-
+        ButterKnife.bind(this, view);
+        MangaApplication.get().applicationComponent().inject(this);
 
         final float size = getResources().getDimension(R.dimen.info_parallax_image_height);
         final int baseColor = getResources().getColor(R.color.color_world_art);
@@ -84,19 +145,128 @@ public class WorldArtFragment extends BaseFragmentNative {
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        mangaImagesView = findViewById(R.id.manga_images);
         mangaImagesView.setLayoutManager(layoutManager);
+        mangaImagesView.setMinimumWidth(150);
+        mangaImagesView.addItemDecoration(new RecyclerView.ItemDecoration() {
+
+            @Override
+            public void getItemOffsets(final Rect outRect, final View view, final RecyclerView parent, final RecyclerView.State state) {
+                outRect.right = 20;
+            }
+
+        });
         ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.INVISIBLE);
         testInit();
     }
 
     private void testInit() {
-        mangaTitle.setText("God Eater: The Spiral Fate");
-        mangaGenres.setText("приключения, фэнтези, сёнэн");
-        mangaAuthor.setText("Сайто Рокуро");
-        mangaDescriptionTextView.setText("Действия происходят в 2071 году, на Земле появились монстры «Арагами» и начали охоту на людей. Всего за несколько лет человеческая популяция сократилась до одной сотой, а планета превратилась в бесконечную пустыню. Но нашлась группа людей, борющихся с монстрами с помощью биологического оружия «Джинки». Их назвали «Пожирателями богов». Смогут ли они прекратить завоевание и вернуть человечеству надежду на будущее?");
-        mangaCover.setImageResource(R.drawable.test_cover1);
-        mangaImagesView.setAdapter(new ImagesAdapter(new ArrayList<>(Arrays.asList(R.drawable.test_screen0, R.drawable.test_screen1, R.drawable.test_screen2, R.drawable.test_screen3, R.drawable.test_screen4))));
+        final Manga manga = getArguments().getParcelable(Constants.MANGA_PARCEL_KEY);
+        final MangaInfoActivity activity = (MangaInfoActivity) getActivity();
+        activity.startRefresh();
+        new Thread() {
+            @Override
+            public void run() {
+                String uri = null;
+                try {
+                    uri = "http://www.world-art.ru/search.php?public_search=" + URLEncoder.encode(manga.getTitle(), Charset.forName(HTTP.UTF_8).name()) + "&global_sector=manga";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                HttpGet request = new HttpGet(uri);
+
+                HttpContext context = new BasicHttpContext();
+                HttpClient httpClient = new ExtendedHttpClient();
+                HttpResponse response = null;
+                try {
+                    response = httpClient.execute(request, context);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                byte[] result = new byte[0];
+                try {
+                    result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String responseString = IoUtils.convertBytesToString(result);
+
+                String mangaCoverUrl = "";
+
+                if (responseString.startsWith("<meta http-equiv=")) {
+                    String url = responseString.substring(responseString.indexOf("url=") + 4);
+                    url = url.substring(0, url.indexOf("'>"));
+                    url = "http://www.world-art.ru" + url;
+                    request = new HttpGet(url);
+
+                    context = new BasicHttpContext();
+                    httpClient = new ExtendedHttpClient();
+                    response = null;
+                    try {
+                        response = httpClient.execute(request, context);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    result = new byte[0];
+                    try {
+                        result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    responseString = IoUtils.convertBytesToString(result);
+                }
+
+                final List<String> imagesList = new ArrayList<String>();
+
+                JavaScriptEngine.DocHelper docHelper = new JavaScriptEngine.DocHelper(responseString);
+                JavaScriptEngine.ElementsHelper img = docHelper.select("body table td:nth-child(1) > img");
+                mangaCoverUrl = "http://www.world-art.ru/animation/" + img.attr("src");
+                JavaScriptEngine.ElementsHelper imgs = docHelper.select("noindex img");
+                int size = imgs.size();
+                for (int i = 0; i < 10 && i < size - 1; i++) {
+                    String image = "http://www.world-art.ru/animation/" + imgs.get(i).attr("src");
+                    imagesList.add(image);
+                }
+                final String cov = mangaCoverUrl;
+                activity.runOnUiThread(() -> {
+                    Uri coverUri = Uri.parse(cov);
+                    HttpImageManager.LoadRequest _request = HttpImageManager.LoadRequest.obtain(coverUri,
+                            mangaCover, null, sizeOfImage);
+                    Bitmap bitmap = httpImageManager.loadImage(_request);
+                    if (bitmap != null) {
+                        mangaCover.setImageBitmap(bitmap);
+                    }
+                    mangaImagesView.setAdapter(new ImagesAdapter(imagesList));
+                    activity.stopRefresh();
+                    ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.INVISIBLE);
+                });
+            }
+        }.start();
+
+
+        mangaTitle.setText(manga.getTitle());
+        mangaGenres.setText(manga.getGenres());
+        mangaAuthor.setText(manga.getAuthor());
+        mangaDescriptionTextView.setText(manga.getDescription());
+
+        if (manga.isDownloaded()) {
+            LocalManga localManga = (LocalManga) manga;
+            String mangaUri = localManga.getLocalUri();
+            Bitmap bitmap = localImageManager.loadBitmap(mangaCover, mangaUri + "/cover", sizeOfImage);
+            if (bitmap != null) {
+                mangaCover.setImageBitmap(bitmap);
+            }
+        } else {
+            if (manga.getCoverUri() != null) {
+                Uri coverUri = Uri.parse(manga.getCoverUri());
+                HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, mangaCover, manga.getRepository().getEngine().getRequestPreprocessor(), sizeOfImage);
+                Bitmap bitmap = httpImageManager.loadImage(request);
+                if (bitmap != null) {
+                    mangaCover.setImageBitmap(bitmap);
+                }
+            }
+        }
     }
 
     @Override
@@ -111,11 +281,11 @@ public class WorldArtFragment extends BaseFragmentNative {
 
     private class ImagesAdapter extends RecyclerView.Adapter<ImageHolder> {
 
-        private List<Integer> imageIds;
+        private List<String> imageIds;
 
         private Context context = applicationContext;
 
-        public ImagesAdapter(final List<Integer> imageIds) {
+        public ImagesAdapter(final List<String> imageIds) {
             this.imageIds = imageIds;
         }
 
@@ -128,11 +298,17 @@ public class WorldArtFragment extends BaseFragmentNative {
 
         @Override
         public void onBindViewHolder(final ImageHolder holder, final int position) {
-            Integer imageId = imageIds.get(position);
-            holder.mangaScreenSmall.setImageResource(imageId);
+            String imgUrl = imageIds.get(position);
+
+            Uri coverUri = Uri.parse(imgUrl);
+            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, holder.mangaScreenSmall, null, sizeOfImage);
+            Bitmap bitmap = httpImageManager.loadImage(request);
+            if (bitmap != null) {
+                holder.mangaScreenSmall.setImageBitmap(bitmap);
+            }
         }
 
-        public List<Integer> getImageIds() {
+        public List<String> getImageIds() {
             return imageIds;
         }
 

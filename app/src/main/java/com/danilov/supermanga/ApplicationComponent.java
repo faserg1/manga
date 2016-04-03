@@ -19,6 +19,7 @@ import com.danilov.supermanga.fragment.FavoritesFragment;
 import com.danilov.supermanga.fragment.HistoryMangaFragment;
 import com.danilov.supermanga.fragment.InfoFragment;
 import com.danilov.supermanga.fragment.TrackingFragment;
+import com.danilov.supermanga.fragment.WorldArtFragment;
 
 import javax.inject.Singleton;
 
@@ -59,6 +60,8 @@ public interface ApplicationComponent {
     void inject(@NonNull MangaViewPager mangaViewPager);
 
     void inject(@NonNull FavoritesFragment favoritesFragment);
+
+    void inject(@NonNull WorldArtFragment worldArtFragment);
 
     void inject(@NonNull HistoryMangaFragment historyMangaFragment);
 

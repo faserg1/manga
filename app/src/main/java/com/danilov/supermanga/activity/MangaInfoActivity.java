@@ -138,7 +138,8 @@ public class MangaInfoActivity extends BaseToolbarActivity implements Refreshabl
     }
 
     public void flipToWorldArt() {
-        WorldArtFragment fragment = new WorldArtFragment();
+        Manga manga = getIntent().getParcelableExtra(Constants.MANGA_PARCEL_KEY);
+        WorldArtFragment fragment = WorldArtFragment.newInstance(manga);
         currentFragment = fragment;
         getFragmentManager()
                 .beginTransaction()
