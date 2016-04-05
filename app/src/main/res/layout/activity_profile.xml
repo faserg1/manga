@@ -76,8 +76,8 @@
                             android:id="@+id/google_account_title"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="Аккаунты"
-                            android:layout_marginBottom="15dp"
+                            android:text="Синхронизация"
+                            android:layout_marginBottom="25dp"
                             android:textColor="?attr/profile_text_category_title"/>
 
                     </RelativeLayout>
