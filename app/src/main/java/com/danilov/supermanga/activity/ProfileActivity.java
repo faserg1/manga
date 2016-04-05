@@ -2,24 +2,17 @@ package com.danilov.supermanga.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.app.DialogFragment;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,19 +26,11 @@ import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.dialog.CustomDialog;
-import com.danilov.supermanga.core.service.OnlineStorageProfileService;
-import com.danilov.supermanga.core.service.ServiceConnectionListener;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.UnderToolbarScrollView;
 import com.danilov.supermanga.core.view.ViewV16;
-import com.danilov.supermanga.core.widget.RelativeTimeTextView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.software.shell.fab.ActionButton;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -70,26 +55,8 @@ public class ProfileActivity extends BaseToolbarActivity {
     @Bind(R.id.user_name)
     public TextView userNameTextView;
 
-    @Bind(R.id.google_sync_card)
-    public View googleSyncCard;
-
-    @Bind(R.id.yandex_sync_card)
-    public View yandexSyncCard;
-
     @Bind(R.id.user_name_card)
     public View userNameCard;
-
-    @Bind(R.id.google_sync_button)
-    public View googleSyncButton;
-
-    @Bind(R.id.google_download_button)
-    public View googleDownloadButton;
-
-    @Bind(R.id.yandex_sync_button)
-    public View yandexSyncButton;
-
-    @Bind(R.id.yandex_download_button)
-    public View yandexDownloadButton;
 
     @Bind(R.id.email_card)
     public View emailCard;
@@ -97,14 +64,11 @@ public class ProfileActivity extends BaseToolbarActivity {
     @Bind(R.id.always_show_buttons_card)
     public View alwaysShowButtonsCard;
 
+    @Bind(R.id.go_to_cloud)
+    public View goToCloud;
+
     @Bind(R.id.download_path_card)
     public View downloadPathCard;
-
-    @Bind(R.id.google_account)
-    public RelativeTimeTextView googleAccountTextView;
-
-    @Bind(R.id.yandex_account)
-    public RelativeTimeTextView yandexAccountTextView;
 
     @Bind(R.id.user_name_small)
     public TextView userNameSmall;
@@ -193,83 +157,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        googleSyncCard.setOnClickListener(v -> {
-            if (service != null) {
-                service.connect();
-            }
-        });
-        googleSyncButton.setOnClickListener(v -> {
-            if (service == null) {
-                return;
-            }
-            service.save();
-        });
-        googleDownloadButton.setOnClickListener(v -> {
-            if (service == null) {
-                return;
-            }
-            service.download();
-        });
-        yandexSyncCard.setOnClickListener(v -> {
-            if (service != null) {
-                service.connectYandex();
-            }
-        });
-        yandexSyncButton.setOnClickListener(v -> {
-            if (service == null) {
-                return;
-            }
-            service.saveYandex();
-        });
-        yandexDownloadButton.setOnClickListener(v -> {
-            if (service == null) {
-                return;
-            }
-            service.downloadYandex();
-        });
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        long lastUpdateTimeGoogle = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1L);
-        long lastUpdateTimeYandex = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1L);
-
-        String yandexProfileName = sharedPreferences.getString("YA_USERNAME", null);
-        if (yandexProfileName == null) {
-            yandexProfileName = "Нажмите, чтобы подключить";
-            yandexAccountTextView.setPrefix(yandexProfileName);
-            yandexAccountTextView.setReferenceTime(RelativeTimeTextView.ONLY_PREFIX);
-        } else {
-            String prefix =  yandexProfileName + " (" + getString(R.string.sv_synchronized) + " ";
-            yandexAccountTextView.setPrefix(prefix);
-            yandexAccountTextView.setReferenceTime(lastUpdateTimeYandex);
-            yandexAccountTextView.setSuffix(")");
-        }
-
-        String googleProfileName = sharedPreferences.getString(Constants.Settings.GOOGLE_PROFILE_NAME, null);
-        if (googleProfileName == null) {
-            googleProfileName = "Нажмите, чтобы подключить";
-            googleAccountTextView.setPrefix(googleProfileName);
-            googleAccountTextView.setReferenceTime(RelativeTimeTextView.ONLY_PREFIX);
-        } else {
-            String prefix =  googleProfileName + " (" + getString(R.string.sv_synchronized) + " ";
-            googleAccountTextView.setPrefix(prefix);
-            googleAccountTextView.setReferenceTime(lastUpdateTimeGoogle);
-            googleAccountTextView.setSuffix(")");
-        }
-
         init();
-
-        serviceConnection = OnlineStorageProfileService.bindService(this, new ServiceConnectionListener<OnlineStorageProfileService>() {
-            @Override
-            public void onServiceConnected(final OnlineStorageProfileService service) {
-                ProfileActivity.this.service = service;
-                service.setServiceHandler(handler);
-            }
-
-            @Override
-            public void onServiceDisconnected(final OnlineStorageProfileService service) {
-
-            }
-        });
     }
 
 
@@ -334,136 +222,18 @@ public class ProfileActivity extends BaseToolbarActivity {
             intent.putExtra(FolderPickerActivity.FOLDER_KEY, downloadPathString);
             startActivityForResult(intent, FOLDER_PICKER_REQUEST);
         });
-        if (getIntent() != null && getIntent().getData() != null) {
-            onYandexLogin();
-        }
+        goToCloud.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, CloudStorageActivity.class);
+            startActivity(intent);
+        });
     }
 
-    private void onYandexLogin () {
-        Uri data = getIntent().getData();
-        setIntent(null);
-        Pattern pattern = Pattern.compile("access_token=(.*?)(&|$)");
-        Matcher matcher = pattern.matcher(data.toString());
-        if (matcher.find()) {
-            final String token = matcher.group(1);
-            if (!TextUtils.isEmpty(token)) {
-                Log.d("ProfileActivity", "onLogin: token: "+token);
-                saveToken(token);
-            } else {
-                Log.w("ProfileActivity", "onYandexLogin: empty token");
-            }
-        } else {
-            Log.w("ProfileActivity", "onYandexLogin: token not found in return url");
-        }
-    }
-
-    private void saveToken(String token) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("YA_USERNAME", "YaUser");
-        editor.putString("YA_TOKEN", token);
-        editor.apply();
-        handler.sendEmptyMessage(OnlineStorageProfileService.YANDEX_CONNECTED);
-    }
-
-    private ServiceConnection serviceConnection;
-    private OnlineStorageProfileService service;
-
-//    @SuppressWarnings()
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(final Message msg) {
-            switch (msg.what) {
-                case OnlineStorageProfileService.GOOGLE_CONNECTED:
-                    googleSyncButton.setVisibility(View.VISIBLE);
-                    googleDownloadButton.setVisibility(View.VISIBLE);
-                    if (service != null) {
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        long lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, -1L);
-                        String accountName = service.getGoogleConnector().getAccountName();
-                        String prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
-                        googleAccountTextView.setPrefix(prefix);
-                        googleAccountTextView.setReferenceTime(lastUpdateTime);
-                        googleAccountTextView.setSuffix(")");
-
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(Constants.Settings.GOOGLE_PROFILE_NAME, accountName).apply();
-                    }
-                    break;
-                case OnlineStorageProfileService.GOOGLE_NEED_CONFIRMATION:
-                    ConnectionResult connectionResult = (ConnectionResult) msg.obj;
-                    if (!connectionResult.hasResolution()) {
-                        // show the localized error dialog.
-                        GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), ProfileActivity.this, 0).show();
-                        return;
-                    }
-
-                    try {
-                        connectionResult.startResolutionForResult(ProfileActivity.this, GOOGLE_AUTH_REQUEST_CODE);
-                    } catch (IntentSender.SendIntentException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case OnlineStorageProfileService.GOOGLE_SENT_SUCCESS:
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-                    long lastUpdateTime = System.currentTimeMillis();
-                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_GOOGLE, lastUpdateTime).apply();
-                    String accountName = service.getGoogleConnector().getAccountName();
-                    String prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
-                    googleAccountTextView.setPrefix(prefix);
-                    googleAccountTextView.setReferenceTime(lastUpdateTime);
-                    googleAccountTextView.setSuffix(")");
-                    break;
-                case OnlineStorageProfileService.GOOGLE_DOWNLOADED:
-                    init();
-                    break;
-                case OnlineStorageProfileService.YANDEX_NEED_CONFIRMATION:
-                    String yandexAuthURL = "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + getString(R.string.yandex_client_id);
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(yandexAuthURL)));
-                    break;
-                case OnlineStorageProfileService.YANDEX_CONNECTED:
-                    yandexSyncButton.setVisibility(View.VISIBLE);
-                    yandexDownloadButton.setVisibility(View.VISIBLE);
-                    if (service != null) {
-                        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        lastUpdateTime = sharedPreferences.getLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, -1L);
-                        accountName = sharedPreferences.getString("YA_USERNAME", "");
-                        prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
-                        yandexAccountTextView.setPrefix(prefix);
-                        yandexAccountTextView.setReferenceTime(lastUpdateTime);
-                        yandexAccountTextView.setSuffix(")");
-                    }
-                    break;
-                case OnlineStorageProfileService.YANDEX_SENT_SUCCESS:
-                    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-                    lastUpdateTime = System.currentTimeMillis();
-                    sharedPreferences.edit().putLong(Constants.Settings.LAST_UPDATE_PROFILE_TIME_YANDEX, lastUpdateTime).apply();
-                    accountName = service.getYandexConnector().getAccountName();
-                    prefix =  accountName + " (" + getString(R.string.sv_synchronized) + " ";
-                    yandexAccountTextView.setPrefix(prefix);
-                    yandexAccountTextView.setReferenceTime(lastUpdateTime);
-                    yandexAccountTextView.setSuffix(")");
-                    break;
-                case OnlineStorageProfileService.YANDEX_DOWNLOADED:
-                    init();
-                    break;
-            }
-        }
-    };
-
-    private static final int GOOGLE_AUTH_REQUEST_CODE = 1;
     private static final int FOLDER_PICKER_REQUEST = 2;
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case GOOGLE_AUTH_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    service.connect();
-                }
-                break;
             case FOLDER_PICKER_REQUEST:
                 if (resultCode != Activity.RESULT_OK) {
                     return;
@@ -477,16 +247,6 @@ public class ProfileActivity extends BaseToolbarActivity {
                 init();
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (serviceConnection != null && service != null) {
-            unbindService(serviceConnection);
-            service.removeHandler();
-            service = null;
-        }
-        super.onDestroy();
     }
 
     @Override

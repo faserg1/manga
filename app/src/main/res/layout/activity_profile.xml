@@ -59,13 +59,13 @@
 
                     </LinearLayout>
 
-                    <View
+                    <ImageView
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="?attr/profile_divider"/>
+                        android:layout_height="2dp"
+                        android:src="@drawable/card_shadow"/>
 
                     <RelativeLayout
-                        android:id="@+id/google_sync_card"
+                        android:id="@+id/go_to_cloud"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/selectable_item_background"
@@ -76,81 +76,11 @@
                             android:id="@+id/google_account_title"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_toLeftOf="@+id/google_sync_button"
-                            android:text="@string/google_account_info_title"
+                            android:text="Аккаунты"
+                            android:layout_marginBottom="15dp"
                             android:textColor="?attr/profile_text_category_title"/>
 
-                        <com.danilov.supermanga.core.widget.RelativeTimeTextView
-                            android:id="@+id/google_account"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_below="@+id/google_account_title"
-                            android:layout_marginTop="7dp"
-                            android:layout_toLeftOf="@+id/google_sync_button"
-                            android:textColor="?attr/profile_text"/>
-
-                        <LinearLayout
-                            android:id="@+id/google_sync_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignTop="@+id/google_account_title"
-                            android:background="@drawable/selectable_item_background"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <com.danilov.supermanga.core.view.CTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/card_text_color"
-                                android:text="Синхронизировать"/>
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_action_cloud"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/google_download_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_alignLeft="@+id/google_sync_button"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_below="@+id/google_sync_button"
-                            android:background="@drawable/selectable_item_background"
-                            android:gravity="center"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <com.danilov.supermanga.core.view.CTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/card_text_color"
-                                android:text="Загрузить"/>
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_action_cloud"/>
-
-                        </LinearLayout>
-
                     </RelativeLayout>
-
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="?attr/profile_divider"/>
-
-                    <include layout="@layout/yandex_account_card"/>
 
                 </LinearLayout>
 

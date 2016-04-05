@@ -73,5 +73,6 @@
     <attr name="ic_readed" format="reference"/>
     <attr name="ic_saved" format="reference"/>
     <attr name="ic_action_discard" format="reference"/>
+    <attr name="ic_action_file_upload" format="reference"/>
 
 </resources>

@@ -78,6 +78,7 @@
         <item name="ic_readed">@drawable/ic_readed</item>
         <item name="ic_saved">@drawable/ic_saved</item>
         <item name="ic_action_discard">@drawable/ic_action_discard</item>
+        <item name="ic_action_file_upload">@drawable/ic_action_file_upload</item>
 
     </style>
 
@@ -129,6 +130,7 @@
         <item name="ic_readed">@drawable/dark_ic_readed</item>
         <item name="ic_saved">@drawable/dark_ic_saved</item>
         <item name="ic_action_discard">@drawable/dark_ic_action_discard</item>
+        <item name="ic_action_file_upload">@drawable/dark_ic_action_file_upload</item>
 
     </style>
 
