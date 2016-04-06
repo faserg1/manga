@@ -69,4 +69,5 @@ public interface ApplicationComponent {
 
     void inject(@NonNull TrackingFragment trackingFragment);
 
+    void inject(WorldArtFragment.ImagesFragment imagesFragment);
 }

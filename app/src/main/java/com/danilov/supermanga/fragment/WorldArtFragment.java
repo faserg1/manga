@@ -1,13 +1,19 @@
 package com.danilov.supermanga.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
@@ -15,10 +21,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
+import com.annimon.stream.Stream;
 import com.danilov.supermanga.DaggerApplicationComponent;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
@@ -33,6 +42,7 @@ import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.ScrollViewParallax;
+import com.danilov.supermanga.core.view.SubsamplingScaleImageView;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -47,6 +57,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -195,7 +207,7 @@ public class WorldArtFragment extends BaseFragmentNative {
                 if (responseString.startsWith("<meta http-equiv=")) {
                     String url = responseString.substring(responseString.indexOf("url=") + 4);
                     url = url.substring(0, url.indexOf("'>"));
-                    url = "http://www.world-art.ru" + url;
+                    url = "http://www.world-art.ru/" + url;
                     request = new HttpGet(url);
 
                     context = new BasicHttpContext();
@@ -213,10 +225,35 @@ public class WorldArtFragment extends BaseFragmentNative {
                         e.printStackTrace();
                     }
                     responseString = IoUtils.convertBytesToString(result);
+                } else {
+                    Document document = Utils.toDocument(responseString);
+                    Elements select = document.select("table a");
+                    String url = Stream.of(select)
+                            .map(value -> value.attr("href"))
+                            .filter(value -> value.contains("manga.php"))
+                            .findFirst()
+                            .orElse("");
+                    url = "http://www.world-art.ru/" + url;
+                    request = new HttpGet(url);
+                    context = new BasicHttpContext();
+                    httpClient = new ExtendedHttpClient();
+                    response = null;
+                    try {
+                        response = httpClient.execute(request, context);
+                    } catch (IOException e) {
+                        return;
+                    }
+                    result = new byte[0];
+                    try {
+                        result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    responseString = IoUtils.convertBytesToString(result);
                 }
 
-                final List<String> imagesList = new ArrayList<String>();
-
+                final List<String> imagesList = new ArrayList<>();
+                final List<String> urlsList = new ArrayList<>();
                 JavaScriptEngine.DocHelper docHelper = new JavaScriptEngine.DocHelper(responseString);
                 JavaScriptEngine.ElementsHelper img = docHelper.select("body table td:nth-child(1) > img");
                 mangaCoverUrl = "http://www.world-art.ru/animation/" + img.attr("src");
@@ -225,6 +262,7 @@ public class WorldArtFragment extends BaseFragmentNative {
                 for (int i = 0; i < 10 && i < size - 1; i++) {
                     String image = "http://www.world-art.ru/animation/" + imgs.get(i).attr("src");
                     imagesList.add(image);
+                    urlsList.add("http://www.world-art.ru/animation/" + imgs.get(i).parent().attr("href"));
                 }
                 final String cov = mangaCoverUrl;
                 activity.runOnUiThread(() -> {
@@ -235,7 +273,7 @@ public class WorldArtFragment extends BaseFragmentNative {
                     if (bitmap != null) {
                         mangaCover.setImageBitmap(bitmap);
                     }
-                    mangaImagesView.setAdapter(new ImagesAdapter(imagesList));
+                    mangaImagesView.setAdapter(new ImagesAdapter(imagesList, urlsList));
                     activity.stopRefresh();
                     ((MangaInfoActivity) getActivity()).getToolbar().setVisibility(View.INVISIBLE);
                 });
@@ -280,11 +318,13 @@ public class WorldArtFragment extends BaseFragmentNative {
     private class ImagesAdapter extends RecyclerView.Adapter<ImageHolder> {
 
         private List<String> imageIds;
+        private List<String> imageUrls;
 
         private Context context = applicationContext;
 
-        public ImagesAdapter(final List<String> imageIds) {
+        public ImagesAdapter(final List<String> imageIds, final List<String> imageUrls) {
             this.imageIds = imageIds;
+            this.imageUrls = imageUrls;
         }
 
         @Override
@@ -304,6 +344,9 @@ public class WorldArtFragment extends BaseFragmentNative {
             if (bitmap != null) {
                 holder.mangaScreenSmall.setImageBitmap(bitmap);
             }
+            holder.itemView.setOnClickListener(v -> {
+                ImagesFragment.newFragment(imgUrl, imageUrls.get(position)).show(getFragmentManager(), "aezakmeh");
+            });
         }
 
         public List<String> getImageIds() {
@@ -325,6 +368,103 @@ public class WorldArtFragment extends BaseFragmentNative {
             super(itemView);
             mangaScreenSmall = (ImageView) itemView;
         }
+    }
+
+    public static class ImagesFragment extends DialogFragment {
+
+        @Inject
+        public HttpImageManager httpImageManager;
+
+        @BindDimen(R.dimen.grid_item_height)
+        public int sizeOfImage;
+
+        public static ImagesFragment newFragment(final String url, final String newUrl) {
+            ImagesFragment f = new ImagesFragment();
+            Bundle b = new Bundle();
+            b.putString("url", url);
+            b.putString("newUrl", newUrl);
+            f.setArguments(b);
+            return f;
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.world_art_pic, container, false);
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Dialog dialog = super.onCreateDialog(savedInstanceState);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            return dialog;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            int width = size.x;
+            int height = size.y;
+            getDialog().getWindow().setLayout((int) (width * 0.8f), (int) (height * 0.5f));
+        }
+
+        @Override
+        public void onActivityCreated(final Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            ButterKnife.bind(this, getView());
+            MangaApplication.get().applicationComponent().inject(this);
+
+            String url = getArguments().getString("url");
+            ImageView v = (ImageView) getView();
+            Uri coverUri = Uri.parse(url);
+            HttpImageManager.LoadRequest request = HttpImageManager.LoadRequest.obtain(coverUri, v, null, sizeOfImage);
+            Bitmap bitmap = httpImageManager.loadImage(request);
+            if (bitmap != null) {
+                v.setImageBitmap(bitmap);
+            }
+
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    String newUrl = getArguments().getString("newUrl");
+                    HttpGet request = new HttpGet(newUrl);
+
+                    HttpContext context = new BasicHttpContext();
+                    HttpClient httpClient = new ExtendedHttpClient();
+                    HttpResponse response = null;
+                    try {
+                        response = httpClient.execute(request, context);
+                    } catch (IOException e) {
+                        return;
+                    }
+                    byte[] result;
+                    try {
+                        result = IoUtils.convertStreamToBytes(response.getEntity().getContent());
+                    } catch (IOException e) {
+                        return;
+                    }
+                    String responseString = IoUtils.convertBytesToString(result);
+                    Document document = Utils.toDocument(responseString);
+                    Elements select = document.select("table img");
+                    String url = "http://www.world-art.ru/animation/" + select.get(1).attr("src");
+                    final String urrrrl = url;
+                    getActivity().runOnUiThread(() -> {
+                        ImageView v = (ImageView) getView();
+                        Uri coverUri = Uri.parse(urrrrl);
+                        HttpImageManager.LoadRequest _request = HttpImageManager.LoadRequest.obtain(coverUri, v, null, sizeOfImage);
+                        Bitmap bitmap = httpImageManager.loadImage(_request);
+                        if (bitmap != null) {
+                            v.setImageBitmap(bitmap);
+                        }
+                    });
+                }
+            };
+            thread.start();
+        }
+
     }
 
 }
