@@ -6,15 +6,15 @@
                 android:background="?attr/fragment_background"
                 android:orientation="vertical">
 
-    <GridView
-        android:id="@+id/grid_view"
+    <com.danilov.supermanga.core.widget.AutoFitRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:columnWidth="@dimen/grid_item_width"
         android:listSelector="#00000000"
         android:numColumns="auto_fit">
 
-    </GridView>
+    </com.danilov.supermanga.core.widget.AutoFitRecyclerView>
 
     <ProgressBar
         android:id="@+id/history_progress_bar"
