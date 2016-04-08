@@ -93,7 +93,7 @@ public class MangaFilter extends Filter implements TextWatcher {
         void notifyDataSetChanged(final List<Manga> mangaList);
     }
 
-    public class AdapterAccessor implements BaseAdapterAccessor {
+    public static class AdapterAccessor implements BaseAdapterAccessor {
 
         private BaseAdapter<?, Manga> adapter;
 

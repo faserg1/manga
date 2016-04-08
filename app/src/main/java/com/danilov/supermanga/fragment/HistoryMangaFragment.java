@@ -2,23 +2,15 @@ package com.danilov.supermanga.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,6 +20,8 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.activity.MangaViewerActivity;
+import com.danilov.supermanga.core.adapter.BaseGridAdapter;
+import com.danilov.supermanga.core.adapter.ItemClickListener;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
@@ -38,7 +32,6 @@ import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
-import com.danilov.supermanga.core.view.helper.GridViewHelper;
 
 import java.util.Collections;
 import java.util.Date;
@@ -68,11 +61,47 @@ public class HistoryMangaFragment extends BaseFragmentNative {
     @Inject
     public HttpImageManager httpImageManager = null;
 
-    public float gridItemRatio;
     private HistoryMangaAdapter adapter = null;
     private HistoryDAO historyDAO = null;
 
     private int sizeOfImage;
+
+    private ItemClickListener<HistoryItemHolder> listener = new ItemClickListener<HistoryItemHolder>() {
+
+        @Override
+        public void onItemClick(final int position, final HistoryItemHolder viewHolder) {
+            HistoryElement historyElement = adapter.getHistoryElements().get(position);
+            Intent intent = new Intent(getActivity(), MangaViewerActivity.class);
+            intent.putExtra(Constants.MANGA_PARCEL_KEY, historyElement.getManga());
+            intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
+            intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
+            intent.putExtra(Constants.SHOW_ONLINE, historyElement.isOnline());
+            startActivity(intent);
+        }
+
+        @Override
+        public boolean onItemLongClick(final int position, final HistoryItemHolder viewHolder) {
+            ImageView imageView = viewHolder.mangaCover;
+            Manga manga = adapter.getHistoryElements().get(position).getManga();
+
+            Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
+
+            int[] onScreenLocation = new int[2];
+            imageView.getLocationOnScreen(onScreenLocation);
+
+            intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
+            intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
+            intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, imageView.getWidth());
+            intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
+            intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
+
+            intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+            startActivity(intent);
+
+            getActivity().overridePendingTransition(0, 0);
+            return true;
+        }
+    };
 
     public HistoryMangaFragment() {
         MangaApplication.get().applicationComponent().inject(this);
@@ -93,46 +122,7 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         super.onActivityCreated(savedInstanceState);
         ButterKnife.bind(this, view);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int pColCount = sharedPreferences.getInt("P_COL_COUNT", 0);
-        int lColCount = sharedPreferences.getInt("L_COL_COUNT", 0);
-        int screenOrientation = getScreenOrientation();
-        switch (screenOrientation) {
-            case Configuration.ORIENTATION_PORTRAIT:
-            case Configuration.ORIENTATION_SQUARE:
-                if (pColCount != 0) {
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(applicationContext, 3);
-                    gridLayoutManager.setSpanCount(pColCount);
-                    gridView.setLayoutManager(gridLayoutManager);
-                }
-                break;
-            case Configuration.ORIENTATION_LANDSCAPE:
-                if (lColCount != 0) {
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(applicationContext, 3);
-                    gridLayoutManager.setSpanCount(lColCount);
-                    gridView.setLayoutManager(gridLayoutManager);
-                }
-                break;
-        }
-
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
-        gridItemRatio = Utils.getFloatResource(R.dimen.grid_item_ratio, getActivity().getResources());
-    }
-
-    public int getScreenOrientation() {
-        Display getOrient = getActivity().getWindowManager().getDefaultDisplay();
-        int orientation = Configuration.ORIENTATION_UNDEFINED;
-        if (getOrient.getWidth() == getOrient.getHeight()) {
-            orientation = Configuration.ORIENTATION_SQUARE;
-        } else {
-            if (getOrient.getWidth() < getOrient.getHeight()) {
-                orientation = Configuration.ORIENTATION_PORTRAIT;
-            } else {
-                orientation = Configuration.ORIENTATION_LANDSCAPE;
-            }
-        }
-        return orientation;
     }
 
     @Override
@@ -155,7 +145,8 @@ public class HistoryMangaFragment extends BaseFragmentNative {
                 try {
                     List<HistoryElement> history = getHistorySorted();
                     if (!history.isEmpty()) {
-                        adapter = new HistoryMangaAdapter(history);
+                        adapter = new HistoryMangaAdapter(gridView, history);
+                        adapter.setClickListener(listener);
                     }
                 } catch (DatabaseAccessException e) {
                     _success = false;
@@ -177,37 +168,6 @@ public class HistoryMangaFragment extends BaseFragmentNative {
 
         };
         thread.start();
-    }
-
-
-    public void onItemClick(final int position) {
-        HistoryElement historyElement = adapter.getHistoryElements().get(position);
-        Intent intent = new Intent(this.getActivity(), MangaViewerActivity.class);
-        intent.putExtra(Constants.MANGA_PARCEL_KEY, historyElement.getManga());
-        intent.putExtra(Constants.FROM_PAGE_KEY, historyElement.getPage());
-        intent.putExtra(Constants.FROM_CHAPTER_KEY, historyElement.getChapter());
-        intent.putExtra(Constants.SHOW_ONLINE, historyElement.isOnline());
-        startActivity(intent);
-    }
-
-    public void onItemLongClick(final int position, final ImageView imageView) {
-        Manga manga = adapter.getHistoryElements().get(position).getManga();
-
-        Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
-
-        int[] onScreenLocation = new int[2];
-        imageView.getLocationOnScreen(onScreenLocation);
-
-        intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
-        intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
-        intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, imageView.getWidth());
-        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
-        intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
-
-        intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-        startActivity(intent);
-
-        getActivity().overridePendingTransition(0, 0);
     }
 
     private void removeHistory(final HistoryElement historyElement) {
@@ -234,11 +194,12 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         return history;
     }
 
-    private class HistoryMangaAdapter extends RecyclerView.Adapter<HistoryItemHolder> {
+    private class HistoryMangaAdapter extends BaseGridAdapter<HistoryItemHolder> {
 
         private List<HistoryElement> history = null;
 
-        public HistoryMangaAdapter(final List<HistoryElement> history) {
+        public HistoryMangaAdapter(@NonNull final RecyclerView recyclerView, final List<HistoryElement> history) {
+            super(recyclerView);
             this.history = history;
         }
 
@@ -255,21 +216,12 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         }
 
         @Override
-        public HistoryItemHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        public HistoryItemHolder newViewHolder(final ViewGroup parent, final int viewType) {
+            LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = inflater.inflate(R.layout.history_grid_item, parent, false);
-            HistoryItemHolder holder = new HistoryItemHolder(view);
-
-            GridLayoutManager layoutManager = (GridLayoutManager) gridView.getLayoutManager();
-            int spanCount = layoutManager.getSpanCount();
-            int width = layoutManager.getWidth();
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            int colWidth = width / spanCount;
-            layoutParams.height = (int) (colWidth * gridItemRatio);
-            view.setLayoutParams(layoutParams);
-
-            return holder;
+            return new HistoryItemHolder(view);
         }
+
 
         @Override
         public void onBindViewHolder(final HistoryItemHolder holder, final int position) {
@@ -306,7 +258,7 @@ public class HistoryMangaFragment extends BaseFragmentNative {
 
     }
 
-    private class HistoryItemHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    private class HistoryItemHolder extends RecyclerView.ViewHolder {
 
         public ImageView mangaCover;
         public TextView mangaTitle;
@@ -319,21 +271,6 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             mangaTitle = (TextView) itemView.findViewById(R.id.manga_title);
             discardButton = (ImageButton) itemView.findViewById(R.id.discard_button);
             isOnline = itemView.findViewById(R.id.is_online);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
-        }
-
-        @Override
-        public boolean onLongClick(final View v) {
-            int position = getAdapterPosition();
-            onItemLongClick(position, mangaCover);
-            return true;
-        }
-
-        @Override
-        public void onClick(final View v) {
-            int position = getAdapterPosition();
-            onItemClick(position);
         }
 
     }

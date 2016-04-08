@@ -115,7 +115,7 @@ public class TrackingFragment extends BaseFragmentNative implements AdapterView.
                 handler.post(() -> {
                     MangaFilter filter = new MangaFilter(filterEditText, mangas);
                     adapter = new TrackingAdapter(context, 0, mangas, filter);
-                    filter.setAdapterAccessor(filter.new AdapterAccessor(adapter));
+                    filter.setAdapterAccessor(new MangaFilter.AdapterAccessor(adapter));
                     downloadedProgressBar.setVisibility(View.INVISIBLE);
                     if (success) {
                         gridView.setAdapter(adapter);
