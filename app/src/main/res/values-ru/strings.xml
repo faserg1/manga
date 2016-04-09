@@ -121,4 +121,5 @@
     <string name="sv_reverse">Наоборот</string>
     <string name="sv_decoder">Декодер</string>
     <string name="open">Открыть</string>
+    <string name="sv_tracking">Читаемое</string>
 </resources>

@@ -48,6 +48,9 @@ import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Semyon Danilov on 07.10.2014.
  */
@@ -133,6 +136,7 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
+        getToolbar().setLogo(null);
 
         final ApplicationSettings applicationSettings = ApplicationSettings.get(this.getApplicationContext());
         firstLaunch = applicationSettings.isFirstLaunch();
@@ -272,16 +276,35 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (drawerToggle != null) {
-            drawerToggle.syncState();
-        }
-    }
-
-    @Override
     public void onBackStackChanged() {
         syncToggle();
+
+        BaseFragmentNative fragment = (BaseFragmentNative) getFragmentManager().findFragmentById(R.id.content_frame);
+        int titleId = R.string.app_name;
+        if (fragment instanceof MainFragment) {
+            titleId = R.string.menu_updates;
+        } else if (fragment instanceof HistoryMangaFragment) {
+            titleId = R.string.menu_history;
+        } else if (fragment instanceof DownloadManagerFragment) {
+            titleId = R.string.menu_download;
+        } else if (fragment instanceof FavoritesFragment) {
+            titleId = R.string.menu_love;
+        } else if (fragment instanceof DownloadedMangaFragment) {
+            titleId = R.string.menu_local;
+        } else if (fragment instanceof SettingsFragment) {
+            titleId = R.string.menu_settings;
+        } else if (fragment instanceof TrackingFragment) {
+            titleId = R.string.sv_tracking;
+        } else if (fragment instanceof RepositoryPickerFragment) {
+            titleId = R.string.menu_search;
+        }
+        //получаем название вкладки
+        String itemName = getString(titleId);
+        //пишем название в тулбар
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(itemName);
+        }
     }
 
     public enum MainMenuItem {
@@ -488,7 +511,6 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
                         android.R.animator.fade_out)
                 .addToBackStack(transactionName)
                 .commit();
-
     }
 
     public void changeUpdatesQuantity(final int updatesQuantity) {

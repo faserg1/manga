@@ -119,4 +119,5 @@
     <string name="sv_reverse">Inverse</string>
     <string name="sv_decoder">Decoder</string>
     <string name="open">Open</string>
+    <string name="sv_tracking">Tracking</string>
 </resources>

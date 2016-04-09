@@ -251,8 +251,16 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         @Override
         public void onBindViewHolder(final HistoryItemHolder holder, final int position) {
             final HistoryElement historyElement = history.get(position);
-            holder.actionsWrapper.setVisibility(View.GONE);
-            holder.titleWrapper.setVisibility(View.VISIBLE);
+
+            //решаем проблему с 4 андроидом (анимация из animateLayoutChanges отменялась)
+            if (position == adapter.getActionWrapperOpenedPosition()) {
+                holder.actionsWrapper.setVisibility(View.VISIBLE);
+                holder.titleWrapper.setVisibility(View.GONE);
+            } else {
+                holder.actionsWrapper.setVisibility(View.GONE);
+                holder.titleWrapper.setVisibility(View.VISIBLE);
+            }
+
             holder.discardButton.setOnClickListener(view1 -> {
                 history.remove(position);
                 removeHistory(position, historyElement);
