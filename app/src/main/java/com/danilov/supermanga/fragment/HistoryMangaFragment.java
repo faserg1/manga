@@ -142,12 +142,9 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             public void run() {
                 boolean _success = true;
                 String _error = null;
+                List<HistoryElement> _history = null;
                 try {
-                    List<HistoryElement> history = getHistorySorted();
-                    if (!history.isEmpty()) {
-                        adapter = new HistoryMangaAdapter(gridView, history);
-                        adapter.setClickListener(listener);
-                    }
+                    _history = getHistorySorted();
                 } catch (DatabaseAccessException e) {
                     _success = false;
                     _error = e.getMessage();
@@ -155,7 +152,12 @@ public class HistoryMangaFragment extends BaseFragmentNative {
                 }
                 final boolean success = _success;
                 final String error = _error;
+                final List<HistoryElement> history = _history;
                 handler.post(() -> {
+                    if (history != null && !history.isEmpty()) {
+                        adapter = new HistoryMangaAdapter(gridView, history);
+                        adapter.setClickListener(listener);
+                    }
                     historyProgressBar.setVisibility(View.INVISIBLE);
                     if (success) {
                         gridView.setAdapter(adapter);

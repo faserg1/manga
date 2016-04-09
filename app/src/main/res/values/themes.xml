@@ -49,6 +49,7 @@
         <item name="menu_drawer_item_color">@color/black_unselected_white_selected</item>
         <item name="drawer_background_image">@drawable/material_background</item>
         <item name="grid_item_background">@drawable/grid_item_background</item>
+        <item name="triangle_left_top">@drawable/left_top_triangle</item>
 
         <item name="profile_text_toolbar_title">@android:color/white</item>
         <item name="profile_text_category_title">@color/medium_dark_blue</item>
@@ -83,8 +84,8 @@
     </style>
 
     <style name="Manga.Dark" parent="Manga">
-        <item name="colorPrimary">#353535</item>
-        <item name="colorPrimaryDark">#000</item>
+        <item name="colorPrimary">@color/dark_color_primary</item>
+        <item name="colorPrimaryDark">@color/dark_color_primary_dark</item>
         <item name="android:textColorSecondary">#fff</item>
 
 
@@ -93,8 +94,8 @@
         <item name="colorControlHighlight">@color/color_accent</item>
 
         <!--theme dependent-->
-        <item name="color_primary">#353535</item>
-        <item name="color_primary_dark">#000</item>
+        <item name="color_primary">@color/dark_color_primary</item>
+        <item name="color_primary_dark">@color/dark_color_primary_dark</item>
         <item name="action_mode_background">#222e39</item>
         <item name="color_accent">@color/medium_dark_blue</item>
         <item name="toolbar_color">#353535</item>
@@ -102,6 +103,7 @@
         <item name="menu_drawer_item_color">@color/white_unselected_white_selected</item>
         <item name="drawer_background_image">@drawable/material_background_dark</item>
         <item name="grid_item_background">@drawable/grid_item_background_dark</item>
+        <item name="triangle_left_top">@drawable/left_top_triangle_dark</item>
 
         <item name="profile_text_toolbar_title">@android:color/white</item>
         <item name="profile_text_category_title">@android:color/white</item>

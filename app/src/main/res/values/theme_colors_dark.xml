@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="dark_color_primary">#353535</color>
+    <color name="dark_color_world_art">@color/red_trasparent</color>
+    <color name="dark_color_primary_dark">#000</color>
+    <color name="dark_action_mode_background">@color/light_blue</color>
+    <color name="dark_color_accent">@color/medium_dark_blue</color>
+
+
+    <color name="dark_color_showcase">@color/dark_blue</color>
+    <color name="dark_color_showcase_background">@color/dark_blue_semi_transparent</color>
+
+    <color name="dark_dialog_top_bar">@color/medium_dark_blue</color>
+    <color name="dark_dialog_top_bar_divider">@color/dark_blue_semi_transparent</color>
+
+    <color name="dark_toolbar_color">@color/dark_blue</color>
+
+    <color name="dark_dialog_top_bar_color">@color/dark_blue</color>
+    <color name="dark_dialog_divider_color">@color/darkest_blue</color>
+
+    <color name="dark_btn_beauty_normal">@color/dark_blue</color>
+    <color name="dark_btn_beauty_pressed">@color/medium_dark_blue</color>
+    <color name="dark_btn_beauty_ripple">@color/blue</color>
+    <color name="dark_btn_beauty_disabled">@color/light_blue</color>
+
+
+    <color name="dark_btn_normal_normal">@color/dark_blue</color>
+    <color name="dark_btn_normal_pressed">@color/medium_dark_blue</color>
+    <color name="dark_btn_normal_disabled">@color/light_blue</color>
+
+    <color name="dark_btn_fab_enabled_normal">@color/light_orange</color>
+    <color name="dark_btn_fab_enabled_pressed">@color/lighter_orange</color>
+    <color name="dark_btn_fab_disabled_normal">@color/light_gray</color>
+    <color name="dark_btn_fab_disabled_pressed">@color/lighter_gray</color>
+
+    <color name="dark_spinner_dark_normal">@color/dark_blue</color>
+    <color name="dark_spinner_dark_pressed">@color/medium_dark_blue</color>
+    <color name="dark_spinner_dark_ripple">@color/blue_half_transparent</color>
+    <color name="dark_spinner_dark_disabled">@android:color/black</color>
+
+    <color name="dark_selected_color">@color/medium_dark_blue_semi_transparent</color>
+    <color name="dark_love_selected_color">@color/medium_dark_red_semi_transparent</color>
+    <color name="dark_love_ripple_color">@color/medium_dark_red</color>
+
+    <color name="dark_error_message_color">@color/red</color>
+
+    <color name="dark_profile_text_toolbar_title">@android:color/white</color>
+    <color name="dark_profile_text_category_title">@color/medium_dark_blue</color>
+    <color name="dark_profile_text">@color/dark_gray</color>
+    <color name="dark_profile_divider">@color/light_gray</color>
+    <color name="dark_link_color">@color/blue</color>
+    <color name="dark_link_underline">@color/blue_half_transparent</color>
+</resources>

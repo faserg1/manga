@@ -84,9 +84,6 @@
         </activity>
         <activity android:name=".activity.MangaViewerActivity"/>
         <activity
-            android:name=".activity.HistoryActivity"
-            android:label="History"/>
-        <activity
             android:name=".core.notification.headsupold.HeadsUpNotification$HeadsUpActivity"
             android:label="Notification"
             android:theme="@style/Theme.CustomPanel"/>

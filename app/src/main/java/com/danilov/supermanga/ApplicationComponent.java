@@ -2,7 +2,6 @@ package com.danilov.supermanga;
 
 import android.support.annotation.NonNull;
 
-import com.danilov.supermanga.activity.HistoryActivity;
 import com.danilov.supermanga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.supermanga.core.adapter.MangaListAdapter;
 import com.danilov.supermanga.core.application.MangaApplication;
@@ -38,8 +37,6 @@ import dagger.Component;
 public interface ApplicationComponent {
 
     void inject(@NonNull MangaApplication mangaApplication);
-
-    void inject(@NonNull HistoryActivity historyActivity);
 
     void inject(@NonNull DownloadedMangaAdapter downloadedMangaAdapter);
 
