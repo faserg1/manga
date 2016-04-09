@@ -50,6 +50,7 @@
         <item name="drawer_background_image">@drawable/material_background</item>
         <item name="grid_item_background">@drawable/grid_item_background</item>
         <item name="triangle_left_top">@drawable/left_top_triangle</item>
+        <item name="square_marker">@drawable/square_marker</item>
 
         <item name="profile_text_toolbar_title">@android:color/white</item>
         <item name="profile_text_category_title">@color/medium_dark_blue</item>
@@ -104,6 +105,7 @@
         <item name="drawer_background_image">@drawable/material_background_dark</item>
         <item name="grid_item_background">@drawable/grid_item_background_dark</item>
         <item name="triangle_left_top">@drawable/left_top_triangle_dark</item>
+        <item name="square_marker">@drawable/square_marker_dark</item>
 
         <item name="profile_text_toolbar_title">@android:color/white</item>
         <item name="profile_text_category_title">@android:color/white</item>

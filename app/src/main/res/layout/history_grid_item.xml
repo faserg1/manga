@@ -3,10 +3,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="2dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:paddingTop="2dp">
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
 
     <RelativeLayout
         android:id="@+id/card_wrapper"
@@ -37,37 +37,89 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:weightSum="1"
+            android:orientation="vertical"
             android:id="@+id/bottom_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="#A0000000"
-            android:paddingLeft="10dp"
-            android:descendantFocusability="blocksDescendants">
+            android:animateLayoutChanges="true"
+            android:layout_alignParentBottom="true">
 
-            <com.danilov.supermanga.core.view.CTextView
-                android:id="@+id/manga_title"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/actions_wrapper"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:visibility="gone"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:maxLines="2"
-                android:lines="2"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/grid_item_text_size"/>
+                android:descendantFocusability="blocksDescendants">
 
-            <ImageButton
-                android:id="@+id/discard_button"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:src="@drawable/dark_ic_action_discard"/>
+
+                <com.danilov.supermanga.core.view.CTextView
+                    android:text="@string/open"
+                    android:textAllCaps="true"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/open"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/selectable_normal_background"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:maxLines="2"
+                    android:lines="2"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/grid_item_text_size"/>
+
+                <ImageButton
+                    android:id="@+id/discard_button"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/selectable_normal_background"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/dark_ic_action_discard"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/title_wrapper"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:descendantFocusability="blocksDescendants">
+
+
+                <com.danilov.supermanga.core.view.CTextView
+                    android:id="@+id/manga_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:lines="2"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/grid_item_text_size"/>
+
+
+                <com.danilov.supermanga.core.view.CTextView
+                    android:padding="2dp"
+                    android:background="?attr/square_marker"
+                    android:id="@+id/chapters_left"
+                    android:gravity="center"
+                    android:minEms="2"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/grid_item_text_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -81,10 +133,9 @@
         android:scaleType="centerCrop"
         android:src="@drawable/card_shadow"/>
 
-
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/selectable_item_background"/>
+        android:background="@drawable/selectable_normal_background"/>
 
 </RelativeLayout>

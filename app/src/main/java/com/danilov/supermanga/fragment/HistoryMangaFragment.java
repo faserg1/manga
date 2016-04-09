@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -81,24 +82,12 @@ public class HistoryMangaFragment extends BaseFragmentNative {
 
         @Override
         public boolean onItemLongClick(final int position, final HistoryItemHolder viewHolder) {
-            ImageView imageView = viewHolder.mangaCover;
-            Manga manga = adapter.getHistoryElements().get(position).getManga();
-
-            Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
-
-            int[] onScreenLocation = new int[2];
-            imageView.getLocationOnScreen(onScreenLocation);
-
-            intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
-            intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
-            intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, imageView.getWidth());
-            intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
-            intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
-
-            intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
-            startActivity(intent);
-
-            getActivity().overridePendingTransition(0, 0);
+            if (adapter.getActionWrapperOpenedPosition() == position) {
+                adapter.setActionWrapperOpenedPosition(-1);
+            } else {
+                adapter.setActionWrapperOpenedPosition(position);
+            }
+            adapter.notifyItemChanged(position);
             return true;
         }
     };
@@ -123,6 +112,32 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         ButterKnife.bind(this, view);
         historyDAO = ServiceContainer.getService(HistoryDAO.class);
         sizeOfImage = getActivity().getResources().getDimensionPixelSize(R.dimen.grid_item_height);
+        gridView.setItemAnimator(new DefaultItemAnimator() {
+
+            @Override
+            public boolean animateChange(@NonNull final RecyclerView.ViewHolder oldHolder,
+                                         @NonNull final RecyclerView.ViewHolder newHolder,
+                                         @NonNull final ItemHolderInfo preLayoutInfo,
+                                         @NonNull final ItemHolderInfo postLayoutInfo) {
+                int position = newHolder.getAdapterPosition();
+                HistoryItemHolder holder = (HistoryItemHolder) newHolder;
+                if (position == adapter.getActionWrapperOpenedPosition()) {
+                    holder.actionsWrapper.setVisibility(View.VISIBLE);
+                    holder.titleWrapper.setVisibility(View.GONE);
+                } else {
+                    holder.actionsWrapper.setVisibility(View.GONE);
+                    holder.titleWrapper.setVisibility(View.VISIBLE);
+                }
+                dispatchAnimationFinished(newHolder);
+                return true;
+            }
+
+            @Override
+            public boolean canReuseUpdatedViewHolder(final RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+
+        });
     }
 
     @Override
@@ -172,12 +187,11 @@ public class HistoryMangaFragment extends BaseFragmentNative {
         thread.start();
     }
 
-    private void removeHistory(final HistoryElement historyElement) {
+    private void removeHistory(final int position, final HistoryElement historyElement) {
         try {
             historyDAO.deleteManga(historyElement.getManga(), historyElement.isOnline());
-            loadHistory();
+            adapter.notifyItemRemoved(position);
         } catch (DatabaseAccessException e) {
-            e.printStackTrace();
             Utils.showToast(getActivity(), getActivity().getString(R.string.e_failed_remove_history) + e.getMessage());
         }
     }
@@ -199,6 +213,8 @@ public class HistoryMangaFragment extends BaseFragmentNative {
     private class HistoryMangaAdapter extends BaseGridAdapter<HistoryItemHolder> {
 
         private List<HistoryElement> history = null;
+
+        private int actionWrapperOpenedPosition = -1;
 
         public HistoryMangaAdapter(@NonNull final RecyclerView recyclerView, final List<HistoryElement> history) {
             super(recyclerView);
@@ -224,13 +240,54 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             return new HistoryItemHolder(view);
         }
 
+        public void setActionWrapperOpenedPosition(final int actionWrapperOpenedPosition) {
+            this.actionWrapperOpenedPosition = actionWrapperOpenedPosition;
+        }
+
+        public int getActionWrapperOpenedPosition() {
+            return actionWrapperOpenedPosition;
+        }
 
         @Override
         public void onBindViewHolder(final HistoryItemHolder holder, final int position) {
             final HistoryElement historyElement = history.get(position);
-            holder.discardButton.setOnClickListener(view1 -> removeHistory(historyElement));
+            holder.actionsWrapper.setVisibility(View.GONE);
+            holder.titleWrapper.setVisibility(View.VISIBLE);
+            holder.discardButton.setOnClickListener(view1 -> {
+                history.remove(position);
+                removeHistory(position, historyElement);
+            });
+            holder.open.setOnClickListener(view1 -> {
+                ImageView imageView = holder.mangaCover;
+                Manga manga = adapter.getHistoryElements().get(position).getManga();
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
+
+                int[] onScreenLocation = new int[2];
+                imageView.getLocationOnScreen(onScreenLocation);
+
+                intent.putExtra(MangaInfoActivity.EXTRA_LEFT, onScreenLocation[0]);
+                intent.putExtra(MangaInfoActivity.EXTRA_TOP, onScreenLocation[1]);
+                intent.putExtra(MangaInfoActivity.EXTRA_WIDTH, imageView.getWidth());
+                intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
+                intent.putExtra(MangaInfoActivity.EXTRA_HEIGHT, imageView.getHeight());
+
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                startActivity(intent);
+
+                getActivity().overridePendingTransition(0, 0);
+            });
             Manga manga = historyElement.getManga();
             holder.mangaTitle.setText(manga.getTitle());
+
+            int diff = manga.getChaptersQuantity() - 1 - historyElement.getChapter();
+            if (diff > 0) {
+                holder.chaptersLeft.setText(diff + "");
+                holder.chaptersLeft.setVisibility(View.VISIBLE);
+            } else {
+                holder.chaptersLeft.setText("");
+                holder.chaptersLeft.setVisibility(View.GONE);
+            }
 
             if (!historyElement.isOnline()) {
                 holder.isOnline.setVisibility(View.INVISIBLE);
@@ -264,6 +321,10 @@ public class HistoryMangaFragment extends BaseFragmentNative {
 
         public ImageView mangaCover;
         public TextView mangaTitle;
+        public TextView chaptersLeft;
+        public View open;
+        public View actionsWrapper;
+        public View titleWrapper;
         public ImageButton discardButton;
         private View isOnline;
 
@@ -271,8 +332,12 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             super(itemView);
             mangaCover = (ImageView) itemView.findViewById(R.id.manga_cover);
             mangaTitle = (TextView) itemView.findViewById(R.id.manga_title);
+            chaptersLeft = (TextView) itemView.findViewById(R.id.chapters_left);
             discardButton = (ImageButton) itemView.findViewById(R.id.discard_button);
             isOnline = itemView.findViewById(R.id.is_online);
+            actionsWrapper = itemView.findViewById(R.id.actions_wrapper);
+            titleWrapper = itemView.findViewById(R.id.title_wrapper);
+            open = itemView.findViewById(R.id.open);
         }
 
     }

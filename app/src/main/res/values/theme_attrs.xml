@@ -57,6 +57,7 @@
     <attr name="menu_drawer_item_color" format="color"/>
     <attr name="drawer_background_image" format="reference"/>
     <attr name="triangle_left_top" format="reference"/>
+    <attr name="square_marker" format="reference"/>
 
     <!--icons-->
     <attr name="button_chapters_icon" format="reference"/>

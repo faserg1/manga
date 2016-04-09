@@ -9,57 +9,72 @@
               android:paddingTop="2dp"
               android:paddingBottom="2dp">
 
-    <RelativeLayout android:layout_width="fill_parent"
-                  android:layout_height="@dimen/grid_item_height"
-                    android:background="?attr/grid_item_background"
-                  android:id="@+id/card_wrapper">
-
-
-        <ImageView android:layout_width="fill_parent"
-                   android:layout_height="fill_parent"
-                   android:id="@+id/manga_cover"
-                   android:layout_above="@+id/manga_title"
-                   android:scaleType="centerCrop"/>
-
-
-        <com.danilov.supermanga.core.view.CTextView
-                android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/manga_title"
-                  android:padding="10dp"
-                  android:layout_alignParentBottom="true"
-                  android:textSize="@dimen/grid_item_text_size"
-                  android:singleLine="true"
-                android:textColor="?attr/card_text_color"/>
-
-    </RelativeLayout>
-
     <RelativeLayout
-        android:id="@+id/is_online"
-        android:visibility="invisible"
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:background="#CC000000"
-        android:layout_alignParentTop="true">
+        android:id="@+id/card_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom"
+        android:background="?attr/grid_item_background">
 
-        <com.danilov.supermanga.core.view.CTextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textSize="22sp"
-                  android:layout_centerVertical="true"
-                  android:text="ONLINE"
-                  android:textColor="@android:color/white"/>
+
+        <ImageView
+            android:id="@+id/manga_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/test_cover1"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:id="@+id/is_online"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="?attr/triangle_left_top">
+
+            <ImageView
+                android:src="@drawable/dark_button_open_in_browser"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:id="@+id/bottom_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#A0000000"
+            android:paddingLeft="10dp"
+            android:descendantFocusability="blocksDescendants">
+
+            <com.danilov.supermanga.core.view.CTextView
+                android:id="@+id/manga_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:lines="2"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/grid_item_text_size"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
     <ImageView
-            android:id="@+id/bottom"
-            android:layout_below="@+id/card_wrapper"
-            android:src="@drawable/card_shadow"
-            android:layout_height="@dimen/card_shadow"
-            android:layout_width="fill_parent"/>
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_shadow"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/card_shadow"/>
 
-    <View android:layout_width="fill_parent"
-          android:layout_height="@dimen/grid_item_height"
-          android:background="@drawable/selectable_item_background"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/selectable_normal_background"/>
 
 </RelativeLayout>

@@ -110,12 +110,13 @@
     <string name="min">min</string>
     <string name="sec">sec</string>
     <string name="sv_add">Add local manga</string>
-    <string name="hint_filter_edittext">Поиск…</string>
-    <string name="text_clear_filter">Очистить</string>
+    <string name="hint_filter_edittext">Search…</string>
+    <string name="text_clear_filter">Clear</string>
     <string name="open_in_repo">Open on %1$s</string>
-    <string name="application_version_settings_title">Версия приложения</string>
+    <string name="application_version_settings_title">App version</string>
     <string name="yandex_account_info_title">Yandex account</string>
     <string name="images_from">Images from manga</string>
     <string name="sv_reverse">Inverse</string>
-    <string name="sv_decoder">Декодер</string>
+    <string name="sv_decoder">Decoder</string>
+    <string name="open">Open</string>
 </resources>

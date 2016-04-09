@@ -404,7 +404,7 @@ public class InfoFragment extends BaseFragmentNative implements View.OnClickList
         Intent intent = null;
         switch (v.getId()) {
             case R.id.manga_title:
-                activity.flipToWorldArt();
+//                activity.flipToWorldArt();
                 break;
             case R.id.download:
                 activity.showChaptersFragment();

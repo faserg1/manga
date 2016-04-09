@@ -35,6 +35,10 @@ android {
         incremental true
     }
 
+    lintOptions {
+        warning 'ResourceType' //TODO: можно будет убрать с выходом stable Butterknife8
+    }
+
     buildTypes {
         release {
             minifyEnabled false

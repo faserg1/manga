@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
 import com.annimon.stream.Stream;
-import com.danilov.supermanga.DaggerApplicationComponent;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
 import com.danilov.supermanga.core.application.MangaApplication;
