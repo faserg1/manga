@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -36,11 +37,10 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/bottom_holder"
+        <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/bottom_holder"
             android:background="#A0000000"
             android:animateLayoutChanges="true"
             android:layout_alignParentBottom="true">
@@ -50,8 +50,8 @@
                 android:orientation="horizontal"
                 android:weightSum="1"
                 android:visibility="gone"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_widthPercent="100%"
                 android:descendantFocusability="blocksDescendants">
 
 
@@ -89,9 +89,10 @@
                 android:id="@+id/title_wrapper"
                 android:orientation="horizontal"
                 android:weightSum="1"
-                android:layout_width="match_parent"
+                app:layout_widthPercent="100%"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
+                android:layout_toRightOf="@+id/actions_wrapper"
                 android:descendantFocusability="blocksDescendants">
 
 
@@ -121,7 +122,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </android.support.percent.PercentRelativeLayout>
 
     </RelativeLayout>
 

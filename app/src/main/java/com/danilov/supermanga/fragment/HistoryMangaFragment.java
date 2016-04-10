@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.httpimage.HttpImageManager;
@@ -122,11 +123,9 @@ public class HistoryMangaFragment extends BaseFragmentNative {
                 int position = newHolder.getAdapterPosition();
                 HistoryItemHolder holder = (HistoryItemHolder) newHolder;
                 if (position == adapter.getActionWrapperOpenedPosition()) {
-                    holder.actionsWrapper.setVisibility(View.VISIBLE);
-                    holder.titleWrapper.setVisibility(View.GONE);
+                    holder.showActions();
                 } else {
-                    holder.actionsWrapper.setVisibility(View.GONE);
-                    holder.titleWrapper.setVisibility(View.VISIBLE);
+                    holder.showTitle();
                 }
                 dispatchAnimationFinished(newHolder);
                 return true;
@@ -254,11 +253,9 @@ public class HistoryMangaFragment extends BaseFragmentNative {
 
             //решаем проблему с 4 андроидом (анимация из animateLayoutChanges отменялась)
             if (position == adapter.getActionWrapperOpenedPosition()) {
-                holder.actionsWrapper.setVisibility(View.VISIBLE);
-                holder.titleWrapper.setVisibility(View.GONE);
+                holder.showActions();
             } else {
-                holder.actionsWrapper.setVisibility(View.GONE);
-                holder.titleWrapper.setVisibility(View.VISIBLE);
+                holder.showTitle();
             }
 
             holder.discardButton.setOnClickListener(view1 -> {
@@ -346,6 +343,16 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             actionsWrapper = itemView.findViewById(R.id.actions_wrapper);
             titleWrapper = itemView.findViewById(R.id.title_wrapper);
             open = itemView.findViewById(R.id.open);
+        }
+
+        void showActions() {
+            actionsWrapper.setVisibility(View.VISIBLE);
+//            titleWrapper.setVisibility(View.GONE);
+        }
+
+        void showTitle() {
+            actionsWrapper.setVisibility(View.GONE);
+//            titleWrapper.setVisibility(View.VISIBLE);
         }
 
     }

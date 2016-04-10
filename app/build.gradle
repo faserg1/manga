@@ -80,6 +80,7 @@ dependencies {
     compile libraries.supportDesign
     compile libraries.supportRecyclerView
     compile libraries.supportCardView
+    compile libraries.supportPercentView
 
     compile libraries.streamBackport
 
