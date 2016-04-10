@@ -154,7 +154,7 @@ public class FavoritesFragment extends BaseFragmentNative {
 
             Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
 
-            ImageView iv = (ImageView) view.findViewById(R.id.manga_cover);
+            ImageView iv = viewHolder.mangaCover;
             int[] onScreenLocation = new int[2];
             iv.getLocationOnScreen(onScreenLocation);
 
