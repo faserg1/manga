@@ -711,10 +711,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     private void updateInfo() {
-        int currentChapterNumber = strategy.getCurrentChapterNumber();
-        int currentImageNumber = strategy.getCurrentImageNumber();
+        int currentChapterNumber = strategy.getCurrentChapterNumber() + 1;
+        int currentImageNumber = strategy.getCurrentImageNumber() + 1;
         int totalImagesNumber = strategy.getTotalChaptersNumber();
-        String progressInfo = (currentImageNumber + 1) + "/" + totalImagesNumber;
+        String progressInfo = currentImageNumber + "/" + totalImagesNumber;
         progressInfo += "(" + currentChapterNumber + ")";
 
         int battery = (int) Utils.getBatteryLevel(MangaViewerActivity.this);
