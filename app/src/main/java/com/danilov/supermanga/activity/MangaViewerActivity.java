@@ -234,9 +234,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         int whatBar = sp.getInt("WHAT_BAR", APP_BAR);
         setupBarSelect(whatBar);
-
-        barSelect.postDelayed(() -> onBarSelected(whatBar), 100);
-
+        onBarSelected(whatBar);
         barSelect.setOnCheckedChangeListener((group, checkedId) -> {
             int bar = -1;
             switch (checkedId) {
@@ -254,6 +252,10 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             sp.edit().putInt("WHAT_BAR", bar).apply();
         });
         updateTimer.schedule(new UpdateInfoTask(), 1000, Constants.VIEWER_INFO_PERIOD);
+        this.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener((visibility -> {
+            int bar = sp.getInt("WHAT_BAR", APP_BAR);
+            onBarSelected(bar);
+        }));
     }
 
     private void setupBarSelect(final int bar) {
@@ -713,7 +715,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private void updateInfo() {
         int currentChapterNumber = strategy.getCurrentChapterNumber() + 1;
         int currentImageNumber = strategy.getCurrentImageNumber() + 1;
-        int totalImagesNumber = strategy.getTotalChaptersNumber();
+        int totalImagesNumber = strategy.getTotalImageNumber();
         String progressInfo = currentImageNumber + "/" + totalImagesNumber;
         progressInfo += "(" + currentChapterNumber + ")";
 
@@ -748,13 +750,23 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         strategy.onResume(this);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        int whatBar = sp.getInt("WHAT_BAR", APP_BAR);
+        setupBarSelect(whatBar);
+        onBarSelected(whatBar);
+    }
+
     private void toggleFullscreen(final boolean fullscreen) {
         getSupportActionBar().hide();
         if (fullscreen) {
             if (Build.VERSION.SDK_INT >= 19) {
                 this.getWindow().getDecorView()
-                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -767,8 +779,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         } else {
             if (Build.VERSION.SDK_INT >= 19) {
                 this.getWindow().getDecorView()
-                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
                                 | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
@@ -1039,7 +1050,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
         @Override
         public void run() {
-            updateInfo();
+            runOnUiThread(MangaViewerActivity.this::updateInfo);
         }
 
     }
