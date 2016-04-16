@@ -148,6 +148,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private long startedReading;
 
     private Timer timer = new Timer();
+    private Timer updateTimer = new Timer();
     private TimerTask saveProgressTask = new TimerTask() {
 
         @Override
@@ -252,7 +253,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             onBarSelected(bar);
             sp.edit().putInt("WHAT_BAR", bar).apply();
         });
-        timer.schedule(new UpdateInfoTask(), 1000, Constants.VIEWER_INFO_PERIOD);
+        updateTimer.schedule(new UpdateInfoTask(), 1000, Constants.VIEWER_INFO_PERIOD);
     }
 
     private void setupBarSelect(final int bar) {
@@ -642,6 +643,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
 
         timer.cancel();
+        updateTimer.cancel();
 
 //        strategy.destroy();
         super.onDestroy();
@@ -746,15 +748,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         strategy.onResume(this);
     }
 
-//    @Override
-//    public void onWindowFocusChanged(final boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-//        int whatBar = sp.getInt("WHAT_BAR", APP_BAR);
-//        setupBarSelect(whatBar);
-//        onBarSelected(whatBar);
-//    }
-
     private void toggleFullscreen(final boolean fullscreen) {
         getSupportActionBar().hide();
         if (fullscreen) {
@@ -784,6 +777,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             } else {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             }
+        }
+        if (isHidden) {
+            hideBtns(0);
         }
     }
 
