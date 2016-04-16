@@ -88,6 +88,7 @@ public class MainActivity extends BaseToolbarActivity implements FragmentManager
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.manga_main_activity);
 
         //используем лиснер бэкстека, так как

@@ -99,6 +99,11 @@ public class SettingsFragment extends BaseFragmentNative {
         checkBox.setOnCheckedChangeListener((a, b) -> {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(applicationContext);
             sp.edit().putBoolean("DARK_THEME", b).apply();
+
+            Intent intent = new Intent(activity, MainActivity.class);
+            intent.putExtra(MainActivity.PAGE, MainActivity.MainMenuItem.SETTINGS.toString());
+            activity.startActivity(intent);
+            activity.finish();
         });
 
 

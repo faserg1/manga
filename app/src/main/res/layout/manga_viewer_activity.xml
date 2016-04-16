@@ -33,6 +33,36 @@
             android:layout_height="fill_parent">
 
             <LinearLayout
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:padding="2dp"
+                android:background="#b1000000">
+
+                <com.danilov.supermanga.core.view.CTextView
+                    android:id="@+id/page_status"
+                    android:textSize="13sp"
+                    android:layout_weight="1"
+                    android:textColor="#fff"
+                    android:gravity="left|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <com.danilov.supermanga.core.view.CTextView
+                    android:id="@+id/phone_status"
+                    android:textSize="13sp"
+                    android:gravity="right|center_vertical"
+                    android:textColor="#fff"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.1">
@@ -209,7 +239,7 @@
                             </LinearLayout>
 
                             <CheckBox
-                                android:layout_marginTop="5dp"
+                                android:layout_marginTop="10dp"
                                 android:textColor="#ffffffff"
                                 android:id="@+id/show_btns_checkbox"
                                 android:text="@string/sv_always_show_viewer_controls"
@@ -223,6 +253,41 @@
                                 android:text="@string/sv_toggle_rtl"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
+
+                            <TextView android:layout_width="fill_parent"
+                                      android:layout_height="wrap_content"
+                                      android:textColor="#ffffffff"
+                                      android:layout_marginTop="10dp"
+                                      android:textSize="15sp"
+                                      android:text="Статус бар"/>
+
+                            <RadioGroup
+                                android:id="@+id/what_bar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <android.support.v7.widget.AppCompatRadioButton
+                                    android:id="@+id/system_bar"
+                                    android:text="Системный"
+                                    android:textColor="#fff"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <android.support.v7.widget.AppCompatRadioButton
+                                    android:id="@+id/app_bar"
+                                    android:text="Приложение"
+                                    android:textColor="#fff"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <android.support.v7.widget.AppCompatRadioButton
+                                    android:id="@+id/nothing"
+                                    android:text="Не показывать"
+                                    android:textColor="#fff"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                            </RadioGroup>
 
                         </LinearLayout>
 

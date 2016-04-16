@@ -1,14 +1,15 @@
 package com.danilov.supermanga.activity;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -25,6 +26,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -52,8 +55,12 @@ import com.danilov.supermanga.core.view.MangaViewPager;
 import com.danilov.supermanga.core.view.SlidingLayer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 //import com.google.android.gms.ads.AdListener;
 //import com.google.android.gms.ads.AdRequest;
@@ -76,70 +83,88 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private static final String URIS_KEY = "UK";
     private static final String CHAPTERS_READ = "CR";
 
-    private MangaViewPager mangaViewPager;
-    private TextView nextBtn;
-    private TextView prevBtn;
-    private TextView nextBtnBottom;
-    private TextView prevBtnBottom;
-    private Spinner pageSpinner;
-    private Spinner chapterSpinner;
-    private ProgressBar imageProgressBar;
-    private CheckBox showButtonsCheckbox;
-    private CheckBox rtlCheckbox;
-    private Button nextChapter;
-    private Button reInitButton;
-
-    private View drawerRightOffsetTop;
-    private View drawerRightOffsetBottom;
-    private View bottomBar;
-
-    private SlidingLayer slidingLayer;
-
+    private static final int SYSTEM_BAR = 0;
+    private static final int APP_BAR = 1;
+    private static final int NO_BAR = 2;
+    private static final int HIDE_TIME_OFFSET = 2000;
+    private static final int HIDE_TIME = 1000;
+    @Bind(R.id.imageSwitcher)
+    public MangaViewPager mangaViewPager;
+    @Bind(R.id.nextBtn)
+    public TextView nextBtn;
+    @Bind(R.id.prevBtn)
+    public TextView prevBtn;
+    @Bind(R.id.nextBtnBottom)
+    public TextView nextBtnBottom;
+    @Bind(R.id.prevBtnBottom)
+    public TextView prevBtnBottom;
+    @Bind(R.id.imagePicker)
+    public Spinner pageSpinner;
+    @Bind(R.id.chapterPicker)
+    public Spinner chapterSpinner;
+    @Bind(R.id.imageProgressBar)
+    public ProgressBar imageProgressBar;
+    @Bind(R.id.show_btns_checkbox)
+    public CheckBox showButtonsCheckbox;
+    @Bind(R.id.rtl_checkbox)
+    public CheckBox rtlCheckbox;
+    @Bind(R.id.next_chapter)
+    public Button nextChapter;
+    @Bind(R.id.reinit)
+    public Button reInitButton;
+    @Bind(R.id.drawer_right_offset_top)
+    public View drawerRightOffsetTop;
+    @Bind(R.id.drawer_right_offset_bottom)
+    public View drawerRightOffsetBottom;
+    @Bind(R.id.bottom_bar)
+    public View bottomBar;
+    @Bind(R.id.selector)
+    public SlidingLayer slidingLayer;
+    @Bind(R.id.tutorials)
+    public View tutorials;
+    @Bind(R.id.info)
+    public View infoWrapper;
+    @Bind(R.id.page_status)
+    public TextView pageStatus;
+    @Bind(R.id.phone_status)
+    public TextView phoneStatus;
+    @Bind(R.id.what_bar)
+    public RadioGroup barSelect;
     private StrategyDelegate strategy;
     private StrategyHolder strategyHolder;
     private Manga manga;
     private int fromChapter;
     private int fromPage;
-
     private int chaptersRead = 0;
-
     private ApplicationSettings settings;
-
-    private View tutorials;
-
     private DialogFragment progressDialog = null;
     private RateDialog rateDialog = null;
-
-    private boolean isFullscreen = false;
     private boolean isTutorialPassed = false;
-
     private boolean showOnline;
+    private boolean isHidden = false;
+    private boolean isRTL = false;
+    private boolean saveTimerScheduled = false;
+    private boolean saved = false;
+    private long startedReading;
+
+    private Timer timer = new Timer();
+    private TimerTask saveProgressTask = new TimerTask() {
+
+        @Override
+        public void run() {
+            save();
+        }
+
+    };
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manga_viewer_activity);
-
+        ButterKnife.bind(this);
         //advertisment
         adInit();
 
-        this.mangaViewPager = findViewWithId(R.id.imageSwitcher);
         mangaViewPager.setFragmentManager(getFragmentManager());
-        this.nextBtn = findViewWithId(R.id.nextBtn);
-        this.prevBtn = findViewWithId(R.id.prevBtn);
-        this.nextBtnBottom = findViewWithId(R.id.nextBtnBottom);
-        this.prevBtnBottom = findViewWithId(R.id.prevBtnBottom);
-        this.pageSpinner = findViewWithId(R.id.imagePicker);
-        this.chapterSpinner = findViewWithId(R.id.chapterPicker);
-        this.imageProgressBar = findViewWithId(R.id.imageProgressBar);
-        this.nextChapter = findViewWithId(R.id.next_chapter);
-        this.slidingLayer = findViewWithId(R.id.selector);
-        this.drawerRightOffsetBottom = findViewById(R.id.drawer_right_offset_bottom);
-        this.drawerRightOffsetTop = findViewById(R.id.drawer_right_offset_top);
-        this.tutorials = findViewById(R.id.tutorials);
-        this.showButtonsCheckbox = findViewWithId(R.id.show_btns_checkbox);
-        this.rtlCheckbox = findViewWithId(R.id.rtl_checkbox);
-        this.bottomBar = findViewWithId(R.id.bottom_bar);
-        this.reInitButton = findViewWithId(R.id.reinit);
         reInitButton.setOnClickListener(this);
         chapterSpinner.setOnItemSelectedListener(new ChapterSpinnerListener());
         pageSpinner.setOnItemSelectedListener(new ImageSpinnerListener());
@@ -151,7 +176,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         nextChapter.setOnClickListener(this);
         drawerRightOffsetTop.setOnTouchListener(new DisabledTouchEvent());
         drawerRightOffsetBottom.setOnTouchListener(new DisabledTouchEvent());
-        toggleFullscreen(true);
 
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
 
@@ -189,7 +213,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
                 strategy = new StrategyDelegate(mangaViewPager, new OfflineManga((LocalManga) manga), false);
             } else {
                 prepareOnlineManga();
-                strategy =  new StrategyDelegate(mangaViewPager, new OnlineManga(manga), true);
+                strategy = new StrategyDelegate(mangaViewPager, new OnlineManga(manga), true);
             }
 
             strategyHolder = StrategyHolder.newInstance(strategy);
@@ -205,12 +229,66 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         if (!userSettings.isAlwaysShowButtons()) {
             hideBtns(HIDE_TIME_OFFSET);
         }
+
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        int whatBar = sp.getInt("WHAT_BAR", APP_BAR);
+        setupBarSelect(whatBar);
+
+        barSelect.postDelayed(() -> onBarSelected(whatBar), 100);
+
+        barSelect.setOnCheckedChangeListener((group, checkedId) -> {
+            int bar = -1;
+            switch (checkedId) {
+                case R.id.system_bar:
+                    bar = SYSTEM_BAR;
+                    break;
+                case R.id.app_bar:
+                    bar = APP_BAR;
+                    break;
+                case R.id.nothing:
+                    bar = NO_BAR;
+                    break;
+            }
+            onBarSelected(bar);
+            sp.edit().putInt("WHAT_BAR", bar).apply();
+        });
+        timer.schedule(new UpdateInfoTask(), 1000, Constants.VIEWER_INFO_PERIOD);
     }
 
-    private static final int HIDE_TIME_OFFSET = 2000;
-    private static final int HIDE_TIME = 1000;
+    private void setupBarSelect(final int bar) {
+        RadioButton rb = null;
+        switch (bar) {
+            case SYSTEM_BAR:
+                rb = findViewWithId(R.id.system_bar);
+                break;
+            case APP_BAR:
+                rb = findViewWithId(R.id.app_bar);
+                break;
+            case NO_BAR:
+                rb = findViewWithId(R.id.nothing);
+                break;
+        }
+        if (rb != null) {
+            rb.setChecked(true);
+        }
+    }
 
-    private boolean isHidden = false;
+    private void onBarSelected(final int bar) {
+        switch (bar) {
+            case SYSTEM_BAR:
+                toggleFullscreen(false);
+                toggleAppBar(false);
+                break;
+            case APP_BAR:
+                toggleFullscreen(true);
+                toggleAppBar(true);
+                break;
+            case NO_BAR:
+                toggleFullscreen(true);
+                toggleAppBar(false);
+                break;
+        }
+    }
 
     private void hideBtns(final int offset) {
         isHidden = true;
@@ -256,7 +334,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         nextBtnBottom.startAnimation(animation3);
     }
 
-    private boolean isRTL = false;
     private void setReadingMode(final boolean isRTL) {
         this.isRTL = isRTL;
 
@@ -328,8 +405,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             strategy.showChapterAndImage(currentChapterNumber, currentImageNumber, false);
         }
     }
-
-    private boolean saveTimerScheduled = false;
 
     @Override
     public void onShowImage(final int number) {
@@ -451,6 +526,362 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
+    private void showChapter(final int chapterNum, final boolean fromNext) {
+        showProgressDialog(getString(R.string.loading), getString(R.string.getting_chapter_info));
+        strategy.showChapterAndImage(chapterNum, 0, fromNext);
+    }
+
+    public void update(final boolean fromInit) {
+        int currentChapter = strategy.getCurrentChapterNumber();
+        int totalChapters = strategy.getTotalChaptersNumber();
+        int currentImage = strategy.getCurrentImageNumber();
+        int totalImages = strategy.getTotalImageNumber();
+
+
+        if (currentChapter < totalChapters) {
+            MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
+            if (chapterAdapter == null) {
+                chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
+                chapterSpinner.setAdapter(chapterAdapter);
+            } else {
+                chapterAdapter.change(0, totalChapters);
+            }
+            chapterSpinner.setTag(currentChapter);
+            chapterSpinner.setSelection(currentChapter, false);
+        }
+
+
+        if (currentImage < totalImages) {
+            MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
+            if (pageAdapter == null) {
+                pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);
+                pageSpinner.setAdapter(pageAdapter);
+            } else {
+                pageAdapter.change(0, totalImages);
+            }
+            pageSpinner.setTag(currentImage);
+            pageSpinner.setSelection(currentImage);
+        }
+
+        if (!fromInit) {
+            toggleNextChapterButton(currentImage == totalImages - 1);
+        }
+        updateInfo();
+    }
+
+    private void toggleNextChapterButton(final boolean enable) {
+        nextChapter.setVisibility(enable ? View.VISIBLE : View.GONE);
+        bottomBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private void showProgressDialog(final String title, final String message) {
+        if (progressDialog == null) {
+            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+        } else {
+            hideProgress();
+            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
+        }
+    }
+
+    private void hideProgress() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    private void onPrevious() {
+        try {
+            strategy.previous();
+        } catch (ShowMangaException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void onNext() {
+        strategy.next();
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        int currentChapterNumber = strategy.getCurrentChapterNumber();
+        int currentImageNumber = strategy.getCurrentImageNumber();
+        Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
+        outState.putInt(CURRENT_CHAPTER_KEY, strategy.getCurrentChapterNumber());
+        outState.putInt(CURRENT_IMAGE_KEY, strategy.getCurrentImageNumber());
+        outState.putInt(CHAPTERS_READ, chaptersRead);
+        outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
+
+        ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
+        if (chapterList != null) {
+            outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
+        }
+        ArrayList<String> uris = Utils.listToArrayList(strategy.getChapterUris());
+        if (uris != null) {
+            outState.putStringArrayList(URIS_KEY, uris);
+        }
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.putFragment(outState, StrategyHolder.NAME, strategyHolder);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        save();
+        saved = true;
+        finish();
+    }
+
+    // the part with MangaStrategyListener
+
+    @Override
+    protected void onDestroy() {
+        if (!saved) {
+            save();
+            saved = true;
+        }
+
+        timer.cancel();
+
+//        strategy.destroy();
+        super.onDestroy();
+    }
+
+    // MangaStrategyListener realization end
+
+    private void save() {
+        int currentChapterNumber = strategy.getCurrentChapterNumber();
+        int currentImageNumber = strategy.getCurrentImageNumber();
+
+        HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
+        try {
+            historyDAO.updateHistory(manga, strategy.isOnline(), currentChapterNumber, currentImageNumber);
+        } catch (DatabaseAccessException e) {
+            Log.e(TAG, "Failed to update history: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
+        switch (compoundButton.getId()) {
+            case R.id.rtl_checkbox:
+                settings.setRTLMode(isChecked);
+                settings.update(this);
+                setReadingMode(isChecked);
+                break;
+            case R.id.show_btns_checkbox:
+                final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+                userSettings.setAlwaysShowButtons(isChecked);
+                settings.update(getApplicationContext());
+                if (isChecked) {
+                    showBtns();
+                } else {
+                    hideBtns(0);
+                }
+                break;
+        }
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.manga_viewer_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.full_screen:
+                toggleFullscreen(true);
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void updateInfo() {
+        int currentChapterNumber = strategy.getCurrentChapterNumber();
+        int currentImageNumber = strategy.getCurrentImageNumber();
+        int totalImagesNumber = strategy.getTotalChaptersNumber();
+        String progressInfo = (currentImageNumber + 1) + "/" + totalImagesNumber;
+        progressInfo += "(" + currentChapterNumber + ")";
+
+        int battery = (int) Utils.getBatteryLevel(MangaViewerActivity.this);
+        Calendar instance = Calendar.getInstance();
+        int hour = instance.get(Calendar.HOUR_OF_DAY);
+        int minute = instance.get(Calendar.MINUTE);
+        String phoneStatusText = hour + ":" + minute + ", " + battery + "%";
+        pageStatus.setText(progressInfo);
+        phoneStatus.setText(phoneStatusText);
+    }
+
+    @Override
+    protected void onPause() {
+        long delta = System.currentTimeMillis() - startedReading;
+        ApplicationSettings applicationSettings = ApplicationSettings.get(this);
+        ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
+        long timeRead = userSettings.getTimeRead();
+        userSettings.setTimeRead(timeRead + delta);
+        applicationSettings.update(this);
+        strategy.onPause();
+        if (!saved && strategy.isStrategyInitialized()) {
+            save();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        startedReading = System.currentTimeMillis();
+        super.onResume();
+        strategy.onResume(this);
+    }
+
+//    @Override
+//    public void onWindowFocusChanged(final boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//        int whatBar = sp.getInt("WHAT_BAR", APP_BAR);
+//        setupBarSelect(whatBar);
+//        onBarSelected(whatBar);
+//    }
+
+    private void toggleFullscreen(final boolean fullscreen) {
+        getSupportActionBar().hide();
+        if (fullscreen) {
+            if (Build.VERSION.SDK_INT >= 19) {
+                this.getWindow().getDecorView()
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } else {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+
+        } else {
+            if (Build.VERSION.SDK_INT >= 19) {
+                this.getWindow().getDecorView()
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+                                | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+                                | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+        }
+    }
+
+    private void toggleAppBar(final boolean show) {
+        infoWrapper.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showTutorial(final int number) {
+        View tutorialView = null;
+        switch (number) {
+            case -1:
+                tutorials.setVisibility(View.GONE);
+                break;
+            case 1:
+                tutorials.setVisibility(View.VISIBLE);
+                findViewById(R.id.tutorialView2).setVisibility(View.INVISIBLE);
+                tutorialView = tutorials.findViewById(R.id.tutorialView);
+                break;
+            case 2:
+                tutorials.setVisibility(View.VISIBLE);
+                findViewById(R.id.tutorialView).setVisibility(View.INVISIBLE);
+                tutorialView = tutorials.findViewById(R.id.tutorialView2);
+                break;
+        }
+        if (tutorialView != null) {
+            tutorialView.setVisibility(View.VISIBLE);
+            Button closeTutorial = (Button) tutorialView.findViewById(R.id.close_tutorial);
+            closeTutorial.setOnClickListener(view -> {
+                switch (number) {
+                    case 1:
+                        showTutorial(2);
+                        break;
+                    case 2:
+                        slidingLayer.openLayer(true);
+                        slidingLayer.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                slidingLayer.closeLayer(true);
+                            }
+                        }, 1000);
+                        Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
+                        showTutorial(-1);
+                        final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
+                        userSettings.setTutorialViewerPassed(true);
+                        settings.update(getApplicationContext());
+                        hideBtns(HIDE_TIME_OFFSET);
+                        break;
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                onNext();
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                onPrevious();
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private void adInit() {
+        if (!Constants.HAS_ADS) {
+        }
+//        mInterstitialAd = new InterstitialAd(this);
+//        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
+//        mInterstitialAd.setAdListener(new AdListener() {
+//            @Override
+//            public void onAdClosed() {
+//                requestNewInterstitial();
+//            }
+//        });
+//        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        if (!Constants.HAS_ADS) {
+        }
+//        AdRequest adRequest = new AdRequest.Builder()
+//                .addTestDevice(Utils.getDeviceId(this))
+//                .build();
+//        mInterstitialAd.loadAd(adRequest);
+    }
+
     private class ChapterSpinnerListener implements AdapterView.OnItemSelectedListener {
 
         @Override
@@ -499,68 +930,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
-    private void showChapter(final int chapterNum, final boolean fromNext) {
-        showProgressDialog(getString(R.string.loading), getString(R.string.getting_chapter_info));
-        strategy.showChapterAndImage(chapterNum, 0, fromNext);
-    }
+    //ad routine
 
-    public void update(final boolean fromInit) {
-        int currentChapter = strategy.getCurrentChapterNumber();
-        int totalChapters = strategy.getTotalChaptersNumber();
-        int currentImage = strategy.getCurrentImageNumber();
-        int totalImages = strategy.getTotalImageNumber();
-
-
-        if (currentChapter < totalChapters) {
-            MangaControlSpinnerAdapter chapterAdapter = (MangaControlSpinnerAdapter) chapterSpinner.getAdapter();
-            if (chapterAdapter == null) {
-                chapterAdapter = new MangaControlSpinnerAdapter(0, totalChapters);
-                chapterSpinner.setAdapter(chapterAdapter);
-            } else {
-                chapterAdapter.change(0, totalChapters);
-            }
-            chapterSpinner.setTag(currentChapter);
-            chapterSpinner.setSelection(currentChapter, false);
-        }
-
-
-        if (currentImage < totalImages) {
-            MangaControlSpinnerAdapter pageAdapter = (MangaControlSpinnerAdapter) pageSpinner.getAdapter();
-            if (pageAdapter == null) {
-                pageAdapter = new MangaControlSpinnerAdapter(0, totalImages);
-                pageSpinner.setAdapter(pageAdapter);
-            } else {
-                pageAdapter.change(0, totalImages);
-            }
-            pageSpinner.setTag(currentImage);
-            pageSpinner.setSelection(currentImage);
-        }
-
-        if (!fromInit) {
-            toggleNextChapterButton(currentImage == totalImages - 1);
-        }
-    }
-
-    private void toggleNextChapterButton(final boolean enable) {
-        nextChapter.setVisibility(enable ? View.VISIBLE : View.GONE);
-        bottomBar.setVisibility(enable ? View.INVISIBLE : View.VISIBLE);
-    }
-
-    private void showProgressDialog(final String title, final String message) {
-        if (progressDialog == null) {
-            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
-        } else {
-            hideProgress();
-            progressDialog = Utils.easyDialogProgress(getFragmentManager(), PROGRESS_DIALOG_TAG, title, message);
-        }
-    }
-
-    private void hideProgress() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
-    }
+//    private InterstitialAd mInterstitialAd;
 
     private class MangaControlSpinnerAdapter implements SpinnerAdapter {
 
@@ -656,212 +1028,6 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
-    private void onPrevious() {
-        try {
-            strategy.previous();
-        } catch (ShowMangaException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private void onNext() {
-        strategy.next();
-    }
-
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        int currentChapterNumber = strategy.getCurrentChapterNumber();
-        int currentImageNumber = strategy.getCurrentImageNumber();
-        Log.d(TAG, "CCN: " + currentChapterNumber + " CIN: " + currentImageNumber);
-        outState.putInt(CURRENT_CHAPTER_KEY, strategy.getCurrentChapterNumber());
-        outState.putInt(CURRENT_IMAGE_KEY, strategy.getCurrentImageNumber());
-        outState.putInt(CHAPTERS_READ, chaptersRead);
-        outState.putParcelable(Constants.MANGA_PARCEL_KEY, manga);
-
-        ArrayList<MangaChapter> chapterList = Utils.listToArrayList(manga.getChapters());
-        if (chapterList != null) {
-            outState.putParcelableArrayList(CHAPTERS_KEY, chapterList);
-        }
-        ArrayList<String> uris = Utils.listToArrayList(strategy.getChapterUris());
-        if (uris != null) {
-            outState.putStringArrayList(URIS_KEY, uris);
-        }
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.putFragment(outState, StrategyHolder.NAME, strategyHolder);
-        super.onSaveInstanceState(outState);
-    }
-
-    private boolean saved = false;
-
-    @Override
-    public void onBackPressed() {
-        save();
-        saved = true;
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (!saved) {
-            save();
-            saved = true;
-        }
-
-        timer.cancel();
-
-//        strategy.destroy();
-        super.onDestroy();
-    }
-
-    private void save() {
-        int currentChapterNumber = strategy.getCurrentChapterNumber();
-        int currentImageNumber = strategy.getCurrentImageNumber();
-
-        HistoryDAO historyDAO = ServiceContainer.getService(HistoryDAO.class);
-        try {
-            historyDAO.updateHistory(manga, strategy.isOnline(), currentChapterNumber, currentImageNumber);
-        } catch (DatabaseAccessException e) {
-            Log.e(TAG, "Failed to update history: " + e.getMessage());
-        }
-    }
-
-    // the part with MangaStrategyListener
-
-    @Override
-    public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
-        switch (compoundButton.getId()) {
-            case R.id.rtl_checkbox:
-                settings.setRTLMode(isChecked);
-                settings.update(this);
-                setReadingMode(isChecked);
-                break;
-            case R.id.show_btns_checkbox:
-                final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
-                userSettings.setAlwaysShowButtons(isChecked);
-                settings.update(getApplicationContext());
-                if (isChecked) {
-                    showBtns();
-                } else {
-                    hideBtns(0);
-                }
-                break;
-        }
-    }
-
-    // MangaStrategyListener realization end
-
-    private void closeKeyboard() {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.manga_viewer_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.full_screen:
-                toggleFullscreen(true);
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(final Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    private long startedReading;
-
-    @Override
-    protected void onPause() {
-        long delta = System.currentTimeMillis() - startedReading;
-        ApplicationSettings applicationSettings = ApplicationSettings.get(this);
-        ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
-        long timeRead = userSettings.getTimeRead();
-        userSettings.setTimeRead(timeRead + delta);
-        applicationSettings.update(this);
-        strategy.onPause();
-        if (!saved && strategy.isStrategyInitialized()) {
-            save();
-        }
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        startedReading = System.currentTimeMillis();
-        super.onResume();
-        strategy.onResume(this);
-    }
-
-    private void toggleFullscreen(final boolean fullscreen) {
-        this.isFullscreen = fullscreen;
-        boolean oldFullscreen = settings.isViewerFullscreen();
-        if (oldFullscreen != fullscreen) {
-            settings.setViewerFullscreen(fullscreen);
-            settings.update(this);
-        }
-        if (fullscreen) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getSupportActionBar().hide();
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getSupportActionBar().show();
-        }
-    }
-
-    private void showTutorial(final int number) {
-        View tutorialView = null;
-        switch (number) {
-            case -1:
-                tutorials.setVisibility(View.GONE);
-                break;
-            case 1:
-                tutorials.setVisibility(View.VISIBLE);
-                findViewById(R.id.tutorialView2).setVisibility(View.INVISIBLE);
-                tutorialView = tutorials.findViewById(R.id.tutorialView);
-                break;
-            case 2:
-                tutorials.setVisibility(View.VISIBLE);
-                findViewById(R.id.tutorialView).setVisibility(View.INVISIBLE);
-                tutorialView = tutorials.findViewById(R.id.tutorialView2);
-                break;
-        }
-        if (tutorialView != null) {
-            tutorialView.setVisibility(View.VISIBLE);
-            Button closeTutorial = (Button) tutorialView.findViewById(R.id.close_tutorial);
-            closeTutorial.setOnClickListener(view -> {
-               switch (number) {
-                   case 1:
-                       showTutorial(2);
-                       break;
-                   case 2:
-                       slidingLayer.openLayer(true);
-                       slidingLayer.postDelayed(new Runnable() {
-                           @Override
-                           public void run() {
-                               slidingLayer.closeLayer(true);
-                           }
-                       }, 1000);
-                       Toast.makeText(MangaViewerActivity.this, getString(R.string.happy_reading), Toast.LENGTH_LONG).show();
-                       showTutorial(-1);
-                       final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
-                       userSettings.setTutorialViewerPassed(true);
-                       settings.update(getApplicationContext());
-                       hideBtns(HIDE_TIME_OFFSET);
-                       break;
-               }
-            });
-        }
-    }
-
     private class DisabledTouchEvent implements View.OnTouchListener {
 
         @Override
@@ -872,66 +1038,16 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     }
 
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 
-    @Override
-    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                onNext();
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                onPrevious();
-                return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }
-
-    private Timer timer = new Timer();
-
-    private TimerTask saveProgressTask = new TimerTask() {
+    private class UpdateInfoTask extends TimerTask {
 
         @Override
         public void run() {
-            save();
+            updateInfo();
         }
 
-    };
-
-    //ad routine
-
-//    private InterstitialAd mInterstitialAd;
-
-    private void adInit() {
-        if (!Constants.HAS_ADS) {
-        }
-//        mInterstitialAd = new InterstitialAd(this);
-//        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
-//        mInterstitialAd.setAdListener(new AdListener() {
-//            @Override
-//            public void onAdClosed() {
-//                requestNewInterstitial();
-//            }
-//        });
-//        requestNewInterstitial();
     }
 
-    private void requestNewInterstitial() {
-        if (!Constants.HAS_ADS) {
-        }
-//        AdRequest adRequest = new AdRequest.Builder()
-//                .addTestDevice(Utils.getDeviceId(this))
-//                .build();
-//        mInterstitialAd.loadAd(adRequest);
-    }
-
+    ;
 
 }

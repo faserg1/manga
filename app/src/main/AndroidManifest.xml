@@ -82,7 +82,8 @@
         </activity>
         <activity android:name=".activity.FilePickerActivity">
         </activity>
-        <activity android:name=".activity.MangaViewerActivity"/>
+        <activity android:name=".activity.MangaViewerActivity"
+            android:theme="@style/Manga.TranslucentDecor"/>
         <activity
             android:name=".core.notification.headsupold.HeadsUpNotification$HeadsUpActivity"
             android:label="Notification"

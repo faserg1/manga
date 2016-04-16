@@ -1,9 +1,12 @@
 package com.danilov.supermanga.core.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.BatteryManager;
 import android.provider.Settings;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -215,6 +218,19 @@ public class Utils {
         return 0;
     }
 
+    public static float getBatteryLevel(final Context context) {
+        Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if(batteryIntent == null) {
+            return 50.0f;
+        }
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        if(level == -1 || scale == -1) {
+            return 50.0f;
+        }
+        return ((float)level / (float)scale) * 100.0f;
+    }
 
     private static final String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final Random random = new Random();

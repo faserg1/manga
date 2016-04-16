@@ -37,6 +37,7 @@ public class Constants {
 
     public static final String RATED = "RATED";
     public static final long VIEWER_SAVE_PERIOD = 60_000;
+    public static final long VIEWER_INFO_PERIOD = 10_000;
 
     public static class Settings {
 
