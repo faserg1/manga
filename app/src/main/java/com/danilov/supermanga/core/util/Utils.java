@@ -1,5 +1,7 @@
 package com.danilov.supermanga.core.util;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,8 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.BatteryManager;
 import android.provider.Settings;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -251,6 +251,14 @@ public class Utils {
         int margin = ((Number) (resources.getDisplayMetrics().density * 12)).intValue();
         lps.setMargins(margin, margin, margin, margin + getNavigationBarHeight(context, resources.getConfiguration().orientation));
         return lps;
+    }
+
+    public static String leftPad(final String str, final int pad, final char padWith) {
+        String nStr = str;
+        for (int i = 0; i < pad - str.length(); i++) {
+            nStr = padWith + nStr;
+        }
+        return nStr;
     }
 
 }

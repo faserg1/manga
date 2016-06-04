@@ -1,6 +1,6 @@
 ext.versions = [
-        code                         : 56,
-        name                         : '1.42.06',
+        code                         : 57,
+        name                         : '1.42.07',
 
         minSdk                       : 14,
         targetSdk                    : 22,
@@ -21,7 +21,7 @@ ext.versions = [
         rxJava                       : '1.1.1',
         streamBackport               : '1.0.8',
         supportLibs                  : '23.1.1',
-        okHttp                       : '3.2.0',
+        okHttp                       : '3.3.1',
         retrofit                     : '2.0.0-beta4',
         jackson                      : '2.6.3',
         autoValue                    : '1.1',

@@ -73,7 +73,6 @@ dependencies {
     apt libraries.daggerCompiler
     compile libraries.javaxInject
     compile libraries.javaxAnnotationApi
-
     compile libraries.supportAnnotations
     compile libraries.supportV13
     compile libraries.supportAppCompat
@@ -81,18 +80,14 @@ dependencies {
     compile libraries.supportRecyclerView
     compile libraries.supportCardView
     compile libraries.supportPercentView
-
     compile libraries.streamBackport
-
     compile libraries.butterKnife
-
     //yandex disk retarded deps
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
-    compile 'com.squareup.okio:okio:1.6.0'
+    compile 'com.squareup.okio:okio:1.8.0'
     compile 'org.slf4j:slf4j-api:1.7.10'
-
     testCompile libraries.junit
     testCompile libraries.robolectric
     testCompile libraries.assertJ

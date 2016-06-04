@@ -723,7 +723,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         Calendar instance = Calendar.getInstance();
         int hour = instance.get(Calendar.HOUR_OF_DAY);
         int minute = instance.get(Calendar.MINUTE);
-        String phoneStatusText = hour + ":" + minute + ", " + battery + "%";
+        String phoneStatusText = Utils.leftPad("" + hour, 2, '0') + ":" + Utils.leftPad("" + minute, 2, '0') + ", " + battery + "%";
         pageStatus.setText(progressInfo);
         phoneStatus.setText(phoneStatusText);
     }

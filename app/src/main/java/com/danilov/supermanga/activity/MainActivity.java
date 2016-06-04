@@ -1,11 +1,11 @@
 package com.danilov.supermanga.activity;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -47,9 +47,6 @@ import com.danilov.supermanga.fragment.TrackingFragment;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Semyon Danilov on 07.10.2014.
