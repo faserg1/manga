@@ -84,6 +84,16 @@ public abstract class CloudFlareBypassEngine implements RepositoryEngine {
                     .replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
             String js = operation.replace("\n", "");
 
+            int idx = js.lastIndexOf('\'');
+            if (idx != -1) {
+                js = js.substring(0, idx);
+                idx = js.lastIndexOf('\'');
+                if (idx != -1) {
+                    js = js.substring(0, idx);
+                    js += ';';
+                }
+            }
+
             rhino.setOptimizationLevel(-1); // без этой строки rhino не запустится под Android
             Scriptable scope = rhino.initStandardObjects(); // инициализируем пространство исполнения
 
