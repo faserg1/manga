@@ -13,4 +13,4 @@ licenses:
 notifications:
   email: true
 
-script: ./gradlew clean test
+script: gradle clean test
