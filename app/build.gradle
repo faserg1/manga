@@ -26,6 +26,21 @@ android {
     }
 
     retrolambda {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("config.properties").newDataInputStream())
+
+        String jdkPath = properties.getProperty("JDK_PATH")
+        if (jdkPath?.trim()) {
+            jdk jdkPath
+        }
+        String oldJDKPath = properties.getProperty("OLD_JDK_PATH")
+        if (oldJDKPath?.trim()) {
+            oldJdk oldJDKPath
+        }
+        String jVersion = properties.getProperty("OLD_JDK_VERSION")
+        if (jVersion?.trim()) {
+            javaVersion JavaVersion.valueOf(jVersion as String)
+        }
         defaultMethods false
         incremental true
     }

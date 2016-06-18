@@ -3,7 +3,6 @@ package com.danilov.supermanga.core.repository.realweb;
 import com.danilov.supermanga.BuildConfig;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
-import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
@@ -41,17 +40,17 @@ public class MangaChanTest {
 
     }
 
-    @Test
-    public void testGetSuggestions() {
-        List<MangaSuggestion> suggestions = null;
-        try {
-            suggestions = engine.getSuggestions("Naru");
-        } catch (RepositoryException e) {
-            Assert.fail("Should not fail: " + e.getMessage());
-        }
-        Assert.assertNotNull(suggestions);
-        Assert.assertTrue(!suggestions.isEmpty());
-    }
+//    @Test
+//    public void testGetSuggestions() {
+//        List<MangaSuggestion> suggestions = null;
+//        try {
+//            suggestions = engine.getSuggestions("Naru");
+//        } catch (RepositoryException e) {
+//            Assert.fail("Should not fail: " + e.getMessage());
+//        }
+//        Assert.assertNotNull(suggestions);
+//        Assert.assertTrue(!suggestions.isEmpty());
+//    }
 
     @Test
     public void testQueryRepository() {
