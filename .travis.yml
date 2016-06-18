@@ -11,6 +11,6 @@ licenses:
   - android-sdk-license-.+
 
 notifications:
-  email: false
+  email: true
 
 script: ./gradlew clean test
