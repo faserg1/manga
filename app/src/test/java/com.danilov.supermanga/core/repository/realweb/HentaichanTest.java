@@ -2,6 +2,7 @@ package com.danilov.supermanga.core.repository.realweb;
 
 import com.danilov.supermanga.BuildConfig;
 import com.danilov.supermanga.core.model.Manga;
+import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.repository.HentaichanEngine;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryException;
@@ -64,6 +65,57 @@ public class HentaichanTest {
         try {
             boolean success = engine.queryForMangaDescription(manga);
             Assert.assertTrue(success);
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testQueryForMangaChapters() throws Exception {
+        List<Manga> searchResults = null;
+        try {
+            searchResults = engine.queryRepository("Rindou", Collections.emptyList());
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+        Assert.assertNotNull(searchResults);
+        Assert.assertTrue(!searchResults.isEmpty());
+        Manga manga = searchResults.get(0);
+        try {
+            boolean success = engine.queryForMangaDescription(manga);
+            Assert.assertTrue(success);
+            success = engine.queryForChapters(manga);
+            Assert.assertTrue(success);
+            Assert.assertEquals(3, manga.getChapters().size());
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testQueryForChapterImages() throws Exception {
+        List<Manga> searchResults = null;
+        try {
+            searchResults = engine.queryRepository("Rindou", Collections.emptyList());
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+        Assert.assertNotNull(searchResults);
+        Assert.assertTrue(!searchResults.isEmpty());
+        Manga manga = searchResults.get(0);
+        try {
+            boolean success = engine.queryForMangaDescription(manga);
+            Assert.assertTrue(success);
+            success = engine.queryForChapters(manga);
+            Assert.assertTrue(success);
+            Assert.assertEquals(3, manga.getChapters().size());
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+        MangaChapter mangaChapter = manga.getChapters().get(0);
+        try {
+            List<String> chapterImages = engine.getChapterImages(mangaChapter);
+            Assert.assertTrue(chapterImages.size() > 0);
         } catch (RepositoryException e) {
             Assert.fail("Should not fail: " + e.getMessage());
         }

@@ -17,7 +17,6 @@ import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.filter.BasicFilters;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
-import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.protocol.HTTP;
@@ -207,7 +206,6 @@ public class AdultmangaEngine implements RepositoryEngine {
     private final Pattern arrayItemPattern = Pattern.compile("\\[('.*?'),('.*?'),(\".*?\"),.*?,.*?],");
 
     private List<String> extractUrls(final String str) {
-        Log.d(TAG, "a: " + str);
         List<String> urls = new ArrayList<>();
         final String newStr = str + ","; //savant
         Matcher matcher = arrayItemPattern.matcher(newStr);

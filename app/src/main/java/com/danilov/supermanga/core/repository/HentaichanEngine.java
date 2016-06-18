@@ -8,12 +8,14 @@ import android.support.annotation.Nullable;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.danilov.supermanga.core.application.MangaApplication;
+import com.danilov.supermanga.core.http.LinesSearchInputStream;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.special.AuthorizableEngine;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.Utils;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;
@@ -23,9 +25,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +70,8 @@ public class HentaichanEngine extends AuthorizableEngine {
         mangaApplication.applicationComponent().inject(this);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mangaApplication);
-        login = preferences.getString(Constants.HentaichanConstants.LOGIN, "");
-        password = preferences.getString(Constants.HentaichanConstants.PASSWORD, "");
+        login = preferences.getString(Constants.HentaichanConstants.LOGIN, "husername");
+        password = preferences.getString(Constants.HentaichanConstants.PASSWORD, "hpassword");
 //        isAuthorized = preferences.getBoolean(Constants.HentaichanConstants.AUTHORIZED, false);
     }
 
@@ -225,11 +231,65 @@ public class HentaichanEngine extends AuthorizableEngine {
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        return false;
+        final String response = doWithLoginAttempt(() -> {
+            final Call call = httpClient.newCall(new Request.Builder()
+                    .url(manga.getUri().replace("/manga/", "/related/"))
+                    .get().build());
+            final Response rsp;
+            try {
+                rsp = call.execute();
+            } catch (IOException e) {
+                throw new RepositoryException("Failed to load: " + e.getMessage());
+            }
+            return rsp;
+        });
+
+        final Document document = Utils.toDocument(response);
+        final List<MangaChapter> chapters = parseMangaChaptersResponse(document);
+        if (chapters == null) {
+            return false;
+        }
+        manga.setChaptersQuantity(chapters.size());
+        manga.setChapters(chapters);
+        return true;
     }
 
     @Override
     public List<String> getChapterImages(final MangaChapter chapter) throws RepositoryException {
+        String uri = baseUri + chapter.getUri();
+        final String response = doWithLoginAttempt(() -> {
+            final Call call = httpClient.newCall(new Request.Builder()
+                    .url(uri)
+                    .get().build());
+            final Response rsp;
+            try {
+                rsp = call.execute();
+            } catch (IOException e) {
+                throw new RepositoryException("Failed to load: " + e.getMessage());
+            }
+            return rsp;
+        });
+
+        final InputStream stream;
+        try {
+            stream = new ByteArrayInputStream(response.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RepositoryException("Failed to load: " + e.getMessage());
+        }
+
+        try {
+            byte[] bytes = new byte[1024];
+            final LinesSearchInputStream inputStream = new LinesSearchInputStream(stream, "\"fullimg\":[", "]");
+            int status = LinesSearchInputStream.SEARCHING;
+            while (status == LinesSearchInputStream.SEARCHING) {
+                status = inputStream.read(bytes);
+            }
+            bytes = inputStream.getResult();
+            String str = IoUtils.convertBytesToString(bytes);
+            return extractUrls(str);
+        } catch (Exception e) {
+
+        }
         return null;
     }
 
@@ -274,6 +334,31 @@ public class HentaichanEngine extends AuthorizableEngine {
         manga.setChaptersQuantity(3);
 
         return true;
+    }
+
+    private List<MangaChapter> parseMangaChaptersResponse(final Document document) {
+        final List<MangaChapter> chapters = new ArrayList<>();
+        final Elements contentRows = document.select("#right .related");
+        int i = 0;
+        for (Element element : contentRows) {
+            String title = "";
+            String uri = "";
+            final Elements linkElement = element.select(".related_info a");
+            if (!linkElement.isEmpty()) {
+                final Element link = linkElement.first();
+                uri = link.attr("href").replace("/manga/", "/online/");
+                title = link.text();
+            }
+            MangaChapter chapter = new MangaChapter(title, i, uri);
+            chapters.add(chapter);
+            i++;
+        }
+        return chapters;
+    }
+
+    private List<String> extractUrls(final String str) {
+        String newStr = str.replaceAll("\"", "").replaceAll("]", "");
+        return Arrays.asList(newStr.split(","));
     }
 
     @Override
