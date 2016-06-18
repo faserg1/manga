@@ -7,10 +7,13 @@ android:
   - android-23
   - extra-android-m2repository
 
+before_install:
+  - chmod +x gradlew
+
 licenses:
   - android-sdk-license-.+
 
 notifications:
   email: true
 
-script: gradle clean test
+script: ./gradlew clean test
