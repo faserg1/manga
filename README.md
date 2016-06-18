@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/SammyVimes/manga.svg?branch=master)](https://travis-ci.org/SammyVimes/manga)
 # Super Manga Reader
 Manga reader for android. Easily extendable with JS!
 
