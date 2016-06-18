@@ -9,6 +9,7 @@ import com.danilov.supermanga.core.module.CacheModule;
 import com.danilov.supermanga.core.module.NetworkModule;
 import com.danilov.supermanga.core.repository.AdultmangaEngine;
 import com.danilov.supermanga.core.repository.AllHentaiEngine;
+import com.danilov.supermanga.core.repository.HentaichanEngine;
 import com.danilov.supermanga.core.repository.MangaReaderNetEngine;
 import com.danilov.supermanga.core.repository.MangachanEngine;
 import com.danilov.supermanga.core.repository.ReadmangaEngine;
@@ -66,5 +67,7 @@ public interface ApplicationComponent {
 
     void inject(@NonNull TrackingFragment trackingFragment);
 
-    void inject(WorldArtFragment.ImagesFragment imagesFragment);
+    void inject(@NonNull WorldArtFragment.ImagesFragment imagesFragment);
+
+    void inject(@NonNull HentaichanEngine hentaichanEngine);
 }

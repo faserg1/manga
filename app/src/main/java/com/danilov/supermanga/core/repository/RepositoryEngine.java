@@ -95,6 +95,7 @@ public interface RepositoryEngine {
         MANGACHAN(new MangachanEngine(), "MangaChan (RU)", true, R.drawable.ic_russia),
         MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader (EN)", true, R.drawable.ic_english),
         KISSMANGA(new KissmangaEngine(), "KissManga (EN)", true, R.drawable.ic_english),
+        HENTAICHAN(new HentaichanEngine(), "Hentaichan (RU)", true, R.drawable.ic_russia),
         OFFLINE(new OfflineEngine(), "", false, -1);
 
         private static DefaultRepository[] withoutOffline = {READMANGA, ADULTMANGA, MANGACHAN, KISSMANGA, ALLHENTAI, MANGAREADERNET};

@@ -74,6 +74,14 @@ public class Constants {
 
     }
 
+    public static class HentaichanConstants {
+
+        public static final String LOGIN = "HCLOGIN";
+        public static final String PASSWORD = "HCPASSWORD";
+        public static final String AUTHORIZED = "HCAUTHORIZED";
+
+    }
+
     public static class ImageRestrictions {
 
         //если превышает, то не грузим заранее
