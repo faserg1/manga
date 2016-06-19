@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.activity.FolderPickerActivity;
 import com.danilov.supermanga.activity.MainActivity;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;

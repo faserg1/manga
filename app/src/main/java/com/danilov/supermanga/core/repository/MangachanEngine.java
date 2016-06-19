@@ -16,7 +16,6 @@ import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.util.IoUtils;
-import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 
 import org.apache.http.HttpResponse;

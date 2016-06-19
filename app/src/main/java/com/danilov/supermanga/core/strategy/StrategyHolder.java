@@ -1,7 +1,7 @@
 package com.danilov.supermanga.core.strategy;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 
 /**
  * Created by Semyon on 07.08.2015.

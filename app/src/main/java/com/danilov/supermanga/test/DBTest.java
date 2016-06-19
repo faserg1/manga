@@ -3,8 +3,6 @@ package com.danilov.supermanga.test;
 import android.os.Environment;
 import android.util.Log;
 
-import com.annimon.stream.function.BiFunction;
-import com.annimon.stream.function.Function;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.Database;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
@@ -13,7 +11,6 @@ import com.danilov.supermanga.core.database.DatabaseOptions;
 import com.danilov.supermanga.core.util.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

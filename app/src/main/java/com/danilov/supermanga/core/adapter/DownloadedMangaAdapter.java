@@ -15,7 +15,6 @@ import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.LocalManga;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.service.LocalImageManager;
-import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.view.helper.MangaFilter;
 
 import java.util.LinkedList;

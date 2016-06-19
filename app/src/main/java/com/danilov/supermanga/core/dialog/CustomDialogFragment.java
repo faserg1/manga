@@ -1,8 +1,8 @@
 package com.danilov.supermanga.core.dialog;
 
 import android.app.Dialog;
-import android.os.Bundle;
 import android.app.DialogFragment;
+import android.os.Bundle;
 
 /**
  * Created by Semyon on 09.11.2014.

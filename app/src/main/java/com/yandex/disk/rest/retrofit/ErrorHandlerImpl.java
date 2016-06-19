@@ -32,16 +32,18 @@ import com.yandex.disk.rest.exceptions.http.UnauthorizedException;
 import com.yandex.disk.rest.exceptions.http.UnprocessableEntityException;
 import com.yandex.disk.rest.exceptions.http.UnsupportedMediaTypeException;
 import com.yandex.disk.rest.json.ApiError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import retrofit.ErrorHandler;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
+import retrofit.ErrorHandler;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ErrorHandlerImpl implements ErrorHandler {
 

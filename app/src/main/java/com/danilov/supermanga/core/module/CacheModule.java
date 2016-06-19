@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.android.httpimage.BitmapCache;
 import com.android.httpimage.BitmapMemoryCache;
-import com.android.httpimage.FileSystemPersistence;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.cache.CacheDirectoryManager;

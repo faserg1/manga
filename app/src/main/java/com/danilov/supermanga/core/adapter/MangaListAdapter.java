@@ -15,7 +15,6 @@ import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.model.Manga;
-import com.danilov.supermanga.core.util.ServiceContainer;
 
 import java.util.List;
 

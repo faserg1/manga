@@ -11,7 +11,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.android.httpimage.BitmapCache;
-import com.android.httpimage.BitmapMemoryCache;
 import com.danilov.supermanga.core.util.BitmapUtils;
 
 import java.math.BigInteger;

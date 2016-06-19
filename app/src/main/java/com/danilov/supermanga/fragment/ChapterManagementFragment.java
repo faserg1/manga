@@ -1,6 +1,5 @@
 package com.danilov.supermanga.fragment;
 
-import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,7 +44,6 @@ import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
-import com.danilov.supermanga.core.view.ViewV16;
 
 import java.io.File;
 import java.util.ArrayList;

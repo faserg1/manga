@@ -1,6 +1,7 @@
 package com.danilov.supermanga.core.dialog;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 

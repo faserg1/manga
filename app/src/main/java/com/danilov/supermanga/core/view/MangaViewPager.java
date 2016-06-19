@@ -1,10 +1,10 @@
 package com.danilov.supermanga.core.view;
 
 import android.annotation.TargetApi;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
-import android.app.FragmentManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,12 +18,10 @@ import com.danilov.supermanga.core.adapter.ExtendedPagerAdapter;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.cache.CacheDirectoryManager;
-import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.service.DownloadManager;
 import com.danilov.supermanga.core.util.Decoder;
 import com.danilov.supermanga.core.util.IoUtils;
-import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 

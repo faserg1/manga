@@ -7,25 +7,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.httpimage.BitmapMemoryCache;
-import com.android.httpimage.FileSystemPersistence;
-import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.ApplicationComponent;
 import com.danilov.supermanga.ApplicationModule;
 import com.danilov.supermanga.DaggerApplicationComponent;
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.core.cache.CacheDirectoryManagerImpl;
 import com.danilov.supermanga.core.database.HistoryDAO;
 import com.danilov.supermanga.core.database.MangaDAO;
 import com.danilov.supermanga.core.database.UpdatesDAO;
-import com.danilov.supermanga.core.http.ExtendedHttpClient;
-import com.danilov.supermanga.core.http.HttpBitmapReader;
-import com.danilov.supermanga.core.http.HttpBytesReader;
-import com.danilov.supermanga.core.http.HttpStreamReader;
 import com.danilov.supermanga.core.receiver.AlarmReceiver;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
 import com.danilov.supermanga.core.repository.special.JSCrud;
-import com.danilov.supermanga.core.service.LocalImageManager;
 import com.danilov.supermanga.core.util.ServiceContainer;
 
 import org.acra.ACRA;

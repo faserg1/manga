@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.onlinestorage.yandex.Credentials;
 import com.danilov.supermanga.core.service.OnlineStorageProfileService;
-import com.danilov.supermanga.core.util.Utils;
 import com.yandex.disk.rest.DownloadListener;
 import com.yandex.disk.rest.ProgressListener;
 import com.yandex.disk.rest.ResourcesArgs;

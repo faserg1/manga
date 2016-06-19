@@ -1,6 +1,5 @@
 package com.danilov.supermanga.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,11 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,7 +17,6 @@ import android.widget.TextView;
 import com.android.httpimage.HttpImageManager;
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MangaInfoActivity;
-import com.danilov.supermanga.core.adapter.BaseAdapter;
 import com.danilov.supermanga.core.adapter.BaseGridAdapter;
 import com.danilov.supermanga.core.adapter.ItemClickListener;
 import com.danilov.supermanga.core.application.MangaApplication;

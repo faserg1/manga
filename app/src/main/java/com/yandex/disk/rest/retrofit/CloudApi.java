@@ -16,16 +16,16 @@ import com.yandex.disk.rest.json.Operation;
 import com.yandex.disk.rest.json.Resource;
 import com.yandex.disk.rest.json.ResourceList;
 
-import retrofit.http.GET;
+import java.io.IOException;
+
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.PATCH;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.mime.TypedOutput;
-
-import java.io.IOException;
 
 public interface CloudApi {
 

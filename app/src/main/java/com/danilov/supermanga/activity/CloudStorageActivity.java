@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.danilov.supermanga.R;
-import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.interfaces.RefreshableActivity;
 import com.danilov.supermanga.core.service.OnlineStorageProfileService;
 import com.danilov.supermanga.core.service.ServiceConnectionListener;
