@@ -69,28 +69,89 @@
     <com.danilov.supermanga.core.widget.RepositoryLoginView
         android:id="@+id/login_view"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#be000000"
         android:gravity="center"
-        android:weightSum="1">
+        android:animateLayoutChanges="true">
 
-        <TextView
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/login_details"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Вы не авторизованы"
-            android:textColor="#fff"
-            android:textSize="20sp"/>
+            android:weightSum="1">
 
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text="Авторизация"/>
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Вы не авторизованы"
+                android:textColor="#fff"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="Авторизация"/>
+
+            <Button
+                android:id="@+id/logout_button"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="Выход"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/auth_form"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/auth_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_login"
+                    android:maxLines="1"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/auth_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:singleLine="true"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/auth_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="@string/submit_auth"/>
+
+        </LinearLayout>
 
     </com.danilov.supermanga.core.widget.RepositoryLoginView>
 

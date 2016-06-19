@@ -70,13 +70,20 @@ public class HentaichanEngine extends AuthorizableEngine {
         mangaApplication.applicationComponent().inject(this);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mangaApplication);
-        login = preferences.getString(Constants.HentaichanConstants.LOGIN, "husername");
-        password = preferences.getString(Constants.HentaichanConstants.PASSWORD, "hpassword");
-//        isAuthorized = preferences.getBoolean(Constants.HentaichanConstants.AUTHORIZED, false);
+        login = preferences.getString(Constants.HentaichanConstants.LOGIN, "");
+        password = preferences.getString(Constants.HentaichanConstants.PASSWORD, "");
+        isAuthorized = preferences.getBoolean(Constants.HentaichanConstants.AUTHORIZED, false);
     }
 
+    @Override
     public void setPassword(@NonNull final String password) {
         this.password = password;
+        save();
+    }
+
+    @Override
+    public void setLogin(@NonNull final String login) {
+        this.login = login;
         save();
     }
 
@@ -94,7 +101,7 @@ public class HentaichanEngine extends AuthorizableEngine {
         preferences.edit()
                 .putString(Constants.HentaichanConstants.LOGIN, login)
                 .putString(Constants.HentaichanConstants.PASSWORD, password)
-//                .putBoolean(Constants.HentaichanConstants.AUTHORIZED, isAuthorized)
+                .putBoolean(Constants.HentaichanConstants.AUTHORIZED, isAuthorized)
                 .apply();
     }
 
@@ -115,11 +122,6 @@ public class HentaichanEngine extends AuthorizableEngine {
     @Override
     public String getLogin() {
         return login;
-    }
-
-    public void setLogin(@NonNull final String login) {
-        this.login = login;
-        save();
     }
 
     @Override

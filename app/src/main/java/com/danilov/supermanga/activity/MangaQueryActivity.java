@@ -1,10 +1,10 @@
 package com.danilov.supermanga.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -26,6 +26,7 @@ import com.danilov.supermanga.core.adapter.PopupButtonClickListener;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.repository.RepositoryEngine;
 import com.danilov.supermanga.core.repository.RepositoryHolder;
+import com.danilov.supermanga.core.repository.special.AuthorizableEngine;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.widget.RepositoryLoginView;
@@ -106,9 +107,7 @@ public class MangaQueryActivity extends BaseToolbarActivity implements View.OnCl
         setupTabs(actionBar);
 
         if (engine.requiresAuth()) {
-            loginView.setOnClickListener(this);
-            loginView.setOnLoginButtonClickListener(this);
-            loginView.setNeeded(true);
+            loginView.setNeeded((AuthorizableEngine) engine);
         }
 
     }

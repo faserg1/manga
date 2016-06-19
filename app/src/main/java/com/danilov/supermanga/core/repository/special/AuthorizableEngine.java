@@ -45,6 +45,10 @@ public abstract class AuthorizableEngine implements RepositoryEngine {
                 CookiePolicy.ACCEPT_ALL));
     }
 
+    public abstract void setPassword(@NonNull String password);
+
+    public abstract void setLogin(@NonNull String login);
+
     /**
      * Try to authorize
      * @return authorization result
