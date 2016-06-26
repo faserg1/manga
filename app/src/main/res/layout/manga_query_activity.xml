@@ -73,6 +73,7 @@
         android:layout_alignParentBottom="true"
         android:background="#be000000"
         android:gravity="center"
+        android:padding="5dp"
         android:animateLayoutChanges="true">
 
         <LinearLayout
@@ -88,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Вы не авторизованы"
+                android:text="@string/not_authorized"
                 android:textColor="#fff"
                 android:textSize="20sp"/>
 
@@ -96,16 +97,14 @@
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:text="Авторизация"/>
+                android:text="@string/authorize"/>
 
             <Button
                 android:id="@+id/logout_button"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:text="Выход"/>
+                android:text="@string/logout"/>
 
         </LinearLayout>
 
@@ -117,6 +116,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:textColorHint="#fff"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -124,6 +124,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_login"
+                    android:textColorHint="#fff"
+                    android:textColor="#fff"
                     android:maxLines="1"
                     android:singleLine="true"/>
 
@@ -131,6 +133,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:textColorHint="#fff"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -138,6 +141,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"/>
@@ -146,9 +151,8 @@
 
             <Button
                 android:id="@+id/auth_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:text="@string/submit_auth"/>
 
         </LinearLayout>

@@ -95,6 +95,14 @@ public class HentaichanEngine extends AuthorizableEngine {
         return loginResult;
     }
 
+    @Override
+    public void logout() {
+        this.isAuthorized = false;
+        this.login = "";
+        this.password = "";
+        save();
+    }
+
     private synchronized void save() {
         MangaApplication mangaApplication = MangaApplication.get();
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mangaApplication);

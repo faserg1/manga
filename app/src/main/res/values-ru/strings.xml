@@ -122,8 +122,11 @@
     <string name="sv_decoder">Декодер</string>
     <string name="open">Открыть</string>
     <string name="sv_tracking">Читаемое</string>
-    <string name="prompt_login">Login</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="submit_auth">Sign in</string>
+    <string name="prompt_login">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="submit_auth">Войти</string>
+    <string name="authorize">Авторизация</string>
+    <string name="logout">Выход</string>
+    <string name="not_authorized">Вы не авторизованы</string>
 </resources>

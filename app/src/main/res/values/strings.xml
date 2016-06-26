@@ -124,4 +124,7 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="submit_auth">Sign in</string>
+    <string name="authorize">Authorize</string>
+    <string name="not_authorized">Not authorized</string>
+    <string name="logout">Logout</string>
 </resources>

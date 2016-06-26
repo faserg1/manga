@@ -86,6 +86,8 @@ public abstract class AuthorizableEngine implements RepositoryEngine {
         }
     }
 
+    public abstract void logout();
+
     @Override
     public boolean requiresAuth() {
         return true;

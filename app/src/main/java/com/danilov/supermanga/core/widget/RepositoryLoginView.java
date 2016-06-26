@@ -28,6 +28,9 @@ public class RepositoryLoginView extends LinearLayout {
     @Bind(R.id.login_button)
     Button loginButton;
 
+    @Bind(R.id.logout_button)
+    Button logoutButton;
+
     @Bind(R.id.login_details)
     ViewGroup loginDetails;
 
@@ -76,6 +79,9 @@ public class RepositoryLoginView extends LinearLayout {
         this.authSubmit.setOnClickListener(v -> {
             login();
         });
+        this.logoutButton.setOnClickListener(v -> {
+            logout();
+        });
     }
 
     private void login() {
@@ -92,11 +98,19 @@ public class RepositoryLoginView extends LinearLayout {
                     if (loginResult) {
                         setAuthorized(true);
                         setLogin(login);
-                        showDetailsForm();
+                        showLogoutForm();
                     }
                 });
             }
         }.start();
+    }
+
+    private void logout() {
+        final String loginValue = engine.getLogin();
+        engine.logout();
+        loginEditText.setText(loginValue);
+
+        showAuthForm();
     }
 
     private void showAuthForm() {
@@ -107,6 +121,14 @@ public class RepositoryLoginView extends LinearLayout {
     private void showDetailsForm() {
         authForm.setVisibility(View.GONE);
         loginDetails.setVisibility(View.VISIBLE);
+        logoutButton.setVisibility(View.GONE);
+    }
+
+    private void showLogoutForm() {
+        authForm.setVisibility(View.GONE);
+        loginDetails.setVisibility(View.VISIBLE);
+        logoutButton.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.GONE);
     }
 
     public void setNeeded(final AuthorizableEngine engine) {
@@ -115,6 +137,8 @@ public class RepositoryLoginView extends LinearLayout {
 
         if (engine.isAuthorized()) {
             setLogin(engine.getLogin());
+            showLogoutForm();
+        } else {
             showDetailsForm();
         }
     }
