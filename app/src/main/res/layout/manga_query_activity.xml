@@ -67,6 +67,7 @@
         android:layout_below="@+id/toolbar"/>
 
     <com.danilov.supermanga.core.widget.RepositoryLoginView
+        android:visibility="gone"
         android:id="@+id/login_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

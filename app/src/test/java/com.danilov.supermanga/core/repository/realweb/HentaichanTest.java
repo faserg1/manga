@@ -74,7 +74,7 @@ public class HentaichanTest {
     public void testQueryForMangaChapters() throws Exception {
         List<Manga> searchResults = null;
         try {
-            searchResults = engine.queryRepository("Rindou", Collections.emptyList());
+            searchResults = engine.queryRepository("blush-dc", Collections.emptyList());
         } catch (RepositoryException e) {
             Assert.fail("Should not fail: " + e.getMessage());
         }
@@ -86,7 +86,7 @@ public class HentaichanTest {
             Assert.assertTrue(success);
             success = engine.queryForChapters(manga);
             Assert.assertTrue(success);
-            Assert.assertEquals(3, manga.getChapters().size());
+            Assert.assertEquals(28, manga.getChapters().size());
         } catch (RepositoryException e) {
             Assert.fail("Should not fail: " + e.getMessage());
         }

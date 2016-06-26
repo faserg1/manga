@@ -236,14 +236,66 @@ public class HentaichanEngine extends AuthorizableEngine {
 
         final Document document;
         document = Utils.toDocument(response);
-        return parseMangaDescriptionResponse(manga, document);
+
+        final boolean description = parseMangaDescriptionResponse(manga, document);
+        final boolean chapters = queryForChapters(manga);
+
+        return description && chapters;
     }
 
     @Override
     public boolean queryForChapters(final Manga manga) throws RepositoryException {
-        final String response = doWithLoginAttempt(() -> {
+        final String mangaRelatedUri = manga.getUri().replace("/manga/", "/related/");
+        final String response = loadPage(mangaRelatedUri);
+
+        final Document document = Utils.toDocument(response);
+
+        final Elements pagination = document.select("#pagination_related");
+        final Element quantityEl = pagination.select("b").first();
+        if (quantityEl == null) {
+            return false;
+        }
+        final String quantityS = quantityEl.text().split(" ")[0];
+        final Integer quantity;
+        try {
+            quantity = Integer.valueOf(quantityS);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        manga.setChaptersQuantity(quantity);
+        final List<MangaChapter> chapters = new ArrayList<>();
+        final List<MangaChapter> firstPage = parseMangaChaptersResponse(document);
+        if (firstPage == null) {
+            return false;
+        }
+        chapters.addAll(firstPage);
+
+
+        final List<MangaChapter> pages = Stream.of(pagination.select("a"))
+                .filter(value -> value.text().matches("^[0-9]+$"))
+                .map(value -> value.attr("href"))
+                .map(url -> {
+                    try {
+                        return loadPage(mangaRelatedUri + url);
+                    } catch (RepositoryException e) {
+
+                    }
+                    return null;
+                })
+                .filter(value -> value != null)
+                .map(value -> parseMangaChaptersResponse(Utils.toDocument(value)))
+                .flatMap(Stream::of)
+                .collect(() -> chapters, List::add);
+
+        manga.setChapters(pages);
+        manga.setChaptersQuantity(pages.size());
+        return true;
+    }
+
+    private String loadPage(final String uri) throws RepositoryException {
+        return doWithLoginAttempt(() -> {
             final Call call = httpClient.newCall(new Request.Builder()
-                    .url(manga.getUri().replace("/manga/", "/related/"))
+                    .url(uri)
                     .get().build());
             final Response rsp;
             try {
@@ -253,15 +305,6 @@ public class HentaichanEngine extends AuthorizableEngine {
             }
             return rsp;
         });
-
-        final Document document = Utils.toDocument(response);
-        final List<MangaChapter> chapters = parseMangaChaptersResponse(document);
-        if (chapters == null) {
-            return false;
-        }
-        manga.setChaptersQuantity(chapters.size());
-        manga.setChapters(chapters);
-        return true;
     }
 
     @Override
@@ -340,8 +383,6 @@ public class HentaichanEngine extends AuthorizableEngine {
         if (author != null) {
             manga.setAuthor(author.text());
         }
-
-        manga.setChaptersQuantity(3);
 
         return true;
     }
