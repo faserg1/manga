@@ -2,7 +2,6 @@ package com.danilov.supermanga;
 
 import android.support.annotation.NonNull;
 
-import com.danilov.supermanga.core.adapter.DownloadedMangaAdapter;
 import com.danilov.supermanga.core.adapter.MangaListAdapter;
 import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.module.CacheModule;
@@ -15,6 +14,7 @@ import com.danilov.supermanga.core.repository.MangachanEngine;
 import com.danilov.supermanga.core.repository.ReadmangaEngine;
 import com.danilov.supermanga.core.service.MangaDownloadService;
 import com.danilov.supermanga.core.view.MangaViewPager;
+import com.danilov.supermanga.fragment.DownloadedMangaFragment;
 import com.danilov.supermanga.fragment.FavoritesFragment;
 import com.danilov.supermanga.fragment.HistoryMangaFragment;
 import com.danilov.supermanga.fragment.InfoFragment;
@@ -39,7 +39,7 @@ public interface ApplicationComponent {
 
     void inject(@NonNull MangaApplication mangaApplication);
 
-    void inject(@NonNull DownloadedMangaAdapter downloadedMangaAdapter);
+    void inject(@NonNull DownloadedMangaFragment downloadedMangaFragment);
 
     void inject(@NonNull MangaListAdapter mangaListAdapter);
 

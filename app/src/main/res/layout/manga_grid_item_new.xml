@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
+
+    <RelativeLayout
+        android:id="@+id/card_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom"
+        android:background="?attr/grid_item_background">
+
+
+        <ImageView
+            android:id="@+id/manga_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/test_cover1"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_holder"
+            android:paddingLeft="10dp"
+            android:background="#A0000000"
+            android:weightSum="1"
+            android:animateLayoutChanges="true"
+            android:layout_alignParentBottom="true">
+
+            <com.danilov.supermanga.core.view.CTextView
+                android:id="@+id/manga_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:lines="2"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/grid_item_text_size"/>
+
+
+            <com.danilov.supermanga.core.view.CTextView
+                android:padding="2dp"
+                android:background="?attr/square_marker"
+                android:id="@+id/chapters_downloaded"
+                android:gravity="center"
+                android:minEms="2"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/grid_item_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_shadow"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/card_shadow"/>
+
+    <View
+        android:id="@+id/selectorBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/selected_color">
+    </View>
+
+    <View
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/selectable_item_background">
+    </View>
+
+</RelativeLayout>
