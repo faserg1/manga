@@ -41,6 +41,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -349,6 +351,8 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Actio
 
         private boolean isInMultiSelect = false;
 
+        private Executor downloadedChaptersQueryExecutor = Executors.newSingleThreadExecutor();
+
         public NewDownloadedMangaAdapter(final RecyclerView recyclerView, final List<LocalManga> objects) {
             super(recyclerView);
             this.mangas = objects;
@@ -377,15 +381,20 @@ public class DownloadedMangaFragment extends BaseFragmentNative implements Actio
         public void onBindViewHolder(final Holder holder, final int position) {
             LocalManga manga = getItem(position);
             if (manga.getChapters() == null) {
-                try {
-                    RepositoryEngine.DefaultRepository.OFFLINE.getEngine().queryForChapters(manga);
-                } catch (RepositoryException e) {
-                    //meh
-                }
-            }
-            if (manga.getChapters() != null) {
+                // to avoid multiple tasks for single manga
+                manga.setChapters(Collections.emptyList());
+                downloadedChaptersQueryExecutor.execute(() -> {
+                    try {
+                        RepositoryEngine.DefaultRepository.OFFLINE.getEngine().queryForChapters(manga);
+                        handler.post(this::notifyDataSetChanged);
+                    } catch (RepositoryException e) {
+                        //meh
+                    }
+                });
+            } else {
                 holder.chaptersDownloaded.setText("" + manga.getChapters().size());
             }
+
             holder.mangaTitle.setText(manga.getTitle());
             String mangaUri = manga.getLocalUri();
             Bitmap bitmap = localImageManager.loadBitmap(holder.mangaCover, mangaUri + "/cover", sizeOfImage);
