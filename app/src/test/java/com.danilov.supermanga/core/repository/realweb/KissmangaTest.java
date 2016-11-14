@@ -132,4 +132,34 @@ public class KissmangaTest {
         }
     }
 
+
+    @Test
+    public void testMoujuuseiShounenShoujo14112016() {
+        List<Manga> searchResults = null;
+        try {
+            searchResults = engine.queryRepository("Moujuusei Shounen Shoujo", Collections.emptyList());
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+        Assert.assertNotNull(searchResults);
+        Assert.assertTrue(!searchResults.isEmpty());
+        Manga manga = searchResults.get(0);
+        try {
+            boolean success = engine.queryForChapters(manga);
+            Assert.assertTrue(success);
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+        List<MangaChapter> chapters = manga.getChapters();
+        Assert.assertNotNull(chapters);
+        Assert.assertTrue(chapters.size() > 0);
+        MangaChapter mangaChapter = chapters.get(0);
+        try {
+            List<String> chapterImages = engine.getChapterImages(mangaChapter);
+            Assert.assertTrue(chapterImages.size() > 0);
+        } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        }
+    }
+
 }

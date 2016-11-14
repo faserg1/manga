@@ -218,7 +218,14 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         try {
             Element titleElement = document.getElementById("leftside").getElementsByClass("barContent").first().getElementsByClass("bigChar").first();
             Element parent = titleElement.parent();
-            Element description = parent.child(6);
+
+            final Elements children = parent.children();
+            Element description = null;
+            for (int i = children.size() - 1; i >= 0; i--) {
+                if (children.get(i).text().contains("Summary:")) {
+                    description = children.get(i);
+                }
+            }
 
             Element authors = parent.child(3);
             StringBuilder lst = new StringBuilder();

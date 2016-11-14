@@ -751,8 +751,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus)
-    {
+    public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -843,28 +842,28 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                onNext();
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                onPrevious();
-                return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//                return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+//
+//    @Override
+//    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//                onNext();
+//                return true;
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//                onPrevious();
+//                return true;
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
 
     private void adInit() {
         if (!Constants.HAS_ADS) {

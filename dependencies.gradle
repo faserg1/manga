@@ -1,13 +1,13 @@
 ext.versions = [
         code                         : 62,
-        name                         : '1.43.03',
+        name                         : '1.43.03-novolume',
 
         minSdk                       : 14,
         targetSdk                    : 22,
         compileSdk                   : 23,
         buildTools                   : '23.0.2',
 
-        androidGradlePlugin          : '2.0.0-alpha3',
+        androidGradlePlugin          : '2.1.3',
         aptGradlePlugin              : '1.8',
         retrolambdaGradlePlugin      : '3.2.5',
         lombokGradlePlugin           : '0.2.3.a2',
