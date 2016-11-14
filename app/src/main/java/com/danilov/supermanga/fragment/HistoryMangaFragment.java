@@ -258,12 +258,14 @@ public class HistoryMangaFragment extends BaseFragmentNative {
             }
 
             holder.discardButton.setOnClickListener(view1 -> {
-                history.remove(position);
-                removeHistory(position, historyElement);
+                final int adapterPosition = holder.getAdapterPosition();
+                history.remove(adapterPosition);
+                removeHistory(adapterPosition, historyElement);
             });
             holder.open.setOnClickListener(view1 -> {
+                final int adapterPosition = holder.getAdapterPosition();
                 ImageView imageView = holder.mangaCover;
-                Manga manga = adapter.getHistoryElements().get(position).getManga();
+                Manga manga = adapter.getHistoryElements().get(adapterPosition).getManga();
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), MangaInfoActivity.class);
 
