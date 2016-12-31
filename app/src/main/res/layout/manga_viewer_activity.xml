@@ -289,6 +289,27 @@
 
                             </RadioGroup>
 
+
+
+                            <TextView android:layout_width="fill_parent"
+                                      android:layout_height="wrap_content"
+                                      android:textColor="#ffffffff"
+                                      android:layout_marginTop="10dp"
+                                      android:textSize="15sp"
+                                      android:text="@string/sv_decoder"/>
+
+                            <LinearLayout android:layout_width="fill_parent"
+                                          android:layout_height="wrap_content"
+                                          android:orientation="horizontal">
+
+                                <Spinner
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    style="@style/Manga.Viewer.Spinner"
+                                    android:id="@+id/decoder_selector"/>
+
+                            </LinearLayout>
+
                         </LinearLayout>
 
                     </ScrollView>

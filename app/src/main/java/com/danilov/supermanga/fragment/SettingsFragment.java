@@ -1,6 +1,7 @@
 package com.danilov.supermanga.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.danilov.supermanga.R;
 import com.danilov.supermanga.activity.MainActivity;
+import com.danilov.supermanga.core.adapter.DecoderAdapter;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.MangaDAO;
@@ -133,7 +135,7 @@ public class SettingsFragment extends BaseFragmentNative {
             }
         });
 
-        final DecoderAdapter decoderAdapter = new DecoderAdapter();
+        final DecoderAdapter decoderAdapter = new DecoderAdapter(getActivity());
         decoderSpinner.setAdapter(decoderAdapter);
         decoderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -242,87 +244,6 @@ public class SettingsFragment extends BaseFragmentNative {
                 textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_selected, null);
             }
             String text = getActivity().getString(items[i].getStringId());
-            textView.setText(text);
-            return textView;
-        }
-
-        @Override
-        public int getItemViewType(final int i) {
-            return 0;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 1;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-    }
-
-    private class DecoderAdapter implements SpinnerAdapter {
-
-        private Decoder[] values = Decoder.values();
-
-        @Override
-        public View getDropDownView(final int i, final View view, final ViewGroup viewGroup) {
-            TextView textView = null;
-            if (view != null) {
-                textView = (TextView) view;
-            } else {
-                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_dropdown, null);
-            }
-            String text = values[i].toString();
-            textView.setText(text);
-            return textView;
-        }
-
-        public Decoder getElement(final int i) {
-            return values[i];
-        }
-
-        @Override
-        public void registerDataSetObserver(final DataSetObserver dataSetObserver) {
-
-        }
-
-        @Override
-        public void unregisterDataSetObserver(final DataSetObserver dataSetObserver) {
-
-        }
-
-        @Override
-        public int getCount() {
-            return values.length;
-        }
-
-        @Override
-        public Object getItem(final int i) {
-            return values[i];
-        }
-
-        @Override
-        public long getItemId(final int i) {
-            return 0;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getView(final int i, final View view, final ViewGroup viewGroup) {
-            TextView textView = null;
-            if (view != null) {
-                textView = (TextView) view;
-            } else {
-                textView = (TextView) View.inflate(getActivity(), R.layout.spinner_menu_item_selected, null);
-            }
-            String text = values[i].toString();
             textView.setText(text);
             return textView;
         }

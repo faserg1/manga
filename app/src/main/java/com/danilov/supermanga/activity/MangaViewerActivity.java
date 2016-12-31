@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danilov.supermanga.R;
+import com.danilov.supermanga.core.adapter.DecoderAdapter;
 import com.danilov.supermanga.core.application.ApplicationSettings;
 import com.danilov.supermanga.core.database.DatabaseAccessException;
 import com.danilov.supermanga.core.database.HistoryDAO;
@@ -49,12 +50,14 @@ import com.danilov.supermanga.core.strategy.ShowMangaException;
 import com.danilov.supermanga.core.strategy.StrategyDelegate;
 import com.danilov.supermanga.core.strategy.StrategyHolder;
 import com.danilov.supermanga.core.util.Constants;
+import com.danilov.supermanga.core.util.Decoder;
 import com.danilov.supermanga.core.util.ServiceContainer;
 import com.danilov.supermanga.core.util.Utils;
 import com.danilov.supermanga.core.view.MangaViewPager;
 import com.danilov.supermanga.core.view.SlidingLayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -256,6 +259,41 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
             int bar = sp.getInt("WHAT_BAR", APP_BAR);
             onBarSelected(bar);
         }));
+
+
+        final Spinner decoderSpinner = findViewWithId(R.id.decoder_selector);
+        final DecoderAdapter decoderAdapter = new DecoderAdapter(this);
+        Decoder decoder = settings.getDecoder();
+        decoderSpinner.setAdapter(decoderAdapter);
+        decoderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+                Decoder element = decoderAdapter.getElement(position);
+                // такая проверка подходит, потому что изменение декодера рестартует активити
+                // и закешированный в скоупе decoder всегда актуален
+                if (element == decoder) {
+                    return;
+                }
+                settings.setDecoder(element);
+                settings.update(MangaViewerActivity.this);
+
+                Intent intent = new Intent(MangaViewerActivity.this, MangaViewerActivity.class);
+                intent.putExtra(Constants.MANGA_PARCEL_KEY, manga);
+                intent.putExtra(Constants.FROM_PAGE_KEY, strategy.getCurrentImageNumber());
+                intent.putExtra(Constants.FROM_CHAPTER_KEY, strategy.getCurrentChapterNumber());
+                intent.putExtra(Constants.SHOW_ONLINE, showOnline);
+
+                startActivity(intent);
+                MangaViewerActivity.this.finish();
+            }
+
+            @Override
+            public void onNothingSelected(final AdapterView<?> parent) {
+
+            }
+        });
+        int decoderIdx = Arrays.binarySearch(Decoder.values(), decoder);
+        decoderSpinner.setSelection(decoderIdx, false);
     }
 
     private void setupBarSelect(final int bar) {
@@ -630,6 +668,11 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
 
     @Override
     public void onBackPressed() {
+        if (slidingLayer.isOpened()) {
+            slidingLayer.closeLayer(true);
+            return;
+        }
+
         save();
         saved = true;
         finish();
