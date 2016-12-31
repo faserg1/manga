@@ -71,25 +71,6 @@ public class SettingsFragment extends BaseFragmentNative {
         final ApplicationSettings.UserSettings userSettings = settings.getUserSettings();
         final String path = userSettings.getDownloadPath();
         final Activity activity = getActivity(); //hack
-        findViewById(R.id.transfer).setOnClickListener(v -> {
-            final MangaDAO mangaDAO = ServiceContainer.getService(MangaDAO.class);
-            Thread t = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        List<Manga> favorite = mangaDAO.getFavorite();
-                        for (Manga manga : favorite) {
-                            manga.setTracking(true);
-                            mangaDAO.setTracking(manga, true);
-                        }
-                        activity.runOnUiThread(() -> Toast.makeText(activity, "Готово!", Toast.LENGTH_LONG).show());
-                    } catch (DatabaseAccessException e) {
-                        activity.runOnUiThread(() -> Toast.makeText(activity, "Ошибка при переносе, пишите разработчику", Toast.LENGTH_LONG).show());
-                    }
-                }
-            };
-            t.start();
-        });
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
         boolean darkTheme = sharedPreferences.getBoolean("DARK_THEME", false);
