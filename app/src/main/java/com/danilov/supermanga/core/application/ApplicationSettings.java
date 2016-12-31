@@ -29,6 +29,7 @@ public class ApplicationSettings {
     private static final String SHOW_VIEWER_BTNS_ALWAYS_FIELD = "SVBA";
     private static final String IN_RTL_MODE_FIELD = "IRMF";
     private static final String DECODER_FIELD = "DECF";
+    private static final String USE_VOLUME_BUTTONS_FIELD = "UVBF";
     private static final String MAIN_MENU_ITEM_FIELD = "MMI";
 
     private static ApplicationSettings instance;
@@ -165,6 +166,7 @@ public class ApplicationSettings {
         private long bytesDownloaded = 0;
         private boolean alwaysShowButtons = false;
         private boolean tutorialViewerPassed = false;
+        private boolean useVolumeButtons = true;
 
         public void init(final Context context) {
             SharedPreferences sp = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
@@ -182,6 +184,7 @@ public class ApplicationSettings {
             }
 
             mangasComplete = sharedPreferences.getInt(Constants.Settings.MANGA_FINISHED, 0);
+            this.useVolumeButtons = sharedPreferences.getBoolean(USE_VOLUME_BUTTONS_FIELD, true);
             bytesDownloaded = sharedPreferences.getLong(Constants.Settings.BYTES_DOWNLOADED, 0L);
             alwaysShowButtons = sharedPreferences.getBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
             tutorialViewerPassed = sharedPreferences.getBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, false);
@@ -206,6 +209,7 @@ public class ApplicationSettings {
             editor.putString(Constants.Settings.EMAIL, email);
             editor.putString(Constants.Settings.MANGA_DOWNLOAD_PATH, downloadPath);
 
+            editor.putBoolean(USE_VOLUME_BUTTONS_FIELD, useVolumeButtons);
             editor.putLong(Constants.Settings.TIME_READ, timeRead);
             editor.putInt(Constants.Settings.MANGA_FINISHED, mangasComplete);
             editor.putLong(Constants.Settings.BYTES_DOWNLOADED, bytesDownloaded);
@@ -252,6 +256,14 @@ public class ApplicationSettings {
 
         public void setMangasComplete(final int mangasComplete) {
             this.mangasComplete = mangasComplete;
+        }
+
+        public boolean isUseVolumeButtons() {
+            return useVolumeButtons;
+        }
+
+        public void setUseVolumeButtons(final boolean useVolumeButtons) {
+            this.useVolumeButtons = useVolumeButtons;
         }
 
         public long getBytesDownloaded() {

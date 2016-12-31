@@ -64,6 +64,9 @@ public class ProfileActivity extends BaseToolbarActivity {
     @Bind(R.id.always_show_buttons_card)
     public View alwaysShowButtonsCard;
 
+    @Bind(R.id.use_volume_buttons_card)
+    public View useVolumeButtonsCard;
+
     @Bind(R.id.go_to_cloud)
     public View goToCloud;
 
@@ -93,6 +96,9 @@ public class ProfileActivity extends BaseToolbarActivity {
 
     @Bind(R.id.show_btns_switch)
     public SwitchCompat showBtnsSwitch;
+
+    @Bind(R.id.use_volume_buttons_switch)
+    public SwitchCompat useVolumeButtons;
 
 
     @Override
@@ -171,6 +177,7 @@ public class ProfileActivity extends BaseToolbarActivity {
         int mangasCompleteInt = userSettings.getMangasComplete();
         long megabytesDownloadedLong = userSettings.getBytesDownloaded() / (1024 * 1024);
         boolean alwaysShowButtons = userSettings.isAlwaysShowButtons();
+        final boolean useVolumeButtons = userSettings.isUseVolumeButtons();
 
         long seconds = timeReadLong / 1000;
         long hours = seconds / 3600;
@@ -195,6 +202,8 @@ public class ProfileActivity extends BaseToolbarActivity {
         downloadPath.setText(downloadPathString);
         mangasComplete.setText(mangasCompleteInt + "");
         megabytesDownloaded.setText(megabytesDownloadedLong + "");
+
+
         showBtnsSwitch.setChecked(alwaysShowButtons);
         alwaysShowButtonsCard.setOnClickListener(v -> {
             boolean isChecked = !showBtnsSwitch.isChecked();
@@ -205,6 +214,20 @@ public class ProfileActivity extends BaseToolbarActivity {
         });
         showBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             userSettings.setAlwaysShowButtons(isChecked);
+            Context context = getApplicationContext();
+            ApplicationSettings.get(context).update(context);
+        });
+
+        this.useVolumeButtons.setChecked(useVolumeButtons);
+        useVolumeButtonsCard.setOnClickListener(v -> {
+            boolean isChecked = !this.useVolumeButtons.isChecked();
+            this.useVolumeButtons.setChecked(isChecked);
+            userSettings.setUseVolumeButtons(isChecked);
+            Context context = getApplicationContext();
+            ApplicationSettings.get(context).update(context);
+        });
+        this.useVolumeButtons.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            userSettings.setUseVolumeButtons(isChecked);
             Context context = getApplicationContext();
             ApplicationSettings.get(context).update(context);
         });

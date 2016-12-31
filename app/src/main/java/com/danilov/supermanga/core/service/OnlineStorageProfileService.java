@@ -393,6 +393,7 @@ public class OnlineStorageProfileService extends Service {
             Integer mangaFinished = jsonObject.optInt(Constants.Settings.MANGA_FINISHED, 0);
             boolean showViewerButtons = jsonObject.optBoolean(Constants.Settings.ALWAYS_SHOW_VIEWER_BUTTONS, false);
             boolean tutorialViewerPassed = jsonObject.optBoolean(Constants.Settings.TUTORIAL_VIEWER_PASSED, false);
+            boolean useVolumeButtons = jsonObject.optBoolean(Constants.Settings.USE_VOLUME_BUTTONS, true);
 
             ApplicationSettings applicationSettings = ApplicationSettings.get(getApplicationContext());
             ApplicationSettings.UserSettings userSettings = applicationSettings.getUserSettings();
@@ -400,6 +401,8 @@ public class OnlineStorageProfileService extends Service {
             userSettings.setUserName(userName);
             userSettings.setEmail(email);
             userSettings.setDownloadPath(mangaDownloadPath);
+
+            userSettings.setUseVolumeButtons(useVolumeButtons);
 
             userSettings.setTimeRead(timeRead);
             userSettings.setBytesDownloaded(bytesDownloaded);

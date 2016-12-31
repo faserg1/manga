@@ -129,4 +129,6 @@
     <string name="authorize">Авторизация</string>
     <string name="logout">Выход</string>
     <string name="not_authorized">Вы не авторизованы</string>
+    <string name="sv_volume_buttons">Кнопки звука</string>
+    <string name="sv_use_for_paging">Использовать для листания</string>
 </resources>

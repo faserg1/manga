@@ -146,6 +146,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     private boolean showOnline;
     private boolean isHidden = false;
     private boolean isRTL = false;
+    private boolean useVolumeButtons = true;
     private boolean saveTimerScheduled = false;
     private boolean saved = false;
     private long startedReading;
@@ -186,6 +187,9 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         isTutorialPassed = userSettings.isTutorialViewerPassed();
         showTutorial(isTutorialPassed ? -1 : 1);
         this.showButtonsCheckbox.setChecked(userSettings.isAlwaysShowButtons());
+
+        useVolumeButtons = userSettings.isUseVolumeButtons();
+
         isRTL = settings.isRTLMode();
         this.rtlCheckbox.setChecked(isRTL);
         setReadingMode(isRTL);
@@ -885,28 +889,34 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
         }
     }
 
-//    @Override
-//    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//                return true;
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
-//
-//    @Override
-//    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//                onNext();
-//                return true;
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//                onPrevious();
-//                return true;
-//        }
-//        return super.onKeyUp(keyCode, event);
-//    }
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (!useVolumeButtons) {
+            return false;
+        }
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        if (!useVolumeButtons) {
+            return false;
+        }
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                onNext();
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                onPrevious();
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
 
     private void adInit() {
         if (!Constants.HAS_ADS) {

@@ -127,4 +127,6 @@
     <string name="authorize">Authorize</string>
     <string name="not_authorized">Not authorized</string>
     <string name="logout">Logout</string>
+    <string name="sv_volume_buttons">Volume buttons</string>
+    <string name="sv_use_for_paging">Use for paging</string>
 </resources>
