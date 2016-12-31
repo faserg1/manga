@@ -336,7 +336,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             String responseString = IoUtils.convertBytesToString(result);
             InputStream stringStream = new ByteArrayInputStream(responseString.getBytes());
 
-            inputStream = new LinesSearchInputStream(stringStream, "var lstImages = new Array();", "var lstImagesLoaded = new Array();");
+            inputStream = new LinesSearchInputStream(stringStream, "var lstImages = new Array();", "var currImage = 0;");
             int status = LinesSearchInputStream.SEARCHING;
             while (status == LinesSearchInputStream.SEARCHING) {
                 status = inputStream.read(bytes);
