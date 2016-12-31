@@ -892,7 +892,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (!useVolumeButtons) {
-            return false;
+            return super.onKeyDown(keyCode, event);
         }
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -905,7 +905,7 @@ public class MangaViewerActivity extends BaseToolbarActivity implements Strategy
     @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
         if (!useVolumeButtons) {
-            return false;
+            return super.onKeyUp(keyCode, event);
         }
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
