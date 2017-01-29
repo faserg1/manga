@@ -55,7 +55,7 @@ public class HentaichanTest {
     public void testQueryForMangaDescription() throws Exception {
         List<Manga> searchResults = null;
         try {
-            searchResults = engine.queryRepository("Souguu! Amazoness Oyako", Collections.emptyList());
+            searchResults = engine.queryRepository("blush-dc", Collections.emptyList());
         } catch (RepositoryException e) {
             Assert.fail("Should not fail: " + e.getMessage());
         }

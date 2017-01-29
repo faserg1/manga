@@ -57,7 +57,7 @@ import java.util.concurrent.Callable;
  */
 public class HentaichanEngine extends AuthorizableEngine {
 
-    private final String baseUri = "http://hentaichan.me/";
+    private final String baseUri = "http://henchan.me/";
     MangaApplication context;
     @NonNull
     private String login;
@@ -118,7 +118,7 @@ public class HentaichanEngine extends AuthorizableEngine {
         final Document document = Utils.toDocument(response);
         //there is input#login field for unauthorized user
         final Element login = document.getElementById("login");
-        if (login != null) {
+        if (login != null && !"hidden".equals(login.attr("type"))) {
             //field exists, auth failed
             return false;
         }

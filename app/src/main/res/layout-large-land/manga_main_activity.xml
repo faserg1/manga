@@ -97,9 +97,9 @@
 
     </LinearLayout>
 
-    <com.danilov.supermanga.core.view.SnowFallView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!--<com.danilov.supermanga.core.view.SnowFallView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
 </RelativeLayout>
 

@@ -90,7 +90,7 @@ public interface RepositoryEngine {
     enum DefaultRepository implements Repository {
 
         READMANGA(new ReadmangaEngine(), "ReadManga (RU)", true, R.drawable.ic_russia),
-        ALLHENTAI(new AllHentaiEngine(), "AllHent (RU)", true, R.drawable.ic_russia),
+        ALLHENTAI(new AllHentaiEngine(), "AllHentai (RU)", true, R.drawable.ic_russia),
         ADULTMANGA(new AdultmangaEngine(), "AdultManga (RU)", true, R.drawable.ic_russia),
         MANGACHAN(new MangachanEngine(), "MangaChan (RU)", true, R.drawable.ic_russia),
         MANGAREADERNET(new MangaReaderNetEngine(), "MangaReader (EN)", true, R.drawable.ic_english),

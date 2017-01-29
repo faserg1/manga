@@ -29,6 +29,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -98,6 +99,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
                     link = link.substring(idx + 4);
                 }
                 String title = m.group(2);
+                title = Jsoup.parse(title).text();
                 MangaSuggestion suggestion = new MangaSuggestion(title, link, DefaultRepository.KISSMANGA);
                 mangaSuggestions.add(suggestion);
             }
