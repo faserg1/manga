@@ -56,9 +56,13 @@ public class KissmangaTest {
     @Test
     public void testQueryRepository() {
         List<Manga> searchResults = null;
+        System.out.println(engine);
         try {
             searchResults = engine.queryRepository("Dragon", Collections.emptyList());
         } catch (RepositoryException e) {
+            Assert.fail("Should not fail: " + e.getMessage());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
             Assert.fail("Should not fail: " + e.getMessage());
         }
         Assert.assertNotNull(searchResults);
