@@ -1,15 +1,18 @@
 package com.danilov.supermanga.core.repository;
 
+import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.LinesSearchInputStream;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.model.Manga;
 import com.danilov.supermanga.core.model.MangaChapter;
 import com.danilov.supermanga.core.model.MangaSuggestion;
 import com.danilov.supermanga.core.repository.special.CloudFlareBypassEngine;
+import com.danilov.supermanga.core.repository.special.JavaScriptEngine;
 import com.danilov.supermanga.core.util.Constants;
 import com.danilov.supermanga.core.util.IoUtils;
 import com.danilov.supermanga.core.util.Utils;
@@ -33,10 +36,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
@@ -345,7 +355,7 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             }
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
-            imageUrls = extractUrls(str);
+            imageUrls = decrypt(extractUrls(str));
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
             throw new RepositoryException(e.getMessage());
@@ -369,9 +379,6 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         List<String> urls = new ArrayList<>();
         while (matcher.find()) {
             String url = matcher.group(1);
-            if (!url.contains("http")) {
-                url = baseUri + url;
-            }
             urls.add(url);
         }
         return urls;
@@ -491,5 +498,39 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         }
 
     };
+
+    private List<String> decrypt(final List<String> urlsToDecrypt) {
+        final AssetManager assets = MangaApplication.get().getAssets();
+        Reader cryptoReader = null;
+        Reader loReader = null;
+        try {
+            final InputStream crypto = assets.open("testjs/crypto.js");
+            final InputStream lo = assets.open("testjs/lo.js");
+            cryptoReader = new BufferedReader(new InputStreamReader(crypto));
+            loReader = new BufferedReader(new InputStreamReader(lo));
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
+
+        // инициализируем Rhino
+        Context rhino = Context.enter();
+        rhino.setOptimizationLevel(-1);
+        Scriptable scope = rhino.initStandardObjects(); // инициализируем пространство исполнения
+        try {
+            rhino.evaluateReader(scope, cryptoReader, "crypto.js", 1, null);
+            rhino.evaluateReader(scope, loReader, "lo.js", 1, null);
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
+        Function wrapKA = (Function) scope.get("wrapKA", scope);
+
+        List<String> newUrls = new ArrayList<>();
+        for (String s : urlsToDecrypt) {
+            String callResult = (String) (wrapKA.call(rhino, scope, scope, new Object[]{s}));
+            newUrls.add(callResult);
+        }
+
+        return newUrls;
+    }
 
 }
