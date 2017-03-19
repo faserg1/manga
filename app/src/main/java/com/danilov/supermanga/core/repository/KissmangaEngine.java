@@ -355,7 +355,15 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
             }
             bytes = inputStream.getResult();
             String str = IoUtils.convertBytesToString(bytes);
-            imageUrls = decrypt(extractUrls(str));
+
+            Pattern p = Pattern.compile("(.*CryptoJS.*)");
+            Matcher m = p.matcher(responseString);
+            List<String> scripts = new ArrayList<>();
+            while (m.find()) {
+                scripts.add(m.group(1));
+            }
+
+            imageUrls = decrypt(scripts, extractUrls(str));
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
             throw new RepositoryException(e.getMessage());
@@ -499,7 +507,8 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
 
     };
 
-    private List<String> decrypt(final List<String> urlsToDecrypt) {
+
+    private List<String> decrypt(final List<String> scripts, final List<String> urlsToDecrypt) {
         final AssetManager assets = MangaApplication.get().getAssets();
         Reader cryptoReader = null;
         Reader loReader = null;
@@ -522,6 +531,11 @@ public class KissmangaEngine extends CloudFlareBypassEngine {
         } catch (IOException e) {
             return Collections.emptyList();
         }
+        for (int i = 0; i < scripts.size(); i++) {
+            String script = scripts.get(i);
+            rhino.evaluateString(scope, script,  i + ".js", 1, null);
+        }
+
         Function wrapKA = (Function) scope.get("wrapKA", scope);
 
         List<String> newUrls = new ArrayList<>();

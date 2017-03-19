@@ -76,9 +76,6 @@ var iv, key;
 iv = CryptoJS['enc']['Hex']['parse'](boxzq);
 key = CryptoJS.SHA256(chko);
 
-
-var _0xa5a2 = ["\x37\x32\x6E\x6E\x61\x73\x64\x61\x73\x64\x39\x61\x73\x64\x6E\x31\x32\x33"]; chko = _0xa5a2[0]; key = CryptoJS.SHA256(chko)
-
 function wrapKA(_0xfac5x1b) {
     var _0xfac5x1c = null;
     try {
