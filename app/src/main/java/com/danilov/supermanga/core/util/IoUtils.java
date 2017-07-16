@@ -396,6 +396,10 @@ public class IoUtils {
         while (matcher.find()) {
             title += matcher.group();
         }
+        final int length = title.length();
+        if (length > 50) {
+            title = title.substring(length - 50);
+        }
         return title;
     }
 
