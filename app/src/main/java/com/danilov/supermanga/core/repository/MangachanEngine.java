@@ -48,9 +48,9 @@ public class MangachanEngine implements RepositoryEngine {
 
     private static final String TAG = "MangachanEngine";
 
-    private String baseUri = "http://mangachan.ru/";
-    private String baseSuggestionUri = "http://mangachan.ru/engine/ajax/search.php";
-    private String baseSearchUri = "http://mangachan.ru/?do=search&subaction=search&story=";
+    private String baseUri = "http://mangachan.me/";
+    private String baseSuggestionUri = "http://mangachan.me/engine/ajax/search.php";
+    private String baseSearchUri = "http://mangachan.me/?do=search&subaction=search&story=";
 
     @Inject
     public HttpStreamReader httpStreamReader;

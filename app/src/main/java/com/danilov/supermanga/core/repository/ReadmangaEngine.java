@@ -300,7 +300,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             String coverUri = null;
             if (!tmp.isEmpty()) {
                 Element img = tmp.get(0);
-                coverUri = img != null ? img.attr("src") : "";
+                coverUri = img != null ? img.attr("data-original") : "";
                 if (coverUri.endsWith("_p.jpg")) {
                     coverUri = coverUri.replace("_p.jpg", ".jpg");
                 } else if (coverUri.endsWith("_p.png")) {
@@ -350,7 +350,7 @@ public class ReadmangaEngine implements RepositoryEngine {
             String coverUri = null;
             if (!tmp.isEmpty()) {
                 Element img = tmp.get(0);
-                coverUri = img != null ? img.attr("src") : "";
+                coverUri = img != null ? img.attr("data-original") : "";
                 if (coverUri.endsWith("_p.jpg")) {
                     coverUri = coverUri.replace("_p.jpg", ".jpg");
                 } else if (coverUri.endsWith("_p.png")) {
