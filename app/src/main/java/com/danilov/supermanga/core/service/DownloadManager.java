@@ -9,6 +9,7 @@ import com.danilov.supermanga.core.application.MangaApplication;
 import com.danilov.supermanga.core.http.RequestPreprocessor;
 import com.danilov.supermanga.core.interfaces.Pool;
 
+import java.io.Console;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
@@ -87,13 +88,19 @@ public class DownloadManager {
         lock.lock();
         Download download = null;
         try {
+            URL aURL = new URL(uri);
+            String referer = aURL.getProtocol() + "://" + aURL.getAuthority() + "/";
+
             download = pool.obtain();
+            download.setReferer(referer);
             download.setUri(uri);
             download.setTag(tag);
             download.setFilePath(filePath);
             download.setPreprocessor(requestPreprocessor);
             downloads.add(download);
             isWake.signalAll();
+        } catch (java.net.MalformedURLException ex) {
+            // Log somewhere?
         } finally {
             lock.unlock();
         }
@@ -104,13 +111,19 @@ public class DownloadManager {
         lock.lock();
         Download download = null;
         try {
+            URL aURL = new URL(uri);
+            String referer = aURL.getProtocol() + "://" + aURL.getAuthority() + "/";
+
             download = pool.obtain();
+            download.setReferer(referer);
             download.setUri(uri);
             download.setTag(tag);
             download.setFilePath(filePath);
             download.setPreprocessor(requestPreprocessor);
             downloads.addFirst(download);
             isWake.signalAll();
+        } catch (java.net.MalformedURLException ex) {
+            // Log somewhere?
         } finally {
             lock.unlock();
         }
@@ -240,6 +253,7 @@ public class DownloadManager {
         private int size = -1;
         private int downloaded = 0;
         private DownloadStatus status = DownloadStatus.DOWNLOADING;
+        private String referer = null;
 
         @Nullable
         private RequestPreprocessor preprocessor;
@@ -251,6 +265,8 @@ public class DownloadManager {
             clear();
             DownloadManager.this.recycle(this);
         }
+
+        public String getReferer() { return referer; }
 
         public String getUri() {
             return uri;
@@ -273,6 +289,11 @@ public class DownloadManager {
             this.preprocessor = requestPreprocessor;
         }
 
+        public void setReferer(final String referer)
+        {
+            this.referer = referer;
+        }
+
         private void clear() {
             this.uri = null;
             this.filePath = null;
@@ -281,6 +302,7 @@ public class DownloadManager {
             this.downloaded = 0;
             this.status = DownloadStatus.DOWNLOADING;
             this.preprocessor = null;
+            this.referer = null;
         }
 
         @Override
@@ -323,6 +345,11 @@ public class DownloadManager {
                 // Specify what portion of file to download.
                 connection.setRequestProperty("Range",
                         "bytes=" + downloaded + "-");
+
+                if (referer != null)
+                {
+                    connection.setRequestProperty("Referer", referer);
+                }
 
                 // Connect to server.
                 connection.connect();
