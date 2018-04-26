@@ -432,8 +432,8 @@ public class MangaDownloadService extends Service {
                 urls.set(i, url);
             }
             int curChapterNumber = request.getCurrentChapterNumber();
-            String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this) + "/";
-            String coverUri = mangaPath + "/cover";
+            String mangaPath = IoUtils.createPathForManga(manga, MangaDownloadService.this);
+            String coverUri = IoUtils.joinPath(mangaPath, "cover");
             try {
 
                 LocalManga _local = new LocalManga(manga.getTitle(), manga.getUri(), manga.getRepository());
@@ -447,7 +447,7 @@ public class MangaDownloadService extends Service {
                 Manga localManga = mangaDAO.updateFromDownloadService(_local, manga.getChaptersQuantity());
                 if (localManga != null) {
                     mangaPath = ((LocalManga) localManga).getLocalUri();
-                    coverUri = mangaPath + "/cover";
+                    coverUri = IoUtils.joinPath(mangaPath, "cover");
                 }
             } catch (DatabaseAccessException e) {
                 //TODO: decide what do we need to do if can't store manga
@@ -456,13 +456,13 @@ public class MangaDownloadService extends Service {
                 sendError(currentRequest, e.getMessage());
                 Log.d(TAG, e.getMessage());
             }
-            String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber) + "/";
+            String chapterPath = IoUtils.createPathForMangaChapter(mangaPath, curChapterNumber);
             int i = 0;
             int currentImage = 0;
             int currentImageQuantity = urls.size();
             if (!new File(coverUri).exists()) {
                 if (manga.getCoverUri() != null) {
-                    downloadManager.startDownload(manga.getCoverUri(), mangaPath + "/cover", engine.getRequestPreprocessor());
+                    downloadManager.startDownload(manga.getCoverUri(), coverUri, engine.getRequestPreprocessor());
                     currentImageQuantity++;
                 }
             }
@@ -470,7 +470,7 @@ public class MangaDownloadService extends Service {
             currentRequest.setCurrentImageQuantity(currentImageQuantity);
             sendStatus();
             for (String url : urls) {
-                downloadManager.startDownload(url, chapterPath + i + ".png", engine.getRequestPreprocessor(), currentRequest);
+                downloadManager.startDownload(url, IoUtils.joinPath(chapterPath, i + ".png"), engine.getRequestPreprocessor(), currentRequest);
                 i++;
             }
         }

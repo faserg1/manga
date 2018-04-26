@@ -411,4 +411,15 @@ public class IoUtils {
         return chapterFolder.getPath();
     }
 
+    public static String joinPath(final String firstPath, final String ... other)
+	{
+		//Решение с java.nio.file тут нет, пилим "велосипед"
+		//https://stackoverflow.com/questions/412380/how-to-combine-paths-in-java
+		File completePath = new File(firstPath);
+		for (final String addonPath: other)
+		{
+			completePath = new File(completePath, addonPath);
+		}
+		return completePath.getPath();
+	}
 }
